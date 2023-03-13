@@ -37,12 +37,3 @@ struct HeaderView_Previews: PreviewProvider {
         }
     }
 }
-//
-//class HeaderItem: Hashable, ObservableObject {
-//    static func == (lhs: HeaderItem, rhs: HeaderItem) -> Bool {
-//        <#code#>
-//    }
-//
-//    @Published var title: String
-//    let image: String = ""
-//}

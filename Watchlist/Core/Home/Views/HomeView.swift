@@ -33,20 +33,3 @@ struct HomeView_Previews: PreviewProvider {
         HomeView()
     }
 }
-//
-//extension HomeView {
-//    private var defaultTabView: some View {
-//        TabView(selection: $homeVM.selectedTab) {
-//
-//            ShowTabView()
-//                .tabItem {
-//                    Label("", systemImage: "film.stack")
-//                }
-//
-//            SearchTabView(rowViewManager: RowViewManager(homeVM: homeVM))
-//                .tabItem {
-//                    Label("", systemImage: "magnifyingglass")
-//                }
-//        }
-//    }
-//}

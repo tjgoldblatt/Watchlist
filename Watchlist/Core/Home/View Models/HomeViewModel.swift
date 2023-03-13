@@ -91,21 +91,6 @@ class HomeViewModel: ObservableObject {
             try await group.waitForAll()
             isGenresLoaded = true
         })
-//        Task {
-//            do {
-//                self.movieGenreList = try await HomeViewModel.getMovieGenreList()
-//            } catch {
-//                print("[🔥] Error Loading Movie Genre Lists")
-//            }
-//        }
-//        Task {
-//            do {
-//                self.tvGenreList = try await HomeViewModel.getTVGenreList()
-//                isGenresLoaded = true
-//            } catch {
-//                print("[🔥] Error Loading TV Genre Lists")
-//            }
-//        }
     }
     
     func getGenreNames(for type: MediaType, genreIDs: [Int]) -> [Genre] {

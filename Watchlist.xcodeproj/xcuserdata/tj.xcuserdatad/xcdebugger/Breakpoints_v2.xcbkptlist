@@ -494,8 +494,8 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -510,9 +510,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
-            landmarkName = "getGenreNames(for:genreIDs:)"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
+            landmarkName = "fetchGenres()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -654,9 +654,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "getGenreNames(for:genreIDs:)"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "fetchGenres()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -973,9 +973,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
-            landmarkName = "getTVGenreList()"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "getMovieGenreList()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1066,9 +1066,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
-            landmarkName = "getMovieGenreList()"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
+            landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1082,9 +1082,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "143"
-            endingLineNumber = "143"
-            landmarkName = "getMovieGenreList()"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1098,25 +1098,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
-            landmarkName = "getTVGenreList()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "59A7C69B-FF26-4B9C-88FF-EB441FE81002"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
-            landmarkName = "fetchGenres()"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "getMovieGenreList()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1288,9 +1272,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
-            landmarkName = "getTVGenreList()"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "getMovieGenreList()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

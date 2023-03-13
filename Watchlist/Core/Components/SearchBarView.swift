@@ -28,6 +28,7 @@ struct SearchBarView: View {
                 
                 TextField(textFieldString, text: $searchText)
                     .foregroundColor(Color.theme.text)
+                    .disableAutocorrection(true)
                     .font(.system(size: 16, design: .default))
                 
 //                    .overlay( isTyping ?
