@@ -15,10 +15,12 @@ import TMDb
 struct GenreView: View {
     @State var genreName: String
     
+    @State var size: CGFloat = 10
+    
     var body: some View {
         Text(genreName)
             .foregroundColor(Color.theme.genreText)
-            .font(.system(size: 10, design: .default))
+            .font(.system(size: size, design: .default))
             .padding(.vertical, 3)
             .padding(.horizontal, 10)
             .background {

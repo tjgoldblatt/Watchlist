@@ -11,6 +11,7 @@ struct StarRatingView: View {
     
     @State var text: String
     @State var rating: Double
+    @State var size: CGFloat = 14
     
     var ratingAsString: String {
         return "\(round(rating * 10) / 10.0)"
@@ -28,13 +29,13 @@ struct StarRatingView: View {
                     .imageScale(.small)
                 
                 Text(ratingAsString)
-                    .font(.system(size: 14, design: .default))
+                    .font(.system(size: size, design: .default))
                     .fontWeight(.medium)
                 Text("/")
-                    .font(.system(size: 12, design: .default))
+                    .font(.system(size: size-2, design: .default))
                     .fontWeight(.light)
                 Text("10")
-                    .font(.system(size: 12, design: .default))
+                    .font(.system(size: size-2, design: .default))
                     .fontWeight(.light)
             }
         }

@@ -270,8 +270,8 @@
             filePath = "Watchlist/Utilities/RowViewManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
             landmarkName = "createRowView(movie:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -494,8 +494,8 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -510,9 +510,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
-            landmarkName = "getGenreNames(for:genreIDs:)"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
+            landmarkName = "fetchGenres()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -551,22 +551,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CEC7010C-7D06-47F2-A76F-06494F03682A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Utilities/RowViewManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
-            landmarkName = "createRowView(movie:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "71E7718A-3C69-41B8-A363-6B4BEB11640C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -574,8 +558,8 @@
             filePath = "Watchlist/Utilities/RowViewManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
             landmarkName = "createRowView(tvShow:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -638,58 +622,10 @@
             filePath = "Watchlist/Utilities/RowViewManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
             landmarkName = "createRowView(tvShow:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "BE81F82A-D56C-4899-A13F-00C001B4E9B6"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Utilities/RowViewManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "45"
-            endingLineNumber = "45"
-            landmarkName = "createRowView(movie:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "BE81F82A-D56C-4899-A13F-00C001B4E9B6 - e46f13f0775d44a0"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Watchlist.RowViewManager.createRowView(movie: Watchlist.Media) -&gt; SwiftUI.AnyView"
-                  moduleName = "Watchlist"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Utilities/RowViewManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "45"
-                  endingLineNumber = "45"
-                  offsetFromSymbolStart = "1140">
-               </Location>
-               <Location
-                  uuid = "BE81F82A-D56C-4899-A13F-00C001B4E9B6 - e46f13f0775d44a0"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Watchlist.RowViewManager.createRowView(movie: Watchlist.Media) -&gt; SwiftUI.AnyView"
-                  moduleName = "Watchlist"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Utilities/RowViewManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "45"
-                  endingLineNumber = "45"
-                  offsetFromSymbolStart = "1192">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -702,8 +638,8 @@
             filePath = "Watchlist/Core/Components/MediaDetailView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
             landmarkName = "genreSection"
             landmarkType = "24">
          </BreakpointContent>
@@ -718,9 +654,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "getGenreNames(for:genreIDs:)"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "fetchGenres()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1037,9 +973,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
-            landmarkName = "getTVGenreList()"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "getMovieGenreList()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1130,9 +1066,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
-            landmarkName = "getMovieGenreList()"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
+            landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1146,9 +1082,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "143"
-            endingLineNumber = "143"
-            landmarkName = "getMovieGenreList()"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1162,25 +1098,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
-            landmarkName = "getTVGenreList()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "59A7C69B-FF26-4B9C-88FF-EB441FE81002"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
-            landmarkName = "fetchGenres()"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "getMovieGenreList()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1352,9 +1272,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
-            landmarkName = "getTVGenreList()"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "getMovieGenreList()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
