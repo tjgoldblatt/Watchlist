@@ -167,38 +167,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F88FBD35-242E-4371-A236-EF6E0D329EEB"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Core/Home/Views/Custom Tab Bar/CustomTabBarContainerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "72DFC0EC-64AA-4922-AA5F-A4AB3F15E05F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Core/Home/Views/Custom Tab Bar/CustomTabBarContainerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "E5154632-834A-4E20-BD25-93F87F796C2F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -206,8 +174,8 @@
             filePath = "Watchlist/Core/Search/Views/SearchTabView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -270,9 +238,9 @@
             filePath = "Watchlist/Utilities/RowViewManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
-            landmarkName = "createRowView(movie:)"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "createRowView(movie:tab:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -280,7 +248,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "46513046-1898-41EA-9D3E-6E0BDF3D5857"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../../../Library/Developer/Xcode/DerivedData/Watchlist-fdkobsjkjsjexwdelrbgrxvvpdcj/SourcePackages/checkouts/TMDb/Sources/TMDb/Models/TVShow.swift"
@@ -296,7 +264,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "2732DC96-7185-4095-94E0-17856AE073E7"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../../../Library/Developer/Xcode/DerivedData/Watchlist-fdkobsjkjsjexwdelrbgrxvvpdcj/SourcePackages/checkouts/TMDb/Sources/TMDb/Models/Movie.swift"
@@ -312,7 +280,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "63B80C43-CACF-4789-93F2-FAB721707DD4"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Utilities/TMDbManager.swift"
@@ -350,8 +318,8 @@
             filePath = "Watchlist/Services/TMDbService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
             landmarkName = "search(with:completion:)"
             landmarkType = "7">
             <Locations>
@@ -430,8 +398,8 @@
             filePath = "Watchlist/Services/TMDbService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
             landmarkName = "getMovieGenreList(completion:)"
             landmarkType = "7">
             <Locations>
@@ -494,8 +462,8 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "114"
-            endingLineNumber = "114"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
             landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -510,9 +478,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "fetchGenres()"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
+            landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -558,26 +526,10 @@
             filePath = "Watchlist/Utilities/RowViewManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "createRowView(tvShow:)"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
+            landmarkName = "createRowView(tvShow:tab:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8124F214-B4E4-46E0-B185-3F97C09A579E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Core/Show/Views/ShowTabView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
-            landmarkName = "body"
-            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -590,24 +542,8 @@
             filePath = "Watchlist/Core/Show/Views/ShowTabView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5918635D-58E0-4535-B9D2-0B260CD18E10"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Core/Show/Views/ShowTabView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -622,9 +558,9 @@
             filePath = "Watchlist/Utilities/RowViewManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "75"
-            endingLineNumber = "75"
-            landmarkName = "createRowView(tvShow:)"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
+            landmarkName = "createRowView(tvShow:tab:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -632,14 +568,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "F2E1F381-6902-493C-B9C9-E5AD53D7FF23"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Core/Components/MediaDetailView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
             landmarkName = "genreSection"
             landmarkType = "24">
          </BreakpointContent>
@@ -654,9 +590,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
-            landmarkName = "fetchGenres()"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "getGenreNames(for:genreIDs:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -702,8 +638,8 @@
             filePath = "Watchlist/Services/TMDbService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
             landmarkName = "getMovieGenreList(completion:)"
             landmarkType = "7">
             <Locations>
@@ -744,14 +680,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "85CE4814-1058-4576-9264-8E1E98F328A7"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Services/TMDbService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "39"
-            endingLineNumber = "39"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
             landmarkName = "search(with:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -760,14 +696,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "6E2A2277-6F8B-4549-B7CD-A44950E77CC3"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Services/TMDbService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
             landmarkName = "search(with:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -782,8 +718,8 @@
             filePath = "Watchlist/Services/TMDbService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
             landmarkName = "getMovieGenreList(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -792,14 +728,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "A23A7EB2-E9A2-4DA7-8EDD-9D979845FE3F"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Services/TMDbService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
             landmarkName = "search(with:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -808,38 +744,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "389EA9A2-AAA2-40A0-A042-08AFB9150450"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Services/TMDbService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
-            landmarkName = "getMovieGenreList(completion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "BF4F1319-EAA1-4869-8224-AD9CBBE5A76F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Services/TMDbService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
-            landmarkName = "getMovieGenreList(completion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1D4A044A-CA6B-402C-870F-65A0263434F9"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -855,6 +759,38 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "BF4F1319-EAA1-4869-8224-AD9CBBE5A76F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Services/TMDbService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "getMovieGenreList(completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1D4A044A-CA6B-402C-870F-65A0263434F9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Services/TMDbService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
+            landmarkName = "getMovieGenreList(completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "D588E4A3-9BCC-4C03-9D07-332730EF72E0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -862,8 +798,8 @@
             filePath = "Watchlist/WatchlistApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "18"
-            endingLineNumber = "18"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -894,73 +830,10 @@
             filePath = "Watchlist/Core/Home/Views/HomeView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
             landmarkName = "body"
             landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "684795A9-D103-464C-A2FC-564A648E61CD"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/WatchlistApp.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "684795A9-D103-464C-A2FC-564A648E61CD - 307ee382f3d93b59"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #2 () -&gt; () in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in Watchlist.WatchlistApp.body.getter : some"
-                  moduleName = "Watchlist"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/WatchlistApp.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24"
-                  offsetFromSymbolStart = "76">
-               </Location>
-               <Location
-                  uuid = "684795A9-D103-464C-A2FC-564A648E61CD - 1b114e4b2d2b11ab"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in closure #2 () -&gt; () in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in Watchlist.WatchlistApp.body.getter : some"
-                  moduleName = "Watchlist"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/WatchlistApp.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  uuid = "684795A9-D103-464C-A2FC-564A648E61CD - e3c8ebdb076eb35d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #2 () -&gt; () in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in Watchlist.WatchlistApp.body.getter : some"
-                  moduleName = "Watchlist"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/WatchlistApp.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24"
-                  offsetFromSymbolStart = "28">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -973,9 +846,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
-            landmarkName = "getMovieGenreList()"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
+            landmarkName = "getTVGenreList()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1066,9 +939,9 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "getGenreNames(for:genreIDs:)"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "getMovieGenreList()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1076,15 +949,15 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "7DCDF29D-18AE-409C-9AE0-F9F985810FB5"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
-            landmarkName = "getGenreNames(for:genreIDs:)"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
+            landmarkName = "getMovieGenreList()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1098,65 +971,17 @@
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
-            landmarkName = "getMovieGenreList()"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "getTVGenreList()"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F82E192C-39D4-4096-A42B-C88CB4FCB820"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Watchlist/Core/Search/View Models/SeachDetailsViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
-            landmarkName = "executeQuery()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "F82E192C-39D4-4096-A42B-C88CB4FCB820 - c81c9fd6971a1c09"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for Watchlist.SearchDetailsViewModel.executeQuery() async -&gt; ()"
-                  moduleName = "Watchlist"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/View%20Models/SeachDetailsViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "92">
-               </Location>
-               <Location
-                  uuid = "F82E192C-39D4-4096-A42B-C88CB4FCB820 - a51ee03e9079c72"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Sendable () async -&gt; () in Watchlist.SearchDetailsViewModel.executeQuery() async -&gt; ()"
-                  moduleName = "Watchlist"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/View%20Models/SeachDetailsViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "20"
-                  endingLineNumber = "20"
-                  offsetFromSymbolStart = "0">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Core/Search/View Models/SeachDetailsViewModel.swift"
@@ -1168,11 +993,11 @@
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E - a4272bed970371c"
+                  uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E - 5dd333b127f4d8d9"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Watchlist.SearchDetailsViewModel.executeQuery() async -&gt; ()"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Watchlist.SearchTabViewModel.executeQuery() async -&gt; ()"
                   moduleName = "Watchlist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/View%20Models/SeachDetailsViewModel.swift"
@@ -1183,11 +1008,11 @@
                   offsetFromSymbolStart = "64">
                </Location>
                <Location
-                  uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E - 11ff807d9f23216d"
+                  uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E - f95e95ec826006be"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in Watchlist.SearchDetailsViewModel.executeQuery() async -&gt; ()"
+                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in Watchlist.SearchTabViewModel.executeQuery() async -&gt; ()"
                   moduleName = "Watchlist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/View%20Models/SeachDetailsViewModel.swift"
@@ -1198,11 +1023,11 @@
                   offsetFromSymbolStart = "44">
                </Location>
                <Location
-                  uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E - fe18e82a2e197b02"
+                  uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E - 635b36bb3bc2145f"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Watchlist.SearchDetailsViewModel.executeQuery() async -&gt; ()"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Watchlist.SearchTabViewModel.executeQuery() async -&gt; ()"
                   moduleName = "Watchlist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/View%20Models/SeachDetailsViewModel.swift"
@@ -1213,11 +1038,11 @@
                   offsetFromSymbolStart = "80">
                </Location>
                <Location
-                  uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E - 183c236029921d01"
+                  uuid = "F4599AB5-5865-4A28-8288-ED8BBBF3670E - 4072b380c37321e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Watchlist.SearchDetailsViewModel.executeQuery() async -&gt; ()"
+                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Watchlist.SearchTabViewModel.executeQuery() async -&gt; ()"
                   moduleName = "Watchlist"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/View%20Models/SeachDetailsViewModel.swift"
@@ -1234,7 +1059,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "34862F2C-93F1-4007-9FAA-3F4E06E775AC"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Core/Search/View Models/SeachDetailsViewModel.swift"
@@ -1250,7 +1075,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "257EB0A1-B9D9-4A9B-B88A-FA0A8B836288"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Core/Search/View Models/SeachDetailsViewModel.swift"
@@ -1266,16 +1091,936 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E04CEF47-782E-4253-B577-B71B80963D06"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "109"
+            endingLineNumber = "109"
+            landmarkName = "getTVGenreList()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EBAECFA4-940D-4A8C-8533-494B84EE7A65"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "188"
+            endingLineNumber = "188"
+            landmarkName = "getMoviesFromDatabase()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "EBAECFA4-940D-4A8C-8533-494B84EE7A65 - c431820cd8da1301"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Watchlist.HomeViewModel.getMoviesFromDatabase() async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "175"
+                  endingLineNumber = "175"
+                  offsetFromSymbolStart = "80">
+               </Location>
+               <Location
+                  uuid = "EBAECFA4-940D-4A8C-8533-494B84EE7A65 - 72c0ed4f2465b7f7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Watchlist.HomeViewModel.getMoviesFromDatabase() async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "175"
+                  endingLineNumber = "175"
+                  offsetFromSymbolStart = "1180">
+               </Location>
+               <Location
+                  uuid = "EBAECFA4-940D-4A8C-8533-494B84EE7A65 - a4187e2e1fd765fc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for Watchlist.HomeViewModel.getMoviesFromDatabase() async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "175"
+                  endingLineNumber = "175"
+                  offsetFromSymbolStart = "540">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D197936A-CA69-4E92-BF3E-943B87CD3CAC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "208"
+            endingLineNumber = "208"
+            landmarkName = "getTVFromDatabase()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "99C88FA8-FB93-4E63-A5FB-4F3ACFBA9C47"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "210"
+            endingLineNumber = "210"
+            landmarkName = "getTVFromDatabase()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "99C88FA8-FB93-4E63-A5FB-4F3ACFBA9C47 - 16cc1494374d3e5f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Watchlist.HomeViewModel.markAsWatched(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "196"
+                  endingLineNumber = "196"
+                  offsetFromSymbolStart = "544">
+               </Location>
+               <Location
+                  uuid = "99C88FA8-FB93-4E63-A5FB-4F3ACFBA9C47 - 840b3511b6627c5d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Watchlist.HomeViewModel.markAsWatched(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "196"
+                  endingLineNumber = "196"
+                  offsetFromSymbolStart = "96">
+               </Location>
+               <Location
+                  uuid = "99C88FA8-FB93-4E63-A5FB-4F3ACFBA9C47 - 4ca4a5d07690dd5c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for Watchlist.HomeViewModel.markAsWatched(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "196"
+                  endingLineNumber = "196"
+                  offsetFromSymbolStart = "632">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A3FA1A17-2817-47FB-B527-EFB8EC6CCA46"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "190"
+            endingLineNumber = "190"
+            landmarkName = "getMoviesFromDatabase()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B567A3AD-F8B9-4224-AE63-2A03D2A58CD8"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "192"
+            endingLineNumber = "192"
+            landmarkName = "getMoviesFromDatabase()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2BA2DE67-1FB9-422F-B4F8-157069A36791"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/WatchlistApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
+            landmarkName = "init()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D7078ED9-DD48-47B1-948C-F3B929FF4DBD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/WatchlistApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "init()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D7078ED9-DD48-47B1-948C-F3B929FF4DBD - dd35856be35fb067"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Watchlist.WatchlistApp.init() -&gt; Watchlist.WatchlistApp"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/WatchlistApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "23"
+                  endingLineNumber = "23"
+                  offsetFromSymbolStart = "724">
+               </Location>
+               <Location
+                  uuid = "D7078ED9-DD48-47B1-948C-F3B929FF4DBD - dd35856be35fb067"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Watchlist.WatchlistApp.init() -&gt; Watchlist.WatchlistApp"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/WatchlistApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "23"
+                  endingLineNumber = "23"
+                  offsetFromSymbolStart = "804">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4FAAE8DD-7193-41C0-9CBC-D04AEF7A365B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Services/WatchlistDataStore.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "init()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0A33585A-6F07-4F73-B710-FFC60FA5CD92"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/WatchlistApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "init()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0A33585A-6F07-4F73-B710-FFC60FA5CD92 - dd35856be35fb13c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Watchlist.WatchlistApp.init() -&gt; Watchlist.WatchlistApp"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/WatchlistApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "248">
+               </Location>
+               <Location
+                  uuid = "0A33585A-6F07-4F73-B710-FFC60FA5CD92 - dd35856be35fb13c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Watchlist.WatchlistApp.init() -&gt; Watchlist.WatchlistApp"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/WatchlistApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "344">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9A2A4F29-8259-4CCB-B840-A7DD5627E457"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/WatchlistApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "init()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "56FCA9B6-8147-4468-B6D4-29C3D1308AE5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "198"
+            endingLineNumber = "198"
+            landmarkName = "getMoviesFromDatabase()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "90689AD5-4178-441F-93C5-681D4C635AEB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
+            landmarkName = "deleteMedia(id:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "90689AD5-4178-441F-93C5-681D4C635AEB - dad39fce7437e566"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Watchlist.HomeViewModel.deleteMedia(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "155"
+                  endingLineNumber = "155"
+                  offsetFromSymbolStart = "168">
+               </Location>
+               <Location
+                  uuid = "90689AD5-4178-441F-93C5-681D4C635AEB - a02d63f19baac396"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for Watchlist.HomeViewModel.deleteMedia(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "155"
+                  endingLineNumber = "155"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "90689AD5-4178-441F-93C5-681D4C635AEB - 816b92c419da26e4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Watchlist.HomeViewModel.deleteMedia(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "155"
+                  endingLineNumber = "155"
+                  offsetFromSymbolStart = "92">
+               </Location>
+               <Location
+                  uuid = "90689AD5-4178-441F-93C5-681D4C635AEB - 62a790412ff70825"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for Watchlist.HomeViewModel.deleteMedia(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "155"
+                  endingLineNumber = "155"
+                  offsetFromSymbolStart = "84">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "95612FCB-3E4E-46F3-9EE1-18F5EB138FBC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
+            landmarkName = "deleteMedia(id:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "95612FCB-3E4E-46F3-9EE1-18F5EB138FBC - dad39fce7437e48b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Watchlist.HomeViewModel.deleteMedia(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "152"
+                  endingLineNumber = "152"
+                  offsetFromSymbolStart = "84">
+               </Location>
+               <Location
+                  uuid = "95612FCB-3E4E-46F3-9EE1-18F5EB138FBC - 816b92c419da2709"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Watchlist.HomeViewModel.deleteMedia(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "152"
+                  endingLineNumber = "152"
+                  offsetFromSymbolStart = "732">
+               </Location>
+               <Location
+                  uuid = "95612FCB-3E4E-46F3-9EE1-18F5EB138FBC - 62a790412ff709c8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for Watchlist.HomeViewModel.deleteMedia(id: Swift.Int) async -&gt; ()"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Home/View%20Models/HomeViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "152"
+                  endingLineNumber = "152"
+                  offsetFromSymbolStart = "612">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D9AA6218-0430-4B59-92E1-C891D4D252F7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Search/Views/SearchTabView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "searchBar"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "D9AA6218-0430-4B59-92E1-C891D4D252F7 - 6d0c19f02e1fcf9b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in Watchlist.SearchTabView.searchBar.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/Views/SearchTabView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "496">
+               </Location>
+               <Location
+                  uuid = "D9AA6218-0430-4B59-92E1-C891D4D252F7 - 8df3f8a94cf37232"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in Watchlist.SearchTabView.searchBar.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/Views/SearchTabView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "D9AA6218-0430-4B59-92E1-C891D4D252F7 - be70dafecbb17399"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in Watchlist.SearchTabView.searchBar.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Search/Views/SearchTabView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "60">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C2944F12-5AB2-44C6-B57B-AD2A9EF6F696"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Components/RowView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
             startingLineNumber = "142"
             endingLineNumber = "142"
-            landmarkName = "getMovieGenreList()"
+            landmarkName = "searchSwipeAction"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2A85CBBD-B643-445A-8835-D1B2F09B433F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Components/RowView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
+            landmarkName = "searchSwipeAction"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "2A85CBBD-B643-445A-8835-D1B2F09B433F - 4dcd1cb8d18fdbf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in Watchlist.RowView.searchSwipeAction.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Components/RowView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "145"
+                  endingLineNumber = "145"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  uuid = "2A85CBBD-B643-445A-8835-D1B2F09B433F - fcff0e4ae246540c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in Watchlist.RowView.searchSwipeAction.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Components/RowView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "145"
+                  endingLineNumber = "145"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "2A85CBBD-B643-445A-8835-D1B2F09B433F - c2cac048d031b1b9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in Watchlist.RowView.searchSwipeAction.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Components/RowView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "145"
+                  endingLineNumber = "145"
+                  offsetFromSymbolStart = "84">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B877F7CF-AED0-445F-9D7D-FC60F10AC264"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Components/RowView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
+            landmarkName = "searchSwipeAction"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B54D2F8C-5480-4469-841E-9A7C703514BD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Search/Views/SearchTabView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "searchResults"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1954AAC7-3B03-4CC2-B0A7-C758F1740EFE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Search/View Models/SeachDetailsViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "executeQuery()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "16F873C0-D0A4-416D-A8DA-94F9792BA81D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Search/Views/SearchTabView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
+            landmarkName = "searchResults"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "95BA16F9-8A08-4670-A757-2D456AFE52B8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Components/RowView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "showSwipeAction"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "95BA16F9-8A08-4670-A757-2D456AFE52B8 - f2f553b1e1111628"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0, SwiftUI.Button&lt;SwiftUI.Image&gt;)&gt; in Watchlist.RowView.showSwipeAction.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Components/RowView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "128"
+                  endingLineNumber = "128"
+                  offsetFromSymbolStart = "516">
+               </Location>
+               <Location
+                  uuid = "95BA16F9-8A08-4670-A757-2D456AFE52B8 - f2f553b1e1111628"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0, SwiftUI.Button&lt;SwiftUI.Image&gt;)&gt; in Watchlist.RowView.showSwipeAction.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Components/RowView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "128"
+                  endingLineNumber = "128"
+                  offsetFromSymbolStart = "572">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "529CB41F-585D-4851-998A-C167AF7B53E8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Components/RowView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
+            landmarkName = "showSwipeAction"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "529CB41F-585D-4851-998A-C167AF7B53E8 - a866d3d59b4aa019"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #3 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0, SwiftUI.Button&lt;SwiftUI.Image&gt;)&gt; in Watchlist.RowView.showSwipeAction.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Components/RowView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "130"
+                  endingLineNumber = "130"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "529CB41F-585D-4851-998A-C167AF7B53E8 - b6966395ef2474ca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in closure #3 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0, SwiftUI.Button&lt;SwiftUI.Image&gt;)&gt; in Watchlist.RowView.showSwipeAction.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Components/RowView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "130"
+                  endingLineNumber = "130"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "529CB41F-585D-4851-998A-C167AF7B53E8 - 89f6a34aa5606467"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #3 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.tint&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(Swift.Optional&lt;&#x3c4;_1_0&gt;) -&gt; some&gt;&gt;.0, SwiftUI.Button&lt;SwiftUI.Image&gt;)&gt; in Watchlist.RowView.showSwipeAction.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Components/RowView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "130"
+                  endingLineNumber = "130"
+                  offsetFromSymbolStart = "88">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7A578681-2286-4069-8DC5-DAB24D83F881"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Components/RowView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "131"
+            endingLineNumber = "131"
+            landmarkName = "showSwipeAction"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CDCFCDDB-3622-4B22-993F-1124FC6C1CEE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "212"
+            endingLineNumber = "212"
+            landmarkName = "getTVFromDatabase()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "20DA1356-14FC-47A4-84A6-3050DB6A4F96"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Show/Views/ShowTabView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "119"
+            endingLineNumber = "119"
+            landmarkName = "TabButton"
+            landmarkType = "14">
+            <Locations>
+               <Location
+                  uuid = "20DA1356-14FC-47A4-84A6-3050DB6A4F96 - ea830d47034f57f7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in Watchlist.TabButton.body.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Show/Views/ShowTabView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "127"
+                  endingLineNumber = "127"
+                  offsetFromSymbolStart = "376">
+               </Location>
+               <Location
+                  uuid = "20DA1356-14FC-47A4-84A6-3050DB6A4F96 - 90096ae08ecb138a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; () in Watchlist.TabButton.body.getter : some"
+                  moduleName = "Watchlist"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tj/Desktop/Software%20Development/Side%20Projects/Watchlist/Watchlist/Core/Show/Views/ShowTabView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "128"
+                  endingLineNumber = "128"
+                  offsetFromSymbolStart = "36">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "66AF613B-5824-4283-94C8-D9EF3BB3B34A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "deleteMedia(id:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "015E6F54-98A4-48F0-A1BF-AE0FDE6C4A8D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/Core/Home/View Models/HomeViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
+            landmarkName = "getTVFromDatabase()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D5BC0B6B-7580-4A93-9682-C0B98D006DA2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Watchlist/WatchlistApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "WatchlistApp"
+            landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

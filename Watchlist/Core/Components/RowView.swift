@@ -12,7 +12,13 @@ struct RowView: View {
     
     @State var rowContent: MediaDetailContents
     
+    @EnvironmentObject var homeVM: HomeViewModel
+    
     @State var isWatched: Bool
+    
+    @State var media: Media
+    
+    @State var currentTab: Tab
     
     @State private var showingSheet = false
     
@@ -24,19 +30,25 @@ struct RowView: View {
             
             rightColumn
         }
-        .padding()
         .onTapGesture {
             showingSheet.toggle()
         }
         .sheet(isPresented: $showingSheet) {
-            MediaDetailView(mediaDetails: rowContent)
+            MediaDetailView(mediaDetails: rowContent, media: media)
+        }
+        .swipeActions(edge: .trailing) {
+            if currentTab == .search {
+                searchSwipeAction
+            } else {
+                showSwipeAction
+            }
         }
     }
 }
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
-        RowView(rowContent: dev.rowContent, isWatched: true)
+        RowView(rowContent: dev.rowContent, isWatched: true, media: dev.mediaMock.first!, currentTab: .movies)
             .previewLayout(.sizeThatFits)
     }
 }
@@ -94,6 +106,49 @@ extension RowView {
                     .imageScale(.large)
             }
         }
+    }
+    
+    private var showSwipeAction: some View {
+        Group {
+            Button {
+                print("Marking as watched")
+                Task {
+                    if let id = media.id {
+                        await homeVM.markAsWatched(id:id)
+                        print("Set \(media) to watched")
+                    }
+                }
+            } label: {
+                Image(systemName: "film.stack")
+            }
+            .tint(Color.theme.secondary)
+            
+            Button(role: .destructive) {
+                print("Deleting \(media)")
+                if let id = media.id {
+                    Task {
+                        await homeVM.deleteMedia(id: id)
+                        print("deleted \(media) with \(id)")
+                    }
+                }
+            } label: {
+                Image(systemName: "trash.fill")
+            }
+        }
+    }
+    
+    private var searchSwipeAction: some View {
+        Button {
+            print("adding to watchlist")
+            
+            Task {
+                await homeVM.addToDatabase(media:media)
+                print("Added \(String(describing: media.id))")
+            }
+        } label: {
+            Image(systemName: "film.stack")
+        }
+        .tint(Color.theme.secondary)
     }
 }
 

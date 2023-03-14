@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct SearchTabView: View {
+    @EnvironmentObject var homeVM: HomeViewModel
     
-    @ObservedObject var vm = SearchDetailsViewModel()
+    @ObservedObject var vm = SearchTabViewModel()
 
     @State var rowViewManager: RowViewManager
     
@@ -68,20 +69,25 @@ extension SearchTabView {
     }
     
     var searchResults: some View {
-        ScrollView(showsIndicators: false) {
-            LazyVStack {
-                ForEach(vm.results, id: \.id) { result in
-                    if !vm.isSearching {
-                        rowViewManager.createRowView(media: result)
+        if !vm.isSearching {
+            return AnyView(
+                List {
+                    ForEach(vm.results.sorted(by: {
+                        ($0.voteAverage ?? 0.0) > ($1.voteAverage ?? 0.0)
+                    }), id: \.id) { result in
+                        if !vm.isSearching {
+                            rowViewManager.createRowView(media: result, tab: .search)
+                        }
                     }
+                    .listRowBackground(Color.clear)
                 }
-            }
-        }
-        .scrollDismissesKeyboard(.immediately)
-        .overlay {
-            if vm.isSearching {
-                ProgressView()
-            }
+                    .scrollIndicators(.hidden)
+                    .listStyle(.plain)
+                    .scrollDismissesKeyboard(.immediately)
+                    .scrollDismissesKeyboard(.immediately)
+            )
+        } else {
+           return AnyView(ProgressView())
         }
     }
 }

@@ -19,7 +19,7 @@ class DeveloperPreview {
     
     let homeVM = HomeViewModel()
     
-    let rowContent = MediaDetailContents(posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg", backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg", title: "Batman: The Long Halloween, Part Two", genres: [Genre(id: 12, name: "Adventure"), Genre(id: 13, name: "Fantasy"), Genre(id: 1, name: "Fantasy"), Genre(id: 21, name: "Adventure"), Genre(id: 15, name: "Fantasy"), Genre(id: 19, name: "Fantasy")], overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.", popularity: 12, imdbRating: 7.8, personalRating: nil)
+    let rowContent = MediaDetailContents(id: 24, posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg", backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg", title: "Batman: The Long Halloween, Part Two", genres: [Genre(id: 12, name: "Adventure"), Genre(id: 13, name: "Fantasy"), Genre(id: 1, name: "Fantasy"), Genre(id: 21, name: "Adventure"), Genre(id: 15, name: "Fantasy"), Genre(id: 19, name: "Fantasy")], overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.", popularity: 12, imdbRating: 7.8, personalRating: nil)
 
     
     let mediaMock = [

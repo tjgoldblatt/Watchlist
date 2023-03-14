@@ -8,7 +8,7 @@
 import Foundation
 import TMDb
 
-class SearchDetailsViewModel: ObservableObject {
+class SearchTabViewModel: ObservableObject {
     @Published var results: [Media] = []
     @Published var isSearching = false
     @Published var searchText = ""
@@ -16,10 +16,10 @@ class SearchDetailsViewModel: ObservableObject {
     @MainActor
     func executeQuery() async {
         isSearching = true
-//        results = TMDbManager.shared.searchForMedia(for: searchText)
+        
         Task {
             do {
-                results = try await SearchDetailsViewModel.search(for: searchText)
+                results = try await SearchTabViewModel.search(for: searchText)
                 isSearching = false
             } catch {
                 print("[🔥] Error While Searching")

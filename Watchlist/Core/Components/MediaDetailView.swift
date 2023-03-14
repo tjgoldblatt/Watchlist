@@ -6,11 +6,15 @@
 //
 
 import SwiftUI
-//import TMDb
+import Blackbird
 
 struct MediaDetailView: View {
     
     @State var mediaDetails: MediaDetailContents
+    
+    @State var media: Media
+    
+    @EnvironmentObject var homeVM: HomeViewModel
     
     @Environment(\.dismiss) var dismiss
     
@@ -58,7 +62,7 @@ struct MediaDetailView: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaDetailView(mediaDetails: dev.rowContent)
+        MediaDetailView(mediaDetails: dev.rowContent, media: dev.mediaMock.first!)
     }
 }
 
@@ -148,17 +152,21 @@ extension MediaDetailView {
     
     private var addButton: some View {
         Button {
-            print("Add tapped")
+            print(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? "Add tapped" : "Added")
+            Task {
+                await homeVM.addToDatabase(media:media)
+                print("Added \(media) to database")
+            }
         } label: {
-            Text("Add")
+            Text(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? "Add" : "Added")
                 .font(.system(size: 18))
                 .fontWeight(.medium)
-                .foregroundColor(Color.theme.red)
+                .foregroundColor(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? Color.theme.red : Color.theme.genreText)
                 .padding(.vertical, 5)
                 .padding(.horizontal)
                 .background {
                     RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(Color.theme.secondary.opacity(0.5))
+                        .foregroundColor(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? Color.theme.secondary.opacity(0.5) : Color.theme.red)
                 }
         }
 
@@ -179,21 +187,4 @@ struct GenreSection: View {
     }
 }
 
-struct MediaDetailContents {
-    let posterPath: String
-    let backdropPath: String?
-    let title: String
-    let genres: [Genre]?
-    let overview: String
-    let popularity: Double?
-    
-    let imdbRating: Double
-    let personalRating: Double?
-    
-    // TODO: For future work
-    // Movie Specific
-//    let runTime: Int?
-    
-    // TV Show Specific
-//    let numberOfSeasons: Int?
-}
+

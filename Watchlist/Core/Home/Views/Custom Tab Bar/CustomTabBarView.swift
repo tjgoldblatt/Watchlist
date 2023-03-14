@@ -14,6 +14,8 @@ struct CustomTabBarView: View {
     @Namespace private var namespace
     @State var localSelection: TabBarItem
     
+    @EnvironmentObject var homeVM: HomeViewModel
+    
     @State private var tabColor: Color = Color.theme.red
     
     var body: some View {
@@ -62,6 +64,13 @@ extension CustomTabBarView {
                 tabView(tab: tab)
                     .onTapGesture {
                         switchToTab(tab: tab)
+                        
+                        if tab != .search {
+                            Task {
+                                await homeVM.reloadWatchlist()
+                            }
+                        }
+                        
                     }
             }
         }

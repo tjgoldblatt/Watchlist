@@ -10,16 +10,23 @@ import TMDb
 import Combine
 
 struct HomeView: View {
-    @EnvironmentObject var homeVM: HomeViewModel
+    @EnvironmentObject private var homeVM: HomeViewModel
     
     var body: some View {
         if homeVM.isGenresLoaded {
             CustomTabBarContainerView(selection: $homeVM.selectedTab) {
                 ShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .tabBarItem(tab: .home, selection: $homeVM.selectedTab)
+//                    .onTapGesture {
+//                        Task {
+//                            await homeVM.getMoviesFromDatabase()
+//                        }
+//                    }
+                    .environmentObject(homeVM)
                 
                 SearchTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .tabBarItem(tab: .search, selection: $homeVM.selectedTab)
+                    .environmentObject(homeVM)
             }
         } else {
             ProgressView()

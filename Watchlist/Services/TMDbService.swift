@@ -9,11 +9,14 @@ import Foundation
 
 enum TMDbError: LocalizedError {
     case failedToGetData
+    case failedToEncodeData
     
     var errorDescription: String {
         switch self {
             case .failedToGetData:
                 return "[💣] Failed to get data"
+            case .failedToEncodeData:
+                return "[💣] Failed to encode data"
         }
     }
 }
@@ -27,7 +30,7 @@ class TMDbService {
     ///   - completion: code for what to do after task is finished
     static func search(with query: String, completion: @escaping (Result<[Media], Error>) -> Void) {
         guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else { return }
-        guard let url = URL(string: "\(Constants.baseURL)/3/search/multi?api_key=\(Constants.API_KEY)&query=\(query)&language=en-US&page=1") else { return }
+        guard let url = URL(string: "\(Constants.baseURL)/3/search/multi?api_key=\(Constants.API_KEY)&query=\(query)&language=en-US&page=1&region=US") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else { return }

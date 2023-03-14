@@ -62,8 +62,9 @@ struct SearchBarView: View {
 //                        withAnimation {
 //                            isTyping = true
 //                        }
-                        queryToCall()
-                    
+                        if(!searchText.isEmpty) {
+                            queryToCall()
+                        }
                     })
 //                    .onTapGesture {
 //                        withAnimation(.easeInOut) {

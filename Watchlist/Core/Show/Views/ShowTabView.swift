@@ -32,7 +32,6 @@ struct ShowTabView: View {
                     .transition(.slide)
                 
                 SegmentedControl()
-                
             }
             .padding(.horizontal)
             .padding(.top)
@@ -46,80 +45,42 @@ struct ShowTabView: View {
                 }
             }
             .padding(.bottom)
-            .onSubmit {
-                bottomPadding = 50
-                isSubmitted = true
-            }
-            .onChange(of: vm.filterText) { newValue in
-                if vm.filterText.isEmpty && !isKeyboardShowing {
-                    bottomPadding = 50
-                }
-            }
             
-            ScrollViewReader { value in
-                ScrollView(showsIndicators: false) {
-                    if showMovies {
-                        VStack {
-                            ForEach(homeVM.movieWatchList) { movie in
-                                rowViewManager.createRowView(movie: movie)
-                            }
-                        }
-                        .transition(.slide)
+            // MARK: - Watchlist
+            if showMovies {
+                List {
+                    ForEach(homeVM.movieWatchList) { movie in
+                        rowViewManager.createRowView(movie: movie, tab: .movies)
                     }
-                    
-                    
-                    if !showMovies {
-                        VStack {
-                            ForEach(homeVM.tvWatchList) { tvShow in
-                                rowViewManager.createRowView(tvShow: tvShow)
-                            }
-                        }
-                        .transition(.slide)
-                    }
+                    .listRowBackground(Color.theme.background)
+                    .transition(.slide)
                 }
+                .scrollIndicators(.hidden)
+                .listStyle(.plain)
                 .scrollDismissesKeyboard(.immediately)
-                .onAppear {
-                    if showMovies {
-                        value.scrollTo(homeVM.movieWatchList.first)
-                    } else {
-                        value.scrollTo(homeVM.tvWatchList.first)
-                    }
-                }
-                .onChange(of: showMovies) { _ in
-                    // TODO: eventually this will be scrollTo(tvShows/Movies).first
-                    if showMovies {
-                        value.scrollTo(homeVM.movieWatchList.first)
-                    } else {
-                        value.scrollTo(homeVM.tvWatchList.first)
-                    }
-                }
             }
             
-            /*
-             // MARK: - Watchlist
-             ScrollView(showsIndicators: false) {
-             LazyVStack {
-             if isSubmitted {
-             ForEach(vm.results, id: \.id) { result in
-             if !vm.isSearching {
-             RowViewManager.createRowView(media: result)
-             }
-             }
-             }
-             }
-             }
-             .overlay {
-             if vm.isSearching {
-             ProgressView()
-             }
-             }
-             */
+            if !showMovies {
+                List {
+                    ForEach(homeVM.tvWatchList) { tvShow in
+                        rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
+                    }
+                    .listRowBackground(Color.theme.background)
+                    .transition(.slide)
+                }
+                .scrollIndicators(.hidden)
+                .listStyle(.plain)
+                .scrollDismissesKeyboard(.immediately)
+            }
+            
             Spacer()
         }
         .onReceive(keyboardPublisher) { value in
             isKeyboardShowing = value
             if isKeyboardShowing {
                 bottomPadding = 0.0
+            } else {
+                bottomPadding = 50
             }
             isSubmitted = false
         }
@@ -130,8 +91,8 @@ struct ShowTabView: View {
     @ViewBuilder
     func SegmentedControl() -> some View {
         HStack {
-            TabButton(tab: .movies, animation: animation, currentTab: $currentTab, showMovies: $showMovies)
-            TabButton(tab: .tvShows, animation: animation, currentTab: $currentTab, showMovies: $showMovies)
+            TabButton(tab: .movies, animation: animation, currentTab: $currentTab, showMovies: $showMovies, homeVM: homeVM)
+            TabButton(tab: .tvShows, animation: animation, currentTab: $currentTab, showMovies: $showMovies, homeVM: homeVM)
         }
         .background(Color.theme.text.opacity(0.1), in: Capsule())
         .padding(.horizontal)
@@ -150,16 +111,25 @@ struct TabButton: View {
     var animation: Namespace.ID
     @Binding var currentTab: Tab
     @Binding var showMovies: Bool
+    
+    @State var homeVM: HomeViewModel
+    
     var body: some View {
         Button {
             withAnimation(.spring()) {
                 currentTab = tab
             }
+            
             if tab == .movies {
                 showMovies = true
             } else {
                 showMovies = false
             }
+            
+            Task {
+                homeVM.reloadWatchlist
+            }
+            
         } label: {
             Image(systemName: tab.icon)
                 .fontWeight(.bold)

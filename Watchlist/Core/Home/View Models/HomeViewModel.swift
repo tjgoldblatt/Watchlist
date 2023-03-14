@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Blackbird
 
 // TODO: Store watchlist items on device and maybe pass this in as an environment variable?
 
@@ -28,68 +29,34 @@ class HomeViewModel: ObservableObject {
     /// Local device Movie Watchlist
     @Published var movieWatchList: [Media] = []
     
+    @Published var db: Blackbird.Database? = nil
+    
     init() {
         self.isGenresLoaded = false
-        for i in 0..<15 {
-            self.tvWatchList.append(
-                Media(mediaType: .tv,
-                      id: i,
-                      originalTitle: nil,
-                      originalName: "Batman: The Brave and the Bold",
-                      overview: "The Caped Crusader is teamed up with Blue Beetle, Green Arrow, Aquaman and countless others in his quest to uphold justice.",
-                      voteAverage: 7.532,
-                      voteCount: 13,
-                      posterPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
-                      backdropPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
-                      genreIDS: [99],
-                      popularity: nil,
-                      firstAirDate: nil,
-                      originCountry: nil,
-                      originalLanguage: nil,
-                      name: nil,
-                      adult: nil,
-                      releaseDate: nil,
-                      title: nil,
-                      video: nil,
-                      profilePath: nil,
-                      knownFor: nil)
-            )
-        }
         
-        for i in 0..<15 {
-            self.movieWatchList.append(
-                Media(mediaType: .movie,
-                      id: i,
-                      originalTitle: "Batman: The Long Halloween, Part Two",
-                      originalName: nil,
-                      overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
-                      voteAverage: 7.532,
-                      voteCount: 13,
-                      posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg",
-                      backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg",
-                      genreIDS: [18],
-                      popularity: nil,
-                      firstAirDate: nil,
-                      originCountry: nil,
-                      originalLanguage: nil,
-                      name: nil,
-                      adult: nil,
-                      releaseDate: nil,
-                      title: nil,
-                      video: nil,
-                      profilePath: nil,
-                      knownFor: nil)
-            )
+        Task {
+            try await fetchRequests()
         }
     }
     
     @MainActor
-    func fetchGenres() async throws {
-       try await withThrowingTaskGroup(of: Void.self, body: { group in
+    func fetchRequests() async throws {
+        try await withThrowingTaskGroup(of: Void.self, body: { group in
             group.addTask(operation: { try await self.getMovieGenreList() })
             group.addTask(operation: { try await self.getTVGenreList() })
+            group.addTask(operation: { await self.getMoviesFromDatabase() })
+            group.addTask(operation: { await self.getTVFromDatabase() })
             try await group.waitForAll()
             isGenresLoaded = true
+        })
+    }
+    
+    @MainActor
+    func reloadWatchlist() async {
+        await withTaskGroup(of: Void.self, body: { group in
+            group.addTask(operation: { await self.getMoviesFromDatabase() })
+            group.addTask(operation: { await self.getTVFromDatabase() })
+            await group.waitForAll()
         })
     }
     
@@ -140,5 +107,121 @@ class HomeViewModel: ObservableObject {
             }
         })
         self.tvGenreList = genres
+    }
+    
+    func encodeData(with media: Media) -> Data? {
+        do {
+            return try JSONEncoder().encode(media)
+        } catch let error {
+            print("[💣] Failed to encode. \(error)")
+            return nil
+        }
+    }
+    
+    func decodeData(with data: Data) -> Media? {
+        do {
+            return try JSONDecoder().decode(Media.self, from: data)
+        } catch let error {
+            print("[💣] Failed to decode. \(error)")
+            return nil
+        }
+    }
+    
+    // MARK: - Blackbird
+    func addToDatabase(media: Media) async {
+        guard let db, let id = media.id, let mediaType = media.mediaType, let data = encodeData(with: media) else { return }
+        do {
+            let post = Post(id: id, watched: false, mediaType: mediaType.rawValue, media: data)
+            try await post.write(to: db)
+        } catch let error {
+            print("[💣] Failed to write to Database. \(error)")
+        }
+    }
+    
+    func markAsWatched(id: Int) async {
+        guard let db else { return }
+        
+        do {
+            try await Post.update(in: db, set: [\.$watched : true], matching: \.$id == id)
+        } catch let error {
+            print("[💣] Failed to mark \(id) as watched. \(error)")
+        }
+    }
+    
+    func deleteMedia(id: Int) async {
+        guard let db else { return }
+        
+        do {
+            let post = try await Post.read(from: db, id: id)
+            if let post {
+                if post.mediaType == "tv" {
+                    let filteredArray = self.tvWatchList.filter({ $0.id != post.id })
+                    self.tvWatchList = filteredArray
+                } else {
+                    let filteredArray = self.movieWatchList.filter({ $0.id != post.id })
+                    self.movieWatchList = filteredArray
+                }
+                
+                let _ = Post.delete(post)
+            }
+        } catch let error {
+            print("[💣] Failed to delete \(id). \(error)")
+        }
+    }
+    
+    func getFromDatabase(id: Int) async -> Media? {
+        guard let db else { return nil }
+        do {
+            let post = try await Post.read(from: db, id: id)
+            if let mediaData = post?.media, let media = decodeData(with: mediaData) {
+                return media
+            } else {
+                return nil
+            }
+        } catch let error {
+            print("[💣] Failed to read from Database. \(error)")
+            return nil
+        }
+    }
+    
+    func getMoviesFromDatabase() async {
+        guard let db else { return }
+        do {
+            let posts = try await Post.read(from: db, matching: \.$mediaType == "movie")
+            
+            for post in posts {
+                if let media = decodeData(with: post.media), let mediaType = media.mediaType {
+                    if !movieWatchList.contains(media) && mediaType.rawValue == "movie" {
+                        let mediaToAdd: Media = media
+                        print("🤔 \(media == mediaToAdd)")
+                        print("Added \(String(describing: media.title))")
+                        movieWatchList.append(mediaToAdd)
+                    }
+                }
+            }
+        } catch let error {
+            print("[💣] Failed to get Movies from Database. \(error)")
+        }
+    }
+    
+    func getTVFromDatabase() async {
+        guard let db else { return }
+        do {
+            let posts = try await Post.read(from: db, matching: \.$mediaType == "tv")
+
+            for post in posts {
+                if let media = decodeData(with: post.media), let mediaType = media.mediaType {
+                    if !tvWatchList.contains(media) && mediaType.rawValue == "tv" {
+                        let mediaToAdd: Media = media
+                        print("🤔 \(media == mediaToAdd)")
+                        print("Added \(String(describing: media.name))")
+                        tvWatchList.append(mediaToAdd)
+                        
+                    }
+                }
+            }
+        } catch let error {
+            print("[💣] Failed to get Movies from Database. \(error)")
+        }
     }
 }

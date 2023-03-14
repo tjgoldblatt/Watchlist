@@ -16,12 +16,12 @@ class RowViewManager {
         self.homeVM = homeVM
     }
     
-    func createRowView(media: Media) -> AnyView {if let mediaType = media.mediaType {
+    func createRowView(media: Media, tab: Tab) -> AnyView {if let mediaType = media.mediaType {
         switch mediaType {
             case .movie:
-                return createRowView(movie: media)
+                return createRowView(movie: media, tab: tab)
             case .tv:
-                return createRowView(tvShow: media)
+                return createRowView(tvShow: media, tab: tab)
             case .person:
                 return AnyView(EmptyView())
         }
@@ -30,8 +30,9 @@ class RowViewManager {
         
     }
     
-    func createRowView(movie: Media) -> AnyView {
-        guard let posterPath = movie.posterPath,
+    func createRowView(movie: Media, tab: Tab) -> AnyView {
+        guard let id = movie.id,
+            let posterPath = movie.posterPath,
               let overview = movie.overview,
               !overview.isEmpty,
               let voteAverage = movie.voteAverage,
@@ -47,6 +48,7 @@ class RowViewManager {
             RowView(
                 rowContent:
                     MediaDetailContents(
+                        id: id,
                         posterPath: posterPath,
                         backdropPath: movie.backdropPath,
                         title: title,
@@ -56,13 +58,14 @@ class RowViewManager {
                         imdbRating: voteAverage,
                         personalRating: nil  // eventually get from homeVM?
                     ),
-                isWatched: true
+                isWatched: true, media: movie, currentTab: tab
             )
         )
     }
     
-    func createRowView(tvShow: Media) -> AnyView {
-        guard let posterPath = tvShow.posterPath,
+    func createRowView(tvShow: Media, tab: Tab) -> AnyView {
+        guard let id = tvShow.id,
+              let posterPath = tvShow.posterPath,
               let overview = tvShow.overview,
               !overview.isEmpty,
               let voteAverage = tvShow.voteAverage,
@@ -78,6 +81,7 @@ class RowViewManager {
             RowView(
                 rowContent:
                     MediaDetailContents(
+                        id: id,
                         posterPath: posterPath,
                         backdropPath: tvShow.backdropPath,
                         title: title,
@@ -87,7 +91,7 @@ class RowViewManager {
                         imdbRating: voteAverage,
                         personalRating: nil  // eventually get from homeVM?
                     ),
-                isWatched: true
+                isWatched: true, media: tvShow, currentTab: tab
             )
         )
     }
