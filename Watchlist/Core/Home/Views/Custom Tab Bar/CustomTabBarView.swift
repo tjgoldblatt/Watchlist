@@ -31,7 +31,7 @@ struct CustomTabBarView: View {
 struct CustomTabBarView_Previews: PreviewProvider {
     
     static let tabs: [TabBarItem] = [
-        .home, .search
+        .movie, .tvshow, .search
     ]
     
     static var previews: some View {
@@ -49,9 +49,9 @@ extension CustomTabBarView {
             Image(systemName: tab.iconName)
                 .font(.title3)
         }
-        .foregroundColor(localSelection == tab ? Color.theme.genreText : Color.theme.text)
+        .foregroundColor(localSelection == tab ? Color.theme.genreText : Color.theme.text.opacity(0.3))
         
-        .padding(.vertical, 8)
+        .padding(.vertical, tab == .movie ? 8 : 10)
         .frame(maxWidth: .infinity)
         .background(localSelection == tab ? tabColor.opacity(0.8) : Color.clear)
         .contentShape(RoundedRectangle(cornerRadius: 10))

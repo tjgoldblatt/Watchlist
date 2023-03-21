@@ -21,7 +21,7 @@ class HomeViewModel: ObservableObject {
     @Published var tvGenreList: [Genre] = []
     
     /// Current selected tab
-    @Published var selectedTab: TabBarItem = .home
+    @Published var selectedTab: TabBarItem = .movie
     
     /// Local device TV Watchlist
     @Published var tvWatchList: [Media] = []

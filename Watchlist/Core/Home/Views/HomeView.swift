@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import TMDb
 import Combine
 
 struct HomeView: View {
@@ -15,13 +14,12 @@ struct HomeView: View {
     var body: some View {
         if homeVM.isGenresLoaded {
             CustomTabBarContainerView(selection: $homeVM.selectedTab) {
-                ShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
-                    .tabBarItem(tab: .home, selection: $homeVM.selectedTab)
-//                    .onTapGesture {
-//                        Task {
-//                            await homeVM.getMoviesFromDatabase()
-//                        }
-//                    }
+                MovieTabView(rowViewManager: RowViewManager(homeVM: homeVM))
+                    .tabBarItem(tab: .movie, selection: $homeVM.selectedTab)
+                    .environmentObject(homeVM)
+                
+                TVShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
+                    .tabBarItem(tab: .tvshow, selection: $homeVM.selectedTab)
                     .environmentObject(homeVM)
                 
                 SearchTabView(rowViewManager: RowViewManager(homeVM: homeVM))

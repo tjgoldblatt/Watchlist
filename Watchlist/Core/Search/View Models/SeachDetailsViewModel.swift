@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import TMDb
 
 class SearchTabViewModel: ObservableObject {
     @Published var results: [Media] = []

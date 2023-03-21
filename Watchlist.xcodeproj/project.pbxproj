@@ -27,6 +27,7 @@
 		3258731229BD254C005E1394 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258731129BD254C005E1394 /* Media.swift */; };
 		3258731629BD7ABE005E1394 /* Genre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258731529BD7ABE005E1394 /* Genre.swift */; };
 		3258731829BE5C46005E1394 /* ShowDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258731729BE5C46005E1394 /* ShowDetailsViewModel.swift */; };
+		32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */; };
 		32952D9229BAD18D002B3596 /* CustomTabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9129BAD18D002B3596 /* CustomTabBarView.swift */; };
 		32952D9429BAD5C9002B3596 /* CustomTabBarContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9329BAD5C9002B3596 /* CustomTabBarContainerView.swift */; };
 		32952D9629BAD8B0002B3596 /* TabBarItemsPreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9529BAD8B0002B3596 /* TabBarItemsPreferenceKey.swift */; };
@@ -41,7 +42,7 @@
 		3298920829C0C973009989AA /* WatchlistDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298920729C0C973009989AA /* WatchlistDataStore.swift */; };
 		329A768729BA78200074A4F9 /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768629BA78200074A4F9 /* RowView.swift */; };
 		329A768929BA846F0074A4F9 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768829BA846F0074A4F9 /* PreviewProvider.swift */; };
-		329A768B29BAA8340074A4F9 /* ShowTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768A29BAA8340074A4F9 /* ShowTabView.swift */; };
+		329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768A29BAA8340074A4F9 /* MovieTabView.swift */; };
 		329A768D29BACF070074A4F9 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768C29BACF070074A4F9 /* HeaderView.swift */; };
 /* End PBXBuildFile section */
 
@@ -68,6 +69,7 @@
 		3258731129BD254C005E1394 /* Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
 		3258731529BD7ABE005E1394 /* Genre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genre.swift; sourceTree = "<group>"; };
 		3258731729BE5C46005E1394 /* ShowDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowDetailsViewModel.swift; sourceTree = "<group>"; };
+		32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowTabView.swift; sourceTree = "<group>"; };
 		32952D9129BAD18D002B3596 /* CustomTabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarView.swift; sourceTree = "<group>"; };
 		32952D9329BAD5C9002B3596 /* CustomTabBarContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarContainerView.swift; sourceTree = "<group>"; };
 		32952D9529BAD8B0002B3596 /* TabBarItemsPreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItemsPreferenceKey.swift; sourceTree = "<group>"; };
@@ -81,7 +83,7 @@
 		3298920929C10C4D009989AA /* Watchlist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Watchlist.entitlements; sourceTree = "<group>"; };
 		329A768629BA78200074A4F9 /* RowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowView.swift; sourceTree = "<group>"; };
 		329A768829BA846F0074A4F9 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
-		329A768A29BAA8340074A4F9 /* ShowTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTabView.swift; sourceTree = "<group>"; };
+		329A768A29BAA8340074A4F9 /* MovieTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTabView.swift; sourceTree = "<group>"; };
 		329A768C29BACF070074A4F9 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -158,6 +160,7 @@
 				324BAE6F29B8D768002FBB6F /* Components */,
 				324BAE7129B8D776002FBB6F /* Home */,
 				324BAE7729B8E78E002FBB6F /* Show */,
+				32864EAE29C9E2F300EF0B44 /* TV Shows */,
 				324BAE8529BA5744002FBB6F /* Search */,
 			);
 			path = Core;
@@ -222,7 +225,7 @@
 		324BAE7929B8E7B2002FBB6F /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				329A768A29BAA8340074A4F9 /* ShowTabView.swift */,
+				329A768A29BAA8340074A4F9 /* MovieTabView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -280,6 +283,22 @@
 				3298920729C0C973009989AA /* WatchlistDataStore.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		32864EAE29C9E2F300EF0B44 /* TV Shows */ = {
+			isa = PBXGroup;
+			children = (
+				32864EAF29C9E30A00EF0B44 /* Views */,
+			);
+			path = "TV Shows";
+			sourceTree = "<group>";
+		};
+		32864EAF29C9E30A00EF0B44 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		32952D9029BAD178002B3596 /* Custom Tab Bar */ = {
@@ -383,7 +402,8 @@
 				32952D9229BAD18D002B3596 /* CustomTabBarView.swift in Sources */,
 				3298920129C01A0C009989AA /* Post.swift in Sources */,
 				324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */,
-				329A768B29BAA8340074A4F9 /* ShowTabView.swift in Sources */,
+				32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */,
+				329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */,
 				3258731029BD252A005E1394 /* TMDbService.swift in Sources */,
 				324BAE9929BA6F66002FBB6F /* SearchTabView.swift in Sources */,
 				324BAE8D29BA5979002FBB6F /* SearchBarView.swift in Sources */,

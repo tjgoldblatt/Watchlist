@@ -11,7 +11,7 @@ struct SearchTabView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     
     @ObservedObject var vm = SearchTabViewModel()
-
+    
     @State var rowViewManager: RowViewManager
     
     @State var isKeyboardShowing: Bool = false
@@ -50,6 +50,7 @@ extension SearchTabView {
         HeaderView(currentTab: .constant(.search), showIcon: true)
             .padding(.horizontal)
             .padding(.top)
+            .offset(y: 10)
     }
     
     var searchBar: some View {
@@ -87,7 +88,7 @@ extension SearchTabView {
                     .scrollDismissesKeyboard(.immediately)
             )
         } else {
-           return AnyView(ProgressView())
+            return AnyView(ProgressView())
         }
     }
 }

@@ -31,12 +31,17 @@ struct WatchlistApp: App {
 //    var database: Blackbird.Database = try! Blackbird.Database(path: "\(NSHomeDirectory())/blackbird-swiftui-test.sqlite", options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues])
 //    var database: Blackbird.Database = try! .init(path: "\(NSHomeDirectory())/blackbird-swiftui-test.sqlite")
 
-    static let fileURL = try! FileManager.default
-        .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
-        .appendingPathComponent("blackbird-swiftui-test.sqlite")
-
+//    static let fileURL = try! FileManager.default
+//        .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+//        .appendingPathComponent("blackbird-swiftui-test.sqlite")
+//    static let fileURL = try! FileManager.default
+//        .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+//        .appendingPathComponent("blackbird-swiftui-test.sqlite")
+//    let directory = NSPersistentContainer.defaultDirectoryURL()
+//    let url = directory.appendingPathComponent(yourModel + ".sqlite")
+    static let fileURL = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
     
-    var database: Blackbird.Database = try! Blackbird.Database(path: String(describing: fileURL), options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues])
+    var database: Blackbird.Database = try! Blackbird.Database(path: "\(fileURL)/blackbird-watchlist.sqlite"/*, options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues]*/)
     
     var body: some Scene {
         WindowGroup {

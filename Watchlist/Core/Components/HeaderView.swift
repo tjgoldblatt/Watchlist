@@ -22,6 +22,7 @@ struct HeaderView: View {
                 Image(systemName: currentTab.icon)
                     .foregroundColor(Color.theme.red)
                     .font(.system(.title))
+                    .fontWeight(.semibold)
             }
             
             Spacer()
@@ -32,7 +33,7 @@ struct HeaderView: View {
 struct HeaderView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            HeaderView(currentTab: .constant(.movies), showIcon: true)
+            HeaderView(currentTab: .constant(.tvShows), showIcon: true)
             Spacer()
         }
     }

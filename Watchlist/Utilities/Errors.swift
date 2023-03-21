@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import TMDb
 
 enum ViewError: LocalizedError {
     /// Thrown when trying to create new row with Media

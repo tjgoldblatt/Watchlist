@@ -9,19 +9,21 @@ import Foundation
 import SwiftUI
 
 enum TabBarItem: Hashable {
-    case home, search
+    case movie, tvshow, search
     
     var iconName: String {
         switch self {
-            case .home: return "film.stack"
-            case .search: return "magnifyingglass"
+            case .movie: return Tab.movies.icon
+            case .tvshow: return Tab.tvShows.icon
+            case .search: return Tab.search.icon
         }
     }
     
     var title: String {
         switch self {
-            case .home: return "Home"
-            case .search: return "Search"
+            case .movie: return Tab.movies.rawValue
+            case .tvshow: return Tab.tvShows.rawValue
+            case .search: return Tab.search.rawValue
         }
     }
 }
