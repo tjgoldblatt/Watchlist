@@ -9,6 +9,7 @@ import SwiftUI
 import Blackbird
 
 struct MediaDetailView: View {
+    @Environment(\.blackbirdDatabase) var database
     
     @State var mediaDetails: MediaDetailContents
     
@@ -154,7 +155,9 @@ extension MediaDetailView {
         Button {
             print(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? "Add tapped" : "Added")
             Task {
-                await homeVM.addToDatabase(media:media)
+                if let db = database, let id = media.id, let mediaType = media.mediaType, let data = homeVM.encodeData(with: media) {
+                    try? await Post(id: id, watched: false, mediaType: mediaType.rawValue, media: data).write(to: db)
+                }
                 print("Added \(media) to database")
             }
         } label: {

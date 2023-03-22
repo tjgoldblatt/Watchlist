@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import Blackbird
 
 struct TVShowTabView: View {
+    @Environment(\.blackbirdDatabase) var database
+    
+    @BlackbirdLiveModels({ try await Post.read(from: $0, matching: \.$mediaType == "tv") }) var tvList
+    
     @EnvironmentObject private var homeVM: HomeViewModel
     
     @ObservedObject var vm = ShowDetailsViewModel()
@@ -41,16 +46,23 @@ struct TVShowTabView: View {
             .padding(.bottom)
             
             // MARK: - Watchlist
-            List {
-                ForEach(homeVM.tvWatchList) { tvShow in
-                    rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
+            if tvList.didLoad {
+                List {
+                    ForEach(tvList.results) { post in
+//                        if let tvShow = homeVM.decodeData(with: post.media) {
+//                            rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
+//                        }
+                        Text(post.mediaType)
+                    }
+                    .listRowBackground(Color.theme.background)
+                    .transition(.slide)
                 }
-                .listRowBackground(Color.theme.background)
-                .transition(.slide)
+                .scrollIndicators(.hidden)
+                .listStyle(.plain)
+                .scrollDismissesKeyboard(.immediately)
+            } else {
+                ProgressView()
             }
-            .scrollIndicators(.hidden)
-            .listStyle(.plain)
-            .scrollDismissesKeyboard(.immediately)
             
             
             Spacer()

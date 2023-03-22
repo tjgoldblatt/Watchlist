@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import Blackbird
 
 struct RowView: View {
+    @Environment(\.blackbirdDatabase) var database
     
     @State var rowContent: MediaDetailContents
     
@@ -112,8 +114,9 @@ extension RowView {
             Button {
                 print("Marking as watched")
                 Task {
-                    if let id = media.id {
-                        await homeVM.markAsWatched(id:id)
+                    if let db = database, let id = media.id {
+                        
+                        try? await Post.update(in: db, set: [\.watched : true], matching: \.$id == id)
                         print("Set \(media) to watched")
                     }
                 }
@@ -124,9 +127,10 @@ extension RowView {
             
             Button(role: .destructive) {
                 print("Deleting \(media)")
-                if let id = media.id {
+                if let db = database, let id = media.id {
                     Task {
-                        await homeVM.deleteMedia(id: id)
+                        let post = try? await Post.read(from: db, id: id)
+                        try? await post?.delete(from: db)
                         print("deleted \(media) with \(id)")
                     }
                 }
@@ -141,8 +145,11 @@ extension RowView {
             print("adding to watchlist")
             
             Task {
-                await homeVM.addToDatabase(media:media)
-                print("Added \(String(describing: media.id))")
+                if let db = database, let id = media.id, let mediaType = media.mediaType, let data = homeVM.encodeData(with: media) {
+//                    print("DB path: \(db.path!)")
+                    try! await Post(id: id, watched: false, mediaType: mediaType.rawValue, media: data).write(to: db)
+                    print("Added: \(media.title ?? media.name ?? "")")
+                }
             }
         } label: {
             Image(systemName: "film.stack")

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SearchTabView: View {
+    @Environment(\.blackbirdDatabase) var database
+    
     @EnvironmentObject var homeVM: HomeViewModel
     
     @ObservedObject var vm = SearchTabViewModel()

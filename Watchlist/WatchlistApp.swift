@@ -16,8 +16,9 @@ struct WatchlistApp: App {
 //    init() {
 //        do {
 //            let sqlDB = WatchlistDataStore.shared
+//            WatchlistDataStore.shared.getAllTasks()
 //            if let path = sqlDB.dbPath {
-//                database = try Blackbird.Database(path: path, options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues])
+//                database = try Blackbird.Database(path: path)
 //            }
 ////            database = try Blackbird.Database(path: "\(getDocumentsDirectory())/WatchlistDB/blackbird-watchlist.sqlite", options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues])
 //        } catch let error {
@@ -27,9 +28,6 @@ struct WatchlistApp: App {
     
     @StateObject private var vm = HomeViewModel()
 //    var database: Blackbird.Database = try! Blackbird.Database.inMemoryDatabase()
-//    var database: Blackbird.Database?
-//    var database: Blackbird.Database = try! Blackbird.Database(path: "\(NSHomeDirectory())/blackbird-swiftui-test.sqlite", options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues])
-//    var database: Blackbird.Database = try! .init(path: "\(NSHomeDirectory())/blackbird-swiftui-test.sqlite")
 
 //    static let fileURL = try! FileManager.default
 //        .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
@@ -39,9 +37,10 @@ struct WatchlistApp: App {
 //        .appendingPathComponent("blackbird-swiftui-test.sqlite")
 //    let directory = NSPersistentContainer.defaultDirectoryURL()
 //    let url = directory.appendingPathComponent(yourModel + ".sqlite")
-    static let fileURL = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
     
-    var database: Blackbird.Database = try! Blackbird.Database(path: "\(fileURL)/blackbird-watchlist.sqlite"/*, options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues]*/)
+    var database: Blackbird.Database = try! Blackbird.Database(path: "\(FileManager.default.temporaryDirectory.path)/watchlist-testdb.sqlite", options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues])
+    
+    var firstPost = Post(id: 1, watched: false, mediaType: "movie", media: Data())
     
     var body: some Scene {
         WindowGroup {
@@ -50,9 +49,20 @@ struct WatchlistApp: App {
                     .toolbar(.hidden)
             }
             .environmentObject(vm)
-//            .environment(\.blackbirdDatabase, database)
+            .environment(\.blackbirdDatabase, database)
             .onAppear {
-                vm.db = database
+                Task {
+                    print("DB path: \(database.path ?? "in-memory")")
+//                    for _ in 0..<5 {
+                    if let data = vm.encodeData(
+                        with:
+                            Media(mediaType: .movie, id: Int.random(in: 0..<1000), originalTitle: "TJ", originalName: "TJ", overview: nil, voteAverage: nil, voteCount: nil, posterPath: nil, backdropPath: nil, genreIDS: nil, popularity: nil, firstAirDate: nil, originCountry: nil, originalLanguage: nil, name: nil, adult: nil, releaseDate: nil, title: nil, video: nil, profilePath: nil, knownFor: nil)
+                    ) {
+                        try! await Post(id: Int.random(in: 0..<1000), watched: false, mediaType: "movie", media: data)
+                            .write(to: database)
+                        //                    }
+                    }
+                }
             }
         }
     }

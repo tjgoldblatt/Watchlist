@@ -11,7 +11,7 @@ import SQLite
 class WatchlistDataStore {
     
     static let DIR_TASK_DB = "WatchlistDB"
-    static let STORE_NAME = "blackbird-watchlist.sqlite3"
+    static let STORE_NAME = "watchlist-test.sqlite3"
     
     private let watchlist = Table("watchlist")
     
@@ -63,5 +63,40 @@ class WatchlistDataStore {
         } catch {
             print(error)
         }
+    }
+    
+    func insert(id: Int64) -> Int64? {
+        guard let database = db else { return nil }
+        
+        let insert = watchlist.insert(
+            self.id <- id,
+            self.watched <- true,
+            self.mediaType <- "tv",
+            self.media <- Data()
+        )
+        do {
+            let rowID = try database.run(insert)
+            return rowID
+        } catch {
+            print(error)
+            return nil
+        }
+    }
+    
+    func getAllTasks() {
+//        var tasks: [Media] = []
+        guard let database = db else { return }
+        var count = 1
+        do {
+            for media in try database.prepare(self.watchlist) {
+//                print(media)
+                print("Count is \(count)")
+                count += 1
+//                tasks.append(Task(id: task[id], name: task[taskName], date: task[date], status: task[status]))
+            }
+        } catch {
+            print(error)
+        }
+        return
     }
 }

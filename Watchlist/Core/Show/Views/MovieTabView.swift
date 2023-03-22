@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import Blackbird
 
 struct MovieTabView: View {
+    @Environment(\.blackbirdDatabase) var database
+    
+    @BlackbirdLiveModels({ try await Post.read(from: $0, matching: \.$mediaType == "movie") }) var movieList
+    
     @EnvironmentObject private var homeVM: HomeViewModel
     
     @ObservedObject var vm = ShowDetailsViewModel()
@@ -17,6 +22,8 @@ struct MovieTabView: View {
     @State var isKeyboardShowing: Bool = false
     @State var bottomPadding: CGFloat = 50.0
     @State var isSubmitted: Bool = false
+    
+    @State var count: Int64 = 0
     
     @Namespace var animation
     
@@ -40,17 +47,39 @@ struct MovieTabView: View {
             }
             .padding(.bottom)
             
+//            Button {
+//                WatchlistDataStore.shared.insert(id: count)
+//                count += 1
+//            } label: {
+//                Text("Press Me")
+//            }
+//            .padding(.vertical)
+//
+//            Button {
+//                WatchlistDataStore.shared.getAllTasks()
+//            } label: {
+//                Text("Shared")
+//            }
+
+            
             // MARK: - Watchlist
-            List {
-                ForEach(homeVM.movieWatchList) { movie in
-                    rowViewManager.createRowView(movie: movie, tab: .movies)
+            if movieList.didLoad {
+                List {
+                    ForEach(movieList.results) { post in
+//                        if let movie = homeVM.decodeData(with: post.media) {
+//                            rowViewManager.createRowView(movie: movie, tab: .movies)
+//                        }
+                        Text(post.mediaType)
+                    }
+                    .listRowBackground(Color.theme.background)
+                    .transition(.slide)
                 }
-                .listRowBackground(Color.theme.background)
-                .transition(.slide)
+                .scrollIndicators(.hidden)
+                .listStyle(.plain)
+                .scrollDismissesKeyboard(.immediately)
+            } else {
+                ProgressView()
             }
-            .scrollIndicators(.hidden)
-            .listStyle(.plain)
-            .scrollDismissesKeyboard(.immediately)
             
             
             Spacer()
