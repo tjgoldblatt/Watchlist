@@ -10,6 +10,8 @@ import SwiftUI
 struct SearchTabView: View {
     @Environment(\.blackbirdDatabase) var database
     
+    @Environment(\.dismiss) var dismiss
+    
     @EnvironmentObject var homeVM: HomeViewModel
     
     @ObservedObject var vm = SearchTabViewModel()
@@ -58,7 +60,7 @@ extension SearchTabView {
     var searchBar: some View {
         SearchBarView(searchText: $vm.searchText, currentTab: .constant(Tab.search)) {
             Task {
-                await vm.executeQuery()
+                await vm.search()
             }
         }
         .onSubmit {
@@ -75,9 +77,7 @@ extension SearchTabView {
         if !vm.isSearching {
             return AnyView(
                 List {
-                    ForEach(vm.results.sorted(by: {
-                        ($0.voteAverage ?? 0.0) > ($1.voteAverage ?? 0.0)
-                    }), id: \.id) { result in
+                    ForEach(homeVM.results.isEmpty ? vm.results : homeVM.results, id: \.id) { result in
                         if !vm.isSearching {
                             rowViewManager.createRowView(media: result, tab: .search)
                         }

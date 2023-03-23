@@ -11,7 +11,7 @@ import Blackbird
 struct TVShowTabView: View {
     @Environment(\.blackbirdDatabase) var database
     
-    @BlackbirdLiveModels({ try await Post.read(from: $0, matching: \.$mediaType == "tv") }) var tvList
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == "tv", orderBy: .ascending(\.$title)) }) var tvList
     
     @EnvironmentObject private var homeVM: HomeViewModel
     
@@ -40,7 +40,7 @@ struct TVShowTabView: View {
             SearchBarView(searchText: $vm.filterText, currentTab: .constant(.tvShows)) {
                 Task {
                     // TODO: Call to filter through Watchlist
-//                    await vm.executeQuery()
+//                    await vm.search()
                 }
             }
             .padding(.bottom)
@@ -48,11 +48,10 @@ struct TVShowTabView: View {
             // MARK: - Watchlist
             if tvList.didLoad {
                 List {
-                    ForEach(tvList.results) { post in
-//                        if let tvShow = homeVM.decodeData(with: post.media) {
-//                            rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
-//                        }
-                        Text(post.mediaType)
+                    ForEach(homeVM.groupMedia(mediaModel: tvList.results)) { post in
+                        if let tvShow = homeVM.decodeData(with: post.media) {
+                            rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
+                        }
                     }
                     .listRowBackground(Color.theme.background)
                     .transition(.slide)

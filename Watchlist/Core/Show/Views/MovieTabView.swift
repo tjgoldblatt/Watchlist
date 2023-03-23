@@ -11,7 +11,7 @@ import Blackbird
 struct MovieTabView: View {
     @Environment(\.blackbirdDatabase) var database
     
-    @BlackbirdLiveModels({ try await Post.read(from: $0, matching: \.$mediaType == "movie") }) var movieList
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == "movie", orderBy: .ascending(\.$title)) }) var movieList
     
     @EnvironmentObject private var homeVM: HomeViewModel
     
@@ -22,8 +22,6 @@ struct MovieTabView: View {
     @State var isKeyboardShowing: Bool = false
     @State var bottomPadding: CGFloat = 50.0
     @State var isSubmitted: Bool = false
-    
-    @State var count: Int64 = 0
     
     @Namespace var animation
     
@@ -42,34 +40,18 @@ struct MovieTabView: View {
             SearchBarView(searchText: $vm.filterText, currentTab: .constant(.movies)) {
                 Task {
                     // TODO: Call to filter through Watchlist
-                    //                    await vm.executeQuery()
+                    //                    await vm.search()
                 }
             }
             .padding(.bottom)
             
-//            Button {
-//                WatchlistDataStore.shared.insert(id: count)
-//                count += 1
-//            } label: {
-//                Text("Press Me")
-//            }
-//            .padding(.vertical)
-//
-//            Button {
-//                WatchlistDataStore.shared.getAllTasks()
-//            } label: {
-//                Text("Shared")
-//            }
-
-            
             // MARK: - Watchlist
             if movieList.didLoad {
                 List {
-                    ForEach(movieList.results) { post in
-//                        if let movie = homeVM.decodeData(with: post.media) {
-//                            rowViewManager.createRowView(movie: movie, tab: .movies)
-//                        }
-                        Text(post.mediaType)
+                    ForEach(homeVM.groupMedia(mediaModel: movieList.results)) { post in
+                        if let movie = homeVM.decodeData(with: post.media) {
+                            rowViewManager.createRowView(movie: movie, tab: .movies)
+                        }
                     }
                     .listRowBackground(Color.theme.background)
                     .transition(.slide)
@@ -80,7 +62,6 @@ struct MovieTabView: View {
             } else {
                 ProgressView()
             }
-            
             
             Spacer()
         }
