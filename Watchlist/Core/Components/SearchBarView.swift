@@ -32,32 +32,6 @@ struct SearchBarView: View {
                     .foregroundColor(Color.theme.text)
                     .disableAutocorrection(true)
                     .font(.system(size: 16, design: .default))
-                
-//                    .overlay( isTyping ?
-//                              Image(systemName: "xmark.circle.fill")
-//                        .padding()
-//                        .offset(x: 15)
-//                        .foregroundColor(Color.theme.text)
-//                        .opacity(searchText.isEmpty ? 0.0 : 1.0)
-//                        .onTapGesture { searchText = "" } : nil, alignment: .trailing)
-//                    .overlay(
-//                        Image(systemName: "slider.horizontal.3")
-//                            .resizable()
-//                            .scaledToFit()
-//                            .imageScale(.large)
-//                            .padding()
-//                            .offset(x: 15)
-//                            .foregroundColor(searchText.isEmpty ? Color.theme.red : Color.theme.text)
-//                            .onTapGesture {
-//                                print("Tapped Filter")
-//                            }
-//
-//                        , alignment: .trailing)
-//                    .onTapGesture {
-//                        withAnimation(.spring()) {
-//                            isTyping = true
-//                        }
-//                    }
                     .onReceive(keyboardPublisher) { value in
                         isKeyboardShowing = value
                         
@@ -77,6 +51,9 @@ struct SearchBarView: View {
                     .overlay(alignment: .trailing, content: {
                         if isTyping {
                             Image(systemName: "xmark.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)
                                 .padding()
                                 .offset(x: 15)
                                 .foregroundColor(Color.theme.text)
@@ -84,11 +61,12 @@ struct SearchBarView: View {
                                 .onTapGesture {
                                     searchText = ""
                                     isTyping = false
-//                                    isKeyboardShowing = false
-//                                    hideKeyboard()
                                 }
                         } else {
                             Image(systemName: "slider.horizontal.3")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 25, height: 25)
                                 .padding()
                                 .offset(x: 15)
                                 .foregroundColor(Color.theme.red)
@@ -109,47 +87,6 @@ struct SearchBarView: View {
             .contentShape(RoundedRectangle(cornerRadius: 20))
             .background(Color.theme.secondary)
             .cornerRadius(20)
-            
-            
-            
-//            if isTyping {
-//                Button(action: {
-//                    hideKeyboard()
-//                    searchText = ""
-//                    withAnimation(.easeInOut) {
-//                        isTyping = false
-//                    }
-//                }, label: {
-//                    Image(systemName: "xmark")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 15, height: 15)
-//                        .foregroundColor(Color.theme.genreText)
-//                        .background {
-//                            Circle()
-//                                .foregroundColor(Color.theme.red)
-//                                .frame(width: 30, height: 30)
-//                        }
-//                        .padding(.horizontal, 5)
-//                        .onTapGesture {
-//                            isTyping = false
-//                            searchText = ""
-//                            hideKeyboard()
-//                        }
-//                })
-//            } else {
-//                Image(systemName: "slider.horizontal.3")
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: 15, height: 15)
-//                    .foregroundColor(Color.theme.genreText)
-//                    .background {
-//                        Circle()
-//                            .foregroundColor(Color.theme.red)
-//                            .frame(width: 30, height: 30)
-//                    }
-//                    .padding(.horizontal, 5)
-//            }
         }
         .padding(.horizontal)
     }

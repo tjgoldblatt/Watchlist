@@ -23,58 +23,112 @@ struct MovieTabView: View {
     @State var bottomPadding: CGFloat = 50.0
     @State var isSubmitted: Bool = false
     
+    @State var selectedRows = Set<Int>()
+    
+    @State var deleteConfirmationShowing: Bool = false
+    
+    @State var editMode: EditMode = .inactive
+    
     @Namespace var animation
     
     var body: some View {
-        VStack {
-            // MARK: - Header
-            HStack {
-                HeaderView(currentTab: .constant(.movies), showIcon: true)
-                    .transition(.slide)
-            }
-            .padding(.horizontal)
-            .padding(.top)
-            .offset(y: 10)
-            
-            // MARK: - Search
-            SearchBarView(searchText: $vm.filterText, currentTab: .constant(.movies)) {
-                Task {
-                    // TODO: Call to filter through Watchlist
-                    //                    await vm.search()
-                }
-            }
-            .padding(.bottom)
-            
-            // MARK: - Watchlist
-            if movieList.didLoad {
-                List {
-                    ForEach(homeVM.groupMedia(mediaModel: movieList.results)) { post in
-                        if let movie = homeVM.decodeData(with: post.media) {
-                            rowViewManager.createRowView(movie: movie, tab: .movies)
+        NavigationStack {
+            ZStack {
+                // MARK: - Background
+                Color.theme.background.ignoresSafeArea()
+                
+                VStack {
+                    // MARK: - Header
+                    HeaderView(currentTab: .constant(.movies), showIcon: true)
+                        .transition(.slide)
+                        .padding(.horizontal)
+                    
+                    // MARK: - Search
+                    SearchBarView(searchText: $vm.filterText, currentTab: .constant(.movies)) {
+                        Task {
+                            // TODO: Call to filter through Watchlist
+                            //                    await vm.search()
                         }
                     }
-                    .listRowBackground(Color.theme.background)
-                    .transition(.slide)
+                    .padding(.bottom)
+                    
+                    // MARK: - Watchlist
+                    if movieList.didLoad {
+                        List(selection: $selectedRows) {
+                            ForEach(searchResults) { post in
+                                if let movie = homeVM.decodeData(with: post.media) {
+                                    rowViewManager.createRowView(movie: movie, tab: .movies)
+                                        .allowsHitTesting(editMode == .inactive)
+                                }
+                            }
+                            .listRowBackground(Color.theme.background)
+                            .transition(.slide)
+                        }
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                if movieList.results.count > 1 {
+                                    EditButton()
+                                        .foregroundColor(Color.theme.red)
+                                } else {
+                                    Text("")
+                                }
+                            }
+                        }
+                        .environment(\.editMode, $editMode)
+                        .overlay(alignment: .bottomTrailing) {
+                            if !selectedRows.isEmpty && editMode == .active {
+                                Image(systemName: "trash.square.fill")
+                                    .resizable()
+                                    .fontWeight(.bold)
+                                    .scaledToFit()
+                                    .frame(width: 50)
+                                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 10)
+                                    .padding()
+                                    .onTapGesture {
+                                        deleteConfirmationShowing.toggle()
+                                    }
+                            }
+                        }
+                        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $deleteConfirmationShowing) {
+                            Button("Delete", role: .destructive) {
+                                for id in selectedRows {
+                                    database?.deleteMediaByID(id: id)
+                                    editMode = .inactive
+                                }
+                            }
+                            
+                            Button("Cancel", role: .cancel) {}
+                        }
+                        .scrollIndicators(.hidden)
+                        .listStyle(.plain)
+                        .scrollDismissesKeyboard(.immediately)
+                    } else {
+                        ProgressView()
+                    }
+                    
+                    Spacer()
                 }
-                .scrollIndicators(.hidden)
-                .listStyle(.plain)
-                .scrollDismissesKeyboard(.immediately)
-            } else {
-                ProgressView()
+                .onReceive(keyboardPublisher) { value in
+                    isKeyboardShowing = value
+                    if isKeyboardShowing {
+                        bottomPadding = 0.0
+                    } else {
+                        bottomPadding = 50
+                    }
+                    isSubmitted = false
+                }
+                .padding(.bottom, bottomPadding)
             }
-            
-            Spacer()
         }
-        .onReceive(keyboardPublisher) { value in
-            isKeyboardShowing = value
-            if isKeyboardShowing {
-                bottomPadding = 0.0
-            } else {
-                bottomPadding = 50
-            }
-            isSubmitted = false
+    }
+    
+    var searchResults: [MediaModel] {
+        if vm.filterText.isEmpty {
+            return homeVM.groupMedia(mediaModel: movieList.results)
+        } else {
+            return homeVM.groupMedia(mediaModel: movieList.results).filter { $0.title.contains(vm.filterText) }
         }
-        .padding(.bottom, bottomPadding)
     }
 }
 

@@ -34,6 +34,16 @@ struct RowView: View {
             
             rightColumn
         }
+        // TODO: Show rating sheet when swiping to mark as Watched
+        .sheet(isPresented: $showRatingSheet) {
+            RatingModalView(media: media) {
+                Task {
+                    await database?.fetchPersonalRating(media: media) { rating in
+                        personalRating = rating
+                    }
+                }
+            }
+        }
         .onTapGesture {
             showingSheet.toggle()
         }
@@ -45,6 +55,7 @@ struct RowView: View {
                     }
                 }
             }
+            .interactiveDismissDisabled()
         }
         .swipeActions(edge: .trailing) {
             if currentTab == .search {
@@ -97,7 +108,6 @@ extension RowView {
             if let genres = rowContent.genres {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        
                         ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
                             GenreView(genreName: genre.name)
                         }
@@ -127,52 +137,32 @@ extension RowView {
     }
     
     private var mediaTabSwipeAction: some View {
-        Group {
-            Button {
-                if !isWatched {
-                    DispatchQueue.main.async {
-                        showRatingSheet = true
-                    }
-                }
-                
-                Task {
-                    if let db = database, let id = media.id {
-                        if isWatched {
-                            try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
-                        } else {
-                            try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
-                        }
-                        await database?.fetchIsWatched(media: media, completionHandler: { watched in
-                            isWatched = watched
-                        })
-                        
-                        await database?.fetchPersonalRating(media: media, completionHandler: { rating in
-                            personalRating = rating
-                        })
-                    }
-                }
-            } label: {
-                Image(systemName: "film.stack")
+        //        Group {
+        Button {
+            if !isWatched && personalRating == nil {
+                showRatingSheet = true
             }
-            // TODO: Show rating sheet when swiping to mark as Watched
-            .popover(isPresented: $showRatingSheet) {
-                RatingModalView(media: media) {
-                    Task {
-                        await database?.fetchPersonalRating(media: media) { rating in
-                            personalRating = rating
-                        }
-                    }
-                }
-            }
-            .tint(Color.theme.secondary)
             
-            Button(role: .destructive) {
-                print("Deleting \(media)")
-                database?.deleteMedia(media: media)
-            } label: {
-                Image(systemName: "trash.fill")
+            Task {
+                if let db = database, let id = media.id {
+                    if isWatched {
+                        try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
+                    } else {
+                        try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
+                    }
+                    await database?.fetchIsWatched(media: media, completionHandler: { watched in
+                        isWatched = watched
+                    })
+                    
+                    await database?.fetchPersonalRating(media: media, completionHandler: { rating in
+                        personalRating = rating
+                    })
+                }
             }
+        } label: {
+            Image(systemName: "film.stack")
         }
+        .tint(Color.theme.secondary)
     }
     
     private var searchTabSwipeAction: some View {

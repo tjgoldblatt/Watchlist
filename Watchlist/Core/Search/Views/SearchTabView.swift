@@ -23,23 +23,30 @@ struct SearchTabView: View {
     @State var isSubmitted: Bool = false
     
     var body: some View {
-        VStack {
-            header
-            
-            searchBar
-            
-            searchResults
-            
-            Spacer()
-        }
-        .onReceive(keyboardPublisher) { value in
-            isKeyboardShowing = value
-            if isKeyboardShowing {
-                bottomPadding = 0.0
+        NavigationStack {
+            ZStack {
+                // MARK: - Background
+                Color.theme.background.ignoresSafeArea()
+                
+                VStack {
+                    header
+                    
+                    searchBar
+                    
+                    searchResults
+                    
+                    Spacer()
+                }
+                .onReceive(keyboardPublisher) { value in
+                    isKeyboardShowing = value
+                    if isKeyboardShowing {
+                        bottomPadding = 0.0
+                    }
+                    isSubmitted = false
+                }
+                .padding(.bottom, bottomPadding)
             }
-            isSubmitted = false
         }
-        .padding(.bottom, bottomPadding)
     }
 }
 
@@ -53,8 +60,6 @@ extension SearchTabView {
     var header: some View {
         HeaderView(currentTab: .constant(.search), showIcon: true)
             .padding(.horizontal)
-            .padding(.top)
-            .offset(y: 10)
     }
     
     var searchBar: some View {
@@ -84,6 +89,11 @@ extension SearchTabView {
                     }
                     .listRowBackground(Color.clear)
                 }
+                    .toolbar {
+                        ToolbarItemGroup {
+                            Text("")
+                        }
+                    }
                     .scrollIndicators(.hidden)
                     .listStyle(.plain)
                     .scrollDismissesKeyboard(.immediately)

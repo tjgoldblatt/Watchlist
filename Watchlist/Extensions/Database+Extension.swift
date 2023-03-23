@@ -39,8 +39,14 @@ extension Blackbird.Database {
             Task {
                 let post = try? await MediaModel.read(from: self, id: id)
                 try? await post?.delete(from: self)
-                print("deleted \(media) with \(id)")
             }
+        }
+    }
+    
+    func deleteMediaByID(id: Int) {
+        Task {
+            let post = try? await MediaModel.read(from: self, id: id)
+            try? await post?.delete(from: self)
         }
     }
     
