@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import Blackbird
 
 struct MovieTabView: View {
+    @Environment(\.blackbirdDatabase) var database
+    
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == "movie", orderBy: .ascending(\.$title)) }) var movieList
+    
     @EnvironmentObject private var homeVM: HomeViewModel
     
     @ObservedObject var vm = ShowDetailsViewModel()
@@ -35,23 +40,28 @@ struct MovieTabView: View {
             SearchBarView(searchText: $vm.filterText, currentTab: .constant(.movies)) {
                 Task {
                     // TODO: Call to filter through Watchlist
-                    //                    await vm.executeQuery()
+                    //                    await vm.search()
                 }
             }
             .padding(.bottom)
             
             // MARK: - Watchlist
-            List {
-                ForEach(homeVM.movieWatchList) { movie in
-                    rowViewManager.createRowView(movie: movie, tab: .movies)
+            if movieList.didLoad {
+                List {
+                    ForEach(homeVM.groupMedia(mediaModel: movieList.results)) { post in
+                        if let movie = homeVM.decodeData(with: post.media) {
+                            rowViewManager.createRowView(movie: movie, tab: .movies)
+                        }
+                    }
+                    .listRowBackground(Color.theme.background)
+                    .transition(.slide)
                 }
-                .listRowBackground(Color.theme.background)
-                .transition(.slide)
+                .scrollIndicators(.hidden)
+                .listStyle(.plain)
+                .scrollDismissesKeyboard(.immediately)
+            } else {
+                ProgressView()
             }
-            .scrollIndicators(.hidden)
-            .listStyle(.plain)
-            .scrollDismissesKeyboard(.immediately)
-            
             
             Spacer()
         }

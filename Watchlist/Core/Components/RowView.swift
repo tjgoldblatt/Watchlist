@@ -6,20 +6,25 @@
 //
 
 import SwiftUI
+import Blackbird
 
 struct RowView: View {
+    @Environment(\.blackbirdDatabase) var database
+    @EnvironmentObject var homeVM: HomeViewModel
     
     @State var rowContent: MediaDetailContents
     
-    @EnvironmentObject var homeVM: HomeViewModel
+    @State var personalRating: Double?
     
-    @State var isWatched: Bool
+    @State var isWatched: Bool = false
     
     @State var media: Media
     
     @State var currentTab: Tab
     
     @State private var showingSheet = false
+    /// For showing the rating modal on swipe - need to work on still
+    @State private var showRatingSheet = false
     
     var body: some View {
         HStack(alignment: .center) {
@@ -33,13 +38,29 @@ struct RowView: View {
             showingSheet.toggle()
         }
         .sheet(isPresented: $showingSheet) {
-            MediaDetailView(mediaDetails: rowContent, media: media)
+            MediaModalView(mediaDetails: rowContent, media: media) {
+                Task {
+                    await database?.fetchPersonalRating(media: media) { rating in
+                        personalRating = rating
+                    }
+                }
+            }
         }
         .swipeActions(edge: .trailing) {
             if currentTab == .search {
-                searchSwipeAction
+                searchTabSwipeAction
             } else {
-                showSwipeAction
+                mediaTabSwipeAction
+            }
+        }
+        .onAppear {
+            Task {
+                await database?.fetchIsWatched(media: media) { watched in
+                    isWatched = watched
+                }
+                await database?.fetchPersonalRating(media: media, completionHandler: { rating in
+                    personalRating = rating
+                })
             }
         }
     }
@@ -47,7 +68,7 @@ struct RowView: View {
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
-        RowView(rowContent: dev.rowContent, isWatched: true, media: dev.mediaMock.first!, currentTab: .movies)
+        RowView(rowContent: dev.rowContent, media: dev.mediaMock.first!, currentTab: .movies)
             .previewLayout(.sizeThatFits)
     }
 }
@@ -93,11 +114,9 @@ extension RowView {
         VStack(spacing: 10) {
             StarRatingView(text: "IMDb RATING", rating: rowContent.imdbRating)
             
-            
-            // TODO: Store personal rating
-            //                if let rating = personalRating {
-            StarRatingView(text: "YOUR RATING", rating: 8)
-            //                }
+            if let rating = personalRating {
+                StarRatingView(text: "YOUR RATING", rating: rating)
+            }
             
             if isWatched {
                 Image(systemName: "checkmark.circle.fill")
@@ -107,43 +126,58 @@ extension RowView {
         }
     }
     
-    private var showSwipeAction: some View {
+    private var mediaTabSwipeAction: some View {
         Group {
             Button {
-                print("Marking as watched")
+                if !isWatched {
+                    DispatchQueue.main.async {
+                        showRatingSheet = true
+                    }
+                }
+                
                 Task {
-                    if let id = media.id {
-                        await homeVM.markAsWatched(id:id)
-                        print("Set \(media) to watched")
+                    if let db = database, let id = media.id {
+                        if isWatched {
+                            try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
+                        } else {
+                            try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
+                        }
+                        await database?.fetchIsWatched(media: media, completionHandler: { watched in
+                            isWatched = watched
+                        })
+                        
+                        await database?.fetchPersonalRating(media: media, completionHandler: { rating in
+                            personalRating = rating
+                        })
                     }
                 }
             } label: {
                 Image(systemName: "film.stack")
             }
+            // TODO: Show rating sheet when swiping to mark as Watched
+            .popover(isPresented: $showRatingSheet) {
+                RatingModalView(media: media) {
+                    Task {
+                        await database?.fetchPersonalRating(media: media) { rating in
+                            personalRating = rating
+                        }
+                    }
+                }
+            }
             .tint(Color.theme.secondary)
             
             Button(role: .destructive) {
                 print("Deleting \(media)")
-                if let id = media.id {
-                    Task {
-                        await homeVM.deleteMedia(id: id)
-                        print("deleted \(media) with \(id)")
-                    }
-                }
+                database?.deleteMedia(media: media)
             } label: {
                 Image(systemName: "trash.fill")
             }
         }
     }
     
-    private var searchSwipeAction: some View {
+    private var searchTabSwipeAction: some View {
         Button {
-            print("adding to watchlist")
-            
-            Task {
-                await homeVM.addToDatabase(media:media)
-                print("Added \(String(describing: media.id))")
-            }
+            database?.saveMedia(media: media)
         } label: {
             Image(systemName: "film.stack")
         }

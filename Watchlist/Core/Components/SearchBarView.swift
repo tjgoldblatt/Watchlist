@@ -80,7 +80,7 @@ struct SearchBarView: View {
                                 .padding()
                                 .offset(x: 15)
                                 .foregroundColor(Color.theme.text)
-                                .opacity(!isKeyboardShowing ? 0.0 : 1.0)
+                                .opacity(!isTyping ? 0.0 : 1.0)
                                 .onTapGesture {
                                     searchText = ""
                                     isTyping = false

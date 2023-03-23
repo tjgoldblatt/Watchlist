@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import Blackbird
 
 struct TVShowTabView: View {
+    @Environment(\.blackbirdDatabase) var database
+    
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == "tv", orderBy: .ascending(\.$title)) }) var tvList
+    
     @EnvironmentObject private var homeVM: HomeViewModel
     
     @ObservedObject var vm = ShowDetailsViewModel()
@@ -35,22 +40,28 @@ struct TVShowTabView: View {
             SearchBarView(searchText: $vm.filterText, currentTab: .constant(.tvShows)) {
                 Task {
                     // TODO: Call to filter through Watchlist
-//                    await vm.executeQuery()
+//                    await vm.search()
                 }
             }
             .padding(.bottom)
             
             // MARK: - Watchlist
-            List {
-                ForEach(homeVM.tvWatchList) { tvShow in
-                    rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
+            if tvList.didLoad {
+                List {
+                    ForEach(homeVM.groupMedia(mediaModel: tvList.results)) { post in
+                        if let tvShow = homeVM.decodeData(with: post.media) {
+                            rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
+                        }
+                    }
+                    .listRowBackground(Color.theme.background)
+                    .transition(.slide)
                 }
-                .listRowBackground(Color.theme.background)
-                .transition(.slide)
+                .scrollIndicators(.hidden)
+                .listStyle(.plain)
+                .scrollDismissesKeyboard(.immediately)
+            } else {
+                ProgressView()
             }
-            .scrollIndicators(.hidden)
-            .listStyle(.plain)
-            .scrollDismissesKeyboard(.immediately)
             
             
             Spacer()

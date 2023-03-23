@@ -67,7 +67,7 @@ extension CustomTabBarView {
                         
                         if tab != .search {
                             Task {
-                                await homeVM.reloadWatchlist()
+//                                await homeVM.reloadWatchlist()
                             }
                         }
                         

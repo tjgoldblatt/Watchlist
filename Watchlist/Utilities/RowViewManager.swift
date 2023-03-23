@@ -16,23 +16,24 @@ class RowViewManager {
         self.homeVM = homeVM
     }
     
-    func createRowView(media: Media, tab: Tab) -> AnyView {if let mediaType = media.mediaType {
-        switch mediaType {
-            case .movie:
-                return createRowView(movie: media, tab: tab)
-            case .tv:
-                return createRowView(tvShow: media, tab: tab)
-            case .person:
-                return AnyView(EmptyView())
+    func createRowView(media: Media, tab: Tab) -> AnyView {
+        if let mediaType = media.mediaType {
+            switch mediaType {
+                case .movie:
+                    return createRowView(movie: media, tab: tab)
+                case .tv:
+                    return createRowView(tvShow: media, tab: tab)
+                case .person:
+                    return AnyView(EmptyView())
+            }
         }
-    }
         return AnyView(EmptyView())
         
     }
     
     func createRowView(movie: Media, tab: Tab) -> AnyView {
         guard let id = movie.id,
-            let posterPath = movie.posterPath,
+              let posterPath = movie.posterPath,
               let overview = movie.overview,
               !overview.isEmpty,
               let voteAverage = movie.voteAverage,
@@ -55,10 +56,8 @@ class RowViewManager {
                         genres: genres,
                         overview: overview,
                         popularity: movie.popularity,
-                        imdbRating: voteAverage,
-                        personalRating: nil  // eventually get from homeVM?
-                    ),
-                isWatched: true, media: movie, currentTab: tab
+                        imdbRating: voteAverage
+                    ), media: movie, currentTab: tab
             )
         )
     }
@@ -88,10 +87,8 @@ class RowViewManager {
                         genres: genres,
                         overview: overview,
                         popularity: tvShow.popularity,
-                        imdbRating: voteAverage,
-                        personalRating: nil  // eventually get from homeVM?
-                    ),
-                isWatched: true, media: tvShow, currentTab: tab
+                        imdbRating: voteAverage
+                    ), media: tvShow, currentTab: tab
             )
         )
     }

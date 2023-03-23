@@ -17,7 +17,6 @@ struct MediaDetailContents: Codable {
     let popularity: Double?
     
     let imdbRating: Double
-    let personalRating: Double?
     
     // TODO: For future work
     // Movie Specific

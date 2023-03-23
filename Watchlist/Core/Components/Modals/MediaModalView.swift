@@ -1,5 +1,5 @@
 //
-//  MediaDetailView.swift
+//  MediaModalView.swift
 //  Watchlist
 //
 //  Created by TJ Goldblatt on 3/11/23.
@@ -8,15 +8,25 @@
 import SwiftUI
 import Blackbird
 
-struct MediaDetailView: View {
-    
-    @State var mediaDetails: MediaDetailContents
-    
-    @State var media: Media
+struct MediaModalView: View {
+    @Environment(\.blackbirdDatabase) var database
+    @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var homeVM: HomeViewModel
     
-    @Environment(\.dismiss) var dismiss
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
+    
+    @State var mediaDetails: MediaDetailContents
+    @State var media: Media
+    
+    @State var personalRating: Double?
+    
+    @State var isAdded = false
+    @State var isWatched = false
+    
+    @State private var showingRating = false
+    
+    var ratingClosure: () -> Void
     
     var imagePath: String {
         if let backdropPath = mediaDetails.backdropPath {
@@ -28,7 +38,7 @@ struct MediaDetailView: View {
     
     var body: some View {
         ScrollView {
-           backdropSection
+            backdropSection
             
             VStack(alignment: .leading, spacing: 20) {
                 titleSection
@@ -44,6 +54,7 @@ struct MediaDetailView: View {
         .overlay(alignment: .topLeading, content: {
             Button {
                 dismiss()
+                ratingClosure()
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.headline)
@@ -56,17 +67,30 @@ struct MediaDetailView: View {
                     .padding()
             }
         })
+        .onAppear {
+            Task {
+                await database?.fetchPersonalRating(media: media) { rating in
+                    personalRating = rating
+                }
+                
+                await database?.fetchIsWatched(media: media, completionHandler: { watched in
+                    isWatched = watched
+                })
+            }
+        }
         .ignoresSafeArea(edges: .top)
     }
 }
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaDetailView(mediaDetails: dev.rowContent, media: dev.mediaMock.first!)
+        MediaModalView(mediaDetails: dev.rowContent, media: dev.mediaMock.first!) {
+            //
+        }
     }
 }
 
-extension MediaDetailView {
+extension MediaModalView {
     private var backdropSection: some View {
         AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(imagePath)")) { image in
             image
@@ -75,7 +99,7 @@ extension MediaDetailView {
                 .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
                 .frame(maxHeight: 300)
                 .clipped()
-                
+            
             
         } placeholder: {
             ProgressView()
@@ -89,18 +113,26 @@ extension MediaDetailView {
             } else {
                 Spacer()
             }
-            
-            
         }
     }
-
+    
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(mediaDetails.title)
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-                .foregroundColor(Color.theme.text)
-                .multilineTextAlignment(.leading)
+            HStack {
+                Text(mediaDetails.title)
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color.theme.text)
+                    .multilineTextAlignment(.leading)
+                
+                if isWatched {
+                    Spacer()
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(Color.theme.red)
+                        .imageScale(.large)
+                        .padding(.horizontal)
+                }
+            }
             
             genreSection
             
@@ -124,18 +156,17 @@ extension MediaDetailView {
             
             Spacer()
             
-            if let personalRating = mediaDetails.personalRating {
+            if let personalRating {
                 StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
             } else {
                 rateThisButton
-                
             }
         }
     }
     
     private var rateThisButton: some View {
         Button {
-            print("Rate this tapped")
+            showingRating.toggle()
         } label: {
             VStack {
                 Image(systemName: "star")
@@ -148,28 +179,48 @@ extension MediaDetailView {
                     .foregroundColor(Color.theme.red)
             }
         }
+        .fullScreenCover(isPresented: $showingRating) {
+            RatingModalView(media: media) {
+                Task {
+                    await database?.fetchPersonalRating(media: media, completionHandler: { rating in
+                        personalRating = rating
+                    })
+                }
+            }
+        }
     }
     
     private var addButton: some View {
         Button {
-            print(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? "Add tapped" : "Added")
-            Task {
-                await homeVM.addToDatabase(media:media)
-                print("Added \(media) to database")
+            if !isInMedia(mediaModels: mediaList.results, media: media) {
+                database?.saveMedia(media: media)
+            } else {
+                database?.deleteMedia(media: media)
             }
         } label: {
-            Text(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? "Add" : "Added")
+            Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
                 .font(.system(size: 18))
                 .fontWeight(.medium)
-                .foregroundColor(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? Color.theme.red : Color.theme.genreText)
+                .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.genreText)
                 .padding(.vertical, 5)
                 .padding(.horizontal)
                 .background {
                     RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(!(homeVM.tvWatchList + homeVM.movieWatchList).contains(media) ? Color.theme.secondary.opacity(0.5) : Color.theme.red)
+                        .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.secondary.opacity(0.5) : Color.theme.red)
                 }
         }
-
+        
+    }
+    
+    func isInMedia(mediaModels: [MediaModel], media: Media) -> Bool {
+        for mediaModel in mediaModels {
+            if let decodedMedia = homeVM.decodeData(with: mediaModel.media) {
+                if decodedMedia.id == media.id {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
 

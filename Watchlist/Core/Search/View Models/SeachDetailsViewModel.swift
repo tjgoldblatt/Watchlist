@@ -13,7 +13,7 @@ class SearchTabViewModel: ObservableObject {
     @Published var searchText = ""
     
     @MainActor
-    func executeQuery() async {
+    func search() async {
         isSearching = true
         
         Task {
