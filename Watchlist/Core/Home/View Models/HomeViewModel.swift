@@ -25,6 +25,8 @@ class HomeViewModel: ObservableObject {
     /// Current selected tab
     @Published var selectedTab: TabBarItem = .movie
     
+    @Published var editMode: EditMode = .inactive
+    
     init() {
         self.isGenresLoaded = false
         

@@ -63,7 +63,9 @@ extension CustomTabBarView {
             ForEach(tabs, id: \.self) { tab in
                 tabView(tab: tab)
                     .onTapGesture {
-                        switchToTab(tab: tab)
+                        if(homeVM.editMode == .inactive) {
+                            switchToTab(tab: tab)
+                        }
                         
                         if tab != .search {
                             Task {

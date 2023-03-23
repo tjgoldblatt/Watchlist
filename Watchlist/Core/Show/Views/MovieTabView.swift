@@ -27,8 +27,6 @@ struct MovieTabView: View {
     
     @State var deleteConfirmationShowing: Bool = false
     
-    @State var editMode: EditMode = .inactive
-    
     @Namespace var animation
     
     var body: some View {
@@ -58,7 +56,7 @@ struct MovieTabView: View {
                             ForEach(searchResults) { post in
                                 if let movie = homeVM.decodeData(with: post.media) {
                                     rowViewManager.createRowView(movie: movie, tab: .movies)
-                                        .allowsHitTesting(editMode == .inactive)
+                                        .allowsHitTesting(homeVM.editMode == .inactive)
                                 }
                             }
                             .listRowBackground(Color.theme.background)
@@ -74,10 +72,10 @@ struct MovieTabView: View {
                                 }
                             }
                         }
-                        .environment(\.editMode, $editMode)
+                        .environment(\.editMode, $homeVM.editMode)
                         .overlay(alignment: .bottomTrailing) {
-                            if !selectedRows.isEmpty && editMode == .active {
-                                Image(systemName: "trash.square.fill")
+                            if !selectedRows.isEmpty && homeVM.editMode == .active {
+                                Image(systemName: "trash.circle.fill")
                                     .resizable()
                                     .fontWeight(.bold)
                                     .scaledToFit()
@@ -94,7 +92,7 @@ struct MovieTabView: View {
                             Button("Delete", role: .destructive) {
                                 for id in selectedRows {
                                     database?.deleteMediaByID(id: id)
-                                    editMode = .inactive
+                                    homeVM.editMode = .inactive
                                 }
                             }
                             
