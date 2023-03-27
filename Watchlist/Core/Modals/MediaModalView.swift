@@ -160,8 +160,10 @@ extension MediaModalView {
                 StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
             } else {
                 rateThisButton
+                    .disabled(isInMedia(mediaModels: mediaList.results, media: media) ? false : true)
             }
         }
+        .padding(.horizontal)
     }
     
     private var rateThisButton: some View {
@@ -172,11 +174,11 @@ extension MediaModalView {
                 Image(systemName: "star")
                     .font(.system(size: 18))
                     .fontWeight(.bold)
-                    .foregroundColor(Color.theme.red)
+                    .foregroundColor(isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.secondary)
                 Text("Rate This")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(Color.theme.red)
+                    .foregroundColor(isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.secondary)
             }
         }
         .fullScreenCover(isPresented: $showingRating) {

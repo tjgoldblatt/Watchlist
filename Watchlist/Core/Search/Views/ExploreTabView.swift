@@ -1,25 +1,27 @@
 //
-//  SearchTabView.swift
+//  ExploreTabView.swift
 //  Watchlist
 //
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
 import SwiftUI
+import Blackbird
 
-struct SearchTabView: View {
+struct ExploreTabView: View {
     @Environment(\.blackbirdDatabase) var database
     
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var homeVM: HomeViewModel
     
-    @ObservedObject var vm = SearchTabViewModel()
+    var vm: SearchTabViewModel {
+        SearchTabViewModel(homeVM: homeVM)
+    }
     
     @State var rowViewManager: RowViewManager
     
     @State var isKeyboardShowing: Bool = false
-    @State var bottomPadding: CGFloat = 50.0
     @State var isSubmitted: Bool = false
     
     var body: some View {
@@ -39,12 +41,8 @@ struct SearchTabView: View {
                 }
                 .onReceive(keyboardPublisher) { value in
                     isKeyboardShowing = value
-                    if isKeyboardShowing {
-                        bottomPadding = 0.0
-                    }
                     isSubmitted = false
                 }
-                .padding(.bottom, bottomPadding)
             }
         }
     }
@@ -52,51 +50,39 @@ struct SearchTabView: View {
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+        ExploreTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
     }
 }
 
-extension SearchTabView {
+extension ExploreTabView {
     var header: some View {
-        HeaderView(currentTab: .constant(.search), showIcon: true)
+        HeaderView(currentTab: .constant(.explore), showIcon: true)
             .padding(.horizontal)
     }
     
     var searchBar: some View {
-        SearchBarView(searchText: $vm.searchText, currentTab: .constant(Tab.search)) {
+        SearchBarView(searchText: $homeVM.searchText, currentTab: .constant(Tab.explore), genres: ["Action", "Science Fiction"]) {
             Task {
                 await vm.search()
             }
         }
-        .onSubmit {
-            bottomPadding = 50
-        }
-        .onChange(of: vm.searchText) { newValue in
-            if vm.searchText.isEmpty && !isKeyboardShowing {
-                bottomPadding = 50
-            }
-        }
+        .padding(.bottom)
     }
     
     var searchResults: some View {
         if !vm.isSearching {
             return AnyView(
                 List {
-                    ForEach(homeVM.results.isEmpty ? vm.results : homeVM.results, id: \.id) { result in
-                        if !vm.isSearching {
-                            rowViewManager.createRowView(media: result, tab: .search)
-                        }
+                    ForEach(homeVM.results, id: \.id) { result in
+                        rowViewManager.createRowView(media: result, tab: .explore)
                     }
                     .listRowBackground(Color.clear)
                 }
                     .toolbar {
-                        ToolbarItemGroup {
-                            Text("")
-                        }
+                        Text("")
                     }
                     .scrollIndicators(.hidden)
                     .listStyle(.plain)
-                    .scrollDismissesKeyboard(.immediately)
                     .scrollDismissesKeyboard(.immediately)
             )
         } else {
