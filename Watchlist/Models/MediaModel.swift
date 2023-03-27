@@ -14,5 +14,6 @@ struct MediaModel: BlackbirdModel {
     @BlackbirdColumn var watched: Bool
     @BlackbirdColumn var mediaType: String
     @BlackbirdColumn var personalRating: Double?
+    @BlackbirdColumn var genreIDs: String?
     @BlackbirdColumn var media: Data
 }

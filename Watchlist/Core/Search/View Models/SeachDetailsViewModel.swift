@@ -8,9 +8,13 @@
 import Foundation
 
 class SearchTabViewModel: ObservableObject {
-    @Published var results: [Media] = []
     @Published var isSearching = false
-    @Published var searchText = ""
+    
+    var homeVM: HomeViewModel
+    
+    init(homeVM: HomeViewModel) {
+        self.homeVM = homeVM
+    }
     
     @MainActor
     func search() async {
@@ -18,7 +22,7 @@ class SearchTabViewModel: ObservableObject {
         
         Task {
             do {
-                results = try await SearchTabViewModel.search(for: searchText)
+                homeVM.results = try await SearchTabViewModel.search(for: homeVM.searchText)
                 isSearching = false
             } catch {
                 print("[🔥] Error While Searching")

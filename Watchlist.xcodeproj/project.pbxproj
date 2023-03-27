@@ -19,7 +19,7 @@
 		324BAE8D29BA5979002FBB6F /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE8C29BA5978002FBB6F /* SearchBarView.swift */; };
 		324BAE8F29BA5AAA002FBB6F /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE8E29BA5AAA002FBB6F /* HomeViewModel.swift */; };
 		324BAE9329BA5F1F002FBB6F /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE9229BA5F1F002FBB6F /* Tab.swift */; };
-		324BAE9929BA6F66002FBB6F /* SearchTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE9829BA6F66002FBB6F /* SearchTabView.swift */; };
+		324BAE9929BA6F66002FBB6F /* ExploreTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE9829BA6F66002FBB6F /* ExploreTabView.swift */; };
 		3258730929BCD53A005E1394 /* MediaModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258730829BCD53A005E1394 /* MediaModalView.swift */; };
 		3258730B29BCF8DD005E1394 /* GenreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258730A29BCF8DD005E1394 /* GenreView.swift */; };
 		3258730D29BCF939005E1394 /* StarRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258730C29BCF939005E1394 /* StarRatingView.swift */; };
@@ -38,7 +38,6 @@
 		329891FF29C019C1009989AA /* Blackbird in Frameworks */ = {isa = PBXBuildFile; productRef = 329891FE29C019C1009989AA /* Blackbird */; };
 		3298920129C01A0C009989AA /* MediaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298920029C01A0C009989AA /* MediaModel.swift */; };
 		3298920329C0A718009989AA /* MediaDetailContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298920229C0A718009989AA /* MediaDetailContents.swift */; };
-		3298920629C0C93F009989AA /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 3298920529C0C93F009989AA /* SQLite */; };
 		329A768729BA78200074A4F9 /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768629BA78200074A4F9 /* RowView.swift */; };
 		329A768929BA846F0074A4F9 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768829BA846F0074A4F9 /* PreviewProvider.swift */; };
 		329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768A29BAA8340074A4F9 /* MovieTabView.swift */; };
@@ -46,6 +45,8 @@
 		32B5128529CB96FF00879AF6 /* Database+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5128429CB96FF00879AF6 /* Database+Extension.swift */; };
 		32B5128929CBABC800879AF6 /* StarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5128829CBABC800879AF6 /* StarsView.swift */; };
 		32B5128C29CBB00000879AF6 /* RatingModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5128B29CBB00000879AF6 /* RatingModalView.swift */; };
+		32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */; };
+		32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,7 +64,7 @@
 		324BAE8C29BA5978002FBB6F /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		324BAE8E29BA5AAA002FBB6F /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		324BAE9229BA5F1F002FBB6F /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
-		324BAE9829BA6F66002FBB6F /* SearchTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTabView.swift; sourceTree = "<group>"; };
+		324BAE9829BA6F66002FBB6F /* ExploreTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreTabView.swift; sourceTree = "<group>"; };
 		3258730829BCD53A005E1394 /* MediaModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModalView.swift; sourceTree = "<group>"; };
 		3258730A29BCF8DD005E1394 /* GenreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreView.swift; sourceTree = "<group>"; };
 		3258730C29BCF939005E1394 /* StarRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarRatingView.swift; sourceTree = "<group>"; };
@@ -89,6 +90,8 @@
 		32B5128429CB96FF00879AF6 /* Database+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Database+Extension.swift"; sourceTree = "<group>"; };
 		32B5128829CBABC800879AF6 /* StarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarsView.swift; sourceTree = "<group>"; };
 		32B5128B29CBB00000879AF6 /* RatingModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingModalView.swift; sourceTree = "<group>"; };
+		32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalView.swift; sourceTree = "<group>"; };
+		32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +99,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3298920629C0C93F009989AA /* SQLite in Frameworks */,
 				329891FF29C019C1009989AA /* Blackbird in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,6 +164,7 @@
 		324BAE6E29B8D73E002FBB6F /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				32B5128A29CBAFE700879AF6 /* Modals */,
 				324BAE6F29B8D768002FBB6F /* Components */,
 				324BAE7129B8D776002FBB6F /* Home */,
 				324BAE7729B8E78E002FBB6F /* Show */,
@@ -174,7 +177,6 @@
 		324BAE6F29B8D768002FBB6F /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				32B5128A29CBAFE700879AF6 /* Modals */,
 				329A768629BA78200074A4F9 /* RowView.swift */,
 				324BAE8C29BA5978002FBB6F /* SearchBarView.swift */,
 				329A768C29BACF070074A4F9 /* HeaderView.swift */,
@@ -277,7 +279,7 @@
 		324BAE8729BA5752002FBB6F /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				324BAE9829BA6F66002FBB6F /* SearchTabView.swift */,
+				324BAE9829BA6F66002FBB6F /* ExploreTabView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -322,8 +324,18 @@
 			children = (
 				3258730829BCD53A005E1394 /* MediaModalView.swift */,
 				32B5128B29CBB00000879AF6 /* RatingModalView.swift */,
+				32B9CE0F29CF2D1400D6B649 /* FilterModal */,
 			);
 			path = Modals;
+			sourceTree = "<group>";
+		};
+		32B9CE0F29CF2D1400D6B649 /* FilterModal */ = {
+			isa = PBXGroup;
+			children = (
+				32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */,
+				32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */,
+			);
+			path = FilterModal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -344,7 +356,6 @@
 			name = Watchlist;
 			packageProductDependencies = (
 				329891FE29C019C1009989AA /* Blackbird */,
-				3298920529C0C93F009989AA /* SQLite */,
 			);
 			productName = Watchlist;
 			productReference = 324BAE5C29B8D3D9002FBB6F /* Watchlist.app */;
@@ -376,7 +387,6 @@
 			mainGroup = 324BAE5329B8D3D9002FBB6F;
 			packageReferences = (
 				329891FD29C019C1009989AA /* XCRemoteSwiftPackageReference "Blackbird" */,
-				3298920429C0C93F009989AA /* XCRemoteSwiftPackageReference "SQLite" */,
 			);
 			productRefGroup = 324BAE5D29B8D3D9002FBB6F /* Products */;
 			projectDirPath = "";
@@ -418,14 +428,16 @@
 				32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */,
 				32B5128929CBABC800879AF6 /* StarsView.swift in Sources */,
 				329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */,
+				32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */,
 				3258731029BD252A005E1394 /* TMDbService.swift in Sources */,
-				324BAE9929BA6F66002FBB6F /* SearchTabView.swift in Sources */,
+				324BAE9929BA6F66002FBB6F /* ExploreTabView.swift in Sources */,
 				324BAE8D29BA5979002FBB6F /* SearchBarView.swift in Sources */,
 				324BAE9329BA5F1F002FBB6F /* Tab.swift in Sources */,
 				329A768929BA846F0074A4F9 /* PreviewProvider.swift in Sources */,
 				3258730929BCD53A005E1394 /* MediaModalView.swift in Sources */,
 				32952D9E29BB9702002B3596 /* RowViewManager.swift in Sources */,
 				324BAE7E29B91560002FBB6F /* Constants.swift in Sources */,
+				32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */,
 				3258731829BE5C46005E1394 /* ShowDetailsViewModel.swift in Sources */,
 				3298920329C0A718009989AA /* MediaDetailContents.swift in Sources */,
 				324BAE8129B92072002FBB6F /* TMDbManager.swift in Sources */,
@@ -657,14 +669,6 @@
 				kind = branch;
 			};
 		};
-		3298920429C0C93F009989AA /* XCRemoteSwiftPackageReference "SQLite" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.2;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -672,11 +676,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 329891FD29C019C1009989AA /* XCRemoteSwiftPackageReference "Blackbird" */;
 			productName = Blackbird;
-		};
-		3298920529C0C93F009989AA /* SQLite */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3298920429C0C93F009989AA /* XCRemoteSwiftPackageReference "SQLite" */;
-			productName = SQLite;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

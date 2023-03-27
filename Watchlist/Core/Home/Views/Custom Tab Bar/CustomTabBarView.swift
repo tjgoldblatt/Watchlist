@@ -31,7 +31,7 @@ struct CustomTabBarView: View {
 struct CustomTabBarView_Previews: PreviewProvider {
     
     static let tabs: [TabBarItem] = [
-        .movie, .tvshow, .search
+        .movie, .tvshow, .explore
     ]
     
     static var previews: some View {
@@ -67,7 +67,7 @@ extension CustomTabBarView {
                             switchToTab(tab: tab)
                         }
                         
-                        if tab != .search {
+                        if tab != .explore {
                             Task {
 //                                await homeVM.reloadWatchlist()
                             }

@@ -12,11 +12,11 @@ import SwiftUI
 enum Tab: String {
     case tvShows = "TV Shows"
     case movies = "Movies"
-    case search = "Explore"
+    case explore = "Explore"
     
     var searchTextLabel: String {
         switch self {
-            case .search:
+            case .explore:
                 return "Search for Movies or TV Shows..."
             case .tvShows:
                 return "Search for TV Shows..."
@@ -31,7 +31,7 @@ enum Tab: String {
                 return "tv"
             case .movies:
                 return "popcorn.fill"
-            case .search:
+            case .explore:
                 return "magnifyingglass"
         }
     }

@@ -58,7 +58,7 @@ struct RowView: View {
             .interactiveDismissDisabled()
         }
         .swipeActions(edge: .trailing) {
-            if currentTab == .search {
+            if currentTab == .explore {
                 searchTabSwipeAction
             } else {
                 mediaTabSwipeAction

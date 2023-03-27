@@ -9,17 +9,22 @@ import SwiftUI
 
 struct SearchBarView: View {
     
+    @EnvironmentObject var homeVM: HomeViewModel
+    
     @Binding var searchText: String
     @Binding var currentTab: Tab
     @State var isTyping: Bool = false
     @State var isKeyboardShowing: Bool = false
     
-    var queryToCall: () -> Void
+    @State var showFilterSheet: Bool = false
     
     var textFieldString: String {
         return currentTab.searchTextLabel
     }
     
+    @State var genres: [String]
+    
+    var queryToCallWhenTyping: () -> Void
     
     var body: some View {
         HStack {
@@ -30,7 +35,6 @@ struct SearchBarView: View {
                 
                 TextField(textFieldString, text: $searchText)
                     .foregroundColor(Color.theme.text)
-                    .disableAutocorrection(true)
                     .font(.system(size: 16, design: .default))
                     .onReceive(keyboardPublisher) { value in
                         isKeyboardShowing = value
@@ -71,13 +75,16 @@ struct SearchBarView: View {
                                 .offset(x: 15)
                                 .foregroundColor(Color.theme.red)
                                 .opacity(!isKeyboardShowing ? 1.0 : 0.0)
-                                .onTapGesture { print("filter") }
+                                .onTapGesture { showFilterSheet.toggle() }
                         }
                     })
+                    .sheet(isPresented: $showFilterSheet, content: {
+                        FilterModalView(selectedTab: currentTab)
+                    })
                     .submitLabel(.search)
-                    .onChange(of: self.searchText) { newValue in
+                    .onChange(of: searchText) { newValue in
                         if(!searchText.isEmpty) {
-                            queryToCall()
+                            queryToCallWhenTyping()
                         }
                     }
             }
@@ -94,7 +101,7 @@ struct SearchBarView: View {
 
 struct SearchBarView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBarView(searchText: .constant(""), currentTab: .constant(Tab.movies)) {
+        SearchBarView(searchText: .constant(""), currentTab: .constant(Tab.movies), genres: ["Action"]) {
             //
         }
     }

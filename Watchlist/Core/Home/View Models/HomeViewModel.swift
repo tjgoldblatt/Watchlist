@@ -9,12 +9,15 @@ import Foundation
 import SwiftUI
 import Blackbird
 
-// TODO: Store watchlist items on device and maybe pass this in as an environment variable?
-
 class HomeViewModel: ObservableObject {
-    @Published var isGenresLoaded: Bool
+    /// Explore search text
+    @Published var searchText: String = ""
     
+    /// Explore page results
     @Published var results: [Media] = []
+    
+    /// Changes when genres have been loaded
+    @Published var isGenresLoaded: Bool = false
     
     /// List of movie genre options
     @Published var movieGenreList: [Genre] = []
@@ -25,11 +28,20 @@ class HomeViewModel: ObservableObject {
     /// Current selected tab
     @Published var selectedTab: TabBarItem = .movie
     
+    /// Tracks when user is selecting elements to delete
     @Published var editMode: EditMode = .inactive
     
+    var database: Blackbird.Database?
+    
+    var movieWatchlist: [Media] = []
+    var tvWatchlist: [Media] = []
+    
+    /// To track filtering
+    @Published var genresSelected: [String] = []
+    @Published var ratingSelected: Double = 0
+    @Published var watchSelected: String? = "Any"
+    
     init() {
-        self.isGenresLoaded = false
-        
         Task {
             try await fetchRequests()
         }
@@ -44,6 +56,33 @@ class HomeViewModel: ObservableObject {
             isGenresLoaded = true
         })
     }
+    
+    func getMediaWatchlists() {
+        Task {
+            guard let database else { return }
+            let tvMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == "tv", orderBy: .ascending(\.$title))
+            for model in tvMediaModel {
+                let tvShow = decodeData(with: model.media)
+                if let tvShow {
+                    tvWatchlist.append(tvShow)
+                }
+            }
+            
+            let movieMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == "tv", orderBy: .ascending(\.$title))
+            for model in movieMediaModel {
+                let movie = decodeData(with: model.media)
+                if let movie {
+                    movieWatchlist.append(movie)
+                }
+            }
+            print(tvWatchlist)
+            print(movieWatchlist)
+        }
+    }
+    
+//    func getMediaFromMediaModel(mediaModel: MediaModel) -> Media {
+//        
+//    }
     
     func getGenreNames(for type: MediaType, genreIDs: [Int]) -> [Genre] {
         var genreNames: [Genre] = []
@@ -64,6 +103,48 @@ class HomeViewModel: ObservableObject {
                 break
         }
         return genreNames
+    }
+    
+    /// To figure out what genres we want to show as options depending on the tab
+    func convertGenreIDToGenre(for tab: Tab) -> [Genre] {
+        var foundGenres: [Genre] = []
+        let allMediaGenres = movieGenreList + tvGenreList
+        
+        switch tab {
+            case .movies:
+                // return genres found within watchlist
+                for movie in movieWatchlist {
+                    if let genreIDs = movie.genreIDS {
+                        for genreID in genreIDs {
+                            if let genre = allMediaGenres.first(where: { $0.id == genreID }) {
+                                foundGenres.append(genre)
+                            }
+                        }
+                    }
+                }
+            case .tvShows:
+                for tvShow in tvWatchlist {
+                    if let genreIDs = tvShow.genreIDS {
+                        for genreID in genreIDs {
+                            if let genre = allMediaGenres.first(where: { $0.id == genreID }) {
+                                foundGenres.append(genre)
+                            }
+                        }
+                    }
+                }
+            case .explore:
+                debugPrint(allMediaGenres)
+                for result in results {
+                    if let genreIDs = result.genreIDS {
+                        for genreID in genreIDs {
+                            if let genre = allMediaGenres.first(where: { $0.id == genreID }) {
+                                foundGenres.append(genre)
+                            }
+                        }
+                    }
+                }
+        }
+        return Array(Set(foundGenres))
     }
     
     func getMovieGenreList() async throws {
