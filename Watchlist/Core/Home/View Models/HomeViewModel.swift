@@ -60,7 +60,7 @@ class HomeViewModel: ObservableObject {
     func getMediaWatchlists() {
         Task {
             guard let database else { return }
-            let tvMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == "tv", orderBy: .ascending(\.$title))
+            let tvMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == MediaType.tv.rawValue, orderBy: .ascending(\.$title))
             for model in tvMediaModel {
                 let tvShow = decodeData(with: model.media)
                 if let tvShow {
@@ -68,7 +68,7 @@ class HomeViewModel: ObservableObject {
                 }
             }
             
-            let movieMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == "tv", orderBy: .ascending(\.$title))
+            let movieMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == MediaType.movie.rawValue, orderBy: .ascending(\.$title))
             for model in movieMediaModel {
                 let movie = decodeData(with: model.media)
                 if let movie {
@@ -79,10 +79,6 @@ class HomeViewModel: ObservableObject {
             print(movieWatchlist)
         }
     }
-    
-//    func getMediaFromMediaModel(mediaModel: MediaModel) -> Media {
-//        
-//    }
     
     func getGenreNames(for type: MediaType, genreIDs: [Int]) -> [Genre] {
         var genreNames: [Genre] = []

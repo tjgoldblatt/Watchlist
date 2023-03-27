@@ -20,15 +20,19 @@ extension Blackbird.Database {
     
     func saveMedia(media: Media) {
         Task {
-            if let id = media.id, let mediaType = media.mediaType, let genreIDs = media.genreIDS {
+            if let id = media.id, let mediaType = media.mediaType {
                 var title = ""
-                if mediaType.rawValue == "tv", let mediaTitle = media.name {
+                
+                if mediaType == MediaType.tv, let mediaTitle = media.name {
                     title = mediaTitle
-                } else if mediaType.rawValue == "movie", let mediaTitle = media.title {
+                } else if mediaType == MediaType.movie, let mediaTitle = media.title {
                     title = mediaTitle
                 }
                 
-                let genreIDsToString: String = genreIDs.map({ String($0) }).joined(separator: ",")
+                var genreIDsToString: String? = nil
+                if let genreIDs = media.genreIDS {
+                    genreIDsToString = genreIDs.map({ String($0) }).joined(separator: ",")
+                }
                 
                 let mediaModel = MediaModel(id: id, title: title, watched: false, mediaType: mediaType.rawValue, genreIDs: genreIDsToString, media: try JSONEncoder().encode(media))
                 await upsert(model: mediaModel)
@@ -45,7 +49,6 @@ extension Blackbird.Database {
     func deleteMediaByID(id: Int) {
         Task {
             guard let media = try await MediaModel.read(from: self, id: id) else { return }
-            debugPrint(media.id)
             try await media.delete(from: self)
         }
     }

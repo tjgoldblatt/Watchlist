@@ -11,7 +11,7 @@ import Blackbird
 struct MovieTabView: View {
     @Environment(\.blackbirdDatabase) var database
     
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == "movie", orderBy: .ascending(\.$title)) }) var movieList
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.movie.rawValue, orderBy: .ascending(\.$title)) }) var movieList
     
     @EnvironmentObject private var homeVM: HomeViewModel
     
@@ -20,7 +20,7 @@ struct MovieTabView: View {
     @State var rowViewManager: RowViewManager
     
     @State var isKeyboardShowing: Bool = false
-//    @State var bottomPadding: CGFloat = 50.0
+    
     @State var isSubmitted: Bool = false
     
     @State var selectedRows = Set<Int>()
@@ -101,22 +101,7 @@ struct MovieTabView: View {
                             .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $deleteConfirmationShowing) {
                                 Button("Delete", role: .destructive) {
                                     for id in selectedRows {
-                                        if let database {
-                                            Task {
-                                                let everything = try await MediaModel.read(from: database, matching: \.$mediaType == "movie")
-                                                for foo in everything {
-                                                    print("TG: before delete \(foo.id)")
-                                                }
-                                                guard let mediaModel = try await MediaModel.read(from: database, id: id) else { return }
-                                                try await mediaModel.delete(from: database)
-                                                
-                                                let everything2 = try await MediaModel.read(from: database, matching: \.$mediaType == "movie")
-                                                for foo in everything2 {
-                                                    print("TG: after delete \(foo.id)")
-                                                }
-                                            }
-//                                            database.deleteMediaByID(id: id)
-                                        }
+                                        database?.deleteMediaByID(id: id)
                                         homeVM.editMode = .inactive
                                     }
                                 }

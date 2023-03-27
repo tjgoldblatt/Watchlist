@@ -11,7 +11,7 @@ import Blackbird
 struct TVShowTabView: View {
     @Environment(\.blackbirdDatabase) var database
     
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == "tv", orderBy: .ascending(\.$title)) }) var tvList
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.tv.rawValue, orderBy: .ascending(\.$title)) }) var tvList
     
     @EnvironmentObject private var homeVM: HomeViewModel
     
@@ -20,7 +20,7 @@ struct TVShowTabView: View {
     @State var rowViewManager: RowViewManager
     
     @State var isKeyboardShowing: Bool = false
-//    @State var bottomPadding: CGFloat = 50.0
+    
     @State var isSubmitted: Bool = false
     
     @State var selectedRows = Set<Int>()
