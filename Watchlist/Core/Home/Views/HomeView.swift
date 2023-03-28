@@ -15,19 +15,6 @@ struct HomeView: View {
     
     var body: some View {
         if homeVM.isGenresLoaded {
-//            CustomTabBarContainerView(selection: $homeVM.selectedTab) {
-//                MovieTabView(rowViewManager: RowViewManager(homeVM: homeVM))
-//                    .tabBarItem(tab: .movie, selection: $homeVM.selectedTab)
-//                    .environmentObject(homeVM)
-//
-//                TVShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
-//                    .tabBarItem(tab: .tvshow, selection: $homeVM.selectedTab)
-//                    .environmentObject(homeVM)
-//
-//                ExploreTabView(rowViewManager: RowViewManager(homeVM: homeVM))
-//                    .tabBarItem(tab: .search, selection: $homeVM.selectedTab)
-//                    .environmentObject(homeVM)
-//            }
             TabView(selection: $homeVM.selectedTab) {
                 MovieTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
@@ -52,6 +39,7 @@ struct HomeView: View {
             }
             .onAppear {
                 homeVM.database = database
+                homeVM.getMediaWatchlists()
             }
             .tint(Color.theme.red)
         } else {

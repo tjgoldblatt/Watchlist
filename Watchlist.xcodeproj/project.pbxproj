@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		322BB68529D32A4D007CD536 /* Blackbird in Frameworks */ = {isa = PBXBuildFile; productRef = 322BB68429D32A4D007CD536 /* Blackbird */; };
 		324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */; };
 		324BAE6229B8D3D9002FBB6F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE6129B8D3D9002FBB6F /* ContentView.swift */; };
 		324BAE6429B8D3DA002FBB6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 324BAE6329B8D3DA002FBB6F /* Assets.xcassets */; };
@@ -36,7 +37,6 @@
 		32952D9A29BB885E002B3596 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9929BB885E002B3596 /* View.swift */; };
 		32952D9C29BB9548002B3596 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9B29BB9548002B3596 /* Errors.swift */; };
 		32952D9E29BB9702002B3596 /* RowViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9D29BB9702002B3596 /* RowViewManager.swift */; };
-		329891FF29C019C1009989AA /* Blackbird in Frameworks */ = {isa = PBXBuildFile; productRef = 329891FE29C019C1009989AA /* Blackbird */; };
 		3298920129C01A0C009989AA /* MediaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298920029C01A0C009989AA /* MediaModel.swift */; };
 		3298920329C0A718009989AA /* MediaDetailContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298920229C0A718009989AA /* MediaDetailContents.swift */; };
 		329A768729BA78200074A4F9 /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768629BA78200074A4F9 /* RowView.swift */; };
@@ -101,7 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329891FF29C019C1009989AA /* Blackbird in Frameworks */,
+				322BB68529D32A4D007CD536 /* Blackbird in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +358,7 @@
 			);
 			name = Watchlist;
 			packageProductDependencies = (
-				329891FE29C019C1009989AA /* Blackbird */,
+				322BB68429D32A4D007CD536 /* Blackbird */,
 			);
 			productName = Watchlist;
 			productReference = 324BAE5C29B8D3D9002FBB6F /* Watchlist.app */;
@@ -389,7 +389,7 @@
 			);
 			mainGroup = 324BAE5329B8D3D9002FBB6F;
 			packageReferences = (
-				329891FD29C019C1009989AA /* XCRemoteSwiftPackageReference "Blackbird" */,
+				322BB68329D32A4D007CD536 /* XCRemoteSwiftPackageReference "Blackbird" */,
 			);
 			productRefGroup = 324BAE5D29B8D3D9002FBB6F /* Products */;
 			projectDirPath = "";
@@ -665,7 +665,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		329891FD29C019C1009989AA /* XCRemoteSwiftPackageReference "Blackbird" */ = {
+		322BB68329D32A4D007CD536 /* XCRemoteSwiftPackageReference "Blackbird" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/marcoarment/Blackbird";
 			requirement = {
@@ -676,9 +676,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		329891FE29C019C1009989AA /* Blackbird */ = {
+		322BB68429D32A4D007CD536 /* Blackbird */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 329891FD29C019C1009989AA /* XCRemoteSwiftPackageReference "Blackbird" */;
+			package = 322BB68329D32A4D007CD536 /* XCRemoteSwiftPackageReference "Blackbird" */;
 			productName = Blackbird;
 		};
 /* End XCSwiftPackageProductDependency section */

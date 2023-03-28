@@ -78,8 +78,13 @@ struct SearchBarView: View {
                                 .onTapGesture { showFilterSheet.toggle() }
                         }
                     })
-                    .sheet(isPresented: $showFilterSheet, content: {
-                        FilterModalView(selectedTab: currentTab)
+                    .sheet(isPresented: $showFilterSheet, onDismiss: {
+                        homeVM.watchSelected = "Any"
+                        homeVM.genresSelected = []
+                        homeVM.ratingSelected = nil
+                    }, content: {
+                        FilterModalView(selectedTab: currentTab, genresToFilter: homeVM.convertGenreIDToGenre(for: currentTab))
+                            .presentationDragIndicator(.visible)
                     })
                     .submitLabel(.search)
                     .onChange(of: searchText) { newValue in

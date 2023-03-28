@@ -37,9 +37,9 @@ class HomeViewModel: ObservableObject {
     var tvWatchlist: [Media] = []
     
     /// To track filtering
-    @Published var genresSelected: [String] = []
-    @Published var ratingSelected: Double = 0
-    @Published var watchSelected: String? = "Any"
+    @Published var genresSelected: Set<Genre> = []
+    @Published var ratingSelected: Double? = 0
+    @Published var watchSelected: String = "Any"
     
     init() {
         Task {
@@ -127,7 +127,6 @@ class HomeViewModel: ObservableObject {
                     }
                 }
             case .explore:
-                debugPrint(allMediaGenres)
                 for result in results {
                     if let genreIDs = result.genreIDS {
                         for genreID in genreIDs {
