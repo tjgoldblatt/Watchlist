@@ -45,12 +45,14 @@ struct ExploreTabView: View {
                 }
             }
         }
+        .onAppear { homeVM.getMediaWatchlists() }
     }
 }
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
         ExploreTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+            .environmentObject(dev.homeVM)
     }
 }
 
@@ -73,8 +75,8 @@ extension ExploreTabView {
         if !vm.isSearching {
             return AnyView(
                 List {
-                    ForEach(homeVM.results, id: \.id) { result in
-                        rowViewManager.createRowView(media: result, tab: .explore)
+                    ForEach(homeVM.results, id: \.id) { media in
+                        rowViewManager.createRowView(media: media, tab: .explore)
                     }
                     .listRowBackground(Color.clear)
                 }

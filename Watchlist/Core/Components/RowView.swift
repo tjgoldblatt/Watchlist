@@ -58,11 +58,7 @@ struct RowView: View {
             .interactiveDismissDisabled()
         }
         .swipeActions(edge: .trailing) {
-            if currentTab == .explore {
-                searchTabSwipeAction
-            } else {
-                mediaTabSwipeAction
-            }
+            mediaTabSwipeAction
         }
         .onAppear {
             Task {
@@ -81,6 +77,7 @@ struct RowView_Previews: PreviewProvider {
     static var previews: some View {
         RowView(rowContent: dev.rowContent, media: dev.mediaMock.first!, currentTab: .movies)
             .previewLayout(.sizeThatFits)
+            .environmentObject(dev.homeVM)
     }
 }
 
@@ -137,7 +134,6 @@ extension RowView {
     }
     
     private var mediaTabSwipeAction: some View {
-        //        Group {
         Button {
             if !isWatched && personalRating == nil {
                 showRatingSheet = true
@@ -165,18 +161,17 @@ extension RowView {
         .tint(Color.theme.secondary)
     }
     
-    private var searchTabSwipeAction: some View {
-        Button {
-            database?.saveMedia(media: media)
-        } label: {
-            Image(systemName: "film.stack")
+    func isMediaInWatchlist(media: Media) -> Bool {
+        for watchlistMedia in homeVM.tvWatchlist + homeVM.movieWatchlist {
+            if watchlistMedia == media { return true }
         }
-        .tint(Color.theme.secondary)
+        return false
     }
 }
 
 struct ThumbnailView: View {
     @State var imagePath: String
+    @State var frameHeight: CGFloat = 120
     var body: some View {
         AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(imagePath)")) { image in
             image
@@ -186,8 +181,9 @@ struct ThumbnailView: View {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                     
                 )
-                .frame(height: 120)
+                .frame(height: frameHeight)
                 .padding(.trailing, 5)
+                .shadow(color: Color.black.opacity(0.2), radius: 10)
         } placeholder: {
             ProgressView()
         }

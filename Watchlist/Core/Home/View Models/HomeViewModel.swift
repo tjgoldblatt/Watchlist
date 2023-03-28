@@ -75,8 +75,6 @@ class HomeViewModel: ObservableObject {
                     movieWatchlist.append(movie)
                 }
             }
-            print(tvWatchlist)
-            print(movieWatchlist)
         }
     }
     

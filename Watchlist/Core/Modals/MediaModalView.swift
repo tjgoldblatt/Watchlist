@@ -26,6 +26,9 @@ struct MediaModalView: View {
     
     @State private var showingRating = false
     
+    @State private var selectedOption: String = "Clear Rating"
+    let options = ["Clear Rating"]
+    
     var ratingClosure: () -> Void
     
     var imagePath: String {
@@ -51,22 +54,43 @@ struct MediaModalView: View {
             }
             .padding(.horizontal)
         }
-        .overlay(alignment: .topLeading, content: {
+        .overlay(alignment: .topLeading) {
             Button {
                 dismiss()
                 ratingClosure()
             } label: {
-                Image(systemName: "chevron.left")
-                    .font(.headline)
+                Image(systemName: "xmark")
+                    .font(.title2)
+                    .fontWeight(.semibold)
                     .padding(10)
-                    .foregroundColor(Color.theme.text)
-                    .background(Color.theme.background)
-                    .cornerRadius(10)
-                    .shadow(radius: 4)
-                    .padding(.top)
+                    .foregroundColor(Color.theme.genreText)
                     .padding()
             }
-        })
+        }
+        .overlay(alignment: .topTrailing) {
+            Menu {
+                Button {
+                    Task {
+                        if let database, let id = media.id {
+                            try await MediaModel.update(in: database, set: [\.$personalRating : nil], matching: \.$id == id)
+                            personalRating = nil
+                        }
+                    }
+                } label: {
+                    Text("Clear Rating")
+                    Image(systemName: "star")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle.fill")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .padding(10)
+                    .foregroundColor(Color.theme.genreText)
+                    .padding()
+            }
+            
+            
+        }
         .onAppear {
             Task {
                 await database?.fetchPersonalRating(media: media) { rating in
@@ -163,7 +187,7 @@ extension MediaModalView {
                     .disabled(isInMedia(mediaModels: mediaList.results, media: media) ? false : true)
             }
         }
-        .padding(.horizontal)
+        .padding(.trailing)
     }
     
     private var rateThisButton: some View {
@@ -204,13 +228,15 @@ extension MediaModalView {
                 .font(.system(size: 18))
                 .fontWeight(.medium)
                 .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.genreText)
-                .padding(.vertical, 5)
+                .padding(.vertical, 10)
                 .padding(.horizontal)
                 .background {
                     RoundedRectangle(cornerRadius: 5)
                         .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.secondary.opacity(0.5) : Color.theme.red)
+                        .frame(width: 80, height: 30)
                 }
         }
+        .frame(width: 100, alignment: .center)
         
     }
     

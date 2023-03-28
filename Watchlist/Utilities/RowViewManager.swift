@@ -44,22 +44,37 @@ class RowViewManager {
         }
         
         let genres = homeVM.getGenreNames(for: .movie, genreIDs: genreIDs)
-        
-        return AnyView(
-            RowView(
-                rowContent:
-                    MediaDetailContents(
-                        id: id,
-                        posterPath: posterPath,
-                        backdropPath: movie.backdropPath,
-                        title: title,
-                        genres: genres,
-                        overview: overview,
-                        popularity: movie.popularity,
-                        imdbRating: voteAverage
-                    ), media: movie, currentTab: tab
+        if tab == .explore {
+            return AnyView(
+            ExploreRowView(rowContent:
+                            MediaDetailContents(
+                                id: id,
+                                posterPath: posterPath,
+                                backdropPath: movie.backdropPath,
+                                title: title,
+                                genres: genres,
+                                overview: overview,
+                                popularity: movie.popularity,
+                                imdbRating: voteAverage
+                            ),
+                           media: movie, currentTab: tab))
+        } else {
+            return AnyView(
+                RowView(
+                    rowContent:
+                        MediaDetailContents(
+                            id: id,
+                            posterPath: posterPath,
+                            backdropPath: movie.backdropPath,
+                            title: title,
+                            genres: genres,
+                            overview: overview,
+                            popularity: movie.popularity,
+                            imdbRating: voteAverage
+                        ), media: movie, currentTab: tab
+                )
             )
-        )
+        }
     }
     
     func createRowView(tvShow: Media, tab: Tab) -> AnyView {
@@ -76,20 +91,37 @@ class RowViewManager {
         
         let genres = homeVM.getGenreNames(for: .tv, genreIDs: genreIDs)
         
-        return AnyView(
-            RowView(
-                rowContent:
-                    MediaDetailContents(
-                        id: id,
-                        posterPath: posterPath,
-                        backdropPath: tvShow.backdropPath,
-                        title: title,
-                        genres: genres,
-                        overview: overview,
-                        popularity: tvShow.popularity,
-                        imdbRating: voteAverage
-                    ), media: tvShow, currentTab: tab
+        
+        if tab == .explore {
+            return AnyView(
+                ExploreRowView(rowContent:
+                                MediaDetailContents(
+                                    id: id,
+                                    posterPath: posterPath,
+                                    backdropPath: tvShow.backdropPath,
+                                    title: title,
+                                    genres: genres,
+                                    overview: overview,
+                                    popularity: tvShow.popularity,
+                                    imdbRating: voteAverage
+                                ),
+                               media: tvShow, currentTab: tab))
+        } else {
+            return AnyView(
+                RowView(
+                    rowContent:
+                        MediaDetailContents(
+                            id: id,
+                            posterPath: posterPath,
+                            backdropPath: tvShow.backdropPath,
+                            title: title,
+                            genres: genres,
+                            overview: overview,
+                            popularity: tvShow.popularity,
+                            imdbRating: voteAverage
+                        ), media: tvShow, currentTab: tab
+                )
             )
-        )
+        }
     }
 }
