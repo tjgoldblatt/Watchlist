@@ -34,7 +34,6 @@ struct RowView: View {
             
             rightColumn
         }
-        // TODO: Show rating sheet when swiping to mark as Watched
         .sheet(isPresented: $showRatingSheet) {
             RatingModalView(media: media) {
                 Task {
@@ -47,16 +46,19 @@ struct RowView: View {
         .onTapGesture {
             showingSheet.toggle()
         }
-        .sheet(isPresented: $showingSheet) {
-            MediaModalView(mediaDetails: rowContent, media: media) {
-                Task {
-                    await database?.fetchPersonalRating(media: media) { rating in
-                        personalRating = rating
-                    }
+        .sheet(isPresented: $showingSheet, onDismiss: {
+            Task {
+                await database?.fetchPersonalRating(media: media) { rating in
+                    personalRating = rating
+                }
+                await database?.fetchIsWatched(media: media) { watched in
+                    isWatched = watched
                 }
             }
-            .interactiveDismissDisabled()
-        }
+        }, content: {
+            MediaModalView(mediaDetails: rowContent, media: media)
+        })
+        
         .swipeActions(edge: .trailing) {
             mediaTabSwipeAction
         }
@@ -172,20 +174,46 @@ extension RowView {
 struct ThumbnailView: View {
     @State var imagePath: String
     @State var frameHeight: CGFloat = 120
+    
     var body: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(imagePath)")) { image in
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    
-                )
-                .frame(height: frameHeight)
-                .padding(.trailing, 5)
-                .shadow(color: Color.black.opacity(0.2), radius: 10)
-        } placeholder: {
-            ProgressView()
+        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { phase in
+            switch phase {
+                case .empty:
+                    ProgressView()
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            
+                        )
+                        .frame(height: frameHeight)
+                        .padding(.trailing, 5)
+                        .shadow(color: Color.black.opacity(0.2), radius: 10)
+                case .failure:
+                    Image(systemName: "questionmark")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            
+                        )
+                        .frame(height: frameHeight)
+                        .padding(.trailing, 5)
+                        .shadow(color: Color.black.opacity(0.2), radius: 10)
+                default:
+                    Image(systemName: "questionmark")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            
+                        )
+                        .frame(height: frameHeight)
+                        .padding(.trailing, 5)
+                        .shadow(color: Color.black.opacity(0.2), radius: 10)
+            }
         }
     }
 }

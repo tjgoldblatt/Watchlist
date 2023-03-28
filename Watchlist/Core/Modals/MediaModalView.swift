@@ -26,11 +26,6 @@ struct MediaModalView: View {
     
     @State private var showingRating = false
     
-    @State private var selectedOption: String = "Clear Rating"
-    let options = ["Clear Rating"]
-    
-    var ratingClosure: () -> Void
-    
     var imagePath: String {
         if let backdropPath = mediaDetails.backdropPath {
             return backdropPath
@@ -57,7 +52,6 @@ struct MediaModalView: View {
         .overlay(alignment: .topLeading) {
             Button {
                 dismiss()
-                ratingClosure()
             } label: {
                 Image(systemName: "xmark")
                     .font(.title2)
@@ -79,6 +73,18 @@ struct MediaModalView: View {
                 } label: {
                     Text("Clear Rating")
                     Image(systemName: "star")
+                }
+                
+                Button {
+                    Task {
+                        if let database, let id = media.id {
+                            try await MediaModel.update(in: database, set: [\.$watched : false], matching: \.$id == id)
+                            isWatched = false
+                        }
+                    }
+                } label: {
+                    Text("Mark Unwatched")
+                    Image(systemName: "popcorn.circle")
                 }
             } label: {
                 Image(systemName: "ellipsis.circle.fill")
@@ -108,15 +114,13 @@ struct MediaModalView: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaModalView(mediaDetails: dev.rowContent, media: dev.mediaMock.first!) {
-            //
-        }
+        MediaModalView(mediaDetails: dev.rowContent, media: dev.mediaMock.first!)
     }
 }
 
 extension MediaModalView {
     private var backdropSection: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(imagePath)")) { image in
+        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { image in
             image
                 .resizable()
                 .scaledToFill()
