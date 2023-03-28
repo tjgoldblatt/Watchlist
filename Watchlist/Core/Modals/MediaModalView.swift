@@ -29,8 +29,6 @@ struct MediaModalView: View {
     @State private var selectedOption: String = "Clear Rating"
     let options = ["Clear Rating"]
     
-    var ratingClosure: () -> Void
-    
     var imagePath: String {
         if let backdropPath = mediaDetails.backdropPath {
             return backdropPath
@@ -57,7 +55,6 @@ struct MediaModalView: View {
         .overlay(alignment: .topLeading) {
             Button {
                 dismiss()
-                ratingClosure()
             } label: {
                 Image(systemName: "xmark")
                     .font(.title2)
@@ -108,9 +105,7 @@ struct MediaModalView: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaModalView(mediaDetails: dev.rowContent, media: dev.mediaMock.first!) {
-            //
-        }
+        MediaModalView(mediaDetails: dev.rowContent, media: dev.mediaMock.first!)
     }
 }
 
@@ -205,11 +200,11 @@ extension MediaModalView {
                     .foregroundColor(isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.secondary)
             }
         }
-        .fullScreenCover(isPresented: $showingRating, onDismiss: {
+        .sheet(isPresented: $showingRating, onDismiss: {
             Task {
-                await database?.fetchPersonalRating(media: media) { rating in
+                await database?.fetchPersonalRating(media: media, completionHandler: { rating in
                     personalRating = rating
-                }
+                })
             }
         }) {
             RatingModalView(media: media)

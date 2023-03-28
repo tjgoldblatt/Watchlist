@@ -26,6 +26,8 @@ struct RowView: View {
     /// For showing the rating modal on swipe - need to work on still
     @State private var showRatingSheet = false
     
+    @State var showPersonalRating = false
+    
     var body: some View {
         HStack(alignment: .center) {
             ThumbnailView(imagePath: "\(rowContent.posterPath)")
@@ -47,14 +49,15 @@ struct RowView: View {
         .onTapGesture {
             showingSheet.toggle()
         }
-        .sheet(isPresented: $showingSheet) {
-            MediaModalView(mediaDetails: rowContent, media: media) {
-                Task {
-                    await database?.fetchPersonalRating(media: media) { rating in
-                        personalRating = rating
-                    }
+        .sheet(isPresented: $showingSheet, onDismiss: {
+            Task {
+                await database?.fetchPersonalRating(media: media) { rating in
+                    personalRating = rating
+                    showPersonalRating = true
                 }
             }
+        }) {
+            MediaModalView(mediaDetails: rowContent, media: media)
             .interactiveDismissDisabled()
         }
         .swipeActions(edge: .trailing) {
@@ -67,6 +70,7 @@ struct RowView: View {
                 }
                 await database?.fetchPersonalRating(media: media, completionHandler: { rating in
                     personalRating = rating
+                    showPersonalRating = true
                 })
             }
         }
@@ -121,8 +125,10 @@ extension RowView {
         VStack(spacing: 10) {
             StarRatingView(text: "IMDb RATING", rating: rowContent.imdbRating)
             
-            if let rating = personalRating {
-                StarRatingView(text: "YOUR RATING", rating: rating)
+            if showPersonalRating {
+                if let rating = personalRating {
+                    StarRatingView(text: "YOUR RATING", rating: rating)
+                }
             }
             
             if isWatched {

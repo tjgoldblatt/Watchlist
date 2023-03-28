@@ -41,15 +41,15 @@ struct ExploreRowView: View {
         .onTapGesture {
             showingSheet.toggle()
         }
-        .sheet(isPresented: $showingSheet) {
-            MediaModalView(mediaDetails: rowContent, media: media) {
-                Task {
-                    await database?.fetchPersonalRating(media: media) { rating in
-                        personalRating = rating
-                    }
+        .sheet(isPresented: $showingSheet, onDismiss: {
+            Task {
+                await database?.fetchPersonalRating(media: media) { rating in
+                    personalRating = rating
                 }
             }
-            .interactiveDismissDisabled()
+        }) {
+            MediaModalView(mediaDetails: rowContent, media: media)
+                .interactiveDismissDisabled()
         }
         .onAppear {
             Task {
