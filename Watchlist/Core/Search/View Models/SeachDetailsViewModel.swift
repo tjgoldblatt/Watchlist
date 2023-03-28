@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NaturalLanguage
 
 class SearchTabViewModel: ObservableObject {
     @Published var isSearching = false
@@ -23,6 +24,29 @@ class SearchTabViewModel: ObservableObject {
         Task {
             do {
                 homeVM.results = try await SearchTabViewModel.search(for: homeVM.searchText)
+                
+                /// if we want only english titles
+                /*
+                let recognizer = NLLanguageRecognizer()
+                homeVM.results = homeVM.results.filter { media in
+                    guard let mediaType = media.mediaType else { return false }
+                    switch mediaType {
+                        case .movie:
+                            if let title = media.originalTitle {
+                                recognizer.processString(title)
+                            }
+                        case .tv:
+                            if let name = media.originalName {
+                                recognizer.processString(name)
+                            }
+                        case .person:
+                            break
+                    }
+                 
+                    return recognizer.dominantLanguage == .english
+                }
+                 */
+                
                 isSearching = false
             } catch {
                 print("[🔥] Error While Searching")
