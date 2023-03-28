@@ -205,14 +205,14 @@ extension MediaModalView {
                     .foregroundColor(isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.secondary)
             }
         }
-        .fullScreenCover(isPresented: $showingRating) {
-            RatingModalView(media: media) {
-                Task {
-                    await database?.fetchPersonalRating(media: media, completionHandler: { rating in
-                        personalRating = rating
-                    })
+        .fullScreenCover(isPresented: $showingRating, onDismiss: {
+            Task {
+                await database?.fetchPersonalRating(media: media) { rating in
+                    personalRating = rating
                 }
             }
+        }) {
+            RatingModalView(media: media)
         }
     }
     

@@ -34,7 +34,7 @@ extension Blackbird.Database {
                     genreIDsToString = genreIDs.map({ String($0) }).joined(separator: ",")
                 }
                 
-                let mediaModel = MediaModel(id: id, title: title, watched: false, mediaType: mediaType.rawValue, genreIDs: genreIDsToString, media: try JSONEncoder().encode(media))
+                let mediaModel = MediaModel(id: id, title: title, watched: false, mediaType: mediaType.rawValue, personalRating: nil, genreIDs: genreIDsToString, media: try JSONEncoder().encode(media))
                 await upsert(model: mediaModel)
             }
         }
@@ -79,7 +79,8 @@ extension Blackbird.Database {
         
         let fetchTask = Task { () -> Double? in
             guard let mediaModel = try await MediaModel.read(from: self, id: id) else { return nil }
-            return mediaModel.personalRating
+            let rating = mediaModel.personalRating
+            return rating
         }
         let result = await fetchTask.result
         
@@ -88,6 +89,19 @@ extension Blackbird.Database {
             completionHandler(rating)
         } catch let error {
             debugPrint(error)
+        }
+    }
+    
+    @MainActor
+    func sendRating(rating: Double, media: Media) async {
+        if let id = media.id {
+            do {
+                guard var mediaModel = try await MediaModel.read(from: self, id: id) else { return }
+                mediaModel.personalRating = rating
+                await upsert(model: mediaModel)
+            } catch let error {
+                debugPrint(error)
+            }
         }
     }
 }

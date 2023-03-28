@@ -15,8 +15,6 @@ struct RatingModalView: View {
     @State var media: Media
     @State var rating: Int = 0
     
-    var tapClosure: () -> Void
-    
     var posterPath: String? {
         return media.posterPath
     }
@@ -82,8 +80,10 @@ struct RatingModalView: View {
                     .background(Color.theme.secondary)
                     .cornerRadius(10)
                     .onTapGesture {
-                        sendRating(rating: rating)
-                        tapClosure()
+                        Task {
+                            await database?.sendRating(rating: Double(rating), media: media)
+                            dismiss()
+                        }
                     }
             }
         }
@@ -102,21 +102,10 @@ struct RatingModalView: View {
         })
         .ignoresSafeArea(edges: .vertical)
     }
-    
-    func sendRating(rating: Int) {
-        Task {
-            if let database, let id = media.id {
-                try await MediaModel.update(in: database, set: [\.$personalRating : rating], matching: \.$id == id)
-            }
-            dismiss()
-        }
-    }
 }
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingModalView(media: dev.mediaMock.first!) {
-            //
-        }
+        RatingModalView(media: dev.mediaMock.first!)
     }
 }

@@ -35,14 +35,14 @@ struct RowView: View {
             rightColumn
         }
         // TODO: Show rating sheet when swiping to mark as Watched
-        .sheet(isPresented: $showRatingSheet) {
-            RatingModalView(media: media) {
-                Task {
-                    await database?.fetchPersonalRating(media: media) { rating in
-                        personalRating = rating
-                    }
+        .sheet(isPresented: $showRatingSheet, onDismiss: {
+            Task {
+                await database?.fetchPersonalRating(media: media) { rating in
+                    personalRating = rating
                 }
             }
+        }) {
+            RatingModalView(media: media)
         }
         .onTapGesture {
             showingSheet.toggle()
@@ -148,10 +148,6 @@ extension RowView {
                     }
                     await database?.fetchIsWatched(media: media, completionHandler: { watched in
                         isWatched = watched
-                    })
-                    
-                    await database?.fetchPersonalRating(media: media, completionHandler: { rating in
-                        personalRating = rating
                     })
                 }
             }
