@@ -23,7 +23,7 @@ struct RatingModalView: View {
         ZStack() {
             if let posterPath {
                 ZStack {
-                    AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")) { image in
+                    AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { image in
                         image
                             .resizable()
                             .frame(height: UIScreen.main.bounds.height)
@@ -40,7 +40,7 @@ struct RatingModalView: View {
             
             VStack(alignment: .center, spacing: 30) {
                 if let posterPath {
-                    AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")) { image in
+                    AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { image in
                         image
                             .resizable()
                             .scaledToFit()

@@ -58,7 +58,6 @@ struct RowView: View {
             }
         }) {
             MediaModalView(mediaDetails: rowContent, media: media)
-            .interactiveDismissDisabled()
         }
         .swipeActions(edge: .trailing) {
             mediaTabSwipeAction
@@ -175,7 +174,7 @@ struct ThumbnailView: View {
     @State var imagePath: String
     @State var frameHeight: CGFloat = 120
     var body: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(imagePath)")) { image in
+        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { image in
             image
                 .resizable()
                 .aspectRatio(contentMode: .fit)

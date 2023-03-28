@@ -25,6 +25,7 @@ struct MediaModalView: View {
     @State var isWatched = false
     
     @State private var showingRating = false
+    @State private var showDeleConfirmation = false
     
     @State private var selectedOption: String = "Clear Rating"
     let options = ["Clear Rating"]
@@ -68,14 +69,32 @@ struct MediaModalView: View {
             Menu {
                 Button {
                     Task {
-                        if let database, let id = media.id {
-                            try await MediaModel.update(in: database, set: [\.$personalRating : nil], matching: \.$id == id)
-                            personalRating = nil
+                        await database?.sendRating(rating: nil, media: media)
+                        await database?.fetchPersonalRating(media: media) { rating in
+                            personalRating = rating
                         }
                     }
                 } label: {
                     Text("Clear Rating")
                     Image(systemName: "star")
+                }
+                
+                Button {
+                    Task {
+                        if let db = database, let id = media.id {
+                            if isWatched {
+                                try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
+                            } else {
+                                try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
+                            }
+                            await database?.fetchIsWatched(media: media) { watched in
+                                isWatched = watched
+                            }
+                        }
+                    }
+                } label: {
+                    Text("Toggle Watched")
+                    Image(systemName: "popcorn.circle")
                 }
             } label: {
                 Image(systemName: "ellipsis.circle.fill")
@@ -111,7 +130,7 @@ struct MediaDetailView_Previews: PreviewProvider {
 
 extension MediaModalView {
     private var backdropSection: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(imagePath)")) { image in
+        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { image in
             image
                 .resizable()
                 .scaledToFill()
@@ -216,7 +235,7 @@ extension MediaModalView {
             if !isInMedia(mediaModels: mediaList.results, media: media) {
                 database?.saveMedia(media: media)
             } else {
-                database?.deleteMedia(media: media)
+                showDeleConfirmation.toggle()
             }
         } label: {
             Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
@@ -231,6 +250,10 @@ extension MediaModalView {
                         .frame(width: 80, height: 30)
                 }
         }
+        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $showDeleConfirmation, actions: {
+            Button("Delete", role: .destructive) { database?.deleteMedia(media: media) }
+            Button("Cancel", role: .cancel) {}
+        })
         .frame(width: 100, alignment: .center)
         
     }

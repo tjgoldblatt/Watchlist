@@ -93,7 +93,7 @@ extension Blackbird.Database {
     }
     
     @MainActor
-    func sendRating(rating: Double, media: Media) async {
+    func sendRating(rating: Double?, media: Media) async {
         if let id = media.id {
             do {
                 guard var mediaModel = try await MediaModel.read(from: self, id: id) else { return }
