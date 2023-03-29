@@ -26,8 +26,6 @@ struct RowView: View {
     /// For showing the rating modal on swipe - need to work on still
     @State private var showRatingSheet = false
     
-    @State var showPersonalRating = false
-    
     var body: some View {
         HStack(alignment: .center) {
             ThumbnailView(imagePath: "\(rowContent.posterPath)")
@@ -53,7 +51,9 @@ struct RowView: View {
             Task {
                 await database?.fetchPersonalRating(media: media) { rating in
                     personalRating = rating
-                    showPersonalRating = true
+                }
+                await database?.fetchIsWatched(media: media) { watched in
+                    isWatched = watched
                 }
             }
         }) {
@@ -67,10 +67,9 @@ struct RowView: View {
                 await database?.fetchIsWatched(media: media) { watched in
                     isWatched = watched
                 }
-                await database?.fetchPersonalRating(media: media, completionHandler: { rating in
+                await database?.fetchPersonalRating(media: media) { rating in
                     personalRating = rating
-                    showPersonalRating = true
-                })
+                }
             }
         }
     }
@@ -124,10 +123,8 @@ extension RowView {
         VStack(spacing: 10) {
             StarRatingView(text: "IMDb RATING", rating: rowContent.imdbRating)
             
-            if showPersonalRating {
-                if let rating = personalRating {
-                    StarRatingView(text: "YOUR RATING", rating: rating)
-                }
+            if let rating = personalRating {
+                StarRatingView(text: "YOUR RATING", rating: rating)
             }
             
             if isWatched {

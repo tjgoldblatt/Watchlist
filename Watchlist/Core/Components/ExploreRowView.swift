@@ -49,7 +49,6 @@ struct ExploreRowView: View {
             }
         }) {
             MediaModalView(mediaDetails: rowContent, media: media)
-                .interactiveDismissDisabled()
         }
         .onAppear {
             Task {

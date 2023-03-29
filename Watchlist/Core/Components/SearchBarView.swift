@@ -84,6 +84,7 @@ struct SearchBarView: View {
                         homeVM.ratingSelected = nil
                     }, content: {
                         FilterModalView(selectedTab: currentTab, genresToFilter: homeVM.convertGenreIDToGenre(for: currentTab))
+                            .presentationDetents([.large])
                             .presentationDragIndicator(.visible)
                     })
                     .submitLabel(.search)

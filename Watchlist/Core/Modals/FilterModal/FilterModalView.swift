@@ -18,7 +18,11 @@ struct FilterModalView: View {
     
     @State var genresToFilter: [Genre]
     
-    let watchOptions = ["Any", "Watched", "Not Watched"]
+    let watchOptions = ["Any", "Watched", "Unwatched"]
+    
+    @State var showWatchedModal = false
+    @State var showGenreModal = false
+    @State var showRatingModal = false
     
     var body: some View {
         NavigationStack {
@@ -26,120 +30,139 @@ struct FilterModalView: View {
                 Color.theme.background.ignoresSafeArea()
                 
                 VStack {
-                    Text("Filters")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color.theme.text)
-                    
-                    List {
-                        watchedFilter
+                    VStack {
+                        Text("FILTERS")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color.theme.text.opacity(0.6))
+                            .padding(.vertical)
                         
-                        if !genresToFilter.isEmpty {
-                            genreFilter
+                        VStack {
+                            watchedFilter
+                            
+                            if !genresToFilter.isEmpty {
+                                genreFilter
+                            }
                         }
                     }
-                    .scrollContentBackground(.hidden)
-                    .listStyle(.grouped)
-                    .transition(.slide)
-                }
-                .overlay(alignment: .topLeading) {
-                    Image(systemName: "xmark")
-                        .padding(.leading)
-                        .padding(.top, 5)
-                        .onTapGesture {
-                            dismiss()
+                    
+                    VStack {
+                        Text("SORTING")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color.theme.text.opacity(0.6))
+                            .padding(.bottom)
+                        
+                        
+                        VStack(spacing: 20) {
+                            Text("Alphabetical")
+                            Text("Rating (High to Low)")
+                            Text("Rating (Low to High)")
                         }
+                    }
+                    .padding(.bottom, 50)
+                    
+                    Spacer()
+                    HStack(spacing: 40) {
+                        Button("Cancel") {
+                            dismiss()
+                            homeVM.watchSelected = "Any"
+                            homeVM.genresSelected = []
+                            homeVM.ratingSelected = nil
+                        }
+                        .foregroundColor(Color.theme.genreText)
+                        .frame(width: 100, height: 40)
+                        .background(Color.theme.secondary)
+                        .cornerRadius(10)
+                        
+                        Button("Done") { dismiss() }
+                            .foregroundColor(Color.theme.genreText)
+                            .frame(width: 100, height: 40)
+                            .background(Color.theme.red)
+                            .cornerRadius(10)
+                    }
                 }
-                .padding(.top)
+                .padding(.vertical)
             }
         }
         .onAppear { homeVM.getMediaWatchlists() }
-        .navigationTitle("Filters")
     }
 }
 
 struct FilterModalView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterModalView(selectedTab: .movies, genresToFilter: [Genre(id: 1, name: "Science")])
+        FilterModalView(selectedTab: .movies, genresToFilter: [Genre(id: 1, name: "Adventure"), Genre(id: 1, name: "Action"), Genre(id: 1, name: "Science Fiction"), Genre(id: 1, name: "Fantasy")])
             .environmentObject(dev.homeVM)
     }
 }
 
 extension FilterModalView {
     private var watchedFilter: some View {
-        NavigationLink {
-            List(watchOptions, id: \.self) { watchOption in
-                HStack {
-                    Text(watchOption)
-                    
-                    Spacer()
-                    
-                    if homeVM.watchSelected == watchOption {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(Color.theme.red)
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    if homeVM.watchSelected != watchOption {
-                        homeVM.watchSelected = watchOption
-                    }
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color.theme.background)
-            .transition(.slide)
-        } label: {
+        VStack(alignment: .center) {
+            Text("Watched")
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundColor(Color.theme.text)
             HStack {
-                Text("Watched")
-                Spacer()
-                Text("\(homeVM.watchSelected)")
+                ForEach(watchOptions, id: \.self) { watchOption in
+                    Text(watchOption)
+                        .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.genreText : Color.theme.text.opacity(0.6))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .frame(width: 110, height: 30)
+                        .contentShape(Capsule())
+                        .background {
+                            Capsule()
+                                .strokeBorder(homeVM.watchSelected == watchOption ? Color.clear : Color.theme.secondary, lineWidth: 2)
+                            Capsule()
+                                .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.red : Color.clear)
+                        }
+                        .onTapGesture {
+                            if homeVM.watchSelected != watchOption {
+                                homeVM.watchSelected = watchOption
+                            }
+                        }
+                }
             }
+            .padding()
         }
-        .navigationTitle("Filters")
-        .navigationBarHidden(true)
     }
     
-    private var genreFilter: some View {
-        NavigationLink {
-            List(sortedGenreList(genresToFilter: genresToFilter), id: \.id) { genreOption in
-                HStack {
+    var genreFilter: some View {
+        VStack {
+            Text("Genres")
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundColor(Color.theme.text)
+            
+            
+            GeometryReader { geo in
+                FlexibleView(availableWidth: geo.size.width, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
                     Text(genreOption.name)
-                    
-                    Spacer()
-                    
-                    if homeVM.genresSelected.contains(genreOption) {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(Color.theme.red)
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    if !homeVM.genresSelected.contains(genreOption) {
-                        homeVM.genresSelected.insert(genreOption)
-                    } else {
-                        homeVM.genresSelected.remove(genreOption)
-                    }
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color.theme.background)
-            .transition(.slide)
-        } label: {
-            HStack {
-                Text("Genres")
-                Spacer()
-                if homeVM.genresSelected.count == genresToFilter.count {
-                    Text("Any")
-                } else if homeVM.genresSelected.count > 1 {
-                    Text("Multiple Genres")
-                } else {
-                    Text("\(homeVM.genresSelected.first?.name ?? "Any")")
+                        .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.text.opacity(0.6))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .fixedSize(horizontal: true, vertical: true)
+                        .padding(.vertical, 5)
+                        .padding(.horizontal)
+                        .background {
+                            Capsule()
+                                .strokeBorder(homeVM.genresSelected.contains(genreOption) ? Color.clear : Color.theme.secondary, lineWidth: 2)
+                            Capsule()
+                                .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.red : Color.clear)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if !homeVM.genresSelected.contains(genreOption) {
+                                homeVM.genresSelected.insert(genreOption)
+                            } else {
+                                homeVM.genresSelected.remove(genreOption)
+                            }
+                        }
                 }
             }
+            .padding(.horizontal)
         }
-        .navigationTitle("Filters")
-        .navigationBarHidden(true)
     }
     
     func sortedGenreList(genresToFilter: [Genre]) -> [Genre] {
@@ -147,14 +170,88 @@ extension FilterModalView {
             .sorted(by: { genre1, genre2 in
                 genre1.name.lowercased() < genre2.name.lowercased()
             })
-            .sorted { genre1, genre2 in
-            return homeVM.genresSelected.contains(genre1) && !homeVM.genresSelected.contains(genre2)
-        }
     }
 }
 
-struct ListElement {
+struct FilterOptionRow: View {
     @State var title: String
-    @Binding var value: String
-    @State var options: [String]
+    @State var isSelected: Bool
+    var body: some View {
+        HStack {
+            Text(title)
+                .padding(.trailing)
+            if isSelected {
+                Image(systemName: "checkmark")
+                    .foregroundColor(Color.theme.red)
+            }
+        }
+        .contentShape(Rectangle())
+    }
+}
+
+// MARK: - FLEXIBLE VIEW
+
+struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: Hashable {
+    let availableWidth: CGFloat
+    let data: Data
+    let spacing: CGFloat
+    let alignment: HorizontalAlignment
+    let content: (Data.Element) -> Content
+    @State var elementsSize: [Data.Element: CGSize] = [:]
+    
+    var body : some View {
+        VStack(alignment: alignment, spacing: spacing) {
+            ForEach(computeRows(), id: \.self) { rowElements in
+                HStack(spacing: spacing) {
+                    ForEach(rowElements, id: \.self) { element in
+                        content(element)
+                            .fixedSize()
+                            .readSize { size in
+                                elementsSize[element] = size
+                            }
+                    }
+                }
+            }
+        }
+    }
+    
+    func computeRows() -> [[Data.Element]] {
+        var rows: [[Data.Element]] = [[]]
+        var currentRow = 0
+        var remainingWidth = availableWidth
+        
+        for element in data {
+            let elementSize = elementsSize[element, default: CGSize(width: availableWidth, height: 1)]
+            
+            if remainingWidth - (elementSize.width + spacing) >= 0 {
+                rows[currentRow].append(element)
+            } else {
+                currentRow = currentRow + 1
+                rows.append([element])
+                remainingWidth = availableWidth
+            }
+            
+            remainingWidth = remainingWidth - (elementSize.width + spacing)
+        }
+        
+        return rows
+    }
+}
+
+
+extension View {
+    func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
+        background(
+            GeometryReader { geometryProxy in
+                Color.clear
+                    .preference(key: SizePreferenceKey.self, value: geometryProxy.size)
+            }
+        )
+        .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+    }
+}
+
+private struct SizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 }
