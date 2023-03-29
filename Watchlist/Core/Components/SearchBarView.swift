@@ -6,20 +6,26 @@
 //
 
 import SwiftUI
+import Combine
+import Blackbird
 
 struct SearchBarView: View {
     
     @EnvironmentObject var homeVM: HomeViewModel
     
     @Binding var searchText: String
-    @Binding var currentTab: Tab
     @State var isTyping: Bool = false
     @State var isKeyboardShowing: Bool = false
+    
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.movie.rawValue, orderBy: .ascending(\.$title)) }) var movieList
+    
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.tv.rawValue, orderBy: .ascending(\.$title)) }) var tvList
+
     
     @State var showFilterSheet: Bool = false
     
     var textFieldString: String {
-        return currentTab.searchTextLabel
+        return homeVM.selectedTab.searchTextLabel
     }
     
     @State var genres: [String]

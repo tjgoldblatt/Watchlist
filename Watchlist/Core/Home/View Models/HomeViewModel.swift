@@ -26,7 +26,7 @@ class HomeViewModel: ObservableObject {
     @Published var tvGenreList: [Genre] = []
     
     /// Current selected tab
-    @Published var selectedTab: TabBarItem = .movie
+    @Published var selectedTab: Tab = .movies
     
     /// Tracks when user is selecting elements to delete
     @Published var editMode: EditMode = .inactive
@@ -38,7 +38,7 @@ class HomeViewModel: ObservableObject {
     
     /// To track filtering
     @Published var genresSelected: Set<Genre> = []
-    @Published var ratingSelected: Double? = 0
+    @Published var ratingSelected: Int = 0
     @Published var watchSelected: String = "Any"
     
     init() {

@@ -21,22 +21,28 @@ struct HomeView: View {
                     .tabItem {
                         Label("", systemImage: Tab.movies.icon)
                     }
-                    .tag(TabBarItem.movie)
+                    .tag(Tab.movies)
                 
                 TVShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
                     .tabItem {
                         Label("", systemImage: Tab.tvShows.icon)
                     }
-                    .tag(TabBarItem.tvshow)
+                    .tag(Tab.tvShows)
                 
                 ExploreTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
                     .tabItem {
                         Label("", systemImage: Tab.explore.icon)
                     }
-                    .tag(TabBarItem.explore)
+                    .tag(Tab.explore)
             }
+            .onChange(of: homeVM.selectedTab, perform: { newValue in
+                homeVM.getMediaWatchlists()
+                homeVM.watchSelected = "Any"
+                homeVM.genresSelected = []
+                homeVM.ratingSelected = 0
+            })
             .onAppear {
                 homeVM.database = database
                 homeVM.getMediaWatchlists()

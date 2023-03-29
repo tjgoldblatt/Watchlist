@@ -47,10 +47,8 @@ struct TVShowTabView: View {
                         .padding(.horizontal)
                         
                         // MARK: - Search
-                        SearchBarView(searchText: $vm.filterText, currentTab: .constant(.movies), genres: ["Sci Fi", "History"]) {
+                        SearchBarView(searchText: $vm.filterText, genres: ["Sci Fi", "History"]) {
                             Task {
-                                // TODO: Call to filter through Watchlist
-                                //                    await vm.search()
                                 if(!searchResults.isEmpty) {
                                     value.scrollTo(Self.topID)
                                 }

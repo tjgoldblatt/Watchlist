@@ -12,8 +12,6 @@ struct FilterModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @Environment(\.dismiss) var dismiss
     
-    @State var selectedTab: Tab
-    
     @ObservedObject var vm = FilterModalViewModel()
     
     @State var genresToFilter: [Genre]
@@ -37,14 +35,20 @@ struct FilterModalView: View {
                             .foregroundColor(Color.theme.text.opacity(0.6))
                             .padding(.vertical)
                         
-                        VStack {
-                            watchedFilter
+                        VStack(spacing: 20) {
+                            if homeVM.selectedTab != .explore {
+                                watchedFilter
+                            }
                             
                             if !genresToFilter.isEmpty {
                                 genreFilter
                             }
+                            
+                            ratingFilter
                         }
                     }
+                    
+                    Spacer()
                     
                     VStack {
                         Text("SORTING")
@@ -91,18 +95,19 @@ struct FilterModalView: View {
 
 struct FilterModalView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterModalView(selectedTab: .movies, genresToFilter: [Genre(id: 1, name: "Adventure"), Genre(id: 1, name: "Action"), Genre(id: 1, name: "Science Fiction"), Genre(id: 1, name: "Fantasy")])
+        FilterModalView(genresToFilter: [Genre(id: 1, name: "Adventure"), Genre(id: 1, name: "Action"), Genre(id: 1, name: "Science Fiction"), Genre(id: 1, name: "Fantasy")])
             .environmentObject(dev.homeVM)
     }
 }
 
 extension FilterModalView {
     private var watchedFilter: some View {
-        VStack(alignment: .center) {
+        VStack {
             Text("Watched")
                 .font(.title3)
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
+            
             HStack {
                 ForEach(watchOptions, id: \.self) { watchOption in
                     Text(watchOption)
