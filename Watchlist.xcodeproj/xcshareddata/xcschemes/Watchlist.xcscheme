@@ -28,6 +28,28 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "32A6995929D4BCEE0026AC63"
+               BuildableName = "WatchlistTests.xctest"
+               BlueprintName = "WatchlistTests"
+               ReferencedContainer = "container:Watchlist.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "32A6996629D4BCFA0026AC63"
+               BuildableName = "WatchlistUITests.xctest"
+               BlueprintName = "WatchlistUITests"
+               ReferencedContainer = "container:Watchlist.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

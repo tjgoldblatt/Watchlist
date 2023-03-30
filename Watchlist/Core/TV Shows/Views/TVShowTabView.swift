@@ -47,10 +47,8 @@ struct TVShowTabView: View {
                         .padding(.horizontal)
                         
                         // MARK: - Search
-                        SearchBarView(searchText: $vm.filterText, currentTab: .constant(.movies), genres: ["Sci Fi", "History"]) {
+                        SearchBarView(searchText: $vm.filterText, genres: ["Sci Fi", "History"]) {
                             Task {
-                                // TODO: Call to filter through Watchlist
-                                //                    await vm.search()
                                 if(!searchResults.isEmpty) {
                                     value.scrollTo(Self.topID)
                                 }
@@ -104,8 +102,8 @@ struct TVShowTabView: View {
                                 Button("Delete", role: .destructive) {
                                     for id in selectedRows {
                                         database?.deleteMediaByID(id: id)
-                                        homeVM.editMode = .inactive
                                     }
+                                    homeVM.editMode = .inactive
                                 }
                                 
                                 Button("Cancel", role: .cancel) {}
@@ -129,8 +127,39 @@ struct TVShowTabView: View {
     }
     
     var searchResults: [MediaModel] {
-        let groupedMedia = homeVM.groupMedia(mediaModel: tvList.results)
-        if vm.filterText.isEmpty {
+        let groupedMedia = homeVM.groupMedia(mediaModel: tvList.results).filter({ !$0.watched })
+        if homeVM.watchSelected != "Unwatched" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+            var filteredMedia = homeVM.groupMedia(mediaModel: tvList.results)
+            
+            /// Watched Filter
+            if homeVM.watchSelected == "Watched" {
+                filteredMedia = filteredMedia.filter({ $0.watched })
+            }
+            
+            /// Genre Filter
+            if !homeVM.genresSelected.isEmpty {
+                filteredMedia = filteredMedia.filter { media in
+                    guard let genreIDs = media.genreIDs else { return false }
+                    for selectedGenre in homeVM.genresSelected {
+                        return genreIDs.contains("\(selectedGenre.id)")
+                    }
+                    return false
+                }
+            }
+            
+            /// Rating Filter
+            filteredMedia = filteredMedia.filter { mediaModel in
+                if let media = homeVM.decodeData(with: mediaModel.media) {
+                    if let voteAverage = media.voteAverage {
+                        return voteAverage > Double(homeVM.ratingSelected)
+                    }
+                }
+                return false
+            }
+            
+            return filteredMedia
+            
+        } else if vm.filterText.isEmpty {
             return groupedMedia
         } else {
             let filteredMedia = groupedMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }

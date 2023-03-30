@@ -25,6 +25,10 @@ struct MediaModalView: View {
     @State var isWatched = false
     
     @State private var showingRating = false
+    @State private var showDeleConfirmation = false
+    
+    @State private var selectedOption: String = "Clear Rating"
+    let options = ["Clear Rating"]
     
     var imagePath: String {
         if let backdropPath = mediaDetails.backdropPath {
@@ -62,40 +66,48 @@ struct MediaModalView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            Menu {
-                Button {
-                    Task {
-                        if let database, let id = media.id {
-                            try await MediaModel.update(in: database, set: [\.$personalRating : nil], matching: \.$id == id)
-                            personalRating = nil
-                        }
-                    }
-                } label: {
-                    Text("Clear Rating")
-                    Image(systemName: "star")
-                }
-                
-                Button {
-                    Task {
-                        if let database, let id = media.id {
-                            try await MediaModel.update(in: database, set: [\.$watched : false], matching: \.$id == id)
+            if isInMedia(mediaModels: mediaList.results, media: media) {
+                Menu {
+                    Button(role: .destructive) {
+                        Task {
+                            await database?.sendRating(rating: nil, media: media)
+                            await database?.fetchPersonalRating(media: media) { rating in
+                                personalRating = rating
+                            }
+                            await database?.setWatched(watched: false, media: media)
                             isWatched = false
                         }
+                    } label: {
+                        Text("Reset")
+                        Image(systemName: "arrow.counterclockwise.circle")
                     }
+                    
+//                    Button {
+//                        Task {
+//                            if let db = database, let id = media.id {
+//                                if isWatched {
+//                                    try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
+//                                } else {
+//                                    try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
+//                                }
+//                                await database?.fetchIsWatched(media: media) { watched in
+//                                    isWatched = watched
+//                                }
+//                            }
+//                        }
+//                    } label: {
+//                        Text("Toggle Watched")
+//                        Image(systemName: "popcorn.circle")
+//                    }
                 } label: {
-                    Text("Mark Unwatched")
-                    Image(systemName: "popcorn.circle")
+                    Image(systemName: "ellipsis.circle.fill")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .padding(10)
+                        .foregroundColor(Color.theme.genreText)
+                        .padding()
                 }
-            } label: {
-                Image(systemName: "ellipsis.circle.fill")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .padding(10)
-                    .foregroundColor(Color.theme.genreText)
-                    .padding()
             }
-            
-            
         }
         .onAppear {
             Task {
@@ -209,14 +221,14 @@ extension MediaModalView {
                     .foregroundColor(isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.secondary)
             }
         }
-        .fullScreenCover(isPresented: $showingRating) {
-            RatingModalView(media: media) {
-                Task {
-                    await database?.fetchPersonalRating(media: media, completionHandler: { rating in
-                        personalRating = rating
-                    })
-                }
+        .sheet(isPresented: $showingRating, onDismiss: {
+            Task {
+                await database?.fetchPersonalRating(media: media, completionHandler: { rating in
+                    personalRating = rating
+                })
             }
+        }) {
+            RatingModalView(media: media)
         }
     }
     
@@ -225,7 +237,7 @@ extension MediaModalView {
             if !isInMedia(mediaModels: mediaList.results, media: media) {
                 database?.saveMedia(media: media)
             } else {
-                database?.deleteMedia(media: media)
+                showDeleConfirmation.toggle()
             }
         } label: {
             Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
@@ -240,6 +252,10 @@ extension MediaModalView {
                         .frame(width: 80, height: 30)
                 }
         }
+        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $showDeleConfirmation, actions: {
+            Button("Delete", role: .destructive) { database?.deleteMedia(media: media) }
+            Button("Cancel", role: .cancel) {}
+        })
         .frame(width: 100, alignment: .center)
         
     }

@@ -15,43 +15,39 @@ struct HomeView: View {
     
     var body: some View {
         if homeVM.isGenresLoaded {
-//            CustomTabBarContainerView(selection: $homeVM.selectedTab) {
-//                MovieTabView(rowViewManager: RowViewManager(homeVM: homeVM))
-//                    .tabBarItem(tab: .movie, selection: $homeVM.selectedTab)
-//                    .environmentObject(homeVM)
-//
-//                TVShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
-//                    .tabBarItem(tab: .tvshow, selection: $homeVM.selectedTab)
-//                    .environmentObject(homeVM)
-//
-//                ExploreTabView(rowViewManager: RowViewManager(homeVM: homeVM))
-//                    .tabBarItem(tab: .search, selection: $homeVM.selectedTab)
-//                    .environmentObject(homeVM)
-//            }
             TabView(selection: $homeVM.selectedTab) {
                 MovieTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
                     .tabItem {
-                        Label("", systemImage: Tab.movies.icon)
+                        Image(systemName: Tab.movies.icon)
+                            .accessibilityIdentifier("MovieTab")
                     }
-                    .tag(TabBarItem.movie)
+                    .tag(Tab.movies)
                 
                 TVShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
                     .tabItem {
-                        Label("", systemImage: Tab.tvShows.icon)
+                        Image(systemName: Tab.tvShows.icon)
+                            .accessibilityIdentifier("TVShowTab")
                     }
-                    .tag(TabBarItem.tvshow)
+                    .tag(Tab.tvShows)
                 
                 ExploreTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
                     .tabItem {
-                        Label("", systemImage: Tab.explore.icon)
+                        Image(systemName: Tab.explore.icon)
+                            .accessibilityIdentifier("ExploreTab")
                     }
-                    .tag(TabBarItem.explore)
+                    .tag(Tab.explore)
             }
+            .onChange(of: homeVM.selectedTab, perform: { newValue in
+                homeVM.getMediaWatchlists()
+                homeVM.genresSelected = []
+                homeVM.ratingSelected = 0
+            })
             .onAppear {
                 homeVM.database = database
+                homeVM.getMediaWatchlists()
             }
             .tint(Color.theme.red)
         } else {

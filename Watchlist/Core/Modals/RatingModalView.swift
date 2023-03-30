@@ -15,8 +15,6 @@ struct RatingModalView: View {
     @State var media: Media
     @State var rating: Int = 0
     
-    var tapClosure: () -> Void
-    
     var posterPath: String? {
         return media.posterPath
     }
@@ -74,6 +72,7 @@ struct RatingModalView: View {
                 
                 StarsView(rating: $rating)
                     .padding()
+                    .accessibilityIdentifier("StarRatingInModal")
                 
                 Text("Rate")
                     .foregroundColor(Color.theme.text)
@@ -82,9 +81,12 @@ struct RatingModalView: View {
                     .background(Color.theme.secondary)
                     .cornerRadius(10)
                     .onTapGesture {
-                        sendRating(rating: rating)
-                        tapClosure()
+                        Task {
+                            await database?.sendRating(rating: Double(rating), media: media)
+                            dismiss()
+                        }
                     }
+                    .accessibilityIdentifier("RateButton")
             }
         }
         .overlay(alignment: .topLeading, content: {
@@ -99,24 +101,15 @@ struct RatingModalView: View {
                     .padding(.top, 40)
                     .padding()
             }
+            .accessibilityIdentifier("ExitRating")
         })
         .ignoresSafeArea(edges: .vertical)
-    }
-    
-    func sendRating(rating: Int) {
-        Task {
-            if let database, let id = media.id {
-                try await MediaModel.update(in: database, set: [\.$personalRating : rating], matching: \.$id == id)
-            }
-            dismiss()
-        }
+        .accessibilityIdentifier("RatingModalView")
     }
 }
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingModalView(media: dev.mediaMock.first!) {
-            //
-        }
+        RatingModalView(media: dev.mediaMock.first!)
     }
 }

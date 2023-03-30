@@ -34,14 +34,16 @@ struct RowView: View {
             
             rightColumn
         }
-        .sheet(isPresented: $showRatingSheet) {
-            RatingModalView(media: media) {
-                Task {
-                    await database?.fetchPersonalRating(media: media) { rating in
-                        personalRating = rating
-                    }
+        .accessibilityIdentifier("RowView")
+        .sheet(isPresented: $showRatingSheet, onDismiss: {
+            Task {
+                await database?.fetchPersonalRating(media: media) { rating in
+                    personalRating = rating
+                    homeVM.getMediaWatchlists()
                 }
             }
+        }) {
+            RatingModalView(media: media)
         }
         .onTapGesture {
             showingSheet.toggle()
@@ -54,11 +56,11 @@ struct RowView: View {
                 await database?.fetchIsWatched(media: media) { watched in
                     isWatched = watched
                 }
+                homeVM.getMediaWatchlists()
             }
-        }, content: {
+        }) {
             MediaModalView(mediaDetails: rowContent, media: media)
-        })
-        
+        }
         .swipeActions(edge: .trailing) {
             mediaTabSwipeAction
         }
@@ -67,9 +69,9 @@ struct RowView: View {
                 await database?.fetchIsWatched(media: media) { watched in
                     isWatched = watched
                 }
-                await database?.fetchPersonalRating(media: media, completionHandler: { rating in
+                await database?.fetchPersonalRating(media: media) { rating in
                     personalRating = rating
-                })
+                }
             }
         }
     }
@@ -137,30 +139,20 @@ extension RowView {
     
     private var mediaTabSwipeAction: some View {
         Button {
-            if !isWatched && personalRating == nil {
-                showRatingSheet = true
-            }
-            
             Task {
-                if let db = database, let id = media.id {
-                    if isWatched {
-                        try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
-                    } else {
-                        try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
-                    }
-                    await database?.fetchIsWatched(media: media, completionHandler: { watched in
-                        isWatched = watched
-                    })
-                    
-                    await database?.fetchPersonalRating(media: media, completionHandler: { rating in
-                        personalRating = rating
-                    })
+                if !isWatched && personalRating == nil {
+                    showRatingSheet = true
+                }
+                await database?.setWatched(watched: !isWatched, media: media)
+                await database?.fetchIsWatched(media: media) { watched in
+                    isWatched = watched
                 }
             }
         } label: {
             Image(systemName: "film.stack")
         }
         .tint(Color.theme.secondary)
+        .accessibilityIdentifier("MediaSwipeAction")
     }
     
     func isMediaInWatchlist(media: Media) -> Bool {
@@ -176,44 +168,19 @@ struct ThumbnailView: View {
     @State var frameHeight: CGFloat = 120
     
     var body: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { phase in
-            switch phase {
-                case .empty:
-                    ProgressView()
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            
-                        )
-                        .frame(height: frameHeight)
-                        .padding(.trailing, 5)
-                        .shadow(color: Color.black.opacity(0.2), radius: 10)
-                case .failure:
-                    Image(systemName: "questionmark")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            
-                        )
-                        .frame(height: frameHeight)
-                        .padding(.trailing, 5)
-                        .shadow(color: Color.black.opacity(0.2), radius: 10)
-                default:
-                    Image(systemName: "questionmark")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            
-                        )
-                        .frame(height: frameHeight)
-                        .padding(.trailing, 5)
-                        .shadow(color: Color.black.opacity(0.2), radius: 10)
-            }
+        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { image in
+            image
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .clipShape(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    
+                )
+                .frame(height: frameHeight)
+                .padding(.trailing, 5)
+                .shadow(color: Color.black.opacity(0.2), radius: 10)
+        } placeholder: {
+            ProgressView()
         }
     }
 }
