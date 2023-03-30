@@ -30,10 +30,20 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>WatchlistUITest.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>324BAE5B29B8D3D9002FBB6F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>32A6996629D4BCFA0026AC63</key>
 		<dict>
 			<key>primary</key>
 			<true/>

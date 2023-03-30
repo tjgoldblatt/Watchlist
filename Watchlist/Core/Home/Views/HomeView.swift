@@ -19,27 +19,29 @@ struct HomeView: View {
                 MovieTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
                     .tabItem {
-                        Label("", systemImage: Tab.movies.icon)
+                        Image(systemName: Tab.movies.icon)
+                            .accessibilityIdentifier("MovieTab")
                     }
                     .tag(Tab.movies)
                 
                 TVShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
                     .tabItem {
-                        Label("", systemImage: Tab.tvShows.icon)
+                        Image(systemName: Tab.tvShows.icon)
+                            .accessibilityIdentifier("TVShowTab")
                     }
                     .tag(Tab.tvShows)
                 
                 ExploreTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)
                     .tabItem {
-                        Label("", systemImage: Tab.explore.icon)
+                        Image(systemName: Tab.explore.icon)
+                            .accessibilityIdentifier("ExploreTab")
                     }
                     .tag(Tab.explore)
             }
             .onChange(of: homeVM.selectedTab, perform: { newValue in
                 homeVM.getMediaWatchlists()
-                homeVM.watchSelected = "Any"
                 homeVM.genresSelected = []
                 homeVM.ratingSelected = 0
             })

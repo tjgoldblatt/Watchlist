@@ -72,6 +72,7 @@ struct RatingModalView: View {
                 
                 StarsView(rating: $rating)
                     .padding()
+                    .accessibilityIdentifier("StarRatingInModal")
                 
                 Text("Rate")
                     .foregroundColor(Color.theme.text)
@@ -85,6 +86,7 @@ struct RatingModalView: View {
                             dismiss()
                         }
                     }
+                    .accessibilityIdentifier("RateButton")
             }
         }
         .overlay(alignment: .topLeading, content: {
@@ -99,8 +101,10 @@ struct RatingModalView: View {
                     .padding(.top, 40)
                     .padding()
             }
+            .accessibilityIdentifier("ExitRating")
         })
         .ignoresSafeArea(edges: .vertical)
+        .accessibilityIdentifier("RatingModalView")
     }
 }
 

@@ -93,9 +93,10 @@ extension ExploreTabView {
     }
     var sortedSearchResults: [Media] {
         let groupedMedia = homeVM.results
-        if homeVM.watchSelected != "Any" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+        if !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = groupedMedia
             
+            /// Genre Filter
             if !homeVM.genresSelected.isEmpty {
                 filteredMedia = filteredMedia.filter { media in
                     guard let genreIDs = media.genreIDS else { return false }
@@ -105,6 +106,15 @@ extension ExploreTabView {
                     return false
                 }
             }
+            
+            /// Rating Filter
+            filteredMedia = filteredMedia.filter { media in
+                if let voteAverage = media.voteAverage {
+                    return voteAverage > Double(homeVM.ratingSelected)
+                }
+                return false
+            }
+            
             return filteredMedia
             
         } else {

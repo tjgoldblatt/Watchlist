@@ -34,6 +34,7 @@ struct RowView: View {
             
             rightColumn
         }
+        .accessibilityIdentifier("RowView")
         .sheet(isPresented: $showRatingSheet, onDismiss: {
             Task {
                 await database?.fetchPersonalRating(media: media) { rating in
@@ -138,12 +139,11 @@ extension RowView {
     
     private var mediaTabSwipeAction: some View {
         Button {
-            if !isWatched && personalRating == nil {
-                showRatingSheet.toggle()
-            }
-            
             Task {
-                await database?.toggleWatched(watched: !isWatched, media: media)
+                if !isWatched && personalRating == nil {
+                    showRatingSheet = true
+                }
+                await database?.setWatched(watched: !isWatched, media: media)
                 await database?.fetchIsWatched(media: media) { watched in
                     isWatched = watched
                 }
@@ -152,6 +152,7 @@ extension RowView {
             Image(systemName: "film.stack")
         }
         .tint(Color.theme.secondary)
+        .accessibilityIdentifier("MediaSwipeAction")
     }
     
     func isMediaInWatchlist(media: Media) -> Bool {

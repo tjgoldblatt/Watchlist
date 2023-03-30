@@ -54,7 +54,7 @@ extension Blackbird.Database {
     }
     
     // MARK: - UI Changes on Main Thread
-//    @MainActor
+    @MainActor
     func fetchIsWatched(media: Media, completionHandler: @escaping (Bool) -> Void) async {
         guard let id = media.id else { return }
         
@@ -73,7 +73,7 @@ extension Blackbird.Database {
         }
     }
     
-//    @MainActor
+    @MainActor
     func fetchPersonalRating(media: Media, completionHandler: @escaping (Double?) -> Void) async {
         guard let id = media.id else { return }
         
@@ -92,7 +92,6 @@ extension Blackbird.Database {
         }
     }
     
-    @MainActor
     func sendRating(rating: Double?, media: Media) async {
         if let id = media.id {
             do {
@@ -105,8 +104,7 @@ extension Blackbird.Database {
         }
     }
     
-    @MainActor
-    func toggleWatched(watched: Bool, media: Media) async {
+    func setWatched(watched: Bool, media: Media) async {
         if let id = media.id {
             do {
                 guard var mediaModel = try await MediaModel.read(from: self, id: id) else { return }

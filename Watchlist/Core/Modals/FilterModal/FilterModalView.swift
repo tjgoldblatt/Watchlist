@@ -16,7 +16,7 @@ struct FilterModalView: View {
     
     @State var genresToFilter: [Genre]
     
-    let watchOptions = ["Any", "Watched", "Unwatched"]
+    let watchOptions = ["Unwatched", "Watched", "Any"]
     
     @State var showWatchedModal = false
     
@@ -70,7 +70,6 @@ struct FilterModalView: View {
                     HStack(spacing: 40) {
                         Button("Cancel") {
                             dismiss()
-                            homeVM.watchSelected = "Any"
                             homeVM.genresSelected = []
                             homeVM.ratingSelected = 0
                         }
@@ -86,7 +85,7 @@ struct FilterModalView: View {
                             .cornerRadius(10)
                     }
                 }
-                .padding(.vertical)
+                .padding()
             }
         }
         .onAppear { homeVM.getMediaWatchlists() }
@@ -140,7 +139,7 @@ extension FilterModalView {
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
                   
-                FlexibleView(availableWidth: screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 20, alignment: .center) { genreOption in
+                FlexibleView(availableWidth: screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
                     Text(genreOption.name)
                         .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.text.opacity(0.6))
                         .font(.subheadline)

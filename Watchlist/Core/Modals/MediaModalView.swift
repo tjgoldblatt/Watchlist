@@ -66,46 +66,48 @@ struct MediaModalView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            Menu {
-                Button {
-                    Task {
-                        await database?.sendRating(rating: nil, media: media)
-                        await database?.fetchPersonalRating(media: media) { rating in
-                            personalRating = rating
-                        }
-                    }
-                } label: {
-                    Text("Clear Rating")
-                    Image(systemName: "star")
-                }
-                
-                Button {
-                    Task {
-                        if let db = database, let id = media.id {
-                            if isWatched {
-                                try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
-                            } else {
-                                try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
+            if isInMedia(mediaModels: mediaList.results, media: media) {
+                Menu {
+                    Button(role: .destructive) {
+                        Task {
+                            await database?.sendRating(rating: nil, media: media)
+                            await database?.fetchPersonalRating(media: media) { rating in
+                                personalRating = rating
                             }
-                            await database?.fetchIsWatched(media: media) { watched in
-                                isWatched = watched
-                            }
+                            await database?.setWatched(watched: false, media: media)
+                            isWatched = false
                         }
+                    } label: {
+                        Text("Reset")
+                        Image(systemName: "arrow.counterclockwise.circle")
                     }
+                    
+//                    Button {
+//                        Task {
+//                            if let db = database, let id = media.id {
+//                                if isWatched {
+//                                    try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
+//                                } else {
+//                                    try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
+//                                }
+//                                await database?.fetchIsWatched(media: media) { watched in
+//                                    isWatched = watched
+//                                }
+//                            }
+//                        }
+//                    } label: {
+//                        Text("Toggle Watched")
+//                        Image(systemName: "popcorn.circle")
+//                    }
                 } label: {
-                    Text("Toggle Watched")
-                    Image(systemName: "popcorn.circle")
+                    Image(systemName: "ellipsis.circle.fill")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .padding(10)
+                        .foregroundColor(Color.theme.genreText)
+                        .padding()
                 }
-            } label: {
-                Image(systemName: "ellipsis.circle.fill")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .padding(10)
-                    .foregroundColor(Color.theme.genreText)
-                    .padding()
             }
-            
-            
         }
         .onAppear {
             Task {

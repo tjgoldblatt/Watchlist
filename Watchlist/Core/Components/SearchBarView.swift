@@ -32,6 +32,29 @@ struct SearchBarView: View {
     
     var queryToCallWhenTyping: () -> Void
     
+    var mediaList: [Media] {
+        var mediaList: Set<Media> = []
+        switch homeVM.selectedTab {
+            case .movies:
+                for movieModel in movieList.results {
+                    if let media = homeVM.decodeData(with: movieModel.media) {
+                        mediaList.insert(media)
+                    }
+                }
+            case .tvShows:
+                for tvModel in tvList.results {
+                    if let media = homeVM.decodeData(with: tvModel.media) {
+                        mediaList.insert(media)
+                    }
+                }
+            case .explore:
+                for media in homeVM.results {
+                    mediaList.insert(media)
+                }
+        }
+        return Array(mediaList)
+    }
+    
     var body: some View {
         HStack {
             HStack {
@@ -87,7 +110,7 @@ struct SearchBarView: View {
                         }
                     })
                     .sheet(isPresented: $showFilterSheet) {
-                        FilterModalView(genresToFilter: homeVM.convertGenreIDToGenre(for: homeVM.selectedTab))
+                        FilterModalView(genresToFilter: homeVM.convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaList))
                             .presentationDetents([.large])
                             .presentationDragIndicator(.visible)
                     }
@@ -104,6 +127,7 @@ struct SearchBarView: View {
             .contentShape(RoundedRectangle(cornerRadius: 20))
             .background(Color.theme.secondary)
             .cornerRadius(20)
+            .onAppear { homeVM.getMediaWatchlists() }
         }
         .padding(.horizontal)
     }

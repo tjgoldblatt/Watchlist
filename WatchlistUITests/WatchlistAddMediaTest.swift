@@ -8,10 +8,11 @@
 import XCTest
 
 final class WatchlistAddMediaTest: XCTestCase {
-
+    let app = XCUIApplication()
+    
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-
+        
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
 
@@ -22,20 +23,39 @@ final class WatchlistAddMediaTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+    func testAddMovieFromExplore() throws {
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        app.tabBars["Tab Bar"].buttons["ExploreTab"].tap()
+        
+        app.textFields["Search for Movies or TV Shows..."].tap()
+        
+        let aKey = app.keys["A"]
+        aKey.tap()
+        
+        let vKey = app.keys["v"]
+        vKey.tap()
+        
+        let eKey = app.keys["e"]
+        eKey.tap()
+        
+        let nKey = app.keys["n"]
+        nKey.tap()
+        
+        let gKey = app.keys["g"]
+        gKey.tap()
+        
+        app/*@START_MENU_TOKEN@*/.collectionViews/*[[".otherElements[\"ExploreTab\"].collectionViews",".collectionViews"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.children(matching: .cell).element(boundBy: 0).staticTexts["Add"].tap()
+        app/*@START_MENU_TOKEN@*/.buttons["search"]/*[[".keyboards",".buttons[\"search\"]",".buttons[\"Search\"]"],[[[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.tap()
+        app.tabBars["Tab Bar"].buttons["MovieTab"].tap()
     }
+    
+    func testMarkAsWatchedAndRate() throws {
+        
+        let app = XCUIApplication()
+        app.tabBars["Tab Bar"]/*@START_MENU_TOKEN@*/.buttons["MovieTab"]/*[[".buttons[\"popcorn.fill\"]",".buttons[\"MovieTab\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        app.collectionViews.cells.children(matching: .other).element(boundBy: 1).children(matching: .other).element.tap()
 
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+        
     }
 }

@@ -127,15 +127,13 @@ struct TVShowTabView: View {
     }
     
     var searchResults: [MediaModel] {
-        let groupedMedia = homeVM.groupMedia(mediaModel: tvList.results)
-        if homeVM.watchSelected != "Any" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = groupedMedia
+        let groupedMedia = homeVM.groupMedia(mediaModel: tvList.results).filter({ !$0.watched })
+        if homeVM.watchSelected != "Unwatched" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+            var filteredMedia = homeVM.groupMedia(mediaModel: tvList.results)
             
             /// Watched Filter
             if homeVM.watchSelected == "Watched" {
                 filteredMedia = filteredMedia.filter({ $0.watched })
-            } else if homeVM.watchSelected == "Unwatched" {
-                filteredMedia = filteredMedia.filter({ !$0.watched })
             }
             
             /// Genre Filter
