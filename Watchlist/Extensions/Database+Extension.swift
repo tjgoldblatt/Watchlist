@@ -54,7 +54,7 @@ extension Blackbird.Database {
     }
     
     // MARK: - UI Changes on Main Thread
-    @MainActor
+//    @MainActor
     func fetchIsWatched(media: Media, completionHandler: @escaping (Bool) -> Void) async {
         guard let id = media.id else { return }
         
@@ -73,7 +73,7 @@ extension Blackbird.Database {
         }
     }
     
-    @MainActor
+//    @MainActor
     func fetchPersonalRating(media: Media, completionHandler: @escaping (Double?) -> Void) async {
         guard let id = media.id else { return }
         

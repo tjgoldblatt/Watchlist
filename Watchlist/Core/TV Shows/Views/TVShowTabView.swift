@@ -63,7 +63,7 @@ struct TVShowTabView: View {
                                 EmptyView()
                                     .id(Self.topID)
                                 
-                                ForEach(searchResults) { post in
+                                ForEach(sortedSearchResults) { post in
                                     if let tvShow = homeVM.decodeData(with: post.media) {
                                         rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
                                             .allowsHitTesting(homeVM.editMode == .inactive)
@@ -129,7 +129,7 @@ struct TVShowTabView: View {
     var searchResults: [MediaModel] {
         let groupedMedia = homeVM.groupMedia(mediaModel: tvList.results).filter({ !$0.watched })
         if homeVM.watchSelected != "Unwatched" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = homeVM.groupMedia(mediaModel: tvList.results)
+            var filteredMedia = homeVM.groupMedia(mediaModel: tvList.results).sorted(by: { !$0.watched && $1.watched })
             
             /// Watched Filter
             if homeVM.watchSelected == "Watched" {
@@ -164,6 +164,23 @@ struct TVShowTabView: View {
         } else {
             let filteredMedia = groupedMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
             return !filteredMedia.isEmpty ? filteredMedia : groupedMedia
+        }
+    }
+    
+    var sortedSearchResults: [MediaModel] {
+        return searchResults.sorted { MM1, MM2 in
+            if let media1 = homeVM.decodeData(with: MM1.media), let media2 = homeVM.decodeData(with: MM2.media) {
+                if homeVM.sortingSelected == "Rating (High to Low)" {
+                    if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                        return voteAverage1 > voteAverage2
+                    }
+                } else if homeVM.sortingSelected == "Rating (Low to High)" {
+                    if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                        return voteAverage1 < voteAverage2
+                    }
+                }
+            }
+            return false
         }
     }
 }

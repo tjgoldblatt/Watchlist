@@ -30,7 +30,7 @@ struct ExploreRowView: View {
     
     var body: some View {
         HStack(alignment: .center) {
-            ThumbnailView(imagePath: "\(rowContent.posterPath)", frameHeight: 70)
+            ThumbnailView(imagePath: "\(rowContent.posterPath)", frameHeight: 80)
             
             centerColumn
             
@@ -81,7 +81,6 @@ extension ExploreRowView {
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(Color.theme.text)
                 .lineLimit(2)
-                .frame(alignment: .top)
             
             if let genres = rowContent.genres {
                 HStack {
@@ -93,6 +92,7 @@ extension ExploreRowView {
                 }
             }
         }
+        .frame(maxHeight: 75)
     }
         
     var rightColumn: some View {

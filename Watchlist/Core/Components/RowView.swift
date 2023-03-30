@@ -41,6 +41,11 @@ struct RowView: View {
                     personalRating = rating
                     homeVM.getMediaWatchlists()
                 }
+                
+                await database?.setWatched(watched: true, media: media)
+                await database?.fetchIsWatched(media: media) { watched in
+                    isWatched = watched
+                }
             }
         }) {
             RatingModalView(media: media)
@@ -62,7 +67,9 @@ struct RowView: View {
             MediaModalView(mediaDetails: rowContent, media: media)
         }
         .swipeActions(edge: .trailing) {
-            mediaTabSwipeAction
+            if !isWatched {
+                swipeActionToSetWatched
+            }
         }
         .onAppear {
             Task {
@@ -137,13 +144,22 @@ extension RowView {
         }
     }
     
-    private var mediaTabSwipeAction: some View {
+    private var swipeActionToSetWatched: some View {
+        Button {
+            if personalRating == nil {
+                showRatingSheet = true
+            }
+        } label: {
+            Image(systemName: "film.stack")
+        }
+        .tint(Color.blue)
+        .accessibilityIdentifier("MediaSwipeAction")
+    }
+    
+    private var swipeActionToSetUnwatched: some View {
         Button {
             Task {
-                if !isWatched && personalRating == nil {
-                    showRatingSheet = true
-                }
-                await database?.setWatched(watched: !isWatched, media: media)
+                await database?.setWatched(watched: false, media: media)
                 await database?.fetchIsWatched(media: media) { watched in
                     isWatched = watched
                 }
@@ -151,7 +167,7 @@ extension RowView {
         } label: {
             Image(systemName: "film.stack")
         }
-        .tint(Color.theme.secondary)
+        .tint(Color.green)
         .accessibilityIdentifier("MediaSwipeAction")
     }
     
@@ -166,20 +182,50 @@ extension RowView {
 struct ThumbnailView: View {
     @State var imagePath: String
     @State var frameHeight: CGFloat = 120
+    var frameWidth: CGFloat {
+        return frameHeight * 0.70
+    }
+    
     var body: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { image in
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    
-                )
-                .frame(height: frameHeight)
-                .padding(.trailing, 5)
-                .shadow(color: Color.black.opacity(0.2), radius: 10)
-        } placeholder: {
-            ProgressView()
-        }
+        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { phase in
+            if let image = phase.image {
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .clipShape(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        
+                    )
+                    .padding(.trailing, 5)
+                    .shadow(color: Color.black.opacity(0.2), radius: 10)
+            } else if phase.error != nil {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundColor(Color.theme.secondary)
+                    .padding(.trailing, 5)
+                    .shadow(color: Color.black.opacity(0.2), radius: 10)
+                    .frame(width: frameWidth)
+                    .overlay(alignment: .center) {
+                        Image(systemName: "photo")
+                            .resizable()
+                            .foregroundColor(Color.theme.red)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: frameWidth/2)
+                            .offset(x: -2)
+                    }
+            } else {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundColor(Color.theme.secondary)
+                    .padding(.trailing, 5)
+                    .shadow(color: Color.black.opacity(0.2), radius: 10)
+                    .frame(width: frameWidth)
+                    .overlay(alignment: .center) {
+                        ProgressView()
+                            .foregroundColor(Color.theme.text)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: frameWidth/2)
+                            .offset(x: -2)
+                    }
+            }
+        }.frame(height: frameHeight)
     }
 }

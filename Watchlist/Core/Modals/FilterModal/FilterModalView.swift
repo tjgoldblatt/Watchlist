@@ -22,6 +22,8 @@ struct FilterModalView: View {
     
     @State var screenWidth: CGFloat = 0
     
+    @State var sortingOptions = ["Alphabetical", "Rating (High to Low)", "Rating (Low to High)"]
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -59,9 +61,15 @@ struct FilterModalView: View {
                         
                         
                         VStack(spacing: 20) {
-                            Text("Alphabetical")
-                            Text("Rating (High to Low)")
-                            Text("Rating (Low to High)")
+                            ForEach(sortingOptions, id: \.self) { option in
+                                Text(option)
+                                    .fontWeight(homeVM.sortingSelected == option ? .semibold : .medium)
+                                    .foregroundColor(homeVM.sortingSelected == option ? Color.theme.red : Color.theme.text)
+                                    .onTapGesture {
+                                        homeVM.sortingSelected = option
+                                        dismiss()
+                                    }
+                            }
                         }
                     }
                     .padding(.bottom, 50)

@@ -40,6 +40,7 @@ class HomeViewModel: ObservableObject {
     @Published var genresSelected: Set<Genre> = []
     @Published var ratingSelected: Int = 0
     @Published var watchSelected: String = "Unwatched"
+    @Published var sortingSelected: String = "Alphabetical"
     
     init() {
         Task {
