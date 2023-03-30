@@ -14,7 +14,7 @@ extension Blackbird.Database {
         do {
             try await model.write(to: self)
         } catch {
-            debugPrint(error)
+            print("[🔥] \(error)")
         }
     }
     
@@ -54,7 +54,7 @@ extension Blackbird.Database {
     }
     
     // MARK: - UI Changes on Main Thread
-    @MainActor
+//    @MainActor
     func fetchIsWatched(media: Media, completionHandler: @escaping (Bool) -> Void) async {
         guard let id = media.id else { return }
         
@@ -69,11 +69,11 @@ extension Blackbird.Database {
             let watched = try result.get()
             completionHandler(watched)
         } catch let error {
-            debugPrint(error)
+            print("[🔥] \(error)")
         }
     }
     
-    @MainActor
+//    @MainActor
     func fetchPersonalRating(media: Media, completionHandler: @escaping (Double?) -> Void) async {
         guard let id = media.id else { return }
         
@@ -88,7 +88,7 @@ extension Blackbird.Database {
             let rating = try result.get()
             completionHandler(rating)
         } catch let error {
-            debugPrint(error)
+            print("[🔥] \(error)")
         }
     }
     
@@ -100,7 +100,20 @@ extension Blackbird.Database {
                 mediaModel.personalRating = rating
                 await upsert(model: mediaModel)
             } catch let error {
-                debugPrint(error)
+                print("[🔥] \(error)")
+            }
+        }
+    }
+    
+    @MainActor
+    func toggleWatched(watched: Bool, media: Media) async {
+        if let id = media.id {
+            do {
+                guard var mediaModel = try await MediaModel.read(from: self, id: id) else { return }
+                mediaModel.watched = watched
+                await upsert(model: mediaModel)
+            } catch let error {
+                print("[🔥] \(error)")
             }
         }
     }

@@ -57,24 +57,29 @@ class HomeViewModel: ObservableObject {
         })
     }
     
+    @MainActor
     func getMediaWatchlists() {
         Task {
+            var newTVWatchList: [Media] = []
+            var newMovieWatchList: [Media] = []
             guard let database else { return }
             let tvMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == MediaType.tv.rawValue, orderBy: .ascending(\.$title))
             for model in tvMediaModel {
                 let tvShow = decodeData(with: model.media)
-                if let tvShow {
-                    tvWatchlist.append(tvShow)
+                if let tvShow, !tvWatchlist.contains(tvShow) {
+                    newTVWatchList.append(tvShow)
                 }
             }
             
             let movieMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == MediaType.movie.rawValue, orderBy: .ascending(\.$title))
             for model in movieMediaModel {
                 let movie = decodeData(with: model.media)
-                if let movie {
-                    movieWatchlist.append(movie)
+                if let movie, !movieWatchlist.contains(movie) {
+                    newMovieWatchList.append(movie)
                 }
             }
+            tvWatchlist = newTVWatchList
+            movieWatchlist = newMovieWatchList
         }
     }
     

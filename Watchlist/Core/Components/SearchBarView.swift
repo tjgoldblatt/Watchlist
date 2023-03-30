@@ -72,7 +72,7 @@ struct SearchBarView: View {
                                     searchText = ""
                                     isTyping = false
                                 }
-                        } else {
+                        } else if shouldShowFilterButton {
                             Image(systemName: "slider.horizontal.3")
                                 .resizable()
                                 .scaledToFit()
@@ -81,18 +81,16 @@ struct SearchBarView: View {
                                 .offset(x: 15)
                                 .foregroundColor(Color.theme.red)
                                 .opacity(!isKeyboardShowing ? 1.0 : 0.0)
-                                .onTapGesture { showFilterSheet.toggle() }
+                                .onTapGesture {
+                                    showFilterSheet.toggle()
+                                }
                         }
                     })
-                    .sheet(isPresented: $showFilterSheet, onDismiss: {
-                        homeVM.watchSelected = "Any"
-                        homeVM.genresSelected = []
-                        homeVM.ratingSelected = nil
-                    }, content: {
-                        FilterModalView(selectedTab: currentTab, genresToFilter: homeVM.convertGenreIDToGenre(for: currentTab))
+                    .sheet(isPresented: $showFilterSheet) {
+                        FilterModalView(genresToFilter: homeVM.convertGenreIDToGenre(for: homeVM.selectedTab))
                             .presentationDetents([.large])
                             .presentationDragIndicator(.visible)
-                    })
+                    }
                     .submitLabel(.search)
                     .onChange(of: searchText) { newValue in
                         if(!searchText.isEmpty) {
@@ -109,12 +107,41 @@ struct SearchBarView: View {
         }
         .padding(.horizontal)
     }
+    
+    var shouldShowFilterButton: Bool {
+        switch homeVM.selectedTab {
+            case .tvShows:
+                return !tvList.results.isEmpty
+            case .movies:
+                return movieList.results.count > 1
+            case .explore:
+                return !homeVM.results.isEmpty
+        }
+    }
+        
 }
 
 struct SearchBarView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBarView(searchText: .constant(""), currentTab: .constant(Tab.movies), genres: ["Action"]) {
+        SearchBarView(searchText: .constant(""), genres: ["Action"]) {
             //
         }
+    }
+}
+
+extension View {
+    var keyboardPublisher: AnyPublisher<Bool, Never> {
+        Publishers
+            .Merge(
+                NotificationCenter
+                    .default
+                    .publisher(for: UIResponder.keyboardWillShowNotification)
+                    .map { _ in true },
+                NotificationCenter
+                    .default
+                    .publisher(for: UIResponder.keyboardWillHideNotification)
+                    .map { _ in false })
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 }

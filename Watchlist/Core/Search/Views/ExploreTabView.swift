@@ -63,7 +63,7 @@ extension ExploreTabView {
     }
     
     var searchBar: some View {
-        SearchBarView(searchText: $homeVM.searchText, currentTab: .constant(Tab.explore), genres: ["Action", "Science Fiction"]) {
+        SearchBarView(searchText: $homeVM.searchText, genres: ["Action", "Science Fiction"]) {
             Task {
                 await vm.search()
             }
@@ -75,7 +75,7 @@ extension ExploreTabView {
         if !vm.isSearching {
             return AnyView(
                 List {
-                    ForEach(homeVM.results, id: \.id) { media in
+                    ForEach(sortedSearchResults, id: \.id) { media in
                         rowViewManager.createRowView(media: media, tab: .explore)
                     }
                     .listRowBackground(Color.clear)
@@ -89,6 +89,26 @@ extension ExploreTabView {
             )
         } else {
             return AnyView(ProgressView())
+        }
+    }
+    var sortedSearchResults: [Media] {
+        let groupedMedia = homeVM.results
+        if homeVM.watchSelected != "Any" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+            var filteredMedia = groupedMedia
+            
+            if !homeVM.genresSelected.isEmpty {
+                filteredMedia = filteredMedia.filter { media in
+                    guard let genreIDs = media.genreIDS else { return false }
+                    for selectedGenre in homeVM.genresSelected {
+                        return genreIDs.contains(selectedGenre.id)
+                    }
+                    return false
+                }
+            }
+            return filteredMedia
+            
+        } else {
+            return groupedMedia
         }
     }
 }

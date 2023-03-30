@@ -19,8 +19,8 @@ struct FilterModalView: View {
     let watchOptions = ["Any", "Watched", "Unwatched"]
     
     @State var showWatchedModal = false
-    @State var showGenreModal = false
-    @State var showRatingModal = false
+    
+    @State var screenWidth: CGFloat = 0
     
     var body: some View {
         NavigationStack {
@@ -72,7 +72,7 @@ struct FilterModalView: View {
                             dismiss()
                             homeVM.watchSelected = "Any"
                             homeVM.genresSelected = []
-                            homeVM.ratingSelected = nil
+                            homeVM.ratingSelected = 0
                         }
                         .foregroundColor(Color.theme.genreText)
                         .frame(width: 100, height: 40)
@@ -129,20 +129,18 @@ extension FilterModalView {
                         }
                 }
             }
-            .padding()
+            .padding(.bottom)
         }
     }
     
-    var genreFilter: some View {
+    private var genreFilter: some View {
         VStack {
             Text("Genres")
                 .font(.title3)
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
-            
-            
-            GeometryReader { geo in
-                FlexibleView(availableWidth: geo.size.width, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
+                  
+                FlexibleView(availableWidth: screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 20, alignment: .center) { genreOption in
                     Text(genreOption.name)
                         .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.text.opacity(0.6))
                         .font(.subheadline)
@@ -165,9 +163,23 @@ extension FilterModalView {
                             }
                         }
                 }
-            }
-            .padding(.horizontal)
+                .readSize { newSize in
+                    screenWidth = newSize.width
+                }
         }
+    }
+    
+    private var ratingFilter: some View {
+        VStack {
+            Text("Rating")
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundColor(Color.theme.text)
+                .padding(.bottom)
+            
+            StarsView(rating: $homeVM.ratingSelected)
+        }
+        .padding(.vertical)
     }
     
     func sortedGenreList(genresToFilter: [Genre]) -> [Genre] {
@@ -175,22 +187,6 @@ extension FilterModalView {
             .sorted(by: { genre1, genre2 in
                 genre1.name.lowercased() < genre2.name.lowercased()
             })
-    }
-}
-
-struct FilterOptionRow: View {
-    @State var title: String
-    @State var isSelected: Bool
-    var body: some View {
-        HStack {
-            Text(title)
-                .padding(.trailing)
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .foregroundColor(Color.theme.red)
-            }
-        }
-        .contentShape(Rectangle())
     }
 }
 
@@ -208,6 +204,7 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
         VStack(alignment: alignment, spacing: spacing) {
             ForEach(computeRows(), id: \.self) { rowElements in
                 HStack(spacing: spacing) {
+                    Spacer()
                     ForEach(rowElements, id: \.self) { element in
                         content(element)
                             .fixedSize()
@@ -215,6 +212,7 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
                                 elementsSize[element] = size
                             }
                     }
+                    Spacer()
                 }
             }
         }

@@ -34,11 +34,11 @@ struct RowView: View {
             
             rightColumn
         }
-        // TODO: Show rating sheet when swiping to mark as Watched
         .sheet(isPresented: $showRatingSheet, onDismiss: {
             Task {
                 await database?.fetchPersonalRating(media: media) { rating in
                     personalRating = rating
+                    homeVM.getMediaWatchlists()
                 }
             }
         }) {
@@ -55,6 +55,7 @@ struct RowView: View {
                 await database?.fetchIsWatched(media: media) { watched in
                     isWatched = watched
                 }
+                homeVM.getMediaWatchlists()
             }
         }) {
             MediaModalView(mediaDetails: rowContent, media: media)
@@ -138,19 +139,13 @@ extension RowView {
     private var mediaTabSwipeAction: some View {
         Button {
             if !isWatched && personalRating == nil {
-                showRatingSheet = true
+                showRatingSheet.toggle()
             }
             
             Task {
-                if let db = database, let id = media.id {
-                    if isWatched {
-                        try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
-                    } else {
-                        try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
-                    }
-                    await database?.fetchIsWatched(media: media, completionHandler: { watched in
-                        isWatched = watched
-                    })
+                await database?.toggleWatched(watched: !isWatched, media: media)
+                await database?.fetchIsWatched(media: media) { watched in
+                    isWatched = watched
                 }
             }
         } label: {

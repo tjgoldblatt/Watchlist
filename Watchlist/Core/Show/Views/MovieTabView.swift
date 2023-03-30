@@ -100,8 +100,8 @@ struct MovieTabView: View {
                                 Button("Delete", role: .destructive) {
                                     for id in selectedRows {
                                         database?.deleteMediaByID(id: id)
-                                        homeVM.editMode = .inactive
                                     }
+                                    homeVM.editMode = .inactive
                                 }
                                 
                                 Button("Cancel", role: .cancel) {}
@@ -126,7 +126,40 @@ struct MovieTabView: View {
     
     var searchResults: [MediaModel] {
         let groupedMedia = homeVM.groupMedia(mediaModel: movieList.results)
-        if vm.filterText.isEmpty {
+        if homeVM.watchSelected != "Any" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+            var filteredMedia = groupedMedia
+            
+            /// Watched Filter
+            if homeVM.watchSelected == "Watched" {
+                filteredMedia = filteredMedia.filter({ $0.watched })
+            } else if homeVM.watchSelected == "Unwatched" {
+                filteredMedia = filteredMedia.filter({ !$0.watched })
+            }
+            
+            /// Genre Filter
+            if !homeVM.genresSelected.isEmpty {
+                filteredMedia = filteredMedia.filter { media in
+                    guard let genreIDs = media.genreIDs else { return false }
+                    for selectedGenre in homeVM.genresSelected {
+                        return genreIDs.contains("\(selectedGenre.id)")
+                    }
+                    return false
+                }
+            }
+            
+            /// Rating Filter
+            filteredMedia = filteredMedia.filter { mediaModel in
+                if let media = homeVM.decodeData(with: mediaModel.media) {
+                    if let voteAverage = media.voteAverage {
+                        return voteAverage > Double(homeVM.ratingSelected)
+                    }
+                }
+                return false
+            }
+            
+            return filteredMedia
+            
+        } else if vm.filterText.isEmpty {
             return groupedMedia
         } else {
             let filteredMedia = groupedMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
