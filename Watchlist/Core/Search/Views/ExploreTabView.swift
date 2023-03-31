@@ -35,7 +35,7 @@ struct ExploreTabView: View {
                     
                     searchBar
                     
-                    searchResults
+                    searchResultsView
                     
                     Spacer()
                 }
@@ -71,7 +71,7 @@ extension ExploreTabView {
         .padding(.bottom)
     }
     
-    var searchResults: some View {
+    var searchResultsView: some View {
         if !vm.isSearching {
             return AnyView(
                 List {
@@ -91,7 +91,7 @@ extension ExploreTabView {
             return AnyView(ProgressView())
         }
     }
-    var sortedSearchResults: [Media] {
+    var searchResults: [Media] {
         let groupedMedia = homeVM.results
         if !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = groupedMedia
@@ -120,5 +120,21 @@ extension ExploreTabView {
         } else {
             return groupedMedia
         }
+    }
+    
+    var sortedSearchResults: [Media] {
+        return searchResults.sorted { media1, media2 in
+            if homeVM.sortingSelected == "Rating (High to Low)" {
+                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                    return voteAverage1 > voteAverage2
+                }
+            } else if homeVM.sortingSelected == "Rating (Low to High)" {
+                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                    return voteAverage1 < voteAverage2
+                }
+            }
+            return false
+        }
+        
     }
 }

@@ -81,24 +81,6 @@ struct MediaModalView: View {
                         Text("Reset")
                         Image(systemName: "arrow.counterclockwise.circle")
                     }
-                    
-//                    Button {
-//                        Task {
-//                            if let db = database, let id = media.id {
-//                                if isWatched {
-//                                    try await MediaModel.update(in: db, set: [\.$watched : false], matching: \.$id == id)
-//                                } else {
-//                                    try await MediaModel.update(in: db, set: [\.$watched : true], matching: \.$id == id)
-//                                }
-//                                await database?.fetchIsWatched(media: media) { watched in
-//                                    isWatched = watched
-//                                }
-//                            }
-//                        }
-//                    } label: {
-//                        Text("Toggle Watched")
-//                        Image(systemName: "popcorn.circle")
-//                    }
                 } label: {
                     Image(systemName: "ellipsis.circle.fill")
                         .font(.title2)
@@ -243,7 +225,7 @@ extension MediaModalView {
             Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
                 .font(.system(size: 18))
                 .fontWeight(.medium)
-                .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.genreText)
+                .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.text)
                 .padding(.vertical, 10)
                 .padding(.horizontal)
                 .background {

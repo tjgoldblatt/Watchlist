@@ -22,6 +22,8 @@ struct FilterModalView: View {
     
     @State var screenWidth: CGFloat = 0
     
+    @State var sortingOptions = ["Alphabetical", "Rating (High to Low)", "Rating (Low to High)"]
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -59,9 +61,15 @@ struct FilterModalView: View {
                         
                         
                         VStack(spacing: 20) {
-                            Text("Alphabetical")
-                            Text("Rating (High to Low)")
-                            Text("Rating (Low to High)")
+                            ForEach(sortingOptions, id: \.self) { option in
+                                Text(option)
+                                    .fontWeight(homeVM.sortingSelected == option ? .semibold : .medium)
+                                    .foregroundColor(homeVM.sortingSelected == option ? Color.theme.red : Color.theme.text)
+                                    .onTapGesture {
+                                        homeVM.sortingSelected = option
+                                        dismiss()
+                                    }
+                            }
                         }
                     }
                     .padding(.bottom, 50)
@@ -138,33 +146,33 @@ extension FilterModalView {
                 .font(.title3)
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
-                  
-                FlexibleView(availableWidth: screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
-                    Text(genreOption.name)
-                        .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.text.opacity(0.6))
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .fixedSize(horizontal: true, vertical: true)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal)
-                        .background {
-                            Capsule()
-                                .strokeBorder(homeVM.genresSelected.contains(genreOption) ? Color.clear : Color.theme.secondary, lineWidth: 2)
-                            Capsule()
-                                .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.red : Color.clear)
+            
+            FlexibleView(availableWidth: screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
+                Text(genreOption.name)
+                    .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.text.opacity(0.6))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .fixedSize(horizontal: true, vertical: true)
+                    .padding(.vertical, 5)
+                    .padding(.horizontal)
+                    .background {
+                        Capsule()
+                            .strokeBorder(homeVM.genresSelected.contains(genreOption) ? Color.clear : Color.theme.secondary, lineWidth: 2)
+                        Capsule()
+                            .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.red : Color.clear)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if !homeVM.genresSelected.contains(genreOption) {
+                            homeVM.genresSelected.insert(genreOption)
+                        } else {
+                            homeVM.genresSelected.remove(genreOption)
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            if !homeVM.genresSelected.contains(genreOption) {
-                                homeVM.genresSelected.insert(genreOption)
-                            } else {
-                                homeVM.genresSelected.remove(genreOption)
-                            }
-                        }
-                }
-                .readSize { newSize in
-                    screenWidth = newSize.width
-                }
+                    }
+            }
+            .readSize { newSize in
+                screenWidth = newSize.width
+            }
         }
     }
     
