@@ -102,6 +102,7 @@ extension ExploreRowView {
         Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
             .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.genreText)
             .font(.subheadline)
+            .fontWeight(.medium)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background {

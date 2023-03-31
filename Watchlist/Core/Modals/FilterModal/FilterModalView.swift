@@ -30,10 +30,10 @@ struct FilterModalView: View {
             ZStack {
                 Color.theme.background.ignoresSafeArea()
                 
-                VStack {
+                VStack(alignment: .center) {
                     VStack {
                         Text("FILTERS")
-                            .font(.subheadline)
+                            .font(.footnote)
                             .fontWeight(.semibold)
                             .foregroundColor(Color.theme.text.opacity(0.6))
                             .padding(.vertical)
@@ -50,12 +50,11 @@ struct FilterModalView: View {
                             ratingFilter
                         }
                     }
-                    
-                    Spacer()
+                    .padding()
                     
                     VStack {
                         Text("SORTING")
-                            .font(.subheadline)
+                            .font(.footnote)
                             .fontWeight(.semibold)
                             .foregroundColor(Color.theme.text.opacity(0.6))
                             .padding(.bottom)
@@ -73,7 +72,7 @@ struct FilterModalView: View {
                             }
                         }
                     }
-                    .padding(.bottom, 50)
+                    .padding()
                     
                     Spacer()
                     HStack(spacing: 40) {
@@ -82,7 +81,8 @@ struct FilterModalView: View {
                             homeVM.genresSelected = []
                             homeVM.ratingSelected = 0
                         }
-                        .foregroundColor(Color.theme.genreText)
+                        .foregroundColor(Color.theme.red)
+                        .fontWeight(.medium)
                         .frame(width: 100, height: 40)
                         .background(Color.theme.secondary)
                         .cornerRadius(10)
@@ -92,10 +92,12 @@ struct FilterModalView: View {
                             dismiss()
                         }
                             .foregroundColor(Color.theme.genreText)
+                            .fontWeight(.medium)
                             .frame(width: 100, height: 40)
                             .background(Color.theme.red)
                             .cornerRadius(10)
                     }
+                    .padding()
                 }
                 .padding()
             }
@@ -109,7 +111,7 @@ struct FilterModalView: View {
 
 struct FilterModalView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterModalView(genresToFilter: [Genre(id: 1, name: "Adventure"), Genre(id: 1, name: "Action"), Genre(id: 1, name: "Science Fiction"), Genre(id: 1, name: "Fantasy")])
+        FilterModalView(genresToFilter: [Genre(id: 1, name: "Adventure"), Genre(id: 2, name: "Action"), Genre(id: 3, name: "Science Fiction"), Genre(id: 4, name: "Fantasy"), Genre(id: 5, name: "Thriller")])
             .environmentObject(dev.homeVM)
     }
 }
@@ -193,7 +195,6 @@ extension FilterModalView {
             
             StarsView(rating: $homeVM.ratingSelected)
         }
-        .padding(.vertical)
     }
     
     func sortedGenreList(genresToFilter: [Genre]) -> [Genre] {

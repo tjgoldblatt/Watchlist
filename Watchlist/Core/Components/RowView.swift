@@ -198,12 +198,12 @@ struct ThumbnailView: View {
                         
                     )
                     .padding(.trailing, 5)
-                    .shadow(color: Color.black.opacity(0.2), radius: 10)
+                    .shadow(color: Color.black.opacity(0.2), radius: 5)
             } else if phase.error != nil {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundColor(Color.theme.secondary)
                     .padding(.trailing, 5)
-                    .shadow(color: Color.black.opacity(0.2), radius: 10)
+                    .shadow(color: Color.black.opacity(0.2), radius: 5)
                     .frame(width: frameWidth)
                     .overlay(alignment: .center) {
                         Image(systemName: "photo")
@@ -217,7 +217,7 @@ struct ThumbnailView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundColor(Color.theme.secondary)
                     .padding(.trailing, 5)
-                    .shadow(color: Color.black.opacity(0.2), radius: 10)
+                    .shadow(color: Color.black.opacity(0.2), radius: 5)
                     .frame(width: frameWidth)
                     .overlay(alignment: .center) {
                         ProgressView()

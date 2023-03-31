@@ -18,10 +18,11 @@ struct GenreView: View {
     
     var body: some View {
         Text(genreName)
-            .foregroundColor(Color.theme.text)
+            .foregroundColor(Color.theme.red)
             .font(.system(size: size, design: .default))
-            .padding(.vertical, 3)
-            .padding(.horizontal, 10)
+            .fontWeight(.semibold)
+            .padding(.vertical, 5)
+            .padding(.horizontal)
             .background {
                 Capsule()
                     .fill(Color.theme.secondary)

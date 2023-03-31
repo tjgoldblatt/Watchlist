@@ -58,7 +58,8 @@ struct MediaModalView: View {
                 dismiss()
             } label: {
                 Image(systemName: "xmark")
-                    .font(.title2)
+                    .resizable()
+                    .frame(width: 20, height: 20)
                     .fontWeight(.semibold)
                     .padding(10)
                     .foregroundColor(Color.theme.genreText)
@@ -83,7 +84,8 @@ struct MediaModalView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle.fill")
-                        .font(.title2)
+                        .resizable()
+                        .frame(width: 25, height: 25)
                         .fontWeight(.semibold)
                         .padding(10)
                         .foregroundColor(Color.theme.genreText)
@@ -236,7 +238,7 @@ extension MediaModalView {
                 .padding(.horizontal)
                 .background {
                     RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.secondary.opacity(0.5) : Color.theme.red)
+                        .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.secondary : Color.theme.red)
                         .frame(width: 80, height: 30)
                 }
         }
