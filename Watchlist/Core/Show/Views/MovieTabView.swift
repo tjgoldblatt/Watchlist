@@ -151,21 +151,26 @@ struct MovieTabView: View {
     var searchResults: [MediaModel] {
         let groupedMedia = homeVM.groupMedia(mediaModel: movieList.results).filter({ !$0.watched })
         if homeVM.watchSelected != "Unwatched" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = homeVM.groupMedia(mediaModel: movieList.results).sorted(by: { !$0.watched && $1.watched })
+            var filteredMedia = homeVM.groupMedia(mediaModel: movieList.results)
             
             /// Watched Filter
             if homeVM.watchSelected == "Watched" {
                 filteredMedia = filteredMedia.filter({ $0.watched })
+            } else if homeVM.watchSelected == "Any" {
+                filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
             }
             
             /// Genre Filter
             if !homeVM.genresSelected.isEmpty {
                 filteredMedia = filteredMedia.filter { media in
                     guard let genreIDs = media.genreIDs else { return false }
+                    var genreFound = false
                     for selectedGenre in homeVM.genresSelected {
-                        return genreIDs.contains("\(selectedGenre.id)")
+                        if genreIDs.contains("\(selectedGenre.id)") && genreFound != true {
+                            genreFound = true
+                        }
                     }
-                    return false
+                    return genreFound
                 }
             }
             

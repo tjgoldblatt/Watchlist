@@ -205,9 +205,15 @@ extension MediaModalView {
         }
         .sheet(isPresented: $showingRating, onDismiss: {
             Task {
-                await database?.fetchPersonalRating(media: media, completionHandler: { rating in
+                await database?.fetchPersonalRating(media: media) { rating in
                     personalRating = rating
-                })
+                }
+                if personalRating != nil {
+                    await database?.setWatched(watched: true, media: media)
+                    await database?.fetchIsWatched(media: media) { watched in
+                        isWatched = watched
+                    }
+                }
             }
         }) {
             RatingModalView(media: media)
@@ -225,7 +231,7 @@ extension MediaModalView {
             Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
                 .font(.system(size: 18))
                 .fontWeight(.medium)
-                .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.text)
+                .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.genreText)
                 .padding(.vertical, 10)
                 .padding(.horizontal)
                 .background {
