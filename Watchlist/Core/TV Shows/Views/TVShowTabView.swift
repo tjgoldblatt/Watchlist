@@ -74,7 +74,7 @@ struct TVShowTabView: View {
                             }
                             .toolbar {
                                 ToolbarItemGroup {
-                                    if !tvList.results.isEmpty {
+                                    if !sortedSearchResults.isEmpty {
                                         EditButton()
                                             .foregroundColor(Color.theme.red)
                                     } else {

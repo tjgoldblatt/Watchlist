@@ -72,11 +72,35 @@ struct MovieTabView: View {
                             }
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarTrailing) {
-                                    if movieList.results.count > 1 {
+                                    if sortedSearchResults.count > 1 {
                                         EditButton()
                                             .foregroundColor(Color.theme.red)
+                                            .padding()
+                                            .contentShape(Rectangle())
                                     } else {
                                         Text("")
+                                    }
+                                }
+                                
+                                if !selectedRows.isEmpty {
+                                    ToolbarItem(placement: .navigationBarLeading) {
+                                        Text("Reset")
+                                            .font(.body)
+                                            .foregroundColor(Color.theme.red)
+                                            .padding()
+                                            .onTapGesture {
+                                                Task {
+                                                    for id in selectedRows {
+                                                        for mediaModel in movieList.results.filter({ $0.id == id }) {
+                                                            if let media = homeVM.decodeData(with: mediaModel.media) {
+                                                                await database?.sendRating(rating: nil, media: media)
+                                                                await database?.setWatched(watched: false, media: media)
+                                                            }
+                                                        }
+                                                    }
+                                                    homeVM.editMode = .inactive
+                                                }
+                                            }
                                     }
                                 }
                             }

@@ -41,10 +41,11 @@ struct RowView: View {
                     personalRating = rating
                     homeVM.getMediaWatchlists()
                 }
-                
-                await database?.setWatched(watched: true, media: media)
-                await database?.fetchIsWatched(media: media) { watched in
-                    isWatched = watched
+                if personalRating != nil {
+                    await database?.setWatched(watched: true, media: media)
+                    await database?.fetchIsWatched(media: media) { watched in
+                        isWatched = watched
+                    }
                 }
             }
         }) {
@@ -150,9 +151,9 @@ extension RowView {
                 showRatingSheet = true
             }
         } label: {
-            Image(systemName: "film.stack")
+            Image(systemName: "checkmark.circle")
         }
-        .tint(Color.blue)
+        .tint(Color.theme.secondary)
         .accessibilityIdentifier("MediaSwipeAction")
     }
     

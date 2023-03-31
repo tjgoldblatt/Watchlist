@@ -94,10 +94,10 @@ extension ExploreRowView {
         }
         .frame(maxHeight: 75)
     }
-        
+    
     var rightColumn: some View {
         Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
-            .foregroundColor(Color.theme.genreText)
+            .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.genreText : Color.theme.text)
             .font(.subheadline)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)

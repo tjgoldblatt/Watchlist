@@ -14,13 +14,13 @@ struct SearchBarView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     
     @Binding var searchText: String
-    @State var isTyping: Bool = false
+    
     @State var isKeyboardShowing: Bool = false
     
     @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.movie.rawValue, orderBy: .ascending(\.$title)) }) var movieList
     
     @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.tv.rawValue, orderBy: .ascending(\.$title)) }) var tvList
-
+    
     
     @State var showFilterSheet: Bool = false
     
@@ -66,23 +66,21 @@ struct SearchBarView: View {
                     .foregroundColor(Color.theme.text)
                     .font(.system(size: 16, design: .default))
                     .onReceive(keyboardPublisher) { value in
-                        isKeyboardShowing = value
-                        
                         withAnimation(.spring()) {
-                            if isKeyboardShowing {
-                                isTyping = true
-                            } else {
-                                isTyping = false
-                            }
+                            isKeyboardShowing = value
                         }
                     }
                     .onSubmit {
-                        isTyping = false
                         isKeyboardShowing = false
                         hideKeyboard()
                     }
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            isKeyboardShowing = true
+                        }
+                    }
                     .overlay(alignment: .trailing, content: {
-                        if isTyping {
+                        if isKeyboardShowing && !searchText.isEmpty {
                             Image(systemName: "xmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
@@ -90,10 +88,9 @@ struct SearchBarView: View {
                                 .padding()
                                 .offset(x: 15)
                                 .foregroundColor(Color.theme.text)
-                                .opacity(!isTyping ? 0.0 : 1.0)
+                                .opacity(!isKeyboardShowing ? 0.0 : 1.0)
                                 .onTapGesture {
                                     searchText = ""
-                                    isTyping = false
                                 }
                         } else if shouldShowFilterButton {
                             Image(systemName: "slider.horizontal.3")
@@ -142,7 +139,7 @@ struct SearchBarView: View {
                 return !homeVM.results.isEmpty
         }
     }
-        
+    
 }
 
 struct SearchBarView_Previews: PreviewProvider {

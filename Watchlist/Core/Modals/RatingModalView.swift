@@ -91,7 +91,10 @@ struct RatingModalView: View {
         }
         .overlay(alignment: .topLeading, content: {
             Button {
-                dismiss()
+                Task {
+                    await database?.sendRating(rating: Double(rating), media: media)
+                    dismiss()
+                }
             } label: {
                 Image(systemName: "xmark")
                     .font(.title2)

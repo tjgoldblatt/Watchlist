@@ -146,33 +146,33 @@ extension FilterModalView {
                 .font(.title3)
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
-                  
-                FlexibleView(availableWidth: screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
-                    Text(genreOption.name)
-                        .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.text.opacity(0.6))
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .fixedSize(horizontal: true, vertical: true)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal)
-                        .background {
-                            Capsule()
-                                .strokeBorder(homeVM.genresSelected.contains(genreOption) ? Color.clear : Color.theme.secondary, lineWidth: 2)
-                            Capsule()
-                                .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.red : Color.clear)
+            
+            FlexibleView(availableWidth: screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
+                Text(genreOption.name)
+                    .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.text.opacity(0.6))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .fixedSize(horizontal: true, vertical: true)
+                    .padding(.vertical, 5)
+                    .padding(.horizontal)
+                    .background {
+                        Capsule()
+                            .strokeBorder(homeVM.genresSelected.contains(genreOption) ? Color.clear : Color.theme.secondary, lineWidth: 2)
+                        Capsule()
+                            .foregroundColor(homeVM.genresSelected.contains(genreOption) ? Color.theme.red : Color.clear)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if !homeVM.genresSelected.contains(genreOption) {
+                            homeVM.genresSelected.insert(genreOption)
+                        } else {
+                            homeVM.genresSelected.remove(genreOption)
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            if !homeVM.genresSelected.contains(genreOption) {
-                                homeVM.genresSelected.insert(genreOption)
-                            } else {
-                                homeVM.genresSelected.remove(genreOption)
-                            }
-                        }
-                }
-                .readSize { newSize in
-                    screenWidth = newSize.width
-                }
+                    }
+            }
+            .readSize { newSize in
+                screenWidth = newSize.width
+            }
         }
     }
     
