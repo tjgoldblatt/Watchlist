@@ -20,99 +20,116 @@ struct RatingModalView: View {
     }
     
     var body: some View {
-        ZStack() {
-            if let posterPath {
-                ZStack {
-                    AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { image in
-                        image
-                            .resizable()
-                            .frame(height: UIScreen.main.bounds.height)
-                            .scaledToFit()
-                            .blur(radius: 40)
-                    } placeholder: {
-                        Color.theme.background
-                    }
-                    LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top)
-                }
-            } else {
-                Color.theme.background
-            }
-            
-            VStack(alignment: .center, spacing: 30) {
+        GeometryReader { geo in
+            ZStack(alignment: .center) {
                 if let posterPath {
-                    AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 300, alignment: .trailing)
+                    ZStack {
+                        Color.black.ignoresSafeArea()
                         
-                    } placeholder: {
-                        Color.theme.background
-                    }
-                    .overlay {
-                        rating > 0 ?
-                        ZStack {
-                            Color.black.opacity(0.9)
-                            
-                            Text("\(rating)")
-                                .font(.system(size: 90))
-                                .fontWeight(.light)
-                                .foregroundColor(Color.theme.genreText)
+                        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { image in
+                            image
+                                .resizable()
+                                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                                .scaledToFit()
+                                .blur(radius: 20)
+                        } placeholder: {
+                            Color.black
                         }
-                        : nil
+                        LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top)
                     }
-                    .cornerRadius(10)
+                    .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height)
+                } else {
+                    Color.theme.background
+                }
+                
+                VStack(alignment: .center) {
+                    if let posterPath {
+                        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 300, alignment: .trailing)
+                            
+                        } placeholder: {
+                            Color.theme.background
+                                .frame(width: 200, height: 300)
+                        }
+                        .overlay {
+                            rating > 0 ?
+                            ZStack {
+                                Color.black.opacity(0.9)
+                                
+                                Text("\(rating)")
+                                    .font(.system(size: 90))
+                                    .fontWeight(.light)
+                                    .foregroundColor(Color.theme.genreText)
+                            }
+                            : nil
+                        }
+                        .cornerRadius(10)
+                        .padding()
+                    }
+                    Text("How would you rate \(media.title ?? media.name ?? "this")?")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color.theme.genreText)
+                        .padding()
+                    
+                    StarsView(rating: $rating)
+                        .padding()
+                        .accessibilityIdentifier("StarRatingInModal")
+                    
+                    Text("Rate")
+                        .foregroundColor(Color.theme.red)
+                        .fontWeight(.semibold)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 50)
+                        .background(Color.theme.secondary)
+                        .cornerRadius(10)
+                        .onTapGesture {
+                            if rating > 0 {
+                                Task {
+                                    await database?.sendRating(rating: Double(rating), media: media)
+                                    dismiss()
+                                }
+                            }
+                        }
+                        .accessibilityIdentifier("RateButton")
+                        .padding()
                     
                 }
-                
-                Text("How would you rate \(media.title ?? media.name ?? "this")?")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color.theme.genreText)
-                
-                StarsView(rating: $rating)
-                    .padding()
-                    .accessibilityIdentifier("StarRatingInModal")
-                
-                Text("Rate")
-                    .foregroundColor(Color.theme.text)
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 50)
-                    .background(Color.theme.secondary)
-                    .cornerRadius(10)
-                    .onTapGesture {
-                        Task {
-                            await database?.sendRating(rating: Double(rating), media: media)
-                            dismiss()
-                        }
-                    }
-                    .accessibilityIdentifier("RateButton")
+                .frame(maxWidth: geo.size.width - 50)
+                .offset(y: -50)
+                .padding(.bottom)
             }
-        }
-        .overlay(alignment: .topLeading, content: {
-            Button {
-                Task {
-                    await database?.sendRating(rating: Double(rating), media: media)
-                    dismiss()
-                }
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+            .overlay(alignment: .topLeading) {
+                CloseButton()
                     .padding(10)
-                    .foregroundColor(Color.theme.genreText)
-                    .padding(.top, 40)
                     .padding()
             }
-            .accessibilityIdentifier("ExitRating")
-        })
-        .ignoresSafeArea(edges: .vertical)
-        .accessibilityIdentifier("RatingModalView")
+            .ignoresSafeArea(edges: .vertical)
+            .accessibilityIdentifier("RatingModalView")
+        }
     }
 }
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
         RatingModalView(media: dev.mediaMock.first!)
+    }
+}
+
+struct CloseButton: View {
+    var body: some View {
+        Image(systemName: "xmark")
+            .resizable()
+            .frame(width: 20, height: 20)
+            .foregroundColor(Color.theme.genreText)
+            .fontWeight(.semibold)
+            .padding(.all, 5)
+            .accessibility(label:Text("Close"))
+            .accessibility(hint:Text("Tap to close the screen"))
+            .accessibility(addTraits: .isButton)
+            .accessibility(removeTraits: .isImage)
     }
 }
