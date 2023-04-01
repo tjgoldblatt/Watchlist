@@ -64,8 +64,10 @@ extension ExploreTabView {
     
     var searchBar: some View {
         SearchBarView(searchText: $homeVM.searchText, genres: ["Action", "Science Fiction"]) {
-            Task {
-                await vm.search()
+            if homeVM.searchText.count > 3 {
+                Task {
+                    await vm.search()
+                }
             }
         }
         .padding(.bottom)
