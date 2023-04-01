@@ -38,7 +38,7 @@ struct StarsView: View {
                 image(for: index)
                     .font(.system(size: fontSize))
                     .fontWeight(.bold)
-                    .foregroundColor(Color.theme.secondary)
+                    .foregroundColor(rating >= index ? Color.theme.red : Color.theme.red.opacity(0.3))
                     .onTapGesture {
                         withAnimation(.spring()) {
                             rating = index
@@ -61,5 +61,6 @@ struct StarsView: View {
 struct RatingView_Previews: PreviewProvider {
     static var previews: some View {
         StarsView(fontSize: 12, rating: .constant(1))
+            .previewLayout(.sizeThatFits)
     }
 }
