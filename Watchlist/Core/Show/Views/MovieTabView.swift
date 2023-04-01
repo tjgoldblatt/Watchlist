@@ -27,6 +27,18 @@ struct MovieTabView: View {
     
     @State var deleteConfirmationShowing: Bool = false
     
+    var watchedSelectedRows: [MediaModel] {
+        var watchedSelectedRows: [MediaModel] = []
+        for id in selectedRows {
+            for mediaModel in movieList.results.filter({ $0.id == id }) {
+                if mediaModel.watched == true {
+                    watchedSelectedRows.append(mediaModel)
+                }
+            }
+        }
+        return watchedSelectedRows
+    }
+    
     @Namespace var animation
     
     private let topID = "HeaderView"
@@ -81,8 +93,8 @@ struct MovieTabView: View {
                                         Text("")
                                     }
                                 }
-                                
-                                if !selectedRows.isEmpty && homeVM.editMode == .active {
+
+                                if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
                                     ToolbarItem(placement: .navigationBarLeading) {
                                         Text("Reset")
                                             .font(.body)
@@ -90,12 +102,10 @@ struct MovieTabView: View {
                                             .padding()
                                             .onTapGesture {
                                                 Task {
-                                                    for id in selectedRows {
-                                                        for mediaModel in movieList.results.filter({ $0.id == id }) {
-                                                            if let media = homeVM.decodeData(with: mediaModel.media) {
-                                                                await database?.sendRating(rating: nil, media: media)
-                                                                await database?.setWatched(watched: false, media: media)
-                                                            }
+                                                    for watchedSelectedRow in watchedSelectedRows {
+                                                        if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
+                                                            await database?.sendRating(rating: nil, media: media)
+                                                            await database?.setWatched(watched: false, media: media)
                                                         }
                                                     }
                                                     homeVM.editMode = .inactive
@@ -186,13 +196,16 @@ struct MovieTabView: View {
                 return false
             }
             
+            if !vm.filterText.isEmpty {
+                filteredMedia = filteredMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
+            }
+            
             return filteredMedia
             
         } else if vm.filterText.isEmpty {
             return groupedMedia
         } else {
-            let filteredMedia = groupedMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
-            return !filteredMedia.isEmpty ? filteredMedia : groupedMedia
+            return groupedMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
         }
     }
     
