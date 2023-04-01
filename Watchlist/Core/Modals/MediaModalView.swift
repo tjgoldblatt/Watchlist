@@ -67,7 +67,7 @@ struct MediaModalView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            if isInMedia(mediaModels: mediaList.results, media: media) {
+            if isInMedia(mediaModels: mediaList.results, media: media) && isWatched {
                 Menu {
                     Button(role: .destructive) {
                         Task {

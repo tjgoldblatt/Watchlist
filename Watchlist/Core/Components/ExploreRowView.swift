@@ -75,9 +75,8 @@ struct ExploreRowView_Previews: PreviewProvider {
 }
 
 extension ExploreRowView {
-    
     var centerColumn: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 15) {
             Text(rowContent.title)
                 .font(Font.system(.headline, design: .default))
                 .fontWeight(.bold)
@@ -86,10 +85,12 @@ extension ExploreRowView {
                 .lineLimit(2)
             
             if let genres = rowContent.genres {
-                HStack {
-                    ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                        if idx < 2 {
-                            GenreView(genreName: genre.name)
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
+                            if idx < 2 {
+                                GenreView(genreName: genre.name)
+                            }
                         }
                     }
                 }

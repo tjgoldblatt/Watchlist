@@ -27,9 +27,21 @@ struct MovieTabView: View {
     
     @State var deleteConfirmationShowing: Bool = false
     
+    var watchedSelectedRows: [MediaModel] {
+        var watchedSelectedRows: [MediaModel] = []
+        for id in selectedRows {
+            for mediaModel in movieList.results.filter({ $0.id == id }) {
+                if mediaModel.watched == true {
+                    watchedSelectedRows.append(mediaModel)
+                }
+            }
+        }
+        return watchedSelectedRows
+    }
+    
     @Namespace var animation
     
-    private static let topID = "HeaderView"
+    private let topID = "HeaderView"
     
     var body: some View {
         NavigationStack {
@@ -47,8 +59,8 @@ struct MovieTabView: View {
                         // MARK: - Search
                         SearchBarView(searchText: $vm.filterText, genres: ["Sci Fi", "History"]) {
                             Task {
-                                if(!searchResults.isEmpty) {
-                                    value.scrollTo(Self.topID)
+                                if(!sortedSearchResults.isEmpty) {
+                                    value.scrollTo(topID)
                                 }
                             }
                         }
@@ -59,7 +71,7 @@ struct MovieTabView: View {
                             List(selection: $selectedRows) {
                                 /// Used to scroll to top of list
                                 EmptyView()
-                                    .id(Self.topID)
+                                    .id(topID)
                                 
                                 ForEach(sortedSearchResults) { post in
                                     if let movie = homeVM.decodeData(with: post.media) {
@@ -81,8 +93,8 @@ struct MovieTabView: View {
                                         Text("")
                                     }
                                 }
-                                
-                                if !selectedRows.isEmpty {
+
+                                if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
                                     ToolbarItem(placement: .navigationBarLeading) {
                                         Text("Reset")
                                             .font(.body)
@@ -90,12 +102,10 @@ struct MovieTabView: View {
                                             .padding()
                                             .onTapGesture {
                                                 Task {
-                                                    for id in selectedRows {
-                                                        for mediaModel in movieList.results.filter({ $0.id == id }) {
-                                                            if let media = homeVM.decodeData(with: mediaModel.media) {
-                                                                await database?.sendRating(rating: nil, media: media)
-                                                                await database?.setWatched(watched: false, media: media)
-                                                            }
+                                                    for watchedSelectedRow in watchedSelectedRows {
+                                                        if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
+                                                            await database?.sendRating(rating: nil, media: media)
+                                                            await database?.setWatched(watched: false, media: media)
                                                         }
                                                     }
                                                     homeVM.editMode = .inactive
@@ -158,6 +168,8 @@ struct MovieTabView: View {
                 filteredMedia = filteredMedia.filter({ $0.watched })
             } else if homeVM.watchSelected == "Any" {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
+            } else {
+                filteredMedia = groupedMedia
             }
             
             /// Genre Filter
@@ -184,13 +196,16 @@ struct MovieTabView: View {
                 return false
             }
             
+            if !vm.filterText.isEmpty {
+                filteredMedia = filteredMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
+            }
+            
             return filteredMedia
             
         } else if vm.filterText.isEmpty {
             return groupedMedia
         } else {
-            let filteredMedia = groupedMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
-            return !filteredMedia.isEmpty ? filteredMedia : groupedMedia
+            return groupedMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
         }
     }
     
