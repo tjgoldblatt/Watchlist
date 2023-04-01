@@ -158,6 +158,8 @@ struct MovieTabView: View {
                 filteredMedia = filteredMedia.filter({ $0.watched })
             } else if homeVM.watchSelected == "Any" {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
+            } else {
+                filteredMedia = groupedMedia
             }
             
             /// Genre Filter
