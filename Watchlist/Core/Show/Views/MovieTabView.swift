@@ -82,7 +82,7 @@ struct MovieTabView: View {
                                     }
                                 }
                                 
-                                if !selectedRows.isEmpty {
+                                if !selectedRows.isEmpty && homeVM.editMode == .active {
                                     ToolbarItem(placement: .navigationBarLeading) {
                                         Text("Reset")
                                             .font(.body)
