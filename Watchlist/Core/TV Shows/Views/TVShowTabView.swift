@@ -29,7 +29,7 @@ struct TVShowTabView: View {
     
     @Namespace var animation
     
-    private static let topID = "HeaderView"
+    private let topID = "HeaderView"
     
     var body: some View {
         NavigationStack {
@@ -49,8 +49,8 @@ struct TVShowTabView: View {
                         // MARK: - Search
                         SearchBarView(searchText: $vm.filterText, genres: ["Sci Fi", "History"]) {
                             Task {
-                                if(!searchResults.isEmpty) {
-                                    value.scrollTo(Self.topID)
+                                if(!sortedSearchResults.isEmpty) {
+                                    value.scrollTo(topID)
                                 }
                             }
                         }
@@ -61,7 +61,7 @@ struct TVShowTabView: View {
                             List(selection: $selectedRows) {
                                 /// Used to scroll to top of list
                                 EmptyView()
-                                    .id(Self.topID)
+                                    .id(topID)
                                 
                                 ForEach(sortedSearchResults) { post in
                                     if let tvShow = homeVM.decodeData(with: post.media) {
