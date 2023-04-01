@@ -19,9 +19,9 @@ enum Tab: String {
             case .explore:
                 return "Search for Movies or TV Shows..."
             case .tvShows:
-                return "Search for TV Shows..."
+                return "Search your saved TV Shows..."
             case .movies:
-                return "Search for Movies..."
+                return "Search your saved Movies..."
         }
     }
     

@@ -29,7 +29,7 @@ struct MovieTabView: View {
     
     @Namespace var animation
     
-    private static let topID = "HeaderView"
+    private let topID = "HeaderView"
     
     var body: some View {
         NavigationStack {
@@ -47,8 +47,8 @@ struct MovieTabView: View {
                         // MARK: - Search
                         SearchBarView(searchText: $vm.filterText, genres: ["Sci Fi", "History"]) {
                             Task {
-                                if(!searchResults.isEmpty) {
-                                    value.scrollTo(Self.topID)
+                                if(!sortedSearchResults.isEmpty) {
+                                    value.scrollTo(topID)
                                 }
                             }
                         }
@@ -59,7 +59,7 @@ struct MovieTabView: View {
                             List(selection: $selectedRows) {
                                 /// Used to scroll to top of list
                                 EmptyView()
-                                    .id(Self.topID)
+                                    .id(topID)
                                 
                                 ForEach(sortedSearchResults) { post in
                                     if let movie = homeVM.decodeData(with: post.media) {
@@ -158,6 +158,8 @@ struct MovieTabView: View {
                 filteredMedia = filteredMedia.filter({ $0.watched })
             } else if homeVM.watchSelected == "Any" {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
+            } else {
+                filteredMedia = groupedMedia
             }
             
             /// Genre Filter
