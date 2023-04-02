@@ -50,7 +50,7 @@ struct TVShowTabView: View {
                 Color.theme.background.ignoresSafeArea()
                 
                 ScrollViewReader { value in
-                    VStack {
+                    VStack(spacing: 10) {
                         // MARK: - Header
                         HStack {
                             HeaderView(currentTab: .constant(.tvShows), showIcon: true)
@@ -62,14 +62,22 @@ struct TVShowTabView: View {
                         SearchBarView(searchText: $vm.filterText, genres: ["Sci Fi", "History"]) {
                             Task {
                                 if(!sortedSearchResults.isEmpty) {
-                                    value.scrollTo(topID)
+                                    withAnimation(.spring()) {
+                                        value.scrollTo(topID)
+                                    }
                                 }
                             }
                         }
-                        .padding(.bottom)
                         
                         // MARK: - Watchlist
                         if tvList.didLoad {
+                            watchFilterOptions
+                                .onTapGesture {
+                                    if(!sortedSearchResults.isEmpty) {
+                                        value.scrollTo(topID)
+                                    }
+                                }
+                            
                             List(selection: $selectedRows) {
                                 /// Used to scroll to top of list
                                 EmptyView()
@@ -159,16 +167,48 @@ struct TVShowTabView: View {
             }
         }
     }
+}
+
+struct TVShowTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+            .environmentObject(dev.homeVM)
+    }
+}
+
+extension TVShowTabView {
+    var watchFilterOptions: some View {
+        HStack {
+            ForEach(WatchOptions.allCases, id: \.rawValue) { watchOption in
+                Text(watchOption.rawValue)
+                    .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.genreText : Color.theme.red.opacity(0.6))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .frame(width: 110, height: 30)
+                    .contentShape(Capsule())
+                    .background {
+                        Capsule()
+                            .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.red : Color.theme.secondary.opacity(0.6))
+                    }
+                    .onTapGesture {
+                        if homeVM.watchSelected != watchOption {
+                            homeVM.watchSelected = watchOption
+                        }
+                    }
+            }
+        }
+        .padding(.horizontal)
+    }
     
     var searchResults: [MediaModel] {
         let groupedMedia = homeVM.groupMedia(mediaModel: tvList.results).filter({ !$0.watched })
-        if homeVM.watchSelected != "Unwatched" || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+        if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = homeVM.groupMedia(mediaModel: tvList.results)
             
             /// Watched Filter
-            if homeVM.watchSelected == "Watched" {
+            if homeVM.watchSelected == .watched {
                 filteredMedia = filteredMedia.filter({ $0.watched })
-            } else if homeVM.watchSelected == "Any" {
+            } else if homeVM.watchSelected == .any {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
             }
             
@@ -212,11 +252,11 @@ struct TVShowTabView: View {
     var sortedSearchResults: [MediaModel] {
         return searchResults.sorted { MM1, MM2 in
             if let media1 = homeVM.decodeData(with: MM1.media), let media2 = homeVM.decodeData(with: MM2.media) {
-                if homeVM.sortingSelected == "Rating (High to Low)" {
+                if homeVM.sortingSelected == .highToLow {
                     if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
                         return voteAverage1 > voteAverage2
                     }
-                } else if homeVM.sortingSelected == "Rating (Low to High)" {
+                } else if homeVM.sortingSelected == .lowToHigh {
                     if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
                         return voteAverage1 < voteAverage2
                     }
@@ -224,12 +264,5 @@ struct TVShowTabView: View {
             }
             return false
         }
-    }
-}
-
-struct TVShowTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-            .environmentObject(dev.homeVM)
     }
 }

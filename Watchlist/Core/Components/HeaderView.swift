@@ -15,6 +15,7 @@ struct HeaderView: View {
     var body: some View {
         HStack {
             Text(currentTab.rawValue)
+                .foregroundColor(Color.theme.text)
                 .font(Font.system(size: 36, design: .default))
                 .fontWeight(.bold)
           

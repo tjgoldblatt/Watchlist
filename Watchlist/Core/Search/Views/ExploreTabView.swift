@@ -124,11 +124,11 @@ extension ExploreTabView {
     
     var sortedSearchResults: [Media] {
         return searchResults.sorted { media1, media2 in
-            if homeVM.sortingSelected == "Rating (High to Low)" {
+            if homeVM.sortingSelected == .highToLow {
                 if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
                     return voteAverage1 > voteAverage2
                 }
-            } else if homeVM.sortingSelected == "Rating (Low to High)" {
+            } else if homeVM.sortingSelected == .lowToHigh {
                 if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
                     return voteAverage1 < voteAverage2
                 }

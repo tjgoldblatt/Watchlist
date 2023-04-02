@@ -39,8 +39,8 @@ class HomeViewModel: ObservableObject {
     /// To track filtering
     @Published var genresSelected: Set<Genre> = []
     @Published var ratingSelected: Int = 0
-    @Published var watchSelected: String = "Unwatched"
-    @Published var sortingSelected: String = "Alphabetical"
+    @Published var watchSelected: WatchOptions = WatchOptions.unwatched
+    @Published var sortingSelected: SortingOptions = SortingOptions.alphabetical
     
     init() {
         Task {
