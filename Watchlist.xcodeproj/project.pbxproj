@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32246F4029D9ECBD002EDFC9 /* FilterOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */; };
 		322BB68529D32A4D007CD536 /* Blackbird in Frameworks */ = {isa = PBXBuildFile; productRef = 322BB68429D32A4D007CD536 /* Blackbird */; };
 		324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */; };
 		324BAE6229B8D3D9002FBB6F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE6129B8D3D9002FBB6F /* ContentView.swift */; };
@@ -68,6 +69,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptions.swift; sourceTree = "<group>"; };
 		324BAE5C29B8D3D9002FBB6F /* Watchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Watchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistApp.swift; sourceTree = "<group>"; };
 		324BAE6129B8D3D9002FBB6F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				3258731129BD254C005E1394 /* Media.swift */,
 				3258731529BD7ABE005E1394 /* Genre.swift */,
 				3298920229C0A718009989AA /* MediaDetailContents.swift */,
+				32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -524,6 +527,7 @@
 				329A768729BA78200074A4F9 /* RowView.swift in Sources */,
 				324BAE6229B8D3D9002FBB6F /* ContentView.swift in Sources */,
 				324BAE8B29BA5822002FBB6F /* SeachDetailsViewModel.swift in Sources */,
+				32246F4029D9ECBD002EDFC9 /* FilterOptions.swift in Sources */,
 				3258731229BD254C005E1394 /* Media.swift in Sources */,
 				32952D9A29BB885E002B3596 /* View.swift in Sources */,
 				3283E40529D255CB0002490F /* ExploreRowView.swift in Sources */,
