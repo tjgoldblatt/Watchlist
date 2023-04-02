@@ -24,11 +24,12 @@ class SearchTabViewModel: ObservableObject {
         isSearching = true
         homeVM.$searchText
             .debounce(for: 0.5, scheduler: RunLoop.main)
-            .sink { [weak self] searchText in
-                Task {
+            .sink { searchText in
+                Task { [weak self] in
+                    guard let self else { return }
                     do {
-                        self?.homeVM.results = try await SearchTabViewModel.search(for: searchText)
-                        self?.isSearching = false
+                        self.homeVM.results = try await SearchTabViewModel.search(for: searchText)
+                        self.isSearching = false
                     } catch {
                         print("[🔥] Error While Searching")
                     }
