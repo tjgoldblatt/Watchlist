@@ -6,10 +6,12 @@
 //
 
 import Foundation
-import NaturalLanguage
+import Combine
 
 class SearchTabViewModel: ObservableObject {
     @Published var isSearching = false
+    
+    private var cancellables = Set<AnyCancellable>()
     
     var homeVM: HomeViewModel
     
@@ -20,42 +22,24 @@ class SearchTabViewModel: ObservableObject {
     @MainActor
     func search() async {
         isSearching = true
-        
-        Task {
-            do {
-                homeVM.results = try await SearchTabViewModel.search(for: homeVM.searchText)
-                
-                /// if we want only english titles
-                /*
-                let recognizer = NLLanguageRecognizer()
-                homeVM.results = homeVM.results.filter { media in
-                    guard let mediaType = media.mediaType else { return false }
-                    switch mediaType {
-                        case .movie:
-                            if let title = media.originalTitle {
-                                recognizer.processString(title)
-                            }
-                        case .tv:
-                            if let name = media.originalName {
-                                recognizer.processString(name)
-                            }
-                        case .person:
-                            break
+        homeVM.$searchText
+            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .sink { searchText in
+                Task { [weak self] in
+                    guard let self else { return }
+                    do {
+                        self.homeVM.results = try await SearchTabViewModel.search(for: searchText)
+                        self.isSearching = false
+                    } catch {
+                        print("[🔥] Error While Searching")
                     }
-                 
-                    return recognizer.dominantLanguage == .english
                 }
-                 */
-                
-                isSearching = false
-            } catch {
-                print("[🔥] Error While Searching")
             }
-        }
+            .store(in: &cancellables)
     }
     
     static func search(for searchText: String) async throws -> [Media] {
-        let media: [Media] = try await withCheckedThrowingContinuation({ continuation in
+        let media: [Media] = try await withCheckedThrowingContinuation { continuation in
             TMDbService.search(with: searchText) { result in
                 switch result {
                     case .success(let media):
@@ -64,7 +48,7 @@ class SearchTabViewModel: ObservableObject {
                         continuation.resume(throwing: error)
                 }
             }
-        })
+        }
         return media
     }
 }
