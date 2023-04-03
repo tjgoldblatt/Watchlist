@@ -39,6 +39,7 @@ struct ExploreRowView: View {
             rightColumn
         }
         .onTapGesture {
+            homeVM.impactMed.impactOccurred()
             showingSheet.toggle()
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
@@ -112,6 +113,7 @@ extension ExploreRowView {
                     .frame(width: 80, height: 30)
             }
             .onTapGesture {
+                homeVM.impactMed.impactOccurred()
                 if !isInMedia(mediaModels: mediaList.results, media: media) {
                     database?.saveMedia(media: media)
                 } else {

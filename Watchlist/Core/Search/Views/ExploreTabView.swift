@@ -30,7 +30,7 @@ struct ExploreTabView: View {
                 // MARK: - Background
                 Color.theme.background.ignoresSafeArea()
                 
-                VStack {
+                VStack(spacing: 10) {
                     header
                     
                     searchBar
@@ -57,22 +57,25 @@ struct SearchView_Previews: PreviewProvider {
 }
 
 extension ExploreTabView {
+    // MARK: - Header
     var header: some View {
         HeaderView(currentTab: .constant(.explore), showIcon: true)
             .padding(.horizontal)
     }
     
+    // MARK: - Search
     var searchBar: some View {
-        SearchBarView(searchText: $homeVM.searchText, genres: ["Action", "Science Fiction"]) {
-                Task {
-                    await vm.search()
-                }
+        SearchBarView(searchText: $homeVM.searchText) {
+            Task {
+                await vm.search()
+            }
         }
         .padding(.bottom)
     }
     
+    // MARK: - Search Results
     var searchResultsView: some View {
-        if !vm.isSearching {
+        if !vm.isSearching && homeVM.selectedTab == .explore {
             return AnyView(
                 List {
                     ForEach(sortedSearchResults, id: \.id) { media in
