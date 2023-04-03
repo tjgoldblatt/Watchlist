@@ -31,6 +31,8 @@ class HomeViewModel: ObservableObject {
     /// Tracks when user is selecting elements to delete
     @Published var editMode: EditMode = .inactive
     
+    var hapticFeedback = UIImpactFeedbackGenerator(style: .soft)
+    
     var database: Blackbird.Database?
     
     var movieWatchlist: [Media] = []

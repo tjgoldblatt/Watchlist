@@ -28,8 +28,6 @@ struct SearchBarView: View {
         return homeVM.selectedTab.searchTextLabel
     }
     
-    @State var genres: [String]
-    
     var queryToCallWhenTyping: () -> Void
     
     var mediaList: [Media] {
@@ -90,6 +88,7 @@ struct SearchBarView: View {
                                 .foregroundColor(Color.theme.text)
                                 .opacity(!isKeyboardShowing ? 0.0 : 1.0)
                                 .onTapGesture {
+                                    homeVM.hapticFeedback.impactOccurred()
                                     searchText = ""
                                 }
                         } else if shouldShowFilterButton {
@@ -102,6 +101,7 @@ struct SearchBarView: View {
                                 .foregroundColor(Color.theme.red)
                                 .opacity(!isKeyboardShowing ? 1.0 : 0.0)
                                 .onTapGesture {
+                                    homeVM.hapticFeedback.impactOccurred()
                                     showFilterSheet.toggle()
                                 }
                         }
@@ -144,7 +144,7 @@ struct SearchBarView: View {
 
 struct SearchBarView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBarView(searchText: .constant(""), genres: ["Action"]) {
+        SearchBarView(searchText: .constant("")) {
             //
         }
     }

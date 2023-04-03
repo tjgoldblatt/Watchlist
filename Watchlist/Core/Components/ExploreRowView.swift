@@ -39,6 +39,7 @@ struct ExploreRowView: View {
             rightColumn
         }
         .onTapGesture {
+            homeVM.hapticFeedback.impactOccurred()
             showingSheet.toggle()
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
@@ -112,6 +113,7 @@ extension ExploreRowView {
                     .frame(width: 80, height: 30)
             }
             .onTapGesture {
+                homeVM.hapticFeedback.impactOccurred()
                 if !isInMedia(mediaModels: mediaList.results, media: media) {
                     database?.saveMedia(media: media)
                 } else {

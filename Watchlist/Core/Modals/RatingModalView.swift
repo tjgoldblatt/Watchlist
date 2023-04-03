@@ -9,6 +9,8 @@ import SwiftUI
 import Blackbird
 
 struct RatingModalView: View {
+    @EnvironmentObject var homeVM: HomeViewModel
+    
     @Environment(\.blackbirdDatabase) var database
     @Environment(\.dismiss) var dismiss
     
@@ -88,6 +90,7 @@ struct RatingModalView: View {
                         .cornerRadius(10)
                         .onTapGesture {
                             if rating > 0 {
+                                homeVM.hapticFeedback.impactOccurred()
                                 Task {
                                     await database?.sendRating(rating: Double(rating), media: media)
                                     dismiss()

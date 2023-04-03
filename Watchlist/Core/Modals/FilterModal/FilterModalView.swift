@@ -57,6 +57,7 @@ struct FilterModalView: View {
                                     .fontWeight(homeVM.sortingSelected == option ? .semibold : .medium)
                                     .foregroundColor(homeVM.sortingSelected == option ? Color.theme.red : Color.theme.text)
                                     .onTapGesture {
+                                        homeVM.hapticFeedback.impactOccurred()
                                         homeVM.sortingSelected = option
                                         dismiss()
                                     }
@@ -65,31 +66,9 @@ struct FilterModalView: View {
                     }
                     .padding()
                     
-                    HStack(spacing: 40) {
-                        Button("Clear") {
-                            dismiss()
-                            homeVM.genresSelected = []
-                            homeVM.ratingSelected = 0
-                        }
-                        .foregroundColor(Color.theme.red)
-                        .fontWeight(.medium)
-                        .frame(width: 100, height: 40)
-                        .background(Color.theme.secondary)
-                        .cornerRadius(10)
-                        
-                        Button("Done") {
-                            homeVM.genresSelected = genresSelected
-                            dismiss()
-                        }
-                            .foregroundColor(Color.theme.genreText)
-                            .fontWeight(.medium)
-                            .frame(width: 100, height: 40)
-                            .background(Color.theme.red)
-                            .cornerRadius(10)
-                    }
-                    .padding(.vertical)
-                    
                     Spacer()
+                    
+                    confirmationButtons
                 }
             }
         }
@@ -129,6 +108,7 @@ extension FilterModalView {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
+                        homeVM.hapticFeedback.impactOccurred()
                         if !genresSelected.contains(genreOption) {
                             genresSelected.insert(genreOption)
                         } else {
@@ -152,6 +132,34 @@ extension FilterModalView {
             
             StarsView(rating: $homeVM.ratingSelected)
         }
+    }
+    
+    private var confirmationButtons: some View {
+        HStack(spacing: 40) {
+            Button("Clear") {
+                homeVM.hapticFeedback.impactOccurred()
+                dismiss()
+                homeVM.genresSelected = []
+                homeVM.ratingSelected = 0
+            }
+            .foregroundColor(Color.theme.red)
+            .fontWeight(.medium)
+            .frame(width: 100, height: 40)
+            .background(Color.theme.secondary)
+            .cornerRadius(10)
+            
+            Button("Done") {
+                homeVM.hapticFeedback.impactOccurred()
+                homeVM.genresSelected = genresSelected
+                dismiss()
+            }
+            .foregroundColor(Color.theme.genreText)
+            .fontWeight(.medium)
+            .frame(width: 100, height: 40)
+            .background(Color.theme.red)
+            .cornerRadius(10)
+        }
+        .padding(.bottom)
     }
     
     func sortedGenreList(genresToFilter: [Genre]) -> [Genre] {

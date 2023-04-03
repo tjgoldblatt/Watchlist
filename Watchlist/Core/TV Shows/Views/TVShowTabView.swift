@@ -49,110 +49,17 @@ struct TVShowTabView: View {
                 // MARK: - Background
                 Color.theme.background.ignoresSafeArea()
                 
-                ScrollViewReader { value in
+                ScrollViewReader { proxy in
                     VStack(spacing: 10) {
-                        // MARK: - Header
-                        HStack {
-                            HeaderView(currentTab: .constant(.tvShows), showIcon: true)
-                                .transition(.slide)
-                        }
-                        .padding(.horizontal)
                         
-                        // MARK: - Search
-                        SearchBarView(searchText: $vm.filterText, genres: ["Sci Fi", "History"]) {
-                            Task {
-                                if(!sortedSearchResults.isEmpty) {
-                                    withAnimation(.spring()) {
-                                        value.scrollTo(topID)
-                                    }
-                                }
-                            }
-                        }
+                        header
                         
-                        // MARK: - Watchlist
+                        searchBar(scrollProxy: proxy)
+                        
                         if tvList.didLoad {
-                            watchFilterOptions
-                                .onTapGesture {
-                                    if(!sortedSearchResults.isEmpty) {
-                                        value.scrollTo(topID)
-                                    }
-                                }
+                            watchFilterOptions(scrollProxy: proxy)
                             
-                            List(selection: $selectedRows) {
-                                /// Used to scroll to top of list
-                                EmptyView()
-                                    .id(topID)
-                                
-                                ForEach(sortedSearchResults) { post in
-                                    if let tvShow = homeVM.decodeData(with: post.media) {
-                                        rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
-                                            .allowsHitTesting(homeVM.editMode == .inactive)
-                                    }
-                                }
-                                .listRowBackground(Color.theme.background)
-                                .transition(.slide)
-                            }
-                            .toolbar {
-                                ToolbarItem(placement: .navigationBarTrailing) {
-                                    if sortedSearchResults.count > 1 {
-                                        EditButton()
-                                            .foregroundColor(Color.theme.red)
-                                            .padding()
-                                            .contentShape(Rectangle())
-                                    } else {
-                                        Text("")
-                                    }
-                                }
-                                
-                                if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
-                                    ToolbarItem(placement: .navigationBarLeading) {
-                                        Text("Reset")
-                                            .font(.body)
-                                            .foregroundColor(Color.theme.red)
-                                            .padding()
-                                            .onTapGesture {
-                                                Task {
-                                                    for watchedSelectedRow in watchedSelectedRows {
-                                                        if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
-                                                            await database?.sendRating(rating: nil, media: media)
-                                                            await database?.setWatched(watched: false, media: media)
-                                                        }
-                                                    }
-                                                    homeVM.editMode = .inactive
-                                                }
-                                            }
-                                    }
-                                }
-                            }
-                            .environment(\.editMode, $homeVM.editMode)
-                            .overlay(alignment: .bottomTrailing) {
-                                if !selectedRows.isEmpty && homeVM.editMode == .active {
-                                    Image(systemName: "trash.circle.fill")
-                                        .resizable()
-                                        .fontWeight(.bold)
-                                        .scaledToFit()
-                                        .frame(width: 50)
-                                        .foregroundStyle(Color.theme.genreText, Color.theme.red)
-                                        .shadow(color: Color.black.opacity(0.2), radius: 5)
-                                        .padding()
-                                        .onTapGesture {
-                                            deleteConfirmationShowing.toggle()
-                                        }
-                                }
-                            }
-                            .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $deleteConfirmationShowing) {
-                                Button("Delete", role: .destructive) {
-                                    for id in selectedRows {
-                                        database?.deleteMediaByID(id: id)
-                                    }
-                                    homeVM.editMode = .inactive
-                                }
-                                
-                                Button("Cancel", role: .cancel) {}
-                            }
-                            .scrollIndicators(.hidden)
-                            .listStyle(.plain)
-                            .scrollDismissesKeyboard(.immediately)
+                            watchlist
                         } else {
                             ProgressView()
                         }
@@ -177,7 +84,110 @@ struct TVShowTabView_Previews: PreviewProvider {
 }
 
 extension TVShowTabView {
-    var watchFilterOptions: some View {
+    // MARK: - Header
+    var header: some View {
+        HStack {
+            HeaderView(currentTab: .constant(.tvShows), showIcon: true)
+                .transition(.slide)
+        }
+        .padding(.horizontal)
+    }
+    
+    // MARK: - Search
+    func searchBar(scrollProxy value: ScrollViewProxy) -> some View {
+        SearchBarView(searchText: $vm.filterText) {
+            Task {
+                if(!sortedSearchResults.isEmpty) {
+                    withAnimation(.spring()) {
+                        value.scrollTo(topID)
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - Watchlist
+    var watchlist: some View {
+        List(selection: $selectedRows) {
+            /// Used to scroll to top of list
+            EmptyView()
+                .id(topID)
+            
+            ForEach(sortedSearchResults) { post in
+                if let tvShow = homeVM.decodeData(with: post.media) {
+                    rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
+                        .allowsHitTesting(homeVM.editMode == .inactive)
+                }
+            }
+            .listRowBackground(Color.theme.background)
+            .transition(.slide)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if sortedSearchResults.count > 1 {
+                    EditButton()
+                        .foregroundColor(Color.theme.red)
+                        .padding()
+                        .contentShape(Rectangle())
+                } else {
+                    Text("")
+                }
+            }
+            
+            if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text("Reset")
+                        .font(.body)
+                        .foregroundColor(Color.theme.red)
+                        .padding()
+                        .onTapGesture {
+                            Task {
+                                for watchedSelectedRow in watchedSelectedRows {
+                                    if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
+                                        await database?.sendRating(rating: nil, media: media)
+                                        await database?.setWatched(watched: false, media: media)
+                                    }
+                                }
+                                homeVM.editMode = .inactive
+                            }
+                        }
+                }
+            }
+        }
+        .environment(\.editMode, $homeVM.editMode)
+        .overlay(alignment: .bottomTrailing) {
+            if !selectedRows.isEmpty && homeVM.editMode == .active {
+                Image(systemName: "trash.circle.fill")
+                    .resizable()
+                    .fontWeight(.bold)
+                    .scaledToFit()
+                    .frame(width: 50)
+                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                    .padding()
+                    .onTapGesture {
+                        deleteConfirmationShowing.toggle()
+                    }
+            }
+        }
+        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $deleteConfirmationShowing) {
+            Button("Delete", role: .destructive) {
+                for id in selectedRows {
+                    database?.deleteMediaByID(id: id)
+                }
+                homeVM.editMode = .inactive
+            }
+            
+            Button("Cancel", role: .cancel) {}
+        }
+        .scrollIndicators(.hidden)
+        .listStyle(.plain)
+        .scrollDismissesKeyboard(.immediately)
+    }
+}
+
+
+extension TVShowTabView {
+    func watchFilterOptions(scrollProxy value: ScrollViewProxy) -> some View {
         HStack {
             ForEach(WatchOptions.allCases, id: \.rawValue) { watchOption in
                 Text(watchOption.rawValue)
@@ -191,8 +201,12 @@ extension TVShowTabView {
                             .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.red : Color.theme.secondary.opacity(0.6))
                     }
                     .onTapGesture {
+                        homeVM.hapticFeedback.impactOccurred()
                         if homeVM.watchSelected != watchOption {
                             homeVM.watchSelected = watchOption
+                        }
+                        if(!sortedSearchResults.isEmpty) {
+                            value.scrollTo(topID)
                         }
                     }
             }
