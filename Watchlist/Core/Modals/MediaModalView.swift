@@ -63,6 +63,7 @@ struct MediaModalView: View {
                     .fontWeight(.semibold)
                     .padding(10)
                     .foregroundColor(Color.theme.genreText)
+                    .shadow(color: Color.theme.background.opacity(0.4), radius: 2)
                     .padding()
             }
         }
@@ -89,6 +90,7 @@ struct MediaModalView: View {
                         .fontWeight(.semibold)
                         .padding(10)
                         .foregroundColor(Color.theme.genreText)
+                        .shadow(color: Color.theme.background.opacity(0.4), radius: 2)
                         .padding()
                 }
             }
@@ -123,8 +125,7 @@ extension MediaModalView {
                 .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
                 .frame(maxHeight: 300)
                 .clipped()
-            
-            
+                .shadow(color: Color.black.opacity(0.3), radius: 5)
         } placeholder: {
             ProgressView()
         }

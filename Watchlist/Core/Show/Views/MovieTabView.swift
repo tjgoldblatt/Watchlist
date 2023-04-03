@@ -160,7 +160,6 @@ extension MovieTabView {
                     .scaledToFit()
                     .frame(width: 50)
                     .foregroundStyle(Color.theme.genreText, Color.theme.red)
-                    .shadow(color: Color.black.opacity(0.2), radius: 5)
                     .padding()
                     .onTapGesture {
                         deleteConfirmationShowing.toggle()
