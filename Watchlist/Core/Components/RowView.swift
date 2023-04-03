@@ -111,7 +111,7 @@ extension RowView {
                 .fixedSize(horizontal: false, vertical: true)
                 .fontWeight(.light)
                 .foregroundColor(Color.theme.text)
-                .lineLimit(4)
+                .lineLimit(3)
             
             Spacer()
             
@@ -126,7 +126,7 @@ extension RowView {
             }
         }
         
-        .frame(maxHeight: 115)
+        .frame(maxHeight: 110)
         .frame(minWidth: 50)
     }
     
@@ -197,8 +197,6 @@ struct ThumbnailView: View {
                     .clipShape(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
-                    .padding(.trailing, 5)
-                    .shadow(color: Color.black.opacity(0.2), radius: 5)
             } else if phase.error != nil {
                 AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { phase in
                     if let image = phase.image {
@@ -208,14 +206,9 @@ struct ThumbnailView: View {
                             .clipShape(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                             )
-                            .padding(.trailing, 5)
-                            .shadow(color: Color.black.opacity(0.2), radius: 5)
                     } else if phase.error != nil {
                         RoundedRectangle(cornerRadius: 10)
                             .foregroundColor(Color.theme.secondary)
-                            .padding(.trailing, 5)
-                            .shadow(color: Color.black.opacity(0.2), radius: 5)
-                            .frame(width: frameWidth)
                             .overlay(alignment: .center) {
                                 Image(systemName: "photo")
                                     .resizable()
@@ -227,9 +220,6 @@ struct ThumbnailView: View {
                     } else {
                         RoundedRectangle(cornerRadius: 10)
                             .foregroundColor(Color.theme.secondary)
-                            .padding(.trailing, 5)
-                            .shadow(color: Color.black.opacity(0.2), radius: 5)
-                            .frame(width: frameWidth)
                             .overlay(alignment: .center) {
                                 ProgressView()
                                     .foregroundColor(Color.theme.text)
@@ -242,9 +232,6 @@ struct ThumbnailView: View {
             } else {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundColor(Color.theme.secondary)
-                    .padding(.trailing, 5)
-                    .shadow(color: Color.black.opacity(0.2), radius: 5)
-                    .frame(width: frameWidth)
                     .overlay(alignment: .center) {
                         ProgressView()
                             .foregroundColor(Color.theme.text)
@@ -253,6 +240,9 @@ struct ThumbnailView: View {
                             .offset(x: -2)
                     }
             }
-        }.frame(height: frameHeight)
+        }
+        .frame(width: frameWidth, height: frameHeight)
+        .shadow(color: Color.black.opacity(0.2), radius: 5)
+        .padding(.trailing, 5)
     }
 }
