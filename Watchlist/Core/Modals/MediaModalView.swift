@@ -185,7 +185,7 @@ extension MediaModalView {
     
     private var rateThisButton: some View {
         Button {
-            homeVM.impactMed.impactOccurred()
+            homeVM.hapticFeedback.impactOccurred()
             showingRating.toggle()
         } label: {
             VStack {
@@ -218,7 +218,7 @@ extension MediaModalView {
     
     private var addButton: some View {
         Button {
-            homeVM.impactMed.impactOccurred()
+            homeVM.hapticFeedback.impactOccurred()
             if !isInMedia(mediaModels: mediaList.results, media: media) {
                 database?.saveMedia(media: media)
             } else {

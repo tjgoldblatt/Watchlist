@@ -90,7 +90,7 @@ struct RatingModalView: View {
                         .cornerRadius(10)
                         .onTapGesture {
                             if rating > 0 {
-                                homeVM.impactMed.impactOccurred()
+                                homeVM.hapticFeedback.impactOccurred()
                                 Task {
                                     await database?.sendRating(rating: Double(rating), media: media)
                                     dismiss()

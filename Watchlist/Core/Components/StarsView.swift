@@ -41,7 +41,7 @@ struct StarsView: View {
                     .fontWeight(.bold)
                     .foregroundColor(rating >= index ? Color.theme.red : Color.theme.red.opacity(0.3))
                     .onTapGesture {
-                        homeVM.impactMed.impactOccurred()
+                        homeVM.hapticFeedback.impactOccurred()
                         withAnimation(.spring()) {
                             rating = index
                         }
