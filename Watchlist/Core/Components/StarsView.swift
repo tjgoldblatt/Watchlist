@@ -9,6 +9,7 @@ import SwiftUI
 import Blackbird
 
 struct StarsView: View {
+    @EnvironmentObject private var homeVM: HomeViewModel
     
     @State var fontSize: CGFloat = 20
     @Binding var rating: Int
@@ -40,6 +41,7 @@ struct StarsView: View {
                     .fontWeight(.bold)
                     .foregroundColor(rating >= index ? Color.theme.red : Color.theme.red.opacity(0.3))
                     .onTapGesture {
+                        homeVM.impactMed.impactOccurred()
                         withAnimation(.spring()) {
                             rating = index
                         }
