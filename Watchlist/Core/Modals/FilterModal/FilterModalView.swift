@@ -57,7 +57,7 @@ struct FilterModalView: View {
                                     .fontWeight(homeVM.sortingSelected == option ? .semibold : .medium)
                                     .foregroundColor(homeVM.sortingSelected == option ? Color.theme.red : Color.theme.text)
                                     .onTapGesture {
-                                        homeVM.impactMed.impactOccurred()
+                                        homeVM.hapticFeedback.impactOccurred()
                                         homeVM.sortingSelected = option
                                         dismiss()
                                     }
@@ -108,7 +108,7 @@ extension FilterModalView {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        homeVM.impactMed.impactOccurred()
+                        homeVM.hapticFeedback.impactOccurred()
                         if !genresSelected.contains(genreOption) {
                             genresSelected.insert(genreOption)
                         } else {
@@ -137,7 +137,7 @@ extension FilterModalView {
     private var confirmationButtons: some View {
         HStack(spacing: 40) {
             Button("Clear") {
-                homeVM.impactMed.impactOccurred()
+                homeVM.hapticFeedback.impactOccurred()
                 dismiss()
                 homeVM.genresSelected = []
                 homeVM.ratingSelected = 0
@@ -149,7 +149,7 @@ extension FilterModalView {
             .cornerRadius(10)
             
             Button("Done") {
-                homeVM.impactMed.impactOccurred()
+                homeVM.hapticFeedback.impactOccurred()
                 homeVM.genresSelected = genresSelected
                 dismiss()
             }

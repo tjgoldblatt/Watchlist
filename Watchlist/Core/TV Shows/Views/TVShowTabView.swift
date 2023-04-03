@@ -201,7 +201,7 @@ extension TVShowTabView {
                             .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.red : Color.theme.secondary.opacity(0.6))
                     }
                     .onTapGesture {
-                        homeVM.impactMed.impactOccurred()
+                        homeVM.hapticFeedback.impactOccurred()
                         if homeVM.watchSelected != watchOption {
                             homeVM.watchSelected = watchOption
                         }

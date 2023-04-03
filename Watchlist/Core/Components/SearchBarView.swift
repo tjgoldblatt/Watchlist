@@ -88,7 +88,7 @@ struct SearchBarView: View {
                                 .foregroundColor(Color.theme.text)
                                 .opacity(!isKeyboardShowing ? 0.0 : 1.0)
                                 .onTapGesture {
-                                    homeVM.impactMed.impactOccurred()
+                                    homeVM.hapticFeedback.impactOccurred()
                                     searchText = ""
                                 }
                         } else if shouldShowFilterButton {
@@ -101,7 +101,7 @@ struct SearchBarView: View {
                                 .foregroundColor(Color.theme.red)
                                 .opacity(!isKeyboardShowing ? 1.0 : 0.0)
                                 .onTapGesture {
-                                    homeVM.impactMed.impactOccurred()
+                                    homeVM.hapticFeedback.impactOccurred()
                                     showFilterSheet.toggle()
                                 }
                         }

@@ -52,7 +52,7 @@ struct RowView: View {
             RatingModalView(media: media)
         }
         .onTapGesture {
-            homeVM.impactMed.impactOccurred()
+            homeVM.hapticFeedback.impactOccurred()
             showingSheet.toggle()
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
