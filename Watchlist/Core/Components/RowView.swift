@@ -111,7 +111,7 @@ extension RowView {
                 .fixedSize(horizontal: false, vertical: true)
                 .fontWeight(.light)
                 .foregroundColor(Color.theme.text)
-                .lineLimit(4)
+                .lineLimit(3)
             
             Spacer()
             
@@ -126,7 +126,7 @@ extension RowView {
             }
         }
         
-        .frame(maxHeight: 115)
+        .frame(maxHeight: 110)
         .frame(minWidth: 50)
     }
     
@@ -242,7 +242,7 @@ struct ThumbnailView: View {
             }
         }
         .frame(width: frameWidth, height: frameHeight)
-        .shadow(color: Color.black.opacity(0.1), radius: 5)
+        .shadow(color: Color.black.opacity(0.2), radius: 5)
         .padding(.trailing, 5)
     }
 }

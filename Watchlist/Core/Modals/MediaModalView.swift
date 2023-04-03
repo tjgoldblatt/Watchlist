@@ -47,8 +47,6 @@ struct MediaModalView: View {
                 
                 ratingSection
                 
-                Divider()
-                
                 overview
             }
             .padding(.horizontal)
@@ -151,24 +149,18 @@ extension MediaModalView {
                     .multilineTextAlignment(.leading)
                 
                 if isWatched {
-                    Spacer()
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(Color.theme.red)
                         .imageScale(.large)
-                        .padding(.horizontal)
                 }
             }
             
             genreSection
-            
         }
     }
     
     private var overview: some View {
-        Text(mediaDetails.overview)
-            .font(.body)
-            .foregroundColor(Color.theme.text)
-            .multilineTextAlignment(.leading)
+        ExpandableText(text: mediaDetails.overview, lineLimit: 3)
     }
     
     private var ratingSection: some View {
@@ -279,4 +271,57 @@ struct GenreSection: View {
     }
 }
 
-
+struct ExpandableText: View {
+    let text: String
+    let lineLimit: Int
+    
+    @State private var isExpanded: Bool = false
+    @State private var isTruncated: Bool? = nil
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(text)
+                .lineLimit(isExpanded ? nil : lineLimit)
+                .background(calculateTruncation(text: text))
+            
+            if isTruncated == true {
+                button
+            }
+        }
+        .multilineTextAlignment(.leading)
+        // Re-calculate isTruncated for the new text
+        .onChange(of: text, perform: { _ in isTruncated = nil })
+    }
+    
+    func calculateTruncation(text: String) -> some View {
+        // Select the view that fits in the background of the line-limited text.
+        ViewThatFits(in: .vertical) {
+            Text(text)
+                .hidden()
+                .onAppear {
+                    // If the whole text fits, then isTruncated is set to false and no button is shown.
+                    guard isTruncated == nil else { return }
+                    isTruncated = false
+                }
+            Color.clear
+                .hidden()
+                .onAppear {
+                    // If the whole text does not fit, Color.clear is selected,
+                    // isTruncated is set to true and button is shown.
+                    guard isTruncated == nil else { return }
+                    isTruncated = true
+                }
+        }
+    }
+    
+    var button: some View {
+        Button(isExpanded ? "" : "More") {
+            withAnimation(.interactiveSpring()){
+                isExpanded = true
+            }
+        }
+        .foregroundColor(Color.theme.red)
+        .font(.body)
+        .fontWeight(.semibold)
+    }
+}
