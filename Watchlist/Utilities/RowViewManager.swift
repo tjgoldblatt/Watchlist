@@ -43,7 +43,7 @@ class RowViewManager {
             return AnyView(EmptyView())
         }
         
-        let genres = homeVM.getGenreNames(for: .movie, genreIDs: genreIDs)
+        let genres = homeVM.getGenresForMediaType(for: .movie, genreIDs: genreIDs)
         if tab == .explore {
             return AnyView(
             ExploreRowView(rowContent:
@@ -89,7 +89,7 @@ class RowViewManager {
             return AnyView(EmptyView())
         }
         
-        let genres = homeVM.getGenreNames(for: .tv, genreIDs: genreIDs)
+        let genres = homeVM.getGenresForMediaType(for: .tv, genreIDs: genreIDs)
         
         
         if tab == .explore {

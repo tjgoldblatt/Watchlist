@@ -15,33 +15,13 @@ struct TVShowTabView: View {
     
     @EnvironmentObject private var homeVM: HomeViewModel
     
-    @ObservedObject var vm = ShowDetailsViewModel()
+    @StateObject var vm = WatchlistDetailsViewModel()
     
     @State var rowViewManager: RowViewManager
     
-    @State var isKeyboardShowing: Bool = false
-    
-    @State var isSubmitted: Bool = false
-    
-    @State var selectedRows = Set<Int>()
-    
-    @State var deleteConfirmationShowing: Bool = false
-    
     var watchedSelectedRows: [MediaModel] {
-        var watchedSelectedRows: [MediaModel] = []
-        for id in selectedRows {
-            for mediaModel in tvList.results.filter({ $0.id == id }) {
-                if mediaModel.watched == true {
-                    watchedSelectedRows.append(mediaModel)
-                }
-            }
-        }
-        return watchedSelectedRows
+        return vm.getWatchedSelectedRows(mediaModelArray: tvList.results)
     }
-    
-    @Namespace var animation
-    
-    private let topID = "HeaderView"
     
     var body: some View {
         NavigationStack {
@@ -68,8 +48,8 @@ struct TVShowTabView: View {
                     }
                 }
                 .onReceive(keyboardPublisher) { value in
-                    isKeyboardShowing = value
-                    isSubmitted = false
+                    vm.isKeyboardShowing = value
+                    vm.isSubmitted = false
                 }
             }
         }
@@ -99,7 +79,7 @@ extension TVShowTabView {
             Task {
                 if(!sortedSearchResults.isEmpty) {
                     withAnimation(.spring()) {
-                        value.scrollTo(topID)
+                        value.scrollTo(vm.topID)
                     }
                 }
             }
@@ -108,10 +88,10 @@ extension TVShowTabView {
     
     // MARK: - Watchlist
     var watchlist: some View {
-        List(selection: $selectedRows) {
+        List(selection: $vm.selectedRows) {
             /// Used to scroll to top of list
             EmptyView()
-                .id(topID)
+                .id(vm.topID)
             
             ForEach(sortedSearchResults) { post in
                 if let tvShow = homeVM.decodeData(with: post.media) {
@@ -156,7 +136,7 @@ extension TVShowTabView {
         }
         .environment(\.editMode, $homeVM.editMode)
         .overlay(alignment: .bottomTrailing) {
-            if !selectedRows.isEmpty && homeVM.editMode == .active {
+            if !vm.selectedRows.isEmpty && homeVM.editMode == .active {
                 Image(systemName: "trash.circle.fill")
                     .resizable()
                     .fontWeight(.bold)
@@ -165,13 +145,13 @@ extension TVShowTabView {
                     .foregroundStyle(Color.theme.genreText, Color.theme.red)
                     .padding()
                     .onTapGesture {
-                        deleteConfirmationShowing.toggle()
+                        vm.deleteConfirmationShowing.toggle()
                     }
             }
         }
-        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $deleteConfirmationShowing) {
+        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.deleteConfirmationShowing) {
             Button("Delete", role: .destructive) {
-                for id in selectedRows {
+                for id in vm.selectedRows {
                     database?.deleteMediaByID(id: id)
                 }
                 homeVM.editMode = .inactive
@@ -206,7 +186,7 @@ extension TVShowTabView {
                             homeVM.watchSelected = watchOption
                         }
                         if(!sortedSearchResults.isEmpty) {
-                            value.scrollTo(topID)
+                            value.scrollTo(vm.topID)
                         }
                     }
             }
@@ -215,9 +195,9 @@ extension TVShowTabView {
     }
     
     var searchResults: [MediaModel] {
-        let groupedMedia = homeVM.groupMedia(mediaModel: tvList.results).filter({ !$0.watched })
+        let groupedMedia = tvList.results.filter({ !$0.watched })
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = homeVM.groupMedia(mediaModel: tvList.results)
+            var filteredMedia = tvList.results.sorted(by: { !$0.watched && $1.watched})
             
             /// Watched Filter
             if homeVM.watchSelected == .watched {
