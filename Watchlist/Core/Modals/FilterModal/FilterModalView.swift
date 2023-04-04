@@ -112,7 +112,9 @@ extension FilterModalView {
                     }
             }
             .readSize { newSize in
-                vm.screenWidth = newSize.width
+                DispatchQueue.main.async {
+                    vm.screenWidth = newSize.width
+                }
             }
         }
     }
