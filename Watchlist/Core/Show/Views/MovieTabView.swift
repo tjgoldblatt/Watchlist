@@ -211,9 +211,9 @@ extension MovieTabView {
     }
     
     var searchResults: [MediaModel] {
-        let groupedMedia = homeVM.groupMedia(mediaModel: movieList.results).filter({ !$0.watched })
+        let groupedMedia = movieList.results.filter({ !$0.watched })
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = homeVM.groupMedia(mediaModel: movieList.results)
+            var filteredMedia = movieList.results.sorted(by: { !$0.watched && $1.watched})
             
             /// Watched Filter
             if homeVM.watchSelected == .watched {

@@ -215,9 +215,9 @@ extension TVShowTabView {
     }
     
     var searchResults: [MediaModel] {
-        let groupedMedia = homeVM.groupMedia(mediaModel: tvList.results).filter({ !$0.watched })
+        let groupedMedia = tvList.results.filter({ !$0.watched })
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = homeVM.groupMedia(mediaModel: tvList.results)
+            var filteredMedia = tvList.results.sorted(by: { !$0.watched && $1.watched})
             
             /// Watched Filter
             if homeVM.watchSelected == .watched {

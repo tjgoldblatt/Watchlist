@@ -35,7 +35,10 @@ class HomeViewModel: ObservableObject {
     
     var database: Blackbird.Database?
     
+    /// Users Movie Watchlist
     var movieWatchlist: [Media] = []
+    
+    /// Users TV Show Watchlist
     var tvWatchlist: [Media] = []
     
     /// To track filtering
@@ -46,12 +49,12 @@ class HomeViewModel: ObservableObject {
     
     init() {
         Task {
-            try await fetchRequests()
+            try await fetchGenreLists()
         }
     }
     
-    @MainActor
-    func fetchRequests() async throws {
+    /// Fetches the list of genres from the API
+    @MainActor func fetchGenreLists() async throws {
         try await withThrowingTaskGroup(of: Void.self, body: { group in
             group.addTask(operation: { try await self.getMovieGenreList() })
             group.addTask(operation: { try await self.getTVGenreList() })
@@ -60,8 +63,8 @@ class HomeViewModel: ObservableObject {
         })
     }
     
-    @MainActor
-    func getMediaWatchlists() {
+    /// Set HomeVM Watchlists equal to Database Watchlist
+    @MainActor func getMediaWatchlists() {
         Task {
             var newTVWatchList: [Media] = []
             var newMovieWatchList: [Media] = []
@@ -86,7 +89,8 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func getGenreNames(for type: MediaType, genreIDs: [Int]) -> [Genre] {
+    /// Get Genres for a specific MediaType
+    func getGenresForMediaType(for type: MediaType, genreIDs: [Int]) -> [Genre] {
         var genreNames: [Genre] = []
         switch type {
             case .movie:
@@ -175,9 +179,5 @@ class HomeViewModel: ObservableObject {
             print("[💣] Failed to decode. \(error)")
             return nil
         }
-    }
-    
-    func groupMedia(mediaModel: [MediaModel]) -> [MediaModel] {
-        return mediaModel.sorted(by: { !$0.watched && $1.watched })
     }
 }
