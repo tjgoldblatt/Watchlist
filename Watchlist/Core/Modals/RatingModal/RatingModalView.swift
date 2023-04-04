@@ -123,6 +123,8 @@ struct RatingModalView_Previews: PreviewProvider {
 }
 
 struct CloseButton: View {
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         Image(systemName: "xmark")
             .resizable()
@@ -130,9 +132,13 @@ struct CloseButton: View {
             .foregroundColor(Color.theme.genreText)
             .fontWeight(.semibold)
             .padding(.all, 5)
+            .shadow(color: Color.black.opacity(0.4), radius: 2)
             .accessibility(label:Text("Close"))
             .accessibility(hint:Text("Tap to close the screen"))
             .accessibility(addTraits: .isButton)
             .accessibility(removeTraits: .isImage)
+            .onTapGesture {
+                dismiss()
+            }
     }
 }

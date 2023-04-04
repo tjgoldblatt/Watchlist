@@ -30,17 +30,41 @@ struct SearchBarView: View {
     
     var queryToCallWhenTyping: () -> Void
     
-    var mediaList: [Media] {
+    var mediaListWithFilter: [Media] {
         var mediaList: Set<Media> = []
+        
         switch homeVM.selectedTab {
             case .movies:
-                for movieModel in movieList.results {
+                let movieListAfterFilter = movieList.results.filter {
+                    switch homeVM.watchSelected {
+                        case .unwatched:
+                            return !$0.watched
+                        case .watched:
+                            return $0.watched
+                        case .any:
+                            return true
+                    }
+                }
+                
+                for movieModel in movieListAfterFilter {
                     if let media = homeVM.decodeData(with: movieModel.media) {
                         mediaList.insert(media)
                     }
                 }
+                
             case .tvShows:
-                for tvModel in tvList.results {
+                let tvListAfterFilter = tvList.results.filter {
+                    switch homeVM.watchSelected {
+                        case .unwatched:
+                            return !$0.watched
+                        case .watched:
+                            return $0.watched
+                        case .any:
+                            return true
+                    }
+                }
+                
+                for tvModel in tvListAfterFilter {
                     if let media = homeVM.decodeData(with: tvModel.media) {
                         mediaList.insert(media)
                     }
@@ -107,7 +131,7 @@ struct SearchBarView: View {
                         }
                     })
                     .sheet(isPresented: $showFilterSheet) {
-                        FilterModalView(genresToFilter: homeVM.convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaList))
+                        FilterModalView(genresToFilter: homeVM.convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
                             .presentationDetents([.large])
                             .presentationDragIndicator(.visible)
                     }

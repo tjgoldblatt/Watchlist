@@ -94,6 +94,7 @@ extension ExploreTabView {
             return AnyView(ProgressView())
         }
     }
+    
     var searchResults: [Media] {
         let groupedMedia = homeVM.results
         if !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {

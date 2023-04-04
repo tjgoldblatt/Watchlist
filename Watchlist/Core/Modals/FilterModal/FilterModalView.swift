@@ -12,14 +12,9 @@ struct FilterModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @Environment(\.dismiss) var dismiss
     
-    @ObservedObject var vm = FilterModalViewModel()
+    @StateObject var vm = FilterModalViewModel()
     
     @State var genresToFilter: [Genre]
-    @State var genresSelected: Set<Genre> = []
-    
-    @State var showWatchedModal = false
-    
-    @State var screenWidth: CGFloat = 0
     
     var body: some View {
         NavigationStack {
@@ -74,7 +69,7 @@ struct FilterModalView: View {
         }
         .onAppear {
             homeVM.getMediaWatchlists()
-            genresSelected = homeVM.genresSelected
+            vm.genresSelected = homeVM.genresSelected
         }
     }
 }
@@ -94,9 +89,9 @@ extension FilterModalView {
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
             
-            FlexibleView(availableWidth: screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
+            FlexibleView(availableWidth: vm.screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
                 Text(genreOption.name)
-                    .foregroundColor(genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.red.opacity(0.8))
+                    .foregroundColor(vm.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.red.opacity(0.8))
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .fixedSize(horizontal: true, vertical: true)
@@ -104,20 +99,22 @@ extension FilterModalView {
                     .padding(.horizontal)
                     .background {
                         Capsule()
-                            .foregroundColor(genresSelected.contains(genreOption) || genresSelected.contains(genreOption) ? Color.theme.red : Color.theme.secondary.opacity(0.6))
+                            .foregroundColor(vm.genresSelected.contains(genreOption) || vm.genresSelected.contains(genreOption) ? Color.theme.red : Color.theme.secondary.opacity(0.6))
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
                         homeVM.hapticFeedback.impactOccurred()
-                        if !genresSelected.contains(genreOption) {
-                            genresSelected.insert(genreOption)
+                        if !vm.genresSelected.contains(genreOption) {
+                            vm.genresSelected.insert(genreOption)
                         } else {
-                            genresSelected.remove(genreOption)
+                            vm.genresSelected.remove(genreOption)
                         }
                     }
             }
             .readSize { newSize in
-                screenWidth = newSize.width
+                DispatchQueue.main.async {
+                    vm.screenWidth = newSize.width
+                }
             }
         }
     }
@@ -150,7 +147,7 @@ extension FilterModalView {
             
             Button("Done") {
                 homeVM.hapticFeedback.impactOccurred()
-                homeVM.genresSelected = genresSelected
+                homeVM.genresSelected = vm.genresSelected
                 dismiss()
             }
             .foregroundColor(Color.theme.genreText)

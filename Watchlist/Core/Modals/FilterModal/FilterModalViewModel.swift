@@ -8,6 +8,8 @@
 import Foundation
 
 class FilterModalViewModel: ObservableObject {
-    @Published var genres: [Genre] = []
+    @Published var screenWidth: CGFloat = 0
+    @Published var showWatchedModal = false
+    @Published var genresSelected: Set<Genre> = []
     
 }
