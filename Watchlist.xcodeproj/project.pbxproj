@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		32246F4029D9ECBD002EDFC9 /* FilterOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */; };
 		322BB68529D32A4D007CD536 /* Blackbird in Frameworks */ = {isa = PBXBuildFile; productRef = 322BB68429D32A4D007CD536 /* Blackbird */; };
+		322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322BF19929DC4CD000161820 /* MediaModalViewModel.swift */; };
 		324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */; };
 		324BAE6229B8D3D9002FBB6F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE6129B8D3D9002FBB6F /* ContentView.swift */; };
 		324BAE6429B8D3DA002FBB6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 324BAE6329B8D3DA002FBB6F /* Assets.xcassets */; };
@@ -70,6 +71,7 @@
 
 /* Begin PBXFileReference section */
 		32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptions.swift; sourceTree = "<group>"; };
+		322BF19929DC4CD000161820 /* MediaModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModalViewModel.swift; sourceTree = "<group>"; };
 		324BAE5C29B8D3D9002FBB6F /* Watchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Watchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistApp.swift; sourceTree = "<group>"; };
 		324BAE6129B8D3D9002FBB6F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -143,6 +145,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		322BF19829DC4CC300161820 /* MediaModal */ = {
+			isa = PBXGroup;
+			children = (
+				3258730829BCD53A005E1394 /* MediaModalView.swift */,
+				322BF19929DC4CD000161820 /* MediaModalViewModel.swift */,
+			);
+			path = MediaModal;
+			sourceTree = "<group>";
+		};
 		324BAE5329B8D3D9002FBB6F = {
 			isa = PBXGroup;
 			children = (
@@ -371,7 +382,7 @@
 		32B5128A29CBAFE700879AF6 /* Modals */ = {
 			isa = PBXGroup;
 			children = (
-				3258730829BCD53A005E1394 /* MediaModalView.swift */,
+				322BF19829DC4CC300161820 /* MediaModal */,
 				32B5128B29CBB00000879AF6 /* RatingModalView.swift */,
 				32B9CE0F29CF2D1400D6B649 /* FilterModal */,
 			);
@@ -532,6 +543,7 @@
 				32952D9A29BB885E002B3596 /* View.swift in Sources */,
 				3283E40529D255CB0002490F /* ExploreRowView.swift in Sources */,
 				3258730B29BCF8DD005E1394 /* GenreView.swift in Sources */,
+				322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */,
 				3298920129C01A0C009989AA /* MediaModel.swift in Sources */,
 				324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */,
 				32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */,
