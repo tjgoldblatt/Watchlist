@@ -13,6 +13,8 @@ struct SearchBarView: View {
     
     @EnvironmentObject var homeVM: HomeViewModel
     
+    @StateObject private var textObserver = TextFieldObserver()
+    
     @Binding var searchText: String
     
     @State var isKeyboardShowing: Bool = false
@@ -28,7 +30,7 @@ struct SearchBarView: View {
         return homeVM.selectedTab.searchTextLabel
     }
     
-    var queryToCallWhenTyping: () -> Void
+    var queryToCallWhenTyping: (() -> Void)? = nil
     
     var mediaListWithFilter: [Media] {
         var mediaList: Set<Media> = []
@@ -84,7 +86,7 @@ struct SearchBarView: View {
                     .foregroundColor(!isKeyboardShowing ? Color.theme.red : Color.theme.text)
                     .imageScale(.medium)
                 
-                TextField(textFieldString, text: $searchText)
+                TextField(textFieldString, text: homeVM.selectedTab == .explore ? $textObserver.searchText : $searchText)
                     .foregroundColor(Color.theme.text)
                     .font(.system(size: 16, design: .default))
                     .onReceive(keyboardPublisher) { value in
@@ -101,7 +103,7 @@ struct SearchBarView: View {
                             isKeyboardShowing = true
                         }
                     }
-                    .overlay(alignment: .trailing, content: {
+                    .overlay(alignment: .trailing) {
                         if isKeyboardShowing && !searchText.isEmpty {
                             Image(systemName: "xmark.circle.fill")
                                 .resizable()
@@ -114,6 +116,7 @@ struct SearchBarView: View {
                                 .onTapGesture {
                                     homeVM.hapticFeedback.impactOccurred()
                                     searchText = ""
+                                    textObserver.searchText = ""
                                 }
                         } else if shouldShowFilterButton {
                             Image(systemName: "slider.horizontal.3")
@@ -129,16 +132,19 @@ struct SearchBarView: View {
                                     showFilterSheet.toggle()
                                 }
                         }
-                    })
+                    }
                     .sheet(isPresented: $showFilterSheet) {
                         FilterModalView(genresToFilter: homeVM.convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
                             .presentationDetents([.large])
                             .presentationDragIndicator(.visible)
                     }
                     .submitLabel(.search)
-                    .onChange(of: searchText) { newValue in
-                        if(!searchText.isEmpty) {
-                            queryToCallWhenTyping()
+                    .onReceive(textObserver.$debouncedText) { val in
+                        homeVM.searchText = val
+                        if(!textObserver.searchText.isEmpty) {
+                            if let queryToCallWhenTyping {
+                                queryToCallWhenTyping()
+                            }
                         }
                     }
             }
@@ -168,9 +174,7 @@ struct SearchBarView: View {
 
 struct SearchBarView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBarView(searchText: .constant("")) {
-            //
-        }
+        SearchBarView(searchText: .constant(""))
     }
 }
 
@@ -188,5 +192,21 @@ extension View {
                     .map { _ in false })
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
+    }
+}
+
+class TextFieldObserver : ObservableObject {
+    @Published var debouncedText = ""
+    @Published var searchText = ""
+    
+    private var subscriptions = Set<AnyCancellable>()
+    
+    init() {
+        $searchText
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] t in
+                self?.debouncedText = t
+            } )
+            .store(in: &subscriptions)
     }
 }

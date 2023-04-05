@@ -33,7 +33,7 @@ struct MovieTabView: View {
                     VStack(spacing: 10) {
                         header
                         
-                        searchBar(scrollProxy: proxy)
+                        searchbar
                         
                         // MARK: - Watchlist
                         if movieList.didLoad {
@@ -73,14 +73,8 @@ extension MovieTabView {
     }
     
     // MARK: - Search
-    func searchBar(scrollProxy value: ScrollViewProxy) -> some View {
-        SearchBarView(searchText: $vm.filterText) {
-            Task {
-                if(!sortedSearchResults.isEmpty) {
-                    value.scrollTo(vm.topID)
-                }
-            }
-        }
+    var searchbar: some View {
+        SearchBarView(searchText: $vm.filterText)
     }
     
     // MARK: - Watchlist

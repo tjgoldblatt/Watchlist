@@ -34,7 +34,7 @@ struct TVShowTabView: View {
                         
                         header
                         
-                        searchBar(scrollProxy: proxy)
+                        searchbar
                         
                         if tvList.didLoad {
                             watchFilterOptions(scrollProxy: proxy)
@@ -74,16 +74,8 @@ extension TVShowTabView {
     }
     
     // MARK: - Search
-    func searchBar(scrollProxy value: ScrollViewProxy) -> some View {
-        SearchBarView(searchText: $vm.filterText) {
-            Task {
-                if(!sortedSearchResults.isEmpty) {
-                    withAnimation(.spring()) {
-                        value.scrollTo(vm.topID)
-                    }
-                }
-            }
-        }
+    var searchbar: some View {
+        SearchBarView(searchText: $vm.filterText)
     }
     
     // MARK: - Watchlist
