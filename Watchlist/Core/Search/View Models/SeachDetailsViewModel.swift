@@ -22,20 +22,10 @@ class SearchTabViewModel: ObservableObject {
     @MainActor
     func search() async {
         isSearching = true
-        homeVM.$searchText
-            .debounce(for: 0.5, scheduler: RunLoop.main)
-            .sink { searchText in
-                Task { [weak self] in
-                    guard let self else { return }
-                    do {
-                        self.homeVM.results = try await SearchTabViewModel.search(for: searchText)
-                        self.isSearching = false
-                    } catch {
-                        print("[🔥] Error While Searching")
-                    }
-                }
-            }
-            .store(in: &cancellables)
+        Task {
+            self.homeVM.results = try await SearchTabViewModel.search(for: homeVM.searchText)
+            isSearching = false
+        }
     }
     
     static func search(for searchText: String) async throws -> [Media] {
