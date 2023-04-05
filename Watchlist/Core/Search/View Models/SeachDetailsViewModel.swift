@@ -23,7 +23,7 @@ class SearchTabViewModel: ObservableObject {
     func search() async {
         isSearching = true
         homeVM.$searchText
-            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .debounce(for: 1.5, scheduler: RunLoop.main)
             .sink { searchText in
                 Task { [weak self] in
                     guard let self else { return }
