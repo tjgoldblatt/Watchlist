@@ -17,7 +17,7 @@ struct SearchBarView: View {
     
     @Binding var searchText: String
     
-    @State var isKeyboardShowing: Bool = false
+    @FocusState private var isFocused: Bool
     
     @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.movie.rawValue, orderBy: .ascending(\.$title)) }) var movieList
     
@@ -83,28 +83,15 @@ struct SearchBarView: View {
         HStack {
             HStack {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(!isKeyboardShowing ? Color.theme.red : Color.theme.text)
+                    .foregroundColor(!isFocused ? Color.theme.red : Color.theme.text)
                     .imageScale(.medium)
                 
                 TextField(textFieldString, text: homeVM.selectedTab == .explore ? $textObserver.searchText : $searchText)
                     .foregroundColor(Color.theme.text)
                     .font(.system(size: 16, design: .default))
-                    .onReceive(keyboardPublisher) { value in
-                        withAnimation(.spring()) {
-                            isKeyboardShowing = value
-                        }
-                    }
-                    .onSubmit {
-                        isKeyboardShowing = false
-                        hideKeyboard()
-                    }
-                    .onTapGesture {
-                        withAnimation(.spring()) {
-                            isKeyboardShowing = true
-                        }
-                    }
+                    .focused($isFocused)
                     .overlay(alignment: .trailing) {
-                        if isKeyboardShowing && !searchText.isEmpty {
+                        if isFocused && !(homeVM.selectedTab == .explore ? textObserver.searchText.isEmpty : searchText.isEmpty) {
                             Image(systemName: "xmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
@@ -112,7 +99,7 @@ struct SearchBarView: View {
                                 .padding()
                                 .offset(x: 15)
                                 .foregroundColor(Color.theme.text)
-                                .opacity(!isKeyboardShowing ? 0.0 : 1.0)
+                                .opacity(!isFocused ? 0.0 : 1.0)
                                 .onTapGesture {
                                     homeVM.hapticFeedback.impactOccurred()
                                     searchText = ""
@@ -126,7 +113,7 @@ struct SearchBarView: View {
                                 .padding()
                                 .offset(x: 15)
                                 .foregroundColor(Color.theme.red)
-                                .opacity(!isKeyboardShowing ? 1.0 : 0.0)
+                                .opacity(!isFocused ? 1.0 : 0.0)
                                 .onTapGesture {
                                     homeVM.hapticFeedback.impactOccurred()
                                     showFilterSheet.toggle()
@@ -155,6 +142,14 @@ struct SearchBarView: View {
             .background(Color.theme.secondary)
             .cornerRadius(20)
             .onAppear { homeVM.getMediaWatchlists() }
+            .onTapGesture {
+                withAnimation(.spring()) {
+                    isFocused = true
+                }
+            }
+        }
+        .onChange(of: homeVM.watchSelected) { _ in
+            isFocused = false
         }
         .padding(.horizontal)
     }
@@ -175,6 +170,7 @@ struct SearchBarView: View {
 struct SearchBarView_Previews: PreviewProvider {
     static var previews: some View {
         SearchBarView(searchText: .constant(""))
+            .environmentObject(dev.homeVM)
     }
 }
 
@@ -204,9 +200,11 @@ class TextFieldObserver : ObservableObject {
     init() {
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] t in
-                self?.debouncedText = t
-            } )
+            .sink { [weak self] t in
+                if !t.isEmpty {
+                    self?.debouncedText = t
+                }
+            }
             .store(in: &subscriptions)
     }
 }

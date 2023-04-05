@@ -298,9 +298,9 @@ struct ExpandableText: View {
     }
     
     var button: some View {
-        Button(isExpanded ? "" : "More") {
+        Button(isExpanded ? "Less" : "More") {
             withAnimation(.interactiveSpring()){
-                isExpanded = true
+                isExpanded.toggle()
             }
         }
         .foregroundColor(Color.theme.red)
