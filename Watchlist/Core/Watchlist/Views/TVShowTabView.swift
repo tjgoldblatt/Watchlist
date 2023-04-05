@@ -37,9 +37,9 @@ struct TVShowTabView: View {
                         searchbar
                         
                         if tvList.didLoad {
-                            watchFilterOptions(scrollProxy: proxy)
+                            watchFilterOptions
                             
-                            watchlist
+                            watchlist(scrollProxy: proxy)
                         } else {
                             ProgressView()
                         }
@@ -47,9 +47,8 @@ struct TVShowTabView: View {
                         Spacer()
                     }
                 }
-                .onReceive(keyboardPublisher) { value in
-                    vm.isKeyboardShowing = value
-                    vm.isSubmitted = false
+                .onChange(of: homeVM.selectedTab) { _ in
+                    vm.filterText = ""
                 }
             }
         }
@@ -79,17 +78,20 @@ extension TVShowTabView {
     }
     
     // MARK: - Watchlist
-    var watchlist: some View {
+    func watchlist(scrollProxy: ScrollViewProxy) -> some View {
         List(selection: $vm.selectedRows) {
             /// Used to scroll to top of list
             EmptyView()
-                .id(vm.topID)
+                .id(vm.emptyViewID)
             
             ForEach(sortedSearchResults) { post in
                 if let tvShow = homeVM.decodeData(with: post.media) {
                     rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
                         .allowsHitTesting(homeVM.editMode == .inactive)
                 }
+            }
+            .onChange(of: homeVM.watchSelected) { _ in
+                scrollProxy.scrollTo(vm.emptyViewID)
             }
             .listRowBackground(Color.theme.background)
             .transition(.slide)
@@ -101,8 +103,6 @@ extension TVShowTabView {
                         .foregroundColor(Color.theme.red)
                         .padding()
                         .contentShape(Rectangle())
-                } else {
-                    Text("")
                 }
             }
             
@@ -124,6 +124,10 @@ extension TVShowTabView {
                             }
                         }
                 }
+            }
+            
+            ToolbarItem {
+                Text("")
             }
         }
         .environment(\.editMode, $homeVM.editMode)
@@ -159,7 +163,7 @@ extension TVShowTabView {
 
 
 extension TVShowTabView {
-    func watchFilterOptions(scrollProxy value: ScrollViewProxy) -> some View {
+    var watchFilterOptions: some View {
         HStack {
             ForEach(WatchOptions.allCases, id: \.rawValue) { watchOption in
                 Text(watchOption.rawValue)
@@ -176,9 +180,7 @@ extension TVShowTabView {
                         homeVM.hapticFeedback.impactOccurred()
                         if homeVM.watchSelected != watchOption {
                             homeVM.watchSelected = watchOption
-                        }
-                        if(!sortedSearchResults.isEmpty) {
-                            value.scrollTo(vm.topID)
+                            vm.filterText = ""
                         }
                     }
             }
