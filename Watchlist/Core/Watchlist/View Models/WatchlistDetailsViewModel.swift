@@ -19,7 +19,7 @@ class WatchlistDetailsViewModel: ObservableObject {
     
     @Published var deleteConfirmationShowing: Bool = false
     
-    let topID = "HeaderView"
+    let emptyViewID = "HeaderView"
     
     func getWatchedSelectedRows(mediaModelArray: [MediaModel]) -> [MediaModel] {
         var watchedSelectedRows: [MediaModel] = []
