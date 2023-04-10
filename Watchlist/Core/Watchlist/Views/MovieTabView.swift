@@ -90,14 +90,16 @@ extension MovieTabView {
                 }
             }
             .onChange(of: homeVM.watchSelected) { _ in
-                scrollProxy.scrollTo(vm.emptyViewID)
+                if sortedSearchResults.count > 3 {
+                    scrollProxy.scrollTo(vm.emptyViewID)
+                }
             }
             .listRowBackground(Color.theme.background)
             .transition(.slide)
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                if sortedSearchResults.count > 1 {
+                if homeVM.watchSelected != .unwatched ? !sortedSearchResults.isEmpty : sortedSearchResults.count > 1 {
                     EditButton()
                         .foregroundColor(Color.theme.red)
                         .padding()
