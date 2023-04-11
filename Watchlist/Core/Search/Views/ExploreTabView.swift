@@ -35,7 +35,11 @@ struct ExploreTabView: View {
                     
                     searchBar
                     
-                    searchResultsView
+                    if sortedSearchResults.isEmpty {
+                        Color.theme.background
+                    } else {
+                        searchResultsView
+                    }
                     
                     Spacer()
                 }
@@ -44,23 +48,21 @@ struct ExploreTabView: View {
                     isSubmitted = false
                 }
             }
+            .toolbar {
+                Text("")
+            }
         }
         .onAppear { homeVM.getMediaWatchlists() }
-    }
-}
-
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some View {
-        ExploreTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-            .environmentObject(dev.homeVM)
     }
 }
 
 extension ExploreTabView {
     // MARK: - Header
     var header: some View {
-        HeaderView(currentTab: .constant(.explore), showIcon: true)
-            .padding(.horizontal)
+        NavigationStack {
+            HeaderView(currentTab: .constant(.explore), showIcon: true)
+                .padding(.horizontal)
+        }
     }
     
     // MARK: - Search
@@ -80,12 +82,12 @@ extension ExploreTabView {
                 List {
                     ForEach(sortedSearchResults, id: \.id) { media in
                         rowViewManager.createRowView(media: media, tab: .explore)
+                            .listRowBackground(Color.theme.background)
                     }
                     .listRowBackground(Color.clear)
                 }
-                    .toolbar {
-                        Text("")
-                    }
+                    .background(.clear)
+                    .scrollContentBackground(.hidden)
                     .scrollIndicators(.hidden)
                     .listStyle(.plain)
                     .scrollDismissesKeyboard(.immediately)
@@ -140,5 +142,12 @@ extension ExploreTabView {
             return false
         }
         
+    }
+}
+
+struct SearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        ExploreTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+            .environmentObject(dev.homeVM)
     }
 }

@@ -40,16 +40,17 @@ struct HomeView: View {
                     }
                     .tag(Tab.explore)
             }
-            .onChange(of: homeVM.selectedTab, perform: { newValue in
+            .accentColor(Color.theme.red)
+            .tint(Color.theme.red)
+            .onChange(of: homeVM.selectedTab) { newValue in
                 homeVM.getMediaWatchlists()
                 homeVM.genresSelected = []
                 homeVM.ratingSelected = 0
-            })
+            }
             .onAppear {
                 homeVM.database = database
                 homeVM.getMediaWatchlists()
             }
-            .tint(Color.theme.red)
         } else {
             ProgressView()
         }
@@ -60,5 +61,6 @@ struct HomeView_Previews: PreviewProvider {
     
     static var previews: some View {
         HomeView()
+            .environmentObject(dev.homeVM)
     }
 }

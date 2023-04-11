@@ -40,7 +40,11 @@ struct MovieTabView: View {
                             
                             watchFilterOptions
                             
-                            watchlist(scrollProxy: proxy)
+                            if homeVM.watchSelected != .unwatched ? !sortedSearchResults.isEmpty : sortedSearchResults.count > 1 {
+                                watchlist(scrollProxy: proxy)
+                            } else {
+                                EmptyListView()
+                            }
                         } else {
                             ProgressView()
                         }
@@ -52,14 +56,12 @@ struct MovieTabView: View {
                     vm.filterText = ""
                 }
             }
+            .toolbar {
+                ToolbarItem {
+                    Text("")
+                }
+            }
         }
-    }
-}
-
-struct MovieTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        MovieTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-            .environmentObject(dev.homeVM)
     }
 }
 
@@ -87,6 +89,7 @@ extension MovieTabView {
                 if let movie = homeVM.decodeData(with: post.media) {
                     rowViewManager.createRowView(movie: movie, tab: .movies)
                         .allowsHitTesting(homeVM.editMode == .inactive)
+                        .listRowBackground(Color.theme.background)
                 }
             }
             .onChange(of: homeVM.watchSelected) { _ in
@@ -104,6 +107,7 @@ extension MovieTabView {
                         .foregroundColor(Color.theme.red)
                         .padding()
                         .contentShape(Rectangle())
+                        .buttonStyle(.plain)
                 }
             }
             
@@ -126,11 +130,9 @@ extension MovieTabView {
                         }
                 }
             }
-            
-            ToolbarItem {
-                Text("")
-            }
         }
+        .background(.clear)
+        .scrollContentBackground(.hidden)
         .environment(\.editMode, $homeVM.editMode)
         .overlay(alignment: .bottomTrailing) {
             if !vm.selectedRows.isEmpty && homeVM.editMode == .active {
@@ -153,8 +155,10 @@ extension MovieTabView {
                 }
                 homeVM.editMode = .inactive
             }
+            .buttonStyle(.plain)
             
             Button("Cancel", role: .cancel) {}
+                .buttonStyle(.plain)
         }
         .scrollIndicators(.hidden)
         .listStyle(.plain)
@@ -253,6 +257,15 @@ extension MovieTabView {
                 }
             }
             return false
+        }
+    }
+}
+
+struct MovieTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            MovieTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+                .environmentObject(dev.homeVM)
         }
     }
 }

@@ -39,7 +39,11 @@ struct TVShowTabView: View {
                         if tvList.didLoad {
                             watchFilterOptions
                             
-                            watchlist(scrollProxy: proxy)
+                            if !sortedSearchResults.isEmpty {
+                                watchlist(scrollProxy: proxy)
+                            } else {
+                                EmptyListView()
+                            }
                         } else {
                             ProgressView()
                         }
@@ -51,14 +55,12 @@ struct TVShowTabView: View {
                     vm.filterText = ""
                 }
             }
+            .toolbar {
+                ToolbarItem {
+                    Text("")
+                }
+            }
         }
-    }
-}
-
-struct TVShowTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-            .environmentObject(dev.homeVM)
     }
 }
 
@@ -88,6 +90,7 @@ extension TVShowTabView {
                 if let tvShow = homeVM.decodeData(with: post.media) {
                     rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
                         .allowsHitTesting(homeVM.editMode == .inactive)
+                        .listRowBackground(Color.theme.background)
                 }
             }
             .onChange(of: homeVM.watchSelected) { _ in
@@ -105,6 +108,7 @@ extension TVShowTabView {
                         .foregroundColor(Color.theme.red)
                         .padding()
                         .contentShape(Rectangle())
+                        .buttonStyle(.plain)
                 }
             }
             
@@ -127,11 +131,9 @@ extension TVShowTabView {
                         }
                 }
             }
-            
-            ToolbarItem {
-                Text("")
-            }
         }
+        .background(.clear)
+        .scrollContentBackground(.hidden)
         .environment(\.editMode, $homeVM.editMode)
         .overlay(alignment: .bottomTrailing) {
             if !vm.selectedRows.isEmpty && homeVM.editMode == .active {
@@ -154,8 +156,10 @@ extension TVShowTabView {
                 }
                 homeVM.editMode = .inactive
             }
+            .buttonStyle(.plain)
             
             Button("Cancel", role: .cancel) {}
+                .buttonStyle(.plain)
         }
         .scrollIndicators(.hidden)
         .listStyle(.plain)
@@ -254,5 +258,44 @@ extension TVShowTabView {
             }
             return false
         }
+    }
+}
+
+struct EmptyListView: View {
+    @EnvironmentObject private var homeVM: HomeViewModel
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            Image(systemName: homeVM.selectedTab.icon)
+                .resizable()
+                .foregroundColor(Color.theme.secondary)
+                .scaledToFit()
+                .frame(maxHeight: 150)
+            Text("Looks like your Watchlist is Empty!")
+                .font(.headline)
+                .foregroundColor(Color.theme.secondary)
+                .padding()
+            Button {
+                homeVM.selectedTab = .explore
+            } label: {
+                Text("Add \(homeVM.selectedTab == .movies ? "Movies" : "TV Shows")")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color.theme.genreText)
+                    .padding(.vertical, 13)
+                    .padding(.horizontal, 25)
+                    .background(Color.theme.red)
+                    .cornerRadius(10)
+            }
+            Spacer()
+        }
+    }
+}
+
+struct TVShowTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+            .environmentObject(dev.homeVM)
     }
 }
