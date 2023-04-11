@@ -40,6 +40,8 @@ struct HomeView: View {
                     }
                     .tag(Tab.explore)
             }
+            .accentColor(Color.theme.red)
+            .tint(Color.theme.red)
             .onChange(of: homeVM.selectedTab) { newValue in
                 homeVM.getMediaWatchlists()
                 homeVM.genresSelected = []
