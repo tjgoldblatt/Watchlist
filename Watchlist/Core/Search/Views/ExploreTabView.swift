@@ -56,13 +56,6 @@ struct ExploreTabView: View {
     }
 }
 
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some View {
-        ExploreTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-            .environmentObject(dev.homeVM)
-    }
-}
-
 extension ExploreTabView {
     // MARK: - Header
     var header: some View {
@@ -147,5 +140,12 @@ extension ExploreTabView {
             return false
         }
         
+    }
+}
+
+struct SearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        ExploreTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+            .environmentObject(dev.homeVM)
     }
 }

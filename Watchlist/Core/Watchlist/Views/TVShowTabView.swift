@@ -40,7 +40,7 @@ struct TVShowTabView: View {
                             watchFilterOptions
                             
                             if !sortedSearchResults.isEmpty {
-                               watchlist(scrollProxy: proxy)
+                                watchlist(scrollProxy: proxy)
                             } else {
                                 EmptyListView()
                             }
@@ -61,13 +61,6 @@ struct TVShowTabView: View {
                 }
             }
         }
-    }
-}
-
-struct TVShowTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-            .environmentObject(dev.homeVM)
     }
 }
 
@@ -265,19 +258,6 @@ extension TVShowTabView {
     }
 }
 
-struct ListBackgroundModifier: ViewModifier {
-    
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content
-                .scrollContentBackground(.hidden)
-        } else {
-            content
-        }
-    }
-}
-
 struct EmptyListView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
     
@@ -300,5 +280,12 @@ struct EmptyListView: View {
                 .cornerRadius(10)
         }
         Spacer()
+    }
+}
+
+struct TVShowTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+            .environmentObject(dev.homeVM)
     }
 }

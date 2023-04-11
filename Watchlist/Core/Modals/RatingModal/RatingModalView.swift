@@ -105,6 +105,7 @@ struct RatingModalView: View {
                 .offset(y: -50)
                 .padding(.bottom)
             }
+            .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
             .overlay(alignment: .topLeading) {
                 CloseButton()
                     .padding(10)
