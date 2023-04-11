@@ -39,7 +39,28 @@ struct TVShowTabView: View {
                         if tvList.didLoad {
                             watchFilterOptions
                             
-                            watchlist(scrollProxy: proxy)
+                            if !sortedSearchResults.isEmpty {
+                               watchlist(scrollProxy: proxy)
+                            } else {
+                                Spacer()
+                                Text("Looks like your Watchlist is Empty!")
+                                    .font(.headline)
+                                    .foregroundColor(Color.theme.text.opacity(0.4))
+                                    .padding()
+                                Button {
+                                    homeVM.selectedTab = .explore
+                                } label: {
+                                    Text("Add TV Shows")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(Color.theme.genreText)
+                                        .padding(.vertical, 10)
+                                        .padding(.horizontal, 15)
+                                        .background(Color.theme.red)
+                                        .cornerRadius(10)
+                                }
+                                Spacer()
+                            }
                         } else {
                             ProgressView()
                         }
@@ -49,6 +70,40 @@ struct TVShowTabView: View {
                 }
                 .onChange(of: homeVM.selectedTab) { _ in
                     vm.filterText = ""
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if !sortedSearchResults.isEmpty {
+                        EditButton()
+                            .foregroundColor(Color.theme.red)
+                            .padding()
+                            .contentShape(Rectangle())
+                    }
+                }
+                
+                if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Text("Reset")
+                            .font(.body)
+                            .foregroundColor(Color.theme.red)
+                            .padding()
+                            .onTapGesture {
+                                Task {
+                                    for watchedSelectedRow in watchedSelectedRows {
+                                        if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
+                                            await database?.sendRating(rating: nil, media: media)
+                                            await database?.setWatched(watched: false, media: media)
+                                        }
+                                    }
+                                    homeVM.editMode = .inactive
+                                }
+                            }
+                    }
+                }
+                
+                ToolbarItem {
+                    Text("")
                 }
             }
         }
@@ -88,6 +143,7 @@ extension TVShowTabView {
                 if let tvShow = homeVM.decodeData(with: post.media) {
                     rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
                         .allowsHitTesting(homeVM.editMode == .inactive)
+                        .listRowBackground(Color.theme.background)
                 }
             }
             .onChange(of: homeVM.watchSelected) { _ in
@@ -98,40 +154,8 @@ extension TVShowTabView {
             .listRowBackground(Color.theme.background)
             .transition(.slide)
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                if !sortedSearchResults.isEmpty {
-                    EditButton()
-                        .foregroundColor(Color.theme.red)
-                        .padding()
-                        .contentShape(Rectangle())
-                }
-            }
-            
-            if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Reset")
-                        .font(.body)
-                        .foregroundColor(Color.theme.red)
-                        .padding()
-                        .onTapGesture {
-                            Task {
-                                for watchedSelectedRow in watchedSelectedRows {
-                                    if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
-                                        await database?.sendRating(rating: nil, media: media)
-                                        await database?.setWatched(watched: false, media: media)
-                                    }
-                                }
-                                homeVM.editMode = .inactive
-                            }
-                        }
-                }
-            }
-            
-            ToolbarItem {
-                Text("")
-            }
-        }
+        .background(.clear)
+        .scrollContentBackground(.hidden)
         .environment(\.editMode, $homeVM.editMode)
         .overlay(alignment: .bottomTrailing) {
             if !vm.selectedRows.isEmpty && homeVM.editMode == .active {
@@ -253,6 +277,19 @@ extension TVShowTabView {
                 }
             }
             return false
+        }
+    }
+}
+
+struct ListBackgroundModifier: ViewModifier {
+    
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content
+                .scrollContentBackground(.hidden)
+        } else {
+            content
         }
     }
 }
