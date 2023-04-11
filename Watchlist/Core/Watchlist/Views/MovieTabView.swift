@@ -107,6 +107,7 @@ extension MovieTabView {
                         .foregroundColor(Color.theme.red)
                         .padding()
                         .contentShape(Rectangle())
+                        .buttonStyle(.plain)
                 }
             }
             
@@ -154,8 +155,10 @@ extension MovieTabView {
                 }
                 homeVM.editMode = .inactive
             }
+            .buttonStyle(.plain)
             
             Button("Cancel", role: .cancel) {}
+                .buttonStyle(.plain)
         }
         .scrollIndicators(.hidden)
         .listStyle(.plain)

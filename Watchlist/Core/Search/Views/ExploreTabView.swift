@@ -86,6 +86,8 @@ extension ExploreTabView {
                     }
                     .listRowBackground(Color.clear)
                 }
+                    .background(.clear)
+                    .scrollContentBackground(.hidden)
                     .scrollIndicators(.hidden)
                     .listStyle(.plain)
                     .scrollDismissesKeyboard(.immediately)

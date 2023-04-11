@@ -40,18 +40,15 @@ struct HomeView: View {
                     }
                     .tag(Tab.explore)
             }
-            .onChange(of: homeVM.selectedTab, perform: { newValue in
+            .onChange(of: homeVM.selectedTab) { newValue in
                 homeVM.getMediaWatchlists()
                 homeVM.genresSelected = []
                 homeVM.ratingSelected = 0
-            })
+            }
             .onAppear {
                 homeVM.database = database
                 homeVM.getMediaWatchlists()
             }
-            .tint(Color.theme.red)
-            // Solution for iOS 16 apps not showing color properly
-            .accentColor(Color.theme.red)
         } else {
             ProgressView()
         }
