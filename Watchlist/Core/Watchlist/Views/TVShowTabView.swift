@@ -42,24 +42,7 @@ struct TVShowTabView: View {
                             if !sortedSearchResults.isEmpty {
                                watchlist(scrollProxy: proxy)
                             } else {
-                                Spacer()
-                                Text("Looks like your Watchlist is Empty!")
-                                    .font(.headline)
-                                    .foregroundColor(Color.theme.text.opacity(0.4))
-                                    .padding()
-                                Button {
-                                    homeVM.selectedTab = .explore
-                                } label: {
-                                    Text("Add TV Shows")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(Color.theme.genreText)
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal, 15)
-                                        .background(Color.theme.red)
-                                        .cornerRadius(10)
-                                }
-                                Spacer()
+                                EmptyListView()
                             }
                         } else {
                             ProgressView()
@@ -292,5 +275,30 @@ struct ListBackgroundModifier: ViewModifier {
         } else {
             content
         }
+    }
+}
+
+struct EmptyListView: View {
+    @EnvironmentObject private var homeVM: HomeViewModel
+    
+    var body: some View {
+        Spacer()
+        Text("Looks like your Watchlist is Empty!")
+            .font(.headline)
+            .foregroundColor(Color.theme.text.opacity(0.4))
+            .padding()
+        Button {
+            homeVM.selectedTab = .explore
+        } label: {
+            Text("Add \(homeVM.selectedTab == .movies ? "Movies" : "TV Shows")")
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(Color.theme.genreText)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 15)
+                .background(Color.theme.red)
+                .cornerRadius(10)
+        }
+        Spacer()
     }
 }

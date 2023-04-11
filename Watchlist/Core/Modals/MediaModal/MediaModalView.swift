@@ -99,12 +99,12 @@ extension MediaModalView {
                 .resizable()
                 .scaledToFill()
                 .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
-                .frame(maxHeight: 300)
                 .clipped()
                 .shadow(color: Color.black.opacity(0.3), radius: 5)
         } placeholder: {
             ProgressView()
         }
+        .frame(height: 200)
     }
     
     private var genreSection: some View {

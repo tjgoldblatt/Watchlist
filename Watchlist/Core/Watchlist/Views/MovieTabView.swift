@@ -43,24 +43,7 @@ struct MovieTabView: View {
                             if homeVM.watchSelected != .unwatched ? !sortedSearchResults.isEmpty : sortedSearchResults.count > 1 {
                                 watchlist(scrollProxy: proxy)
                             } else {
-                                Spacer()
-                                Text("Looks like your Watchlist is Empty!")
-                                    .font(.headline)
-                                    .foregroundColor(Color.theme.text.opacity(0.4))
-                                    .padding()
-                                Button {
-                                    homeVM.selectedTab = .explore
-                                } label: {
-                                    Text("Add Movies")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(Color.theme.genreText)
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal, 15)
-                                        .background(Color.theme.red)
-                                        .cornerRadius(10)
-                                }
-                                Spacer()
+                                EmptyListView()
                             }
                         } else {
                             ProgressView()
