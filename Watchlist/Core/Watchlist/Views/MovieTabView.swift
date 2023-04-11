@@ -40,7 +40,28 @@ struct MovieTabView: View {
                             
                             watchFilterOptions
                             
-                            watchlist(scrollProxy: proxy)
+                            if homeVM.watchSelected != .unwatched ? !sortedSearchResults.isEmpty : sortedSearchResults.count > 1 {
+                                watchlist(scrollProxy: proxy)
+                            } else {
+                                Spacer()
+                                Text("Looks like your Watchlist is Empty!")
+                                    .font(.headline)
+                                    .foregroundColor(Color.theme.text.opacity(0.4))
+                                    .padding()
+                                Button {
+                                    homeVM.selectedTab = .explore
+                                } label: {
+                                    Text("Add Movies")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(Color.theme.genreText)
+                                        .padding(.vertical, 10)
+                                        .padding(.horizontal, 15)
+                                        .background(Color.theme.red)
+                                        .cornerRadius(10)
+                                }
+                                Spacer()
+                            }
                         } else {
                             ProgressView()
                         }
@@ -52,14 +73,50 @@ struct MovieTabView: View {
                     vm.filterText = ""
                 }
             }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if homeVM.watchSelected != .unwatched ? !sortedSearchResults.isEmpty : sortedSearchResults.count > 1 {
+                        EditButton()
+                            .foregroundColor(Color.theme.red)
+                            .padding()
+                            .contentShape(Rectangle())
+                    }
+                }
+                
+                if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Text("Reset")
+                            .font(.body)
+                            .foregroundColor(Color.theme.red)
+                            .padding()
+                            .onTapGesture {
+                                Task {
+                                    for watchedSelectedRow in watchedSelectedRows {
+                                        if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
+                                            await database?.sendRating(rating: nil, media: media)
+                                            await database?.setWatched(watched: false, media: media)
+                                        }
+                                    }
+                                    homeVM.editMode = .inactive
+                                }
+                            }
+                    }
+                }
+                
+                ToolbarItem {
+                    Text("")
+                }
+            }
         }
     }
 }
 
 struct MovieTabView_Previews: PreviewProvider {
     static var previews: some View {
-        MovieTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-            .environmentObject(dev.homeVM)
+        NavigationStack {
+            MovieTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+                .environmentObject(dev.homeVM)
+        }
     }
 }
 
@@ -87,6 +144,7 @@ extension MovieTabView {
                 if let movie = homeVM.decodeData(with: post.media) {
                     rowViewManager.createRowView(movie: movie, tab: .movies)
                         .allowsHitTesting(homeVM.editMode == .inactive)
+                        .listRowBackground(Color.theme.background)
                 }
             }
             .onChange(of: homeVM.watchSelected) { _ in
@@ -97,40 +155,8 @@ extension MovieTabView {
             .listRowBackground(Color.theme.background)
             .transition(.slide)
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                if homeVM.watchSelected != .unwatched ? !sortedSearchResults.isEmpty : sortedSearchResults.count > 1 {
-                    EditButton()
-                        .foregroundColor(Color.theme.red)
-                        .padding()
-                        .contentShape(Rectangle())
-                }
-            }
-            
-            if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Reset")
-                        .font(.body)
-                        .foregroundColor(Color.theme.red)
-                        .padding()
-                        .onTapGesture {
-                            Task {
-                                for watchedSelectedRow in watchedSelectedRows {
-                                    if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
-                                        await database?.sendRating(rating: nil, media: media)
-                                        await database?.setWatched(watched: false, media: media)
-                                    }
-                                }
-                                homeVM.editMode = .inactive
-                            }
-                        }
-                }
-            }
-            
-            ToolbarItem {
-                Text("")
-            }
-        }
+        .background(.clear)
+        .scrollContentBackground(.hidden)
         .environment(\.editMode, $homeVM.editMode)
         .overlay(alignment: .bottomTrailing) {
             if !vm.selectedRows.isEmpty && homeVM.editMode == .active {

@@ -50,6 +50,8 @@ struct HomeView: View {
                 homeVM.getMediaWatchlists()
             }
             .tint(Color.theme.red)
+            // Solution for iOS 16 apps not showing color properly
+            .accentColor(Color.theme.red)
         } else {
             ProgressView()
         }
