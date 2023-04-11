@@ -73,35 +73,6 @@ struct TVShowTabView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if !sortedSearchResults.isEmpty {
-                        EditButton()
-                            .foregroundColor(Color.theme.red)
-                            .padding()
-                            .contentShape(Rectangle())
-                    }
-                }
-                
-                if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Text("Reset")
-                            .font(.body)
-                            .foregroundColor(Color.theme.red)
-                            .padding()
-                            .onTapGesture {
-                                Task {
-                                    for watchedSelectedRow in watchedSelectedRows {
-                                        if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
-                                            await database?.sendRating(rating: nil, media: media)
-                                            await database?.setWatched(watched: false, media: media)
-                                        }
-                                    }
-                                    homeVM.editMode = .inactive
-                                }
-                            }
-                    }
-                }
-                
                 ToolbarItem {
                     Text("")
                 }
@@ -153,6 +124,36 @@ extension TVShowTabView {
             }
             .listRowBackground(Color.theme.background)
             .transition(.slide)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if !sortedSearchResults.isEmpty {
+                    EditButton()
+                        .foregroundColor(Color.theme.red)
+                        .padding()
+                        .contentShape(Rectangle())
+                }
+            }
+            
+            if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text("Reset")
+                        .font(.body)
+                        .foregroundColor(Color.theme.red)
+                        .padding()
+                        .onTapGesture {
+                            Task {
+                                for watchedSelectedRow in watchedSelectedRows {
+                                    if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
+                                        await database?.sendRating(rating: nil, media: media)
+                                        await database?.setWatched(watched: false, media: media)
+                                    }
+                                }
+                                homeVM.editMode = .inactive
+                            }
+                        }
+                }
+            }
         }
         .background(.clear)
         .scrollContentBackground(.hidden)
