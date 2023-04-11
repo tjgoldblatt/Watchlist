@@ -59,6 +59,7 @@ struct MediaModalView: View {
                         Text("Reset")
                         Image(systemName: "arrow.counterclockwise.circle")
                     }
+                    .buttonStyle(.plain)
                 } label: {
                     Image(systemName: "ellipsis.circle.fill")
                         .resizable()
@@ -104,6 +105,7 @@ extension MediaModalView {
                 .shadow(color: Color.black.opacity(0.3), radius: 5)
         } placeholder: {
             ProgressView()
+                .frame(height: 200)
         }
     }
     
@@ -204,23 +206,21 @@ extension MediaModalView {
             }
         } label: {
             Text(!isInMedia(mediaModels: mediaList.results, media: vm.media) ? "Add" : "Added")
-                .font(.system(size: 18))
-                .fontWeight(.medium)
+                .font(.subheadline)
+                .fontWeight(.semibold)
                 .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: vm.media) ? Color.theme.red : Color.theme.genreText)
-                .padding(.vertical, 10)
-                .padding(.horizontal)
-                .background {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: vm.media) ? Color.theme.secondary : Color.theme.red)
-                        .frame(width: 80, height: 30)
-                }
+                .frame(width: 90, height: 30)
+                .background(!isInMedia(mediaModels: mediaList.results, media: vm.media) ? Color.theme.secondary : Color.theme.red)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .fixedSize(horizontal: true, vertical: false)
         }
         .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.showDeleteConfirmation, actions: {
             Button("Delete", role: .destructive) { database?.deleteMedia(media: vm.media) }
+                .buttonStyle(.plain)
             Button("Cancel", role: .cancel) {}
+                .buttonStyle(.plain)
         })
         .frame(width: 100, alignment: .center)
-        
     }
     
     func isInMedia(mediaModels: [MediaModel], media: Media) -> Bool {
@@ -306,5 +306,6 @@ struct ExpandableText: View {
         .foregroundColor(Color.theme.red)
         .font(.body)
         .fontWeight(.semibold)
+        .buttonStyle(.plain)
     }
 }

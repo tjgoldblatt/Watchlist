@@ -77,13 +77,19 @@ struct ExploreRowView_Previews: PreviewProvider {
 
 extension ExploreRowView {
     var centerColumn: some View {
-        VStack(alignment: .leading, spacing: 15) {
+        VStack(alignment: .leading) {
             Text(rowContent.title)
-                .font(Font.system(.headline, design: .default))
-                .fontWeight(.bold)
-                .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(Color.theme.text)
-                .lineLimit(2)
+                    .font(Font.system(.headline, design: .default))
+                    .fontWeight(.bold)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .foregroundColor(Color.theme.text)
+                    .lineLimit(2)
+                
+                if let mediaType = media.mediaType, mediaType == .tv {
+                    Text("TV Series")
+                        .font(.caption)
+                        .foregroundColor(Color.theme.text.opacity(0.6))
+                }
             
             if let genres = rowContent.genres {
                 ScrollView(.horizontal) {
@@ -104,14 +110,11 @@ extension ExploreRowView {
         Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
             .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.genreText)
             .font(.subheadline)
-            .fontWeight(.medium)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.secondary : Color.theme.red)
-                    .frame(width: 80, height: 30)
-            }
+            .fontWeight(.semibold)
+            .frame(width: 80, height: 30)
+            .background(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.secondary : Color.theme.red)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .fixedSize(horizontal: true, vertical: false)
             .onTapGesture {
                 homeVM.hapticFeedback.impactOccurred()
                 if !isInMedia(mediaModels: mediaList.results, media: media) {
@@ -120,7 +123,7 @@ extension ExploreRowView {
                     database?.deleteMedia(media: media)
                 }
             }
-            .frame(maxWidth: 80, alignment: .center)
+            .padding(.leading)
     }
     
     func isInMedia(mediaModels: [MediaModel], media: Media) -> Bool {

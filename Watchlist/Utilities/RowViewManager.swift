@@ -38,8 +38,8 @@ class RowViewManager {
               !overview.isEmpty,
               let voteAverage = movie.voteAverage,
               let genreIDs = movie.genreIDS,
-              let title = movie.originalTitle else {
-            printedError += "Movie: \(String(describing: movie.originalTitle))"
+              let title = movie.title ?? movie.originalTitle else {
+            printedError += "Movie: \(String(describing: movie.name))"
             return AnyView(EmptyView())
         }
         
@@ -84,8 +84,8 @@ class RowViewManager {
               !overview.isEmpty,
               let voteAverage = tvShow.voteAverage,
               let genreIDs = tvShow.genreIDS,
-              let title = tvShow.originalName else {
-            printedError += "TV Show: \(String(describing: tvShow.originalName))"
+              let title = tvShow.name ?? tvShow.originalName else {
+            printedError += "TV Show: \(String(describing: tvShow.name))"
             return AnyView(EmptyView())
         }
         

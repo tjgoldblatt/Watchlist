@@ -40,26 +40,9 @@ struct TVShowTabView: View {
                             watchFilterOptions
                             
                             if !sortedSearchResults.isEmpty {
-                               watchlist(scrollProxy: proxy)
+                                watchlist(scrollProxy: proxy)
                             } else {
-                                Spacer()
-                                Text("Looks like your Watchlist is Empty!")
-                                    .font(.headline)
-                                    .foregroundColor(Color.theme.text.opacity(0.4))
-                                    .padding()
-                                Button {
-                                    homeVM.selectedTab = .explore
-                                } label: {
-                                    Text("Add TV Shows")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(Color.theme.genreText)
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal, 15)
-                                        .background(Color.theme.red)
-                                        .cornerRadius(10)
-                                }
-                                Spacer()
+                                EmptyListView()
                             }
                         } else {
                             ProgressView()
@@ -78,13 +61,6 @@ struct TVShowTabView: View {
                 }
             }
         }
-    }
-}
-
-struct TVShowTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-            .environmentObject(dev.homeVM)
     }
 }
 
@@ -132,6 +108,7 @@ extension TVShowTabView {
                         .foregroundColor(Color.theme.red)
                         .padding()
                         .contentShape(Rectangle())
+                        .buttonStyle(.plain)
                 }
             }
             
@@ -179,8 +156,10 @@ extension TVShowTabView {
                 }
                 homeVM.editMode = .inactive
             }
+            .buttonStyle(.plain)
             
             Button("Cancel", role: .cancel) {}
+                .buttonStyle(.plain)
         }
         .scrollIndicators(.hidden)
         .listStyle(.plain)
@@ -282,15 +261,41 @@ extension TVShowTabView {
     }
 }
 
-struct ListBackgroundModifier: ViewModifier {
+struct EmptyListView: View {
+    @EnvironmentObject private var homeVM: HomeViewModel
     
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content
-                .scrollContentBackground(.hidden)
-        } else {
-            content
+    var body: some View {
+        VStack {
+            Spacer()
+            Image(systemName: homeVM.selectedTab.icon)
+                .resizable()
+                .foregroundColor(Color.theme.secondary)
+                .scaledToFit()
+                .frame(maxHeight: 150)
+            Text("Looks like your Watchlist is Empty!")
+                .font(.headline)
+                .foregroundColor(Color.theme.secondary)
+                .padding()
+            Button {
+                homeVM.selectedTab = .explore
+            } label: {
+                Text("Add \(homeVM.selectedTab == .movies ? "Movies" : "TV Shows")")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color.theme.genreText)
+                    .padding(.vertical, 13)
+                    .padding(.horizontal, 25)
+                    .background(Color.theme.red)
+                    .cornerRadius(10)
+            }
+            Spacer()
         }
+    }
+}
+
+struct TVShowTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+            .environmentObject(dev.homeVM)
     }
 }

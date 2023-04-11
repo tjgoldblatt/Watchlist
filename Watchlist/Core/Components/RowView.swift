@@ -107,7 +107,7 @@ extension RowView {
                 .padding(.bottom, 1)
             
             Text(rowContent.overview)
-                .font(.system(size: 10, design: .default))
+                .font(.system(.caption, design: .default))
                 .fixedSize(horizontal: false, vertical: true)
                 .fontWeight(.light)
                 .foregroundColor(Color.theme.text)
@@ -155,21 +155,6 @@ extension RowView {
             Image(systemName: "checkmark.circle")
         }
         .tint(Color.theme.secondary)
-        .accessibilityIdentifier("MediaSwipeAction")
-    }
-    
-    private var swipeActionToSetUnwatched: some View {
-        Button {
-            Task {
-                await database?.setWatched(watched: false, media: media)
-                await database?.fetchIsWatched(media: media) { watched in
-                    isWatched = watched
-                }
-            }
-        } label: {
-            Image(systemName: "film.stack")
-        }
-        .tint(Color.green)
         .accessibilityIdentifier("MediaSwipeAction")
     }
     

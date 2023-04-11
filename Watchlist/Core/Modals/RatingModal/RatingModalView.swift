@@ -105,6 +105,7 @@ struct RatingModalView: View {
                 .offset(y: -50)
                 .padding(.bottom)
             }
+            .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
             .overlay(alignment: .topLeading) {
                 CloseButton()
                     .padding(10)
@@ -131,6 +132,7 @@ struct CloseButton: View {
             .frame(width: 20, height: 20)
             .foregroundColor(Color.theme.genreText)
             .fontWeight(.semibold)
+            .buttonStyle(.plain)
             .padding(.all, 5)
             .shadow(color: Color.black.opacity(0.4), radius: 2)
             .accessibility(label:Text("Close"))
