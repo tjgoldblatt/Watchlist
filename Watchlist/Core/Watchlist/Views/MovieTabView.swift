@@ -65,15 +65,6 @@ struct MovieTabView: View {
     }
 }
 
-struct MovieTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationStack {
-            MovieTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
-                .environmentObject(dev.homeVM)
-        }
-    }
-}
-
 extension MovieTabView {
     // MARK: - Header
     var header: some View {
@@ -263,6 +254,15 @@ extension MovieTabView {
                 }
             }
             return false
+        }
+    }
+}
+
+struct MovieTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            MovieTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+                .environmentObject(dev.homeVM)
         }
     }
 }
