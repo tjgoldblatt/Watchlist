@@ -39,6 +39,13 @@ struct HomeView: View {
                             .accessibilityIdentifier("ExploreTab")
                     }
                     .tag(Tab.explore)
+                
+                SocialView()
+                    .environmentObject(homeVM)
+                    .tabItem {
+                        Image(systemName: Tab.social.icon)
+                    }
+                    .tag(Tab.social)
             }
             .accentColor(Color.theme.red)
             .tint(Color.theme.red)

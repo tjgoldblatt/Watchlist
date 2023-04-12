@@ -75,6 +75,8 @@ struct SearchBarView: View {
                 for media in homeVM.results {
                     mediaList.insert(media)
                 }
+            case .social:
+                break
         }
         return Array(mediaList)
     }
@@ -162,9 +164,10 @@ struct SearchBarView: View {
                 return movieList.results.count > 1
             case .explore:
                 return !homeVM.results.isEmpty
+            case .social:
+                return false
         }
     }
-    
 }
 
 struct SearchBarView_Previews: PreviewProvider {
