@@ -15,7 +15,7 @@ struct DBUser: Codable {
     let displayName: String?
     let email: String?
     let photoUrl: String?
-    let dateCreated: Date?
+    let dateCreated: Timestamp?
     
     init(auth: AuthDataResultModel) {
         self.userId = auth.uid
@@ -23,7 +23,7 @@ struct DBUser: Codable {
         self.email = auth.email
         self.displayName = auth.displayName
         self.photoUrl = auth.photoUrl
-        self.dateCreated = Date()
+        self.dateCreated = Timestamp()
     }
     
     init(userId: String, isAnonymous: Bool? = nil, email: String? = nil, photoUrl: String? = nil, dateCreated: Date? = nil, displayName: String? = nil) {
@@ -32,8 +32,7 @@ struct DBUser: Codable {
         self.email = email
         self.photoUrl = photoUrl
         self.displayName = displayName
-        self.dateCreated = Date()
-        
+        self.dateCreated = Timestamp()
     }
     
     enum CodingKeys: CodingKey {
@@ -58,8 +57,14 @@ final class UserManager {
     }
     
     func createNewUser(user: DBUser) async throws {
-        try userDocument(userId: user.userId).setData(from: user, merge: false)
+        try userDocument(userId: user.userId).setData(from: user, merge: true)
         try await WatchlistManager.shared.createWatchlistForUser(userId: user.userId)
+    }
+    
+    func updateUserAfterLink(authDataResultModel: AuthDataResultModel) async throws {
+        let dbUser = try await getUser(userId: authDataResultModel.uid)
+        let updatedDBUser = DBUser(auth: authDataResultModel)
+        try userDocument(userId: dbUser.userId).setData(from: updatedDBUser, merge: true)
     }
     
     func getUser(userId: String) async throws -> DBUser {
@@ -68,7 +73,6 @@ final class UserManager {
     
     func deleteUser(userId: String) async throws {
         try await userDocument(userId: userId).delete()
-        try await MediaManager(userId: userId).deleteUserWatchlist()
         try await WatchlistManager.shared.deleteWatchlist(userId: userId)
     }
 }

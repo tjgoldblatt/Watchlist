@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-class WatchlistDetailsViewModel: ObservableObject {
+@MainActor
+final class WatchlistDetailsViewModel: ObservableObject {
     /// Current filtered text
     @Published var filterText: String = ""
     

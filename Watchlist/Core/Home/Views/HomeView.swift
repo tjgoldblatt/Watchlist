@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
-import Combine
+import Blackbird
 
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
     
     @Environment(\.blackbirdDatabase) var database
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
     
     var body: some View {
         if homeVM.isGenresLoaded {
@@ -23,6 +24,18 @@ struct HomeView: View {
                             .accessibilityIdentifier("MovieTab")
                     }
                     .tag(Tab.movies)
+                
+                    .onAppear {
+                        Task {
+                            for mediaModel in mediaList.results {
+                                do {
+                                    try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        }
+                    }
                 
                 TVShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
                     .environmentObject(homeVM)

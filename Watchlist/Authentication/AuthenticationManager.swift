@@ -75,41 +75,6 @@ final class AuthenticationManager {
     }
 }
 
-// MARK: - Sign In Email
-extension AuthenticationManager {
-    @discardableResult
-    func createUser(email: String, password: String) async throws -> AuthDataResultModel {
-        let authDataResult = try await Auth.auth().createUser(withEmail: email, password: password)
-        return AuthDataResultModel(user: authDataResult.user)
-    }
-    
-    @discardableResult
-    func signInUser(email: String, password: String) async throws -> AuthDataResultModel {
-        let authDataResult = try await Auth.auth().signIn(withEmail: email, password: password)
-        return AuthDataResultModel(user: authDataResult.user)
-    }
-    
-    func resetPassword(email: String) async throws {
-        try await Auth.auth().sendPasswordReset(withEmail: email)
-    }
-    
-    func updatePassword(password: String) async throws {
-        guard let user = Auth.auth().currentUser else {
-            throw URLError(.badServerResponse)
-        }
-        
-        try await user.updatePassword(to: password)
-    }
-    
-    func updateEmail(email: String) async throws {
-        guard let user = Auth.auth().currentUser else {
-            throw URLError(.badServerResponse)
-        }
-        
-        try await user.updateEmail(to: email)
-    }
-}
-
 // MARK: - Sign In SSO
 extension AuthenticationManager {
     @discardableResult
@@ -138,11 +103,6 @@ extension AuthenticationManager {
         return AuthDataResultModel(user: authDataResult.user)
     }
     
-    func linkEmail(email: String, password: String) async throws -> AuthDataResultModel {
-        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-        return try await linkCredential(credential: credential)
-    }
-    
     func linkApple(tokens: SignInWithAppleResult) async throws -> AuthDataResultModel {
         let credential = OAuthProvider.credential(withProviderID: AuthProviderOption.apple.rawValue, idToken: tokens.token, rawNonce: tokens.nonce)
         return try await linkCredential(credential: credential)
@@ -159,6 +119,10 @@ extension AuthenticationManager {
         }
         
         let authDataResult = try await user.link(with: credential)
-        return AuthDataResultModel(user: authDataResult.user)
+        
+        let authDataResultModel = AuthDataResultModel(user: authDataResult.user)
+        try await UserManager.shared.updateUserAfterLink(authDataResultModel: authDataResultModel)
+        
+        return authDataResultModel
     }
 }

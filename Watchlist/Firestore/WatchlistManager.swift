@@ -68,9 +68,9 @@ struct DBMedia: Codable {
 
 struct UserWatchlist: Codable {
     let userId: String
-    @ServerTimestamp var lastUpdated: Date?
+    @ServerTimestamp var lastUpdated: Timestamp?
     
-    init(userId: String, lastUpdated: Date?) {
+    init(userId: String, lastUpdated: Timestamp?) {
         self.userId = userId
         self.lastUpdated = lastUpdated
     }
@@ -91,8 +91,18 @@ final class WatchlistManager {
         watchlistCollection.document(userId)
     }
     
+    private func userWatchlistCollection(userId: String) -> CollectionReference {
+        watchlistDocument(userId: userId).collection("userWatchlist")
+    }
+    
+    private func userWatchlistDocument(userId: String, mediaId: String) -> DocumentReference {
+        userWatchlistCollection(userId: userId).document(mediaId)
+    }
+    
+    // MARK: - Watchlist Functions
+    
     func createWatchlistForUser(userId: String) async throws {
-        let watchlist = UserWatchlist(userId: userId, lastUpdated: nil)
+        let watchlist = UserWatchlist(userId: userId, lastUpdated: Timestamp())
         try watchlistDocument(userId: userId).setData(from: watchlist, merge: false)
     }
     
@@ -102,51 +112,54 @@ final class WatchlistManager {
     
     func deleteWatchlist(userId: String) async throws {
         try await watchlistDocument(userId: userId).delete()
-    }
-}
-
-final class MediaManager {
-    var userWatchlistCollection: CollectionReference? = nil
-    
-    init(userId: String) {
-        self.userWatchlistCollection = Firestore.firestore()
-            .collection("watchlists").document(userId)
-            .collection("userWatchlist")
+        try await deleteUserWatchlist(userId: userId)
     }
     
-    private func userWatchlistDocument(mediaId: Int) -> DocumentReference? {
-        guard let userWatchlistCollection else { return nil }
-        return userWatchlistCollection.document("\(mediaId)")
-    }
+    // MARK: - User Watchlist Functions
     
-    func deleteUserWatchlist() async throws {
-        guard let userWatchlistCollection else { return }
-        let snapshotDocuments = try await userWatchlistCollection.getDocuments().documents
+    func deleteUserWatchlist(userId: String) async throws {
+        let snapshotDocuments = try await userWatchlistCollection(userId: userId).getDocuments().documents
         
         for snapshotDocument in snapshotDocuments {
-            try await userWatchlistCollection.document(snapshotDocument.documentID).delete()
+            try await userWatchlistCollection(userId: userId).document(snapshotDocument.documentID).delete()
         }
     }
     
-    func createNewMediaInWatchlist(media: Media) async throws {
-        guard let mediaId = media.id,
-              let userWatchlistDocument = userWatchlistDocument(mediaId: mediaId) else {
-            throw URLError(.badURL)
-        }
-        
+    func createNewMediaInWatchlist(userId: String, media: Media) async throws {
+        let document = userWatchlistCollection(userId: userId).document()
         let dbMedia = DBMedia(media: media, watched: false, personalRating: nil)
-        try userWatchlistDocument.setData(from: dbMedia)
+        try document.setData(from: dbMedia)
     }
     
-    func toggleMediaWatched(mediaId: Int, watched: Bool) async throws {
-        guard let userWatchlistDocument = userWatchlistDocument(mediaId: mediaId) else {
-            throw URLError(.badURL)
-        }
+    func toggleMediaWatched(userId: String, mediaId: Int, watched: Bool) async throws {
+        let userWatchlistDocument = userWatchlistDocument(userId: userId, mediaId: "\(mediaId)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.watched.rawValue : watched
         ]
         
         try await userWatchlistDocument.updateData(data)
+    }
+    
+    func setPersonalRatingForMedia(userId: String, mediaId: Int, personalRating: Double) async throws {
+        let userWatchlistDocument = userWatchlistDocument(userId: userId, mediaId: "\(mediaId)")
+        
+        let data: [String:Any] = [
+            DBMedia.CodingKeys.personalRating.rawValue : personalRating
+        ]
+        
+        try await userWatchlistDocument.updateData(data)
+    }
+
+    // MARK: - Function to Copy from Blackbird to Firebase
+    func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
+        guard let user = try? AuthenticationManager.shared.getAuthenticatedUser(),
+              let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media) else { return }
+        
+        if media.mediaType == .movie && media.id == 1 { return }
+            
+        let dbMedia = DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
+        let document = userWatchlistCollection(userId: user.uid).document()
+        try document.setData(from: dbMedia)
     }
 }
