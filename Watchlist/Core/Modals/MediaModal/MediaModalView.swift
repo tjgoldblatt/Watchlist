@@ -44,12 +44,11 @@ struct MediaModalView: View {
                 Menu {
                     Button(role: .destructive) {
                         Task {
-//                            await database?.sendRating(rating: nil, media: vm.media)
-//                            await database?.fetchPersonalRating(media: vm.media) { rating in
-//                                vm.personalRating = rating
-//                            }
-//                            await database?.setWatched(watched: false, media: vm.media)
-//                            vm.isWatched = false
+                            try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
+                            vm.personalRating = nil
+                            try await WatchlistManager.shared.toggleMediaWatched(media: vm.media, watched: false)
+                            try await homeVM.getWatchlists()
+                            vm.isWatched = false
                         }
                     } label: {
                         Text("Reset")
@@ -70,13 +69,10 @@ struct MediaModalView: View {
         }
         .onAppear {
             Task {
-//                await database?.fetchPersonalRating(media: vm.media) { rating in
-//                    vm.personalRating = rating
-//                }
-                
-//                await database?.fetchIsWatched(media: vm.media, completionHandler: { watched in
-//                    vm.isWatched = watched
-//                })
+                try await homeVM.getWatchlists()
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)
+                vm.personalRating = newMedia.personalRating
+                vm.isWatched = newMedia.watched
             }
         }
         .ignoresSafeArea(edges: .top)
@@ -183,18 +179,13 @@ extension MediaModalView {
         }
         .sheet(isPresented: $vm.showingRating, onDismiss: {
             Task {
-//                await database?.fetchPersonalRating(media: vm.media) { rating in
-//                    vm.personalRating = rating
-//                }
-//                if vm.personalRating != nil {
-//                    await database?.setWatched(watched: true, media: vm.media)
-//                    await database?.fetchIsWatched(media: vm.media) { watched in
-//                        vm.isWatched = watched
-//                    }
-//                }
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)
+                vm.personalRating = newMedia.personalRating
+                vm.isWatched = newMedia.watched
+                try await homeVM.getWatchlists()
             }
         }) {
-//            RatingModalView(media: vm.media)
+            RatingModalView(media: vm.media)
         }
     }
     
@@ -202,7 +193,10 @@ extension MediaModalView {
         Button {
             homeVM.hapticFeedback.impactOccurred()
             if !isInMedia(media: vm.media) {
-//                database?.saveMedia(media: vm.media)
+                Task {
+                    try await WatchlistManager.shared.createNewMediaInWatchlist(media: vm.media)
+                    try await homeVM.getWatchlists()
+                }
             } else {
                 vm.showDeleteConfirmation.toggle()
             }
@@ -217,8 +211,13 @@ extension MediaModalView {
                 .fixedSize(horizontal: true, vertical: false)
         }
         .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.showDeleteConfirmation, actions: {
-//            Button("Delete", role: .destructive) { database?.deleteMedia(media: vm.media) }
-//                .buttonStyle(.plain)
+            Button("Delete", role: .destructive) {
+                Task {
+                    try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
+                    try await homeVM.getWatchlists()
+                }
+            }
+                .buttonStyle(.plain)
             Button("Cancel", role: .cancel) {}
                 .buttonStyle(.plain)
         })

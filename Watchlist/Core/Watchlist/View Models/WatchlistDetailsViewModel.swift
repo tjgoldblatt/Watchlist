@@ -23,8 +23,7 @@ final class WatchlistDetailsViewModel: ObservableObject {
     let emptyViewID = "HeaderView"
     
     func resetMedia(media: DBMedia) async throws {
-        guard let id = media.id else { return }
-        try await WatchlistManager.shared.resetMedia(mediaId: String(id))
+        try await WatchlistManager.shared.resetMedia(media: media)
     }
     
     func getWatchedSelectedRows(mediaList: [DBMedia]) ->[DBMedia] {
@@ -40,16 +39,4 @@ final class WatchlistDetailsViewModel: ObservableObject {
         
         return watchedSelectedRows
     }
-    
-//    func getWatchedSelectedRows(mediaModelArray: [MediaModel]) -> [MediaModel] {
-//        var watchedSelectedRows: [MediaModel] = []
-//        for id in selectedRows {
-//            for mediaModel in mediaModelArray.filter({ $0.id == id }) {
-//                if mediaModel.watched == true {
-//                    watchedSelectedRows.append(mediaModel)
-//                }
-//            }
-//        }
-//        return watchedSelectedRows
-//    }
 }

@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import Blackbird
 
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
+    
+    @Environment(\.blackbirdDatabase) var database
+    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
     
     var body: some View {
         if homeVM.isGenresLoaded {
@@ -23,11 +27,10 @@ struct HomeView: View {
                 
                     .onAppear {
                         Task {
+                            // TODO: Delete this after enough people have transferred their databases
+                            homeVM.transferDatabase()
                             try await homeVM.getWatchlists()
                         }
-                        
-                        // TODO: Delete this after enough people have transferred their databases
-                        homeVM.transferDatabase()
                     }
                 
                 TVShowTabView()
@@ -64,6 +67,9 @@ struct HomeView: View {
             }
             .task {
                 try? await homeVM.getWatchlists()
+            }
+            .onAppear {
+                homeVM.database = database
             }
         } else {
             ProgressView()

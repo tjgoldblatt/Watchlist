@@ -89,10 +89,11 @@ struct RatingModalView: View {
                         .onTapGesture {
                             if rating > 0 {
                                 homeVM.hapticFeedback.impactOccurred()
-//                                Task {
-//                                    await database?.sendRating(rating: Double(rating), media: media)
-//                                    dismiss()
-//                                }
+                                Task {
+                                    try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
+                                    try await homeVM.getWatchlists()
+                                    dismiss()
+                                }
                             }
                         }
                         .accessibilityIdentifier("RateButton")

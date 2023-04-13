@@ -9,9 +9,9 @@ import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-struct DBMedia: Identifiable, Hashable, Codable {
+struct DBMedia: Codable, Identifiable, Hashable {
     // Media
-    let id: Int?
+    let id: Int
     let mediaType: MediaType?
     let title, originalTitle: String?
     let name, originalName: String?
@@ -27,7 +27,7 @@ struct DBMedia: Identifiable, Hashable, Codable {
     let personalRating: Double?
     
     init(media: Media, watched: Bool, personalRating: Double?) {
-        self.id = media.id
+        self.id = media.id ?? -1
         self.mediaType = media.mediaType
         self.title = media.title
         self.originalTitle = media.originalTitle
@@ -64,15 +64,18 @@ struct DBMedia: Identifiable, Hashable, Codable {
 
 struct UserWatchlist: Codable {
     let userId: String
+    let isTransferred: Timestamp?
     @ServerTimestamp var lastUpdated: Timestamp?
     
     init(userId: String, lastUpdated: Timestamp?) {
         self.userId = userId
         self.lastUpdated = lastUpdated
+        self.isTransferred = nil
     }
     
     enum CodingKeys: String, CodingKey {
         case userId
+        case isTransferred
         case lastUpdated
     }
 }
@@ -93,7 +96,7 @@ final class WatchlistManager {
     func createWatchlistForUser() async throws {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
         let watchlist = UserWatchlist(userId: authDataResult.uid, lastUpdated: Timestamp())
-        try watchlistDocument().setData(from: watchlist, merge: false)
+        try watchlistDocument().setData(from: watchlist, merge: true)
     }
     
     func getWatchlist() async throws -> UserWatchlist {
@@ -103,6 +106,23 @@ final class WatchlistManager {
     func deleteWatchlist(userId: String) async throws {
         try await watchlistDocument().delete()
         try await deleteUserWatchlist()
+    }
+    
+    func setTransferred() async throws {
+        let watchlistDocument = try watchlistDocument()
+        
+        let data: [String:Any] = [
+            UserWatchlist.CodingKeys.isTransferred.rawValue : Timestamp()
+        ]
+        
+        try await watchlistDocument.setData(data)
+    }
+    
+    func getTransferred() async throws -> Timestamp? {
+        let watchlistDocument = try watchlistDocument()
+        
+        let userWatchlist = try await watchlistDocument.getDocument(as: UserWatchlist.self)
+        return userWatchlist.isTransferred
     }
     
     // MARK: - User Watchlist
@@ -123,14 +143,21 @@ final class WatchlistManager {
         }
     }
     
-    func createNewMediaInWatchlist(media: Media) async throws {
-        let document = try userWatchlistCollection().document()
-        let dbMedia = DBMedia(media: media, watched: false, personalRating: nil)
-        try document.setData(from: dbMedia)
+    func createNewMediaInWatchlist(media: DBMedia) async throws {
+        let document = try userWatchlistCollection().document("\(media.id)")
+        try document.setData(from: media)
     }
     
-    func toggleMediaWatched(mediaId: Int, watched: Bool) async throws {
-        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(mediaId)")
+    func deleteMediaInWatchlist(media: DBMedia) async throws {
+        try await deleteMediaById(mediaId: media.id)
+    }
+    
+    func deleteMediaById(mediaId: Int) async throws {
+        try await userWatchlistDocument(mediaId: "\(mediaId)").delete()
+    }
+    
+    func toggleMediaWatched(media: DBMedia, watched: Bool) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.watched.rawValue : watched
@@ -139,18 +166,27 @@ final class WatchlistManager {
         try await userWatchlistDocument.updateData(data)
     }
     
-    func setPersonalRatingForMedia(mediaId: Int, personalRating: Double) async throws {
-        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(mediaId)")
+    func setPersonalRatingForMedia(media: DBMedia, personalRating: Double?) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        
+        if personalRating != nil {
+            try await toggleMediaWatched(media: media, watched: true)
+        }
         
         let data: [String:Any] = [
-            DBMedia.CodingKeys.personalRating.rawValue : personalRating
+            DBMedia.CodingKeys.personalRating.rawValue : personalRating ?? NSNull()
         ]
         
         try await userWatchlistDocument.updateData(data)
     }
     
-    func resetMedia(mediaId: String) async throws {
-        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(mediaId)")
+    func getUpdatedUserMedia(media: DBMedia) async throws -> DBMedia {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        return try await userWatchlistDocument.getDocument(as: DBMedia.self)
+    }
+    
+    func resetMedia(media: DBMedia) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.personalRating.rawValue : NSNull(),
@@ -172,12 +208,12 @@ final class WatchlistManager {
 
     // MARK: - Function to Copy from Blackbird to Firebase
     func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
-        guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media) else { return }
+        guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media), let mediaId = media.id else { return }
         
         if media.mediaType == .movie && media.id == 1 { return }
             
         let dbMedia = DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
-        let document = try userWatchlistCollection().document()
+        let document = try userWatchlistCollection().document("\(mediaId)")
         try document.setData(from: dbMedia, merge: true)
     }
 }

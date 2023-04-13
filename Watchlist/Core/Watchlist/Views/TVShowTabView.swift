@@ -113,15 +113,12 @@ extension TVShowTabView {
                         .foregroundColor(Color.theme.red)
                         .padding()
                         .onTapGesture {
-                            //                            Task {
-                            //                                for watchedSelectedRow in watchedSelectedRows {
-                            //                                    if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
-                            //                                        await database?.sendRating(rating: nil, media: media)
-                            //                                        await database?.setWatched(watched: false, media: media)
-                            //                                    }
-                            //                                }
-                            //                                homeVM.editMode = .inactive
-                            //                            }
+                            Task {
+                                for watchedSelectedRow in watchedSelectedRows {
+                                    try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
+                                    homeVM.editMode = .inactive
+                                }
+                            }
                         }
                 }
             }
@@ -145,10 +142,12 @@ extension TVShowTabView {
         }
         .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.deleteConfirmationShowing) {
             Button("Delete", role: .destructive) {
-                for id in vm.selectedRows {
-                    //                    database?.deleteMediaByID(id: id)
+                Task {
+                    for id in vm.selectedRows {
+                        try await WatchlistManager.shared.deleteMediaById(mediaId: id)
+                    }
+                    homeVM.editMode = .inactive
                 }
-                homeVM.editMode = .inactive
             }
             .buttonStyle(.plain)
             
@@ -189,6 +188,9 @@ extension TVShowTabView {
     }
     
     var searchResults: [DBMedia] {
+        Task {
+            try await homeVM.getWatchlists()
+        }
         let groupedMedia = homeVM.tvList.filter({ !$0.watched })
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched})
@@ -219,7 +221,7 @@ extension TVShowTabView {
             /// Rating Filter
             filteredMedia = filteredMedia.filter { media in
                 if let voteAverage = media.voteAverage {
-                    return voteAverage > Double(homeVM.ratingSelected)
+                    return voteAverage >= Double(homeVM.ratingSelected)
                 }
                 return false
             }

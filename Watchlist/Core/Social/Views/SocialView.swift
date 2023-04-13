@@ -25,27 +25,12 @@ final class SocialViewModel: ObservableObject {
             self.user = try await UserManager.shared.getUser(userId: user.userId)
         }
     }
-    
-    func addMediaToWatchlist(media: Media) {
-        guard let user else { return }
-        
-        Task {
-            try await WatchlistManager.shared.createNewMediaInWatchlist(media: media)
-            self.user = try await UserManager.shared.getUser(userId: user.userId)
-        }
-    }
-    
-    func toggleMediaWatched(mediaId: Int?, watched: Bool) {
-        guard let mediaId else { return }
-        Task {
-            try await WatchlistManager.shared.toggleMediaWatched(mediaId: mediaId, watched: watched)
-        }
-    }
 }
 
 struct SocialView: View {
     @State private var showSignInView: Bool = false
     @StateObject var vm = SocialViewModel()
+    @EnvironmentObject var homeVM: HomeViewModel
 
     @FirestoreQuery(collectionPath: "watchlists") var userWatchlist: [DBMedia]
     
@@ -56,13 +41,6 @@ struct SocialView: View {
                     .onAppear {
                         Task {
                             try? await vm.loadCurrentUser()
-//                            print(userWatchlist)
-                            
-//                            vm.addMediaToWatchlist()
-                            
-//                            vm.toggleMediaWatched(mediaId: 1234, watched: false)
-                            
-//                            print("Watchlist After: ")
                         }
                     }
             }
@@ -74,12 +52,13 @@ struct SocialView: View {
                 $userWatchlist.path = "watchlists/\(user.userId)/userWatchlist"
                 print($userWatchlist.path)
             }
-            
-//                $watchlist.predicates = [ .whereField("userId", isEqualTo: user.userId)]
-            
         }
         
-        .fullScreenCover(isPresented: $showSignInView) {
+        .fullScreenCover(isPresented: $showSignInView, onDismiss: {
+            Task {
+                try await homeVM.getWatchlists()
+            }
+        }) {
             NavigationStack {
                 AuthenticationView(showSignInView: $showSignInView)
             }

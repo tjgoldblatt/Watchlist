@@ -36,19 +36,13 @@ struct RowView: View {
         .accessibilityIdentifier("RowView")
         .sheet(isPresented: $showRatingSheet, onDismiss: {
             Task {
-                //                await database?.fetchPersonalRating(media: media) { rating in
-                //                    personalRating = rating
-                //                    homeVM.getMediaWatchlists()
-                //                }
-                //                if personalRating != nil {
-                //                    await database?.setWatched(watched: true, media: media)
-                //                    await database?.fetchIsWatched(media: media) { watched in
-                //                        isWatched = watched
-                //                    }
-                //                }
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                personalRating = newMedia.personalRating
+                isWatched = newMedia.watched
+                try await homeVM.getWatchlists()
             }
         }) {
-            //            RatingModalView(media: media)
+            RatingModalView(media: media)
         }
         .onTapGesture {
             homeVM.hapticFeedback.impactOccurred()
@@ -56,12 +50,9 @@ struct RowView: View {
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
             Task {
-                //                await database?.fetchPersonalRating(media: media) { rating in
-                //                    personalRating = rating
-                //                }
-                //                await database?.fetchIsWatched(media: media) { watched in
-                //                    isWatched = watched
-                //                }
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                personalRating = newMedia.personalRating
+                isWatched = newMedia.watched
                 try await homeVM.getWatchlists()
             }
         }) {
@@ -73,14 +64,13 @@ struct RowView: View {
             }
         }
         .onAppear {
-            //            Task {
-            //                await database?.fetchIsWatched(media: media) { watched in
-            //                    isWatched = watched
-            //                }
-            //                await database?.fetchPersonalRating(media: media) { rating in
-            //                    personalRating = rating
-            //                }
-            //            }
+            Task {
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                isWatched = newMedia.watched
+                personalRating = newMedia.personalRating
+                try await homeVM.getWatchlists()
+            }
+            
         }
     }
 }

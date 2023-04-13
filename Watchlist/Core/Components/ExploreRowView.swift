@@ -39,26 +39,20 @@ struct ExploreRowView: View {
             showingSheet.toggle()
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
-//            Task {
-//                await database?.fetchPersonalRating(media: media) { rating in
-//                    personalRating = rating
-//                }
-//                await database?.fetchIsWatched(media: media) { watched in
-//                    isWatched = watched
-//                }
-//            }
+            Task {
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                isWatched = newMedia.watched
+                personalRating = newMedia.personalRating
+            }
         }, content: {
             MediaModalView(media: media)
         })
         .onAppear {
-//            Task {
-//                await database?.fetchIsWatched(media: media) { watched in
-//                    isWatched = watched
-//                }
-//                await database?.fetchPersonalRating(media: media) { rating in
-//                    personalRating = rating
-//                }
-//            }
+            Task {
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                isWatched = newMedia.watched
+                personalRating = newMedia.personalRating
+            }
         }
     }
 }
@@ -116,10 +110,14 @@ extension ExploreRowView {
             .fixedSize(horizontal: true, vertical: false)
             .onTapGesture {
                 homeVM.hapticFeedback.impactOccurred()
-                if !isInMedia(media: media) {
-//                    database?.saveMedia(media: media)
-                } else {
-//                    database?.deleteMedia(media: media)
+                Task {
+                    if !isInMedia(media: media) {
+                        try await WatchlistManager.shared.createNewMediaInWatchlist(media: media)
+                    } else {
+                        try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
+                    }
+                    
+                    try await homeVM.getWatchlists()
                 }
             }
             .padding(.leading)

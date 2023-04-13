@@ -44,12 +44,6 @@ final class HomeViewModel: ObservableObject {
     
     var database: Blackbird.Database?
     
-    /// Users Movie Watchlist
-//    var movieWatchlist: [Media] = []
-//
-//    /// Users TV Show Watchlist
-//    var tvWatchlist: [Media] = []
-    
     /// To track filtering
     @Published var genresSelected: Set<Genre> = []
     @Published var ratingSelected: Int = 0
@@ -81,20 +75,27 @@ final class HomeViewModel: ObservableObject {
     // TODO: Blackbird Copy Func
     func transferDatabase() {
         Task {
-            try await getWatchlists()
-            let fbMediaList = movieList + tvList
+            try await WatchlistManager.shared.createWatchlistForUser()
+            let transferredFlag = try await WatchlistManager.shared.getTransferred()
             
-            guard let database else { return }
-            let mediaModels = try await MediaModel.read(from: database)
-                                                         
-            for mediaModel in mediaModels {
-                if !fbMediaList.map({ $0.id }).contains(mediaModel.id) && mediaModel.id != 1{
-                    do {
-                        try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
-                    } catch {
-                        print(error)
+            if transferredFlag == nil {
+                try await getWatchlists()
+                let fbMediaList = movieList + tvList
+                
+                guard let database else { return }
+                let mediaModels = try await MediaModel.read(from: database)
+                
+                for mediaModel in mediaModels {
+                    if !fbMediaList.map({ $0.id }).contains(mediaModel.id) && mediaModel.id != 1 {
+                        do {
+                            try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
+                        } catch {
+                            print(error)
+                        }
                     }
                 }
+                try await WatchlistManager.shared.setTransferred()
+                try await getWatchlists()
             }
         }
     }
