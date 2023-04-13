@@ -95,6 +95,9 @@ struct SearchBarView: View {
                                     homeVM.hapticFeedback.impactOccurred()
                                     searchText = ""
                                     textObserver.searchText = ""
+                                    if homeVM.selectedTab == .explore {
+                                        homeVM.results = []
+                                    }
                                 }
                         } else if shouldShowFilterButton {
                             Image(systemName: "slider.horizontal.3")
@@ -119,6 +122,11 @@ struct SearchBarView: View {
                     .submitLabel(.search)
                     .onReceive(textObserver.$debouncedText) { val in
                         homeVM.searchText = val
+                        
+                        if homeVM.selectedTab == .explore && val.isEmpty {
+                            homeVM.results = []
+                        }
+                        
                         if(!textObserver.searchText.isEmpty) {
                             if let queryToCallWhenTyping {
                                 queryToCallWhenTyping()
@@ -193,9 +201,7 @@ class TextFieldObserver : ObservableObject {
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] t in
-                if !t.isEmpty {
-                    self?.debouncedText = t
-                }
+                self?.debouncedText = t
             }
             .store(in: &subscriptions)
     }
