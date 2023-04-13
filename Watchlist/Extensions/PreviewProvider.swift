@@ -20,7 +20,7 @@ class DeveloperPreview {
     
     let homeVM = HomeViewModel()
     
-    let mediaMock: [DBMedia?] = [
+    let mediaMock: [DBMedia] = [
         DBMedia(
             media: Media(mediaType: .movie,
                          id: 5,

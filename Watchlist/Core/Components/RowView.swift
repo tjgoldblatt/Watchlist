@@ -77,7 +77,7 @@ struct RowView: View {
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
-        RowView(media: dev.mediaMock.first!!, currentTab: .movies)
+        RowView(media: dev.mediaMock.first!, currentTab: .movies)
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }

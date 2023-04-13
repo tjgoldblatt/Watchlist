@@ -118,7 +118,7 @@ struct RatingModalView: View {
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingModalView(media: dev.mediaMock.first!!)
+        RatingModalView(media: dev.mediaMock.first!)
     }
 }
 

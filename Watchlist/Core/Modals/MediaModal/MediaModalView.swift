@@ -81,7 +81,7 @@ struct MediaModalView: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaModalView(media: dev.mediaMock.first!!)
+        MediaModalView(media: dev.mediaMock.first!)
     }
 }
 
@@ -114,12 +114,14 @@ extension MediaModalView {
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(vm.media.title ?? "")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color.theme.text)
-                    .multilineTextAlignment(.leading)
-                
+                if let mediaType = vm.media.mediaType,
+                   let title = mediaType == .movie ? vm.media.title : vm.media.name {
+                    Text(title)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color.theme.text)
+                        .multilineTextAlignment(.leading)
+                }
                 if vm.isWatched {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(Color.theme.red)

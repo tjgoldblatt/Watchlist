@@ -59,7 +59,7 @@ struct ExploreRowView: View {
 
 struct ExploreRowView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreRowView(media: dev.mediaMock.first!!, currentTab: .movies)
+        ExploreRowView(media: dev.mediaMock.first!, currentTab: .movies)
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }
