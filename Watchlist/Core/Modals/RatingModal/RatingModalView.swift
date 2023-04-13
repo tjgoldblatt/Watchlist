@@ -15,6 +15,8 @@ struct RatingModalView: View {
     @State var media: DBMedia
     @State var rating: Int = 0
     
+    @Binding var shouldShowRatingModal: Bool
+    
     var posterPath: String? {
         return media.posterPath
     }
@@ -92,7 +94,7 @@ struct RatingModalView: View {
                                 Task {
                                     try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
                                     try await homeVM.getWatchlists()
-                                    dismiss()
+                                    shouldShowRatingModal = false
                                 }
                             }
                         }
@@ -101,7 +103,6 @@ struct RatingModalView: View {
                     
                 }
                 .frame(maxWidth: geo.size.width - 50)
-                .offset(y: -50)
                 .padding(.bottom)
             }
             .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
@@ -118,7 +119,7 @@ struct RatingModalView: View {
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingModalView(media: dev.mediaMock.first!)
+        RatingModalView(media: dev.mediaMock.first!, shouldShowRatingModal: .constant(true))
     }
 }
 

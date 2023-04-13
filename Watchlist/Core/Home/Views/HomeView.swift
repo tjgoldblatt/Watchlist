@@ -29,7 +29,6 @@ struct HomeView: View {
                         Task {
                             // TODO: Delete this after enough people have transferred their databases
                             homeVM.transferDatabase()
-                            try await homeVM.getWatchlists()
                         }
                     }
                 

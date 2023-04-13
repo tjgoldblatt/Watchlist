@@ -68,7 +68,6 @@ struct FilterModalView: View {
             }
         }
         .task {
-            try? await homeVM.getWatchlists()
             vm.genresSelected = homeVM.genresSelected
         }
     }

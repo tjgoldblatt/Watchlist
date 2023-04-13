@@ -36,7 +36,7 @@ struct ExploreRowView: View {
         }
         .onTapGesture {
             homeVM.hapticFeedback.impactOccurred()
-            showingSheet.toggle()
+            showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
             Task {

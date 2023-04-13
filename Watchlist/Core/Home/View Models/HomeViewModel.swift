@@ -11,6 +11,9 @@ import Blackbird
 
 @MainActor
 final class HomeViewModel: ObservableObject {
+    /// Prompt the user to sign back in
+    @Published var showSignInView: Bool = false
+    
     /// Explore search text
     @Published var searchText: String = ""
     
@@ -36,9 +39,6 @@ final class HomeViewModel: ObservableObject {
     
     /// Current selected tab
     @Published var selectedTab: Tab = .movies
-    
-    /// Tracks when user is selecting elements to delete
-    @Published var editMode: EditMode = .inactive
     
     var hapticFeedback = UIImpactFeedbackGenerator(style: .soft)
     

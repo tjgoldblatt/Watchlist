@@ -10,57 +10,58 @@ import FirebaseFirestoreSwift
 
 @MainActor
 final class SocialViewModel: ObservableObject {
-    @Published private(set) var user: DBUser? = nil
     
-    func loadCurrentUser() async throws {
-        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-        self.user = try await UserManager.shared.getUser(userId: authDataResult.uid)
-    }
-    
-    func createWatchlistForUser() {
-        guard let user else { return }
-        
-        Task {
-            try await WatchlistManager.shared.createWatchlistForUser()
-            self.user = try await UserManager.shared.getUser(userId: user.userId)
-        }
-    }
 }
 
 struct SocialView: View {
+    @EnvironmentObject var homeVM: HomeViewModel
+    
+    @StateObject var settingsVM = SettingsViewModel()
+    
     @State private var showSignInView: Bool = false
     @StateObject var vm = SocialViewModel()
-    @EnvironmentObject var homeVM: HomeViewModel
-
-    @FirestoreQuery(collectionPath: "watchlists") var userWatchlist: [DBMedia]
+    
+    @State var showSettingsView: Bool = false
     
     var body: some View {
-        ZStack {
-            if !showSignInView {
-                SettingsView(showSignInView: $showSignInView)
-                    .onAppear {
-                        Task {
-                            try? await vm.loadCurrentUser()
+        NavigationStack {
+            ZStack {
+                Color.theme.background.ignoresSafeArea()
+                
+                if settingsVM.authUser?.isAnonymous == false {
+                    // Show friends list
+                    VStack {
+                        Text(settingsVM.authUser?.uid ?? "")
+                            .padding()
+                        Text(settingsVM.authUser?.displayName ?? "No Display Name")
+                            .padding()
+                        HStack {
+                            ForEach(settingsVM.authProviders, id: \.self) { auth in
+                                Text(auth.rawValue)
+                                    .padding()
+                            }
                         }
                     }
+                } else {
+                    anonUser
+                }
             }
-        }
-        .onAppear {
-            let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
-            self.showSignInView = authUser == nil
-            if let user = vm.user {
-                $userWatchlist.path = "watchlists/\(user.userId)/userWatchlist"
-                print($userWatchlist.path)
+            .onAppear {
+                settingsVM.loadAuthProviders()
+                settingsVM.loadAuthUser()
             }
-        }
-        
-        .fullScreenCover(isPresented: $showSignInView, onDismiss: {
-            Task {
-                try await homeVM.getWatchlists()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Image(systemName: "gear")
+                        .font(.headline)
+                        .onTapGesture {
+                            showSettingsView.toggle()
+                        }
+                }
             }
-        }) {
-            NavigationStack {
-                AuthenticationView(showSignInView: $showSignInView)
+            .sheet(isPresented: $showSettingsView) {
+                SettingsView()
+                    .environmentObject(settingsVM)
             }
         }
     }
@@ -69,5 +70,38 @@ struct SocialView: View {
 struct SocialView_Previews: PreviewProvider {
     static var previews: some View {
         SocialView()
+    }
+}
+
+extension SocialView {
+    private var anonUser: some View {
+        VStack {
+            if !settingsVM.authProviders.contains(.google) {
+                Button("Link Google Account") {
+                    Task {
+                        do {
+                            try await settingsVM.linkGoogleAccount()
+                            print("GOOGLE LINKED")
+                        } catch(let error) {
+                            print(error.localizedDescription)
+                        }
+                    }
+                }
+                .padding()
+            }
+            if !settingsVM.authProviders.contains(.apple) {
+                Button("Sign in with Apple Account") {
+                    Task {
+                        do {
+                            try await settingsVM.linkAppleAccount()
+                            print("APPLE LINKED")
+                        } catch(let error) {
+                            print(error.localizedDescription)
+                        }
+                    }
+                }
+                .padding()
+            }
+        }
     }
 }

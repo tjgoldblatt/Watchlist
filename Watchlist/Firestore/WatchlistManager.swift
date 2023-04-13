@@ -169,10 +169,6 @@ final class WatchlistManager {
     func setPersonalRatingForMedia(media: DBMedia, personalRating: Double?) async throws {
         let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
         
-        if personalRating != nil {
-            try await toggleMediaWatched(media: media, watched: true)
-        }
-        
         let data: [String:Any] = [
             DBMedia.CodingKeys.personalRating.rawValue : personalRating ?? NSNull()
         ]
@@ -183,6 +179,11 @@ final class WatchlistManager {
     func getUpdatedUserMedia(media: DBMedia) async throws -> DBMedia {
         let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
         return try await userWatchlistDocument.getDocument(as: DBMedia.self)
+    }
+    
+    func getUpdatedPersonalRating(media: DBMedia) async throws -> Double? {
+        let user = try await getUpdatedUserMedia(media: media)
+        return user.personalRating
     }
     
     func resetMedia(media: DBMedia) async throws {

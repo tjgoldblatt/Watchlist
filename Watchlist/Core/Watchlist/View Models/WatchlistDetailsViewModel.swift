@@ -20,6 +20,8 @@ final class WatchlistDetailsViewModel: ObservableObject {
     
     @Published var deleteConfirmationShowing: Bool = false
     
+    @Published var editMode: EditMode = .inactive
+    
     let emptyViewID = "HeaderView"
     
     func resetMedia(media: DBMedia) async throws {

@@ -140,7 +140,6 @@ struct SearchBarView: View {
             .contentShape(RoundedRectangle(cornerRadius: 20))
             .background(Color.theme.secondary)
             .cornerRadius(20)
-            .task { try? await homeVM.getWatchlists() }
             .onTapGesture {
                 withAnimation(.spring()) {
                     isFocused = true

@@ -48,9 +48,6 @@ struct ExploreTabView: View {
                 Text("")
             }
         }
-        .task {
-            try? await homeVM.getWatchlists()
-        }
     }
 }
 

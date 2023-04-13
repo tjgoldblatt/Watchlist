@@ -36,24 +36,29 @@ struct RowView: View {
         .accessibilityIdentifier("RowView")
         .sheet(isPresented: $showRatingSheet, onDismiss: {
             Task {
+                let newPersonalRating = try await WatchlistManager.shared.getUpdatedPersonalRating(media: media)
+                personalRating = newPersonalRating
+                
+                if personalRating != nil {
+                    try await WatchlistManager.shared.toggleMediaWatched(media: media, watched: true)
+                }
+                
                 let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
-                personalRating = newMedia.personalRating
                 isWatched = newMedia.watched
                 try await homeVM.getWatchlists()
             }
         }) {
-            RatingModalView(media: media)
+            RatingModalView(media: media, shouldShowRatingModal: $showRatingSheet)
         }
         .onTapGesture {
             homeVM.hapticFeedback.impactOccurred()
-            showingSheet.toggle()
+            showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
             Task {
                 let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
                 personalRating = newMedia.personalRating
                 isWatched = newMedia.watched
-                try await homeVM.getWatchlists()
             }
         }) {
             MediaModalView(media: media)
@@ -68,7 +73,6 @@ struct RowView: View {
                 let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
                 isWatched = newMedia.watched
                 personalRating = newMedia.personalRating
-                try await homeVM.getWatchlists()
             }
             
         }

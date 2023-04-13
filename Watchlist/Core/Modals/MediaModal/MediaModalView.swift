@@ -69,7 +69,6 @@ struct MediaModalView: View {
         }
         .onAppear {
             Task {
-                try await homeVM.getWatchlists()
                 let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)
                 vm.personalRating = newMedia.personalRating
                 vm.isWatched = newMedia.watched
@@ -181,13 +180,19 @@ extension MediaModalView {
         }
         .sheet(isPresented: $vm.showingRating, onDismiss: {
             Task {
+                let personalRating = try await WatchlistManager.shared.getUpdatedPersonalRating(media: vm.media)
+                vm.personalRating = personalRating
+                
+                if vm.personalRating != nil {
+                    try await WatchlistManager.shared.toggleMediaWatched(media: vm.media, watched: true)
+                }
+                
                 let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)
-                vm.personalRating = newMedia.personalRating
                 vm.isWatched = newMedia.watched
                 try await homeVM.getWatchlists()
             }
         }) {
-            RatingModalView(media: vm.media)
+            RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
         }
     }
     

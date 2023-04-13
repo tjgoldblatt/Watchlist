@@ -48,6 +48,7 @@ struct TVShowTabView: View {
                     }
                 }
                 .onChange(of: homeVM.selectedTab) { _ in
+                    vm.editMode = .inactive
                     vm.filterText = ""
                 }
             }
@@ -84,7 +85,7 @@ extension TVShowTabView {
             
             ForEach(sortedSearchResults) { tvShow in
                 RowView(media: tvShow, currentTab: .tvShows)
-                    .allowsHitTesting(homeVM.editMode == .inactive)
+                    .allowsHitTesting(vm.editMode == .inactive)
                     .listRowBackground(Color.theme.background)
             }
             .onChange(of: homeVM.watchSelected) { _ in
@@ -106,7 +107,7 @@ extension TVShowTabView {
                 }
             }
             
-            if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
+            if !watchedSelectedRows.isEmpty && vm.editMode == .active {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Text("Reset")
                         .font(.body)
@@ -116,8 +117,10 @@ extension TVShowTabView {
                             Task {
                                 for watchedSelectedRow in watchedSelectedRows {
                                     try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
-                                    homeVM.editMode = .inactive
                                 }
+                                try await homeVM.getWatchlists()
+                                vm.selectedRows = []
+                                vm.editMode = .inactive
                             }
                         }
                 }
@@ -125,9 +128,9 @@ extension TVShowTabView {
         }
         .background(.clear)
         .scrollContentBackground(.hidden)
-        .environment(\.editMode, $homeVM.editMode)
+        .environment(\.editMode, $vm.editMode)
         .overlay(alignment: .bottomTrailing) {
-            if !vm.selectedRows.isEmpty && homeVM.editMode == .active {
+            if !vm.selectedRows.isEmpty && vm.editMode == .active {
                 Image(systemName: "trash.circle.fill")
                     .resizable()
                     .fontWeight(.bold)
@@ -146,7 +149,8 @@ extension TVShowTabView {
                     for id in vm.selectedRows {
                         try await WatchlistManager.shared.deleteMediaById(mediaId: id)
                     }
-                    homeVM.editMode = .inactive
+                    try await homeVM.getWatchlists()
+                    vm.editMode = .inactive
                 }
             }
             .buttonStyle(.plain)
@@ -188,9 +192,6 @@ extension TVShowTabView {
     }
     
     var searchResults: [DBMedia] {
-        Task {
-            try await homeVM.getWatchlists()
-        }
         let groupedMedia = homeVM.tvList.filter({ !$0.watched })
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched})

@@ -15,25 +15,6 @@ struct AuthenticationView: View {
     
     var body: some View {
         VStack {
-//            Button {
-//                Task {
-//                    do {
-//                        try await viewModel.signInAnonymous()
-//                        showSignInView = false
-//                    } catch {
-//                        print(error)
-//                    }
-//                }
-//            } label: {
-//                Text("Sign In Anonymously")
-//                    .font(.headline)
-//                    .foregroundColor(.white)
-//                    .frame(maxWidth: .infinity)
-//                    .frame(height: 55)
-//                    .background(.orange)
-//                    .cornerRadius(10)
-//            }
-            
             GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(scheme: .dark, style: .wide, state: .normal)) {
                 Task {
                     do {
@@ -48,6 +29,26 @@ struct AuthenticationView: View {
             SignInWithAppleView(showSignInView: $showSignInView)
                 .frame(height: 55)
             
+            Button {
+                Task {
+                    do {
+                        try await viewModel.signInAnonymous()
+                        showSignInView = false
+                    } catch {
+                        print(error)
+                    }
+                }
+            } label: {
+                Text("Continue Without Signing In")
+                    .font(.subheadline)
+                    .foregroundColor(Color.theme.red)
+//                    .frame(maxWidth: .infinity)
+//                    .frame(height: 55)
+//                    .background(.orange)
+//                    .cornerRadius(10)
+            }
+            .padding(.top)
+            
             Spacer()
         }
         .padding()
@@ -59,6 +60,7 @@ struct AuthenticationView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             AuthenticationView(showSignInView: .constant(false))
+                .environmentObject(AuthenticationViewModel())
         }
     }
 }

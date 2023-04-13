@@ -50,6 +50,7 @@ struct MovieTabView: View {
                     }
                 }
                 .onChange(of: homeVM.selectedTab) { _ in
+                    vm.editMode = .inactive
                     vm.filterText = ""
                 }
             }
@@ -84,7 +85,7 @@ extension MovieTabView {
             
             ForEach(sortedSearchResults) { movie in
                 RowView(media: movie, currentTab: .movies)
-                    .allowsHitTesting(homeVM.editMode == .inactive)
+                    .allowsHitTesting(vm.editMode == .inactive)
                     .listRowBackground(Color.theme.background)
             }
             .onChange(of: homeVM.watchSelected) { _ in
@@ -106,7 +107,7 @@ extension MovieTabView {
                 }
             }
             
-            if !watchedSelectedRows.isEmpty && homeVM.editMode == .active {
+            if !watchedSelectedRows.isEmpty && vm.editMode == .active {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Text("Reset")
                         .font(.body)
@@ -118,7 +119,8 @@ extension MovieTabView {
                                     try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
                                 }
                                 try await homeVM.getWatchlists()
-                                homeVM.editMode = .inactive
+                                vm.selectedRows = []
+                                vm.editMode = .inactive
                             }
                         }
                 }
@@ -126,9 +128,9 @@ extension MovieTabView {
         }
         .background(.clear)
         .scrollContentBackground(.hidden)
-        .environment(\.editMode, $homeVM.editMode)
+        .environment(\.editMode, $vm.editMode)
         .overlay(alignment: .bottomTrailing) {
-            if !vm.selectedRows.isEmpty && homeVM.editMode == .active {
+            if !vm.selectedRows.isEmpty && vm.editMode == .active {
                 Image(systemName: "trash.circle.fill")
                     .resizable()
                     .fontWeight(.bold)
@@ -147,7 +149,8 @@ extension MovieTabView {
                     for id in vm.selectedRows {
                         try await WatchlistManager.shared.deleteMediaById(mediaId: id)
                     }
-                    homeVM.editMode = .inactive
+                    try await homeVM.getWatchlists()
+                    vm.editMode = .inactive
                 }
             }
             .buttonStyle(.plain)
@@ -188,9 +191,6 @@ extension MovieTabView {
     }
     
     var searchResults: [DBMedia] {
-        Task {
-            try await homeVM.getWatchlists()
-        }
         let groupedMedia = homeVM.movieList.filter({ !$0.watched })
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = homeVM.movieList.sorted(by: { !$0.watched && $1.watched})

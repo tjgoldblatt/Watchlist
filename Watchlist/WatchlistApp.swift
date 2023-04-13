@@ -20,26 +20,37 @@ struct WatchlistApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .toolbar(.hidden)
-                .environmentObject(vm)
-                .environmentObject(authVM)
-                .environment(\.blackbirdDatabase, database)
-                .onAppear {
-                    Task {
-                        if Auth.auth().currentUser == nil {
-                            do {
-                                try await authVM.signInAnonymous()
-                            } catch {
-                                print(error)
+            ZStack {
+                if !vm.showSignInView {
+                    HomeView()
+                        .toolbar(.hidden)
+                        .environmentObject(vm)
+                        .environmentObject(authVM)
+                        .environment(\.blackbirdDatabase, database)
+                        .onAppear {
+                            Task {
+                                // Not really sure why we need to save fake data on load for db to save everything 🤷‍♂️
+                                // ** Remeber if we change the database this needs to be updated and path of db needs to be updated as well **
+                                database.saveMedia(media: Media(mediaType: .movie, id: 1, originalTitle: "", originalName: "", overview: nil, voteAverage: nil, voteCount: nil, posterPath: nil, backdropPath: nil, genreIDS: nil, popularity: nil, firstAirDate: nil, originCountry: nil, originalLanguage: nil, name: nil, adult: nil, releaseDate: nil, title: nil, video: nil, profilePath: nil, knownFor: nil))
                             }
                         }
-                        
-                        // Not really sure why we need to save fake data on load for db to save everything 🤷‍♂️
-                        // ** Remeber if we change the database this needs to be updated and path of db needs to be updated as well **
-                        database.saveMedia(media: Media(mediaType: .movie, id: 1, originalTitle: "", originalName: "", overview: nil, voteAverage: nil, voteCount: nil, posterPath: nil, backdropPath: nil, genreIDS: nil, popularity: nil, firstAirDate: nil, originCountry: nil, originalLanguage: nil, name: nil, adult: nil, releaseDate: nil, title: nil, video: nil, profilePath: nil, knownFor: nil))
-                    }
                 }
+            }
+            .onAppear {
+                let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
+                vm.showSignInView = authUser == nil
+            }
+            .fullScreenCover(isPresented: $vm.showSignInView, onDismiss: {
+                vm.selectedTab = .movies
+                Task {
+                    try await vm.getWatchlists()
+                }
+            }) {
+                NavigationStack {
+                    AuthenticationView(showSignInView: $vm.showSignInView)
+                        .environmentObject(authVM)
+                }
+            }
         }
     }
 }
