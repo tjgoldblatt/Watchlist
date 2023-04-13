@@ -10,7 +10,13 @@ import FirebaseFirestoreSwift
 
 @MainActor
 final class SocialViewModel: ObservableObject {
+    @Published var displayName: String? = nil
     
+    func getDisplayName() {
+        Task {
+            displayName = try await UserManager.shared.getDisplayNameForUser()
+        }
+    }
 }
 
 struct SocialView: View {
@@ -33,7 +39,7 @@ struct SocialView: View {
                     VStack {
                         Text(settingsVM.authUser?.uid ?? "")
                             .padding()
-                        Text(settingsVM.authUser?.displayName ?? "No Display Name")
+                        Text(vm.displayName ?? "No Display Name")
                             .padding()
                         HStack {
                             ForEach(settingsVM.authProviders, id: \.self) { auth in
@@ -49,6 +55,7 @@ struct SocialView: View {
             .onAppear {
                 settingsVM.loadAuthProviders()
                 settingsVM.loadAuthUser()
+                vm.getDisplayName()
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -70,6 +77,7 @@ struct SocialView: View {
 struct SocialView_Previews: PreviewProvider {
     static var previews: some View {
         SocialView()
+            .environmentObject(dev.homeVM)
     }
 }
 

@@ -25,6 +25,7 @@ struct SettingsView: View {
                 // Hide log out button if user is anon
                 //            if viewModel.authUser?.isAnonymous == false {
                 Button("Log Out") {
+                    homeVM.selectedTab = .movies
                     Task {
                         do {
                             try viewModel.signOut()
@@ -47,8 +48,8 @@ struct SettingsView: View {
             .sheet(isPresented: $showReAuthView, onDismiss: {
                 Task {
                     do {
-                        // show alert to confirm, need to implement if we want to create accounts
                         try await viewModel.delete()
+                        homeVM.selectedTab = .movies
                         homeVM.showSignInView = true
                     } catch(let error) {
                         print(error.localizedDescription)
@@ -71,6 +72,9 @@ struct SettingsView: View {
                         SignInWithAppleView(showSignInView: $homeVM.showSignInView)
                             .frame(height: 55)
                     }
+                }
+                .onTapGesture {
+                    homeVM.showSignInView = true
                 }
             }
             .onAppear {

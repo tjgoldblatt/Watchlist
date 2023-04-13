@@ -16,6 +16,9 @@ struct WatchlistApp: App {
     @StateObject private var vm = HomeViewModel()
     @StateObject private var authVM = AuthenticationViewModel()
     
+    
+    @State var showDisplayNameView: Bool = false
+    
     var database: Blackbird.Database = try! Blackbird.Database(path: "\(FileManager.default.temporaryDirectory.path)/watchlist-testapp.sqlite"/*, options: [.debugPrintEveryQuery, .debugPrintEveryReportedChange, .debugPrintQueryParameterValues]*/)
     
     var body: some Scene {
@@ -44,12 +47,22 @@ struct WatchlistApp: App {
                 vm.selectedTab = .movies
                 Task {
                     try await vm.getWatchlists()
+                    let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
+                    
+                    if authUser?.isAnonymous == false {
+                        if try await UserManager.shared.getDisplayNameForUser() == nil {
+                            showDisplayNameView.toggle()
+                        }
+                    }
                 }
             }) {
                 NavigationStack {
                     AuthenticationView(showSignInView: $vm.showSignInView)
                         .environmentObject(authVM)
                 }
+            }
+            .fullScreenCover(isPresented: $showDisplayNameView) {
+                DisplayNameView()
             }
         }
     }

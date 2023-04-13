@@ -35,7 +35,7 @@ struct DBUser: Codable {
         self.dateCreated = Timestamp()
     }
     
-    enum CodingKeys: CodingKey {
+    enum CodingKeys: String, CodingKey {
         case userId
         case isAnonymous
         case email
@@ -52,27 +52,42 @@ final class UserManager {
     
     private let userCollection = Firestore.firestore().collection("users")
     
-    private func userDocument(userId: String) -> DocumentReference {
-        userCollection.document(userId)
+    private func userDocument() throws -> DocumentReference {
+        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
+        return userCollection.document(authDataResult.uid)
     }
     
     func createNewUser(user: DBUser) async throws {
-        try userDocument(userId: user.userId).setData(from: user, merge: true)
+        try userDocument().setData(from: user, merge: true)
         try await WatchlistManager.shared.createWatchlistForUser()
     }
     
     func updateUserAfterLink(authDataResultModel: AuthDataResultModel) async throws {
-        let dbUser = try await getUser(userId: authDataResultModel.uid)
+        let dbUser = try await getUser()
         let updatedDBUser = DBUser(auth: authDataResultModel)
-        try userDocument(userId: dbUser.userId).setData(from: updatedDBUser, merge: true)
+        try userDocument().setData(from: updatedDBUser, merge: true)
     }
     
-    func getUser(userId: String) async throws -> DBUser {
-        try await userDocument(userId: userId).getDocument(as: DBUser.self)
+    func getUser() async throws -> DBUser {
+        try await userDocument().getDocument(as: DBUser.self)
     }
     
-    func deleteUser(userId: String) async throws {
-        try await userDocument(userId: userId).delete()
-        try await WatchlistManager.shared.deleteWatchlist(userId: userId)
+    func deleteUser() async throws {
+        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
+        try await userDocument().delete()
+        try await WatchlistManager.shared.deleteWatchlist(userId: authDataResult.uid)
+    }
+    
+    func getDisplayNameForUser() async throws -> String? {
+        let user = try await getUser()
+        return user.displayName
+    }
+    
+    func updateDisplayNameForUser(displayName: String) async throws {
+        let data: [String:Any] = [
+            DBUser.CodingKeys.displayName.rawValue : displayName
+        ]
+        
+        try await userDocument().updateData(data)
     }
 }

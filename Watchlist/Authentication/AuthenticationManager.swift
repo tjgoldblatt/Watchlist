@@ -70,7 +70,7 @@ final class AuthenticationManager {
             throw URLError(.badURL)
         }
         
-        try await UserManager.shared.deleteUser(userId: user.uid)
+        try await UserManager.shared.deleteUser()
         try await user.delete()
     }
 }

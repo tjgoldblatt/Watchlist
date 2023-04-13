@@ -68,6 +68,7 @@
 		32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */; };
 		32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */; };
 		32C89CC529E843330094D8E2 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 32C89CC429E843330094D8E2 /* FirebasePerformance */; };
+		32C89CC729E8BA920094D8E2 /* DisplayNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,6 +146,7 @@
 		32B5128B29CBB00000879AF6 /* RatingModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingModalView.swift; sourceTree = "<group>"; };
 		32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalView.swift; sourceTree = "<group>"; };
 		32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalViewModel.swift; sourceTree = "<group>"; };
+		32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayNameView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,6 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				324BAE7229B8D7CC002FBB6F /* HomeView.swift */,
+				32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -671,6 +674,7 @@
 				324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */,
 				32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */,
 				32B5128929CBABC800879AF6 /* StarsView.swift in Sources */,
+				32C89CC729E8BA920094D8E2 /* DisplayNameView.swift in Sources */,
 				32B3E1E029E61F7100314B4F /* WatchlistManager.swift in Sources */,
 				329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */,
 				32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */,
