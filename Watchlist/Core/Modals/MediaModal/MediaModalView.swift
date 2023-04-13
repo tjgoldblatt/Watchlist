@@ -6,20 +6,16 @@
 //
 
 import SwiftUI
-import Blackbird
 
 struct MediaModalView: View {
-    @Environment(\.blackbirdDatabase) var database
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var homeVM: HomeViewModel
     
     @StateObject var vm: MediaModalViewModel
     
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
-    
-    init(mediaDetails: MediaDetailContents, media: Media) {
-     _vm = StateObject(wrappedValue: MediaModalViewModel(mediaDetails: mediaDetails, media: media))
+    init(media: DBMedia) {
+     _vm = StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
     
     var body: some View {
@@ -44,16 +40,16 @@ struct MediaModalView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            if isInMedia(mediaModels: mediaList.results, media: vm.media) && vm.isWatched {
+            if isInMedia(media: vm.media) && vm.isWatched {
                 Menu {
                     Button(role: .destructive) {
                         Task {
-                            await database?.sendRating(rating: nil, media: vm.media)
-                            await database?.fetchPersonalRating(media: vm.media) { rating in
-                                vm.personalRating = rating
-                            }
-                            await database?.setWatched(watched: false, media: vm.media)
-                            vm.isWatched = false
+//                            await database?.sendRating(rating: nil, media: vm.media)
+//                            await database?.fetchPersonalRating(media: vm.media) { rating in
+//                                vm.personalRating = rating
+//                            }
+//                            await database?.setWatched(watched: false, media: vm.media)
+//                            vm.isWatched = false
                         }
                     } label: {
                         Text("Reset")
@@ -74,13 +70,13 @@ struct MediaModalView: View {
         }
         .onAppear {
             Task {
-                await database?.fetchPersonalRating(media: vm.media) { rating in
-                    vm.personalRating = rating
-                }
+//                await database?.fetchPersonalRating(media: vm.media) { rating in
+//                    vm.personalRating = rating
+//                }
                 
-                await database?.fetchIsWatched(media: vm.media, completionHandler: { watched in
-                    vm.isWatched = watched
-                })
+//                await database?.fetchIsWatched(media: vm.media, completionHandler: { watched in
+//                    vm.isWatched = watched
+//                })
             }
         }
         .ignoresSafeArea(edges: .top)
@@ -89,7 +85,7 @@ struct MediaModalView: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaModalView(mediaDetails: dev.rowContent, media: dev.mediaMock.first!)
+        MediaModalView(media: dev.mediaMock.first!!)
     }
 }
 
@@ -111,8 +107,8 @@ extension MediaModalView {
     
     private var genreSection: some View {
         HStack {
-            if let genres = vm.mediaDetails.genres {
-                GenreSection(genres: genres)
+            if let genreIds = vm.media.genreIDs {
+                GenreSection(genres: getGenres(genreIDs: genreIds))
             } else {
                 Spacer()
             }
@@ -122,7 +118,7 @@ extension MediaModalView {
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(vm.mediaDetails.title)
+                Text(vm.media.title ?? "")
                     .font(.largeTitle)
                     .fontWeight(.semibold)
                     .foregroundColor(Color.theme.text)
@@ -140,7 +136,11 @@ extension MediaModalView {
     }
     
     private var overview: some View {
-        ExpandableText(text: vm.mediaDetails.overview, lineLimit: 3)
+        if let overview = vm.media.overview {
+            return AnyView(ExpandableText(text: overview, lineLimit: 3))
+        } else {
+            return AnyView(EmptyView())
+        }
     }
     
     private var ratingSection: some View {
@@ -149,7 +149,9 @@ extension MediaModalView {
             
             Spacer()
             
-            StarRatingView(text: "IMDb RATING", rating: vm.mediaDetails.imdbRating, size: 18)
+            if let voteAverage = vm.media.voteAverage {
+                StarRatingView(text: "IMDb RATING", rating: voteAverage, size: 18)
+            }
             
             Spacer()
             
@@ -157,7 +159,7 @@ extension MediaModalView {
                 StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
             } else {
                 rateThisButton
-                    .disabled(isInMedia(mediaModels: mediaList.results, media: vm.media) ? false : true)
+                    .disabled(isInMedia(media: vm.media) ? false : true)
             }
         }
         .padding(.trailing)
@@ -172,66 +174,69 @@ extension MediaModalView {
                 Image(systemName: "star")
                     .font(.system(size: 18))
                     .fontWeight(.bold)
-                    .foregroundColor(isInMedia(mediaModels: mediaList.results, media: vm.media) ? Color.theme.red : Color.theme.secondary)
+                    .foregroundColor(isInMedia(media: vm.media) ? Color.theme.red : Color.theme.secondary)
                 Text("Rate This")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(isInMedia(mediaModels: mediaList.results, media: vm.media) ? Color.theme.red : Color.theme.secondary)
+                    .foregroundColor(isInMedia(media: vm.media) ? Color.theme.red : Color.theme.secondary)
             }
         }
         .sheet(isPresented: $vm.showingRating, onDismiss: {
             Task {
-                await database?.fetchPersonalRating(media: vm.media) { rating in
-                    vm.personalRating = rating
-                }
-                if vm.personalRating != nil {
-                    await database?.setWatched(watched: true, media: vm.media)
-                    await database?.fetchIsWatched(media: vm.media) { watched in
-                        vm.isWatched = watched
-                    }
-                }
+//                await database?.fetchPersonalRating(media: vm.media) { rating in
+//                    vm.personalRating = rating
+//                }
+//                if vm.personalRating != nil {
+//                    await database?.setWatched(watched: true, media: vm.media)
+//                    await database?.fetchIsWatched(media: vm.media) { watched in
+//                        vm.isWatched = watched
+//                    }
+//                }
             }
         }) {
-            RatingModalView(media: vm.media)
+//            RatingModalView(media: vm.media)
         }
     }
     
     private var addButton: some View {
         Button {
             homeVM.hapticFeedback.impactOccurred()
-            if !isInMedia(mediaModels: mediaList.results, media: vm.media) {
-                database?.saveMedia(media: vm.media)
+            if !isInMedia(media: vm.media) {
+//                database?.saveMedia(media: vm.media)
             } else {
                 vm.showDeleteConfirmation.toggle()
             }
         } label: {
-            Text(!isInMedia(mediaModels: mediaList.results, media: vm.media) ? "Add" : "Added")
+            Text(!isInMedia(media: vm.media) ? "Add" : "Added")
                 .font(.subheadline)
                 .fontWeight(.semibold)
-                .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: vm.media) ? Color.theme.red : Color.theme.genreText)
+                .foregroundColor(!isInMedia(media: vm.media) ? Color.theme.red : Color.theme.genreText)
                 .frame(width: 90, height: 30)
-                .background(!isInMedia(mediaModels: mediaList.results, media: vm.media) ? Color.theme.secondary : Color.theme.red)
+                .background(!isInMedia(media: vm.media) ? Color.theme.secondary : Color.theme.red)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .fixedSize(horizontal: true, vertical: false)
         }
         .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.showDeleteConfirmation, actions: {
-            Button("Delete", role: .destructive) { database?.deleteMedia(media: vm.media) }
-                .buttonStyle(.plain)
+//            Button("Delete", role: .destructive) { database?.deleteMedia(media: vm.media) }
+//                .buttonStyle(.plain)
             Button("Cancel", role: .cancel) {}
                 .buttonStyle(.plain)
         })
         .frame(width: 100, alignment: .center)
     }
     
-    func isInMedia(mediaModels: [MediaModel], media: Media) -> Bool {
-        for mediaModel in mediaModels {
-            if let decodedMedia = homeVM.decodeData(with: mediaModel.media) {
-                if decodedMedia.id == media.id {
-                    return true
-                }
+    func isInMedia(media: DBMedia) -> Bool {
+        let mediaList = homeVM.movieList + homeVM.tvList
+        for homeMedia in mediaList {
+            if homeMedia.id == media.id {
+                return true
             }
         }
         return false
+    }
+    
+    func getGenres(genreIDs: [Int]) -> [Genre] {
+        return homeVM.getGenresForMediaType(for: .tv, genreIDs: genreIDs)
     }
 }
 

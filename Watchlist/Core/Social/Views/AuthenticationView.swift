@@ -10,29 +10,29 @@ import GoogleSignInSwift
 import AuthenticationServices
 
 struct AuthenticationView: View {
-    @StateObject private var viewModel = AuthenticationViewModel()
+    @EnvironmentObject private var viewModel: AuthenticationViewModel
     @Binding var showSignInView: Bool
     
     var body: some View {
         VStack {
-            Button {
-                Task {
-                    do {
-                        try await viewModel.signInAnonymous()
-                        showSignInView = false
-                    } catch {
-                        print(error)
-                    }
-                }
-            } label: {
-                Text("Sign In Anonymously")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 55)
-                    .background(.orange)
-                    .cornerRadius(10)
-            }
+//            Button {
+//                Task {
+//                    do {
+//                        try await viewModel.signInAnonymous()
+//                        showSignInView = false
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            } label: {
+//                Text("Sign In Anonymously")
+//                    .font(.headline)
+//                    .foregroundColor(.white)
+//                    .frame(maxWidth: .infinity)
+//                    .frame(height: 55)
+//                    .background(.orange)
+//                    .cornerRadius(10)
+//            }
             
             GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(scheme: .dark, style: .wide, state: .normal)) {
                 Task {

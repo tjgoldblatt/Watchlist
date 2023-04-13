@@ -10,11 +10,9 @@ import Blackbird
 
 struct RatingModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    
-    @Environment(\.blackbirdDatabase) var database
     @Environment(\.dismiss) var dismiss
     
-    @State var media: Media
+    @State var media: DBMedia
     @State var rating: Int = 0
     
     var posterPath: String? {
@@ -91,10 +89,10 @@ struct RatingModalView: View {
                         .onTapGesture {
                             if rating > 0 {
                                 homeVM.hapticFeedback.impactOccurred()
-                                Task {
-                                    await database?.sendRating(rating: Double(rating), media: media)
-                                    dismiss()
-                                }
+//                                Task {
+//                                    await database?.sendRating(rating: Double(rating), media: media)
+//                                    dismiss()
+//                                }
                             }
                         }
                         .accessibilityIdentifier("RateButton")
@@ -119,7 +117,7 @@ struct RatingModalView: View {
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingModalView(media: dev.mediaMock.first!)
+        RatingModalView(media: dev.mediaMock.first!!)
     }
 }
 

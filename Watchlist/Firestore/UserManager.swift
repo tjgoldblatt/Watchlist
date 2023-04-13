@@ -58,7 +58,7 @@ final class UserManager {
     
     func createNewUser(user: DBUser) async throws {
         try userDocument(userId: user.userId).setData(from: user, merge: true)
-        try await WatchlistManager.shared.createWatchlistForUser(userId: user.userId)
+        try await WatchlistManager.shared.createWatchlistForUser()
     }
     
     func updateUserAfterLink(authDataResultModel: AuthDataResultModel) async throws {

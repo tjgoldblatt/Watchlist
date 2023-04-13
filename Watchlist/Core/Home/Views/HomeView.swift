@@ -6,18 +6,14 @@
 //
 
 import SwiftUI
-import Blackbird
 
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
     
-    @Environment(\.blackbirdDatabase) var database
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
-    
     var body: some View {
         if homeVM.isGenresLoaded {
             TabView(selection: $homeVM.selectedTab) {
-                MovieTabView(rowViewManager: RowViewManager(homeVM: homeVM))
+                MovieTabView()
                     .environmentObject(homeVM)
                     .tabItem {
                         Image(systemName: Tab.movies.icon)
@@ -27,17 +23,14 @@ struct HomeView: View {
                 
                     .onAppear {
                         Task {
-                            for mediaModel in mediaList.results {
-                                do {
-                                    try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
-                                } catch {
-                                    print(error)
-                                }
-                            }
+                            try await homeVM.getWatchlists()
                         }
+                        
+                        // TODO: Delete this after enough people have transferred their databases
+                        homeVM.transferDatabase()
                     }
                 
-                TVShowTabView(rowViewManager: RowViewManager(homeVM: homeVM))
+                TVShowTabView()
                     .environmentObject(homeVM)
                     .tabItem {
                         Image(systemName: Tab.tvShows.icon)
@@ -45,7 +38,7 @@ struct HomeView: View {
                     }
                     .tag(Tab.tvShows)
                 
-                ExploreTabView(rowViewManager: RowViewManager(homeVM: homeVM))
+                ExploreTabView()
                     .environmentObject(homeVM)
                     .tabItem {
                         Image(systemName: Tab.explore.icon)
@@ -63,13 +56,14 @@ struct HomeView: View {
             .accentColor(Color.theme.red)
             .tint(Color.theme.red)
             .onChange(of: homeVM.selectedTab) { newValue in
-                homeVM.getMediaWatchlists()
+                Task {
+                    try await homeVM.getWatchlists()
+                }
                 homeVM.genresSelected = []
                 homeVM.ratingSelected = 0
             }
-            .onAppear {
-                homeVM.database = database
-                homeVM.getMediaWatchlists()
+            .task {
+                try? await homeVM.getWatchlists()
             }
         } else {
             ProgressView()

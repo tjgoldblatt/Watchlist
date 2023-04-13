@@ -9,9 +9,18 @@ import Foundation
 import SwiftUI
 import Blackbird
 
-class HomeViewModel: ObservableObject {
+@MainActor
+final class HomeViewModel: ObservableObject {
     /// Explore search text
     @Published var searchText: String = ""
+    
+    /// User Movie Watchlist
+    @Published private(set) var movieList: [DBMedia] = []
+    
+    /// User TVShow Watchlist
+    @Published private(set) var tvList: [DBMedia] = []
+    
+    @Published var isMediaLoaded: Bool = false
     
     /// Explore page results
     @Published var results: [Media] = []
@@ -36,10 +45,10 @@ class HomeViewModel: ObservableObject {
     var database: Blackbird.Database?
     
     /// Users Movie Watchlist
-    var movieWatchlist: [Media] = []
-    
-    /// Users TV Show Watchlist
-    var tvWatchlist: [Media] = []
+//    var movieWatchlist: [Media] = []
+//
+//    /// Users TV Show Watchlist
+//    var tvWatchlist: [Media] = []
     
     /// To track filtering
     @Published var genresSelected: Set<Genre> = []
@@ -63,29 +72,30 @@ class HomeViewModel: ObservableObject {
         })
     }
     
-    /// Set HomeVM Watchlists equal to Database Watchlist
-    @MainActor func getMediaWatchlists() {
+    func getWatchlists() async throws {
+        self.movieList = try await WatchlistManager.shared.getMedia(mediaType: .movie)
+        self.tvList = try await WatchlistManager.shared.getMedia(mediaType: .tv)
+        isMediaLoaded = true
+    }
+    
+    // TODO: Blackbird Copy Func
+    func transferDatabase() {
         Task {
-            var newTVWatchList: [Media] = []
-            var newMovieWatchList: [Media] = []
-            guard let database else { return }
-            let tvMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == MediaType.tv.rawValue, orderBy: .ascending(\.$title))
-            for model in tvMediaModel {
-                let tvShow = decodeData(with: model.media)
-                if let tvShow, !tvWatchlist.contains(tvShow) {
-                    newTVWatchList.append(tvShow)
-                }
-            }
+            try await getWatchlists()
+            let fbMediaList = movieList + tvList
             
-            let movieMediaModel = try await MediaModel.read(from: database, matching: \.$mediaType == MediaType.movie.rawValue, orderBy: .ascending(\.$title))
-            for model in movieMediaModel {
-                let movie = decodeData(with: model.media)
-                if let movie, !movieWatchlist.contains(movie) {
-                    newMovieWatchList.append(movie)
+            guard let database else { return }
+            let mediaModels = try await MediaModel.read(from: database)
+                                                         
+            for mediaModel in mediaModels {
+                if !fbMediaList.map({ $0.id }).contains(mediaModel.id) && mediaModel.id != 1{
+                    do {
+                        try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
-            tvWatchlist = newTVWatchList
-            movieWatchlist = newMovieWatchList
         }
     }
     
@@ -112,12 +122,12 @@ class HomeViewModel: ObservableObject {
     }
     
     /// To figure out what genres we want to show as options depending on the tab
-    func convertGenreIDToGenre(for tab: Tab, watchList: [Media]) -> [Genre] {
+    func convertGenreIDToGenre(for tab: Tab, watchList: [DBMedia]) -> [Genre] {
         var foundGenres: [Genre] = []
         let allMediaGenres = movieGenreList + tvGenreList
         
         for media in watchList {
-            if let genreIDs = media.genreIDS {
+            if let genreIDs = media.genreIDs {
                 for genreID in genreIDs {
                     if let genre = allMediaGenres.first(where: { $0.id == genreID }) {
                         foundGenres.append(genre)

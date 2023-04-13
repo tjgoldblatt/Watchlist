@@ -9,18 +9,12 @@ import SwiftUI
 import Blackbird
 
 struct TVShowTabView: View {
-    @Environment(\.blackbirdDatabase) var database
-    
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.tv.rawValue, orderBy: .ascending(\.$title)) }) var tvList
-    
     @EnvironmentObject private var homeVM: HomeViewModel
     
     @StateObject var vm = WatchlistDetailsViewModel()
     
-    @State var rowViewManager: RowViewManager
-    
-    var watchedSelectedRows: [MediaModel] {
-        return vm.getWatchedSelectedRows(mediaModelArray: tvList.results)
+    var watchedSelectedRows: [DBMedia] {
+        return vm.getWatchedSelectedRows(mediaList: homeVM.tvList)
     }
     
     var body: some View {
@@ -36,16 +30,18 @@ struct TVShowTabView: View {
                         
                         searchbar
                         
-                        if tvList.didLoad {
+                        if !homeVM.tvList.isEmpty {
                             watchFilterOptions
-                            
-                            if !sortedSearchResults.isEmpty {
-                                watchlist(scrollProxy: proxy)
-                            } else {
-                                EmptyListView()
-                            }
+                        }
+                        
+                        if !sortedSearchResults.isEmpty {
+                            watchlist(scrollProxy: proxy)
                         } else {
-                            ProgressView()
+                            if homeVM.isMediaLoaded {
+                                EmptyListView()
+                            } else {
+                                ProgressView()
+                            }
                         }
                         
                         Spacer()
@@ -86,12 +82,10 @@ extension TVShowTabView {
             EmptyView()
                 .id(vm.emptyViewID)
             
-            ForEach(sortedSearchResults) { post in
-                if let tvShow = homeVM.decodeData(with: post.media) {
-                    rowViewManager.createRowView(tvShow: tvShow, tab: .tvShows)
-                        .allowsHitTesting(homeVM.editMode == .inactive)
-                        .listRowBackground(Color.theme.background)
-                }
+            ForEach(sortedSearchResults) { tvShow in
+                RowView(media: tvShow, currentTab: .tvShows)
+                    .allowsHitTesting(homeVM.editMode == .inactive)
+                    .listRowBackground(Color.theme.background)
             }
             .onChange(of: homeVM.watchSelected) { _ in
                 if sortedSearchResults.count > 3 {
@@ -119,15 +113,15 @@ extension TVShowTabView {
                         .foregroundColor(Color.theme.red)
                         .padding()
                         .onTapGesture {
-                            Task {
-                                for watchedSelectedRow in watchedSelectedRows {
-                                    if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
-                                        await database?.sendRating(rating: nil, media: media)
-                                        await database?.setWatched(watched: false, media: media)
-                                    }
-                                }
-                                homeVM.editMode = .inactive
-                            }
+                            //                            Task {
+                            //                                for watchedSelectedRow in watchedSelectedRows {
+                            //                                    if let media = homeVM.decodeData(with: watchedSelectedRow.media) {
+                            //                                        await database?.sendRating(rating: nil, media: media)
+                            //                                        await database?.setWatched(watched: false, media: media)
+                            //                                    }
+                            //                                }
+                            //                                homeVM.editMode = .inactive
+                            //                            }
                         }
                 }
             }
@@ -152,7 +146,7 @@ extension TVShowTabView {
         .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.deleteConfirmationShowing) {
             Button("Delete", role: .destructive) {
                 for id in vm.selectedRows {
-                    database?.deleteMediaByID(id: id)
+                    //                    database?.deleteMediaByID(id: id)
                 }
                 homeVM.editMode = .inactive
             }
@@ -194,16 +188,18 @@ extension TVShowTabView {
         .padding(.horizontal)
     }
     
-    var searchResults: [MediaModel] {
-        let groupedMedia = tvList.results.filter({ !$0.watched })
+    var searchResults: [DBMedia] {
+        let groupedMedia = homeVM.tvList.filter({ !$0.watched })
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = tvList.results.sorted(by: { !$0.watched && $1.watched})
+            var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched})
             
             /// Watched Filter
             if homeVM.watchSelected == .watched {
                 filteredMedia = filteredMedia.filter({ $0.watched })
             } else if homeVM.watchSelected == .any {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
+            } else {
+                filteredMedia = groupedMedia
             }
             
             /// Genre Filter
@@ -212,7 +208,7 @@ extension TVShowTabView {
                     guard let genreIDs = media.genreIDs else { return false }
                     var genreFound = false
                     for selectedGenre in homeVM.genresSelected {
-                        if genreIDs.contains("\(selectedGenre.id)") && genreFound != true {
+                        if genreIDs.contains(selectedGenre.id) && genreFound != true {
                             genreFound = true
                         }
                     }
@@ -221,17 +217,15 @@ extension TVShowTabView {
             }
             
             /// Rating Filter
-            filteredMedia = filteredMedia.filter { mediaModel in
-                if let media = homeVM.decodeData(with: mediaModel.media) {
-                    if let voteAverage = media.voteAverage {
-                        return voteAverage > Double(homeVM.ratingSelected)
-                    }
+            filteredMedia = filteredMedia.filter { media in
+                if let voteAverage = media.voteAverage {
+                    return voteAverage > Double(homeVM.ratingSelected)
                 }
                 return false
             }
             
             if !vm.filterText.isEmpty {
-                filteredMedia = filteredMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
+                filteredMedia = filteredMedia.filter { $0.title?.lowercased().contains(vm.filterText.lowercased()) ?? false }
             }
             
             return filteredMedia
@@ -239,21 +233,19 @@ extension TVShowTabView {
         } else if vm.filterText.isEmpty {
             return groupedMedia
         } else {
-            return groupedMedia.filter { $0.title.lowercased().contains(vm.filterText.lowercased()) }
+            return groupedMedia.filter { $0.title?.lowercased().contains(vm.filterText.lowercased()) ?? false }
         }
     }
     
-    var sortedSearchResults: [MediaModel] {
-        return searchResults.sorted { MM1, MM2 in
-            if let media1 = homeVM.decodeData(with: MM1.media), let media2 = homeVM.decodeData(with: MM2.media) {
-                if homeVM.sortingSelected == .highToLow {
-                    if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                        return voteAverage1 > voteAverage2
-                    }
-                } else if homeVM.sortingSelected == .lowToHigh {
-                    if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                        return voteAverage1 < voteAverage2
-                    }
+    var sortedSearchResults: [DBMedia] {
+        return searchResults.sorted { media1, media2 in
+            if homeVM.sortingSelected == .highToLow {
+                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                    return voteAverage1 > voteAverage2
+                }
+            } else if homeVM.sortingSelected == .lowToHigh {
+                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                    return voteAverage1 < voteAverage2
                 }
             }
             return false
@@ -295,7 +287,7 @@ struct EmptyListView: View {
 
 struct TVShowTabView_Previews: PreviewProvider {
     static var previews: some View {
-        TVShowTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+        TVShowTabView()
             .environmentObject(dev.homeVM)
     }
 }

@@ -21,25 +21,24 @@ final class SocialViewModel: ObservableObject {
         guard let user else { return }
         
         Task {
-            try await WatchlistManager.shared.createWatchlistForUser(userId: user.userId)
+            try await WatchlistManager.shared.createWatchlistForUser()
             self.user = try await UserManager.shared.getUser(userId: user.userId)
         }
     }
     
-    func addMediaToWatchlist() {
+    func addMediaToWatchlist(media: Media) {
         guard let user else { return }
-        let media = Media(mediaType: .movie, id: 1, originalTitle: "Avengers", originalName: "Avengers", overview: nil, voteAverage: 12, voteCount: nil, posterPath: nil, backdropPath: nil, genreIDS: nil, popularity: nil, firstAirDate: nil, originCountry: nil, originalLanguage: nil, name: nil, adult: nil, releaseDate: nil, title: nil, video: nil, profilePath: nil, knownFor: nil)
         
         Task {
-            try await WatchlistManager.shared.createNewMediaInWatchlist(userId: user.userId, media: media)
+            try await WatchlistManager.shared.createNewMediaInWatchlist(media: media)
             self.user = try await UserManager.shared.getUser(userId: user.userId)
         }
     }
     
     func toggleMediaWatched(mediaId: Int?, watched: Bool) {
-        guard let user, let mediaId else { return }
+        guard let mediaId else { return }
         Task {
-            try await WatchlistManager.shared.toggleMediaWatched(userId: user.userId, mediaId: mediaId, watched: watched)
+            try await WatchlistManager.shared.toggleMediaWatched(mediaId: mediaId, watched: watched)
         }
     }
 }

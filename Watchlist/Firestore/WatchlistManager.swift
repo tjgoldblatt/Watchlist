@@ -9,7 +9,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-struct DBMedia: Codable {
+struct DBMedia: Identifiable, Hashable, Codable {
     // Media
     let id: Int?
     let mediaType: MediaType?
@@ -20,19 +20,15 @@ struct DBMedia: Codable {
     let voteCount: Int?
     let posterPath: String?
     let backdropPath: String?
-    let genreIDS: [Int]?
+    let genreIDs: [Int]?
     
     // Extra
     let watched: Bool
     let personalRating: Double?
     
-    init?(media: Media, watched: Bool, personalRating: Double?) {
-        guard let mediaId = media.id,
-              let mediaType = media.mediaType else {
-            return nil
-        }
-        self.id = mediaId
-        self.mediaType = mediaType
+    init(media: Media, watched: Bool, personalRating: Double?) {
+        self.id = media.id
+        self.mediaType = media.mediaType
         self.title = media.title
         self.originalTitle = media.originalTitle
         self.name = media.name
@@ -42,7 +38,7 @@ struct DBMedia: Codable {
         self.voteCount = media.voteCount
         self.posterPath = media.posterPath
         self.backdropPath = media.backdropPath
-        self.genreIDS = media.genreIDS
+        self.genreIDs = media.genreIDS
         self.watched = watched
         self.personalRating = personalRating
     }
@@ -59,7 +55,7 @@ struct DBMedia: Codable {
         case voteCount
         case posterPath
         case backdropPath
-        case genreIDS
+        case genreIDs
         
         case watched
         case personalRating
@@ -85,54 +81,56 @@ final class WatchlistManager {
     static let shared = WatchlistManager()
     private init() {}
     
+    // MARK: - Watchlist
+    
     let watchlistCollection = Firestore.firestore().collection("watchlists")
     
-    func watchlistDocument(userId: String) -> DocumentReference {
-        watchlistCollection.document(userId)
+    func watchlistDocument() throws -> DocumentReference {
+        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
+        return watchlistCollection.document(authDataResult.uid)
     }
     
-    private func userWatchlistCollection(userId: String) -> CollectionReference {
-        watchlistDocument(userId: userId).collection("userWatchlist")
+    func createWatchlistForUser() async throws {
+        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
+        let watchlist = UserWatchlist(userId: authDataResult.uid, lastUpdated: Timestamp())
+        try watchlistDocument().setData(from: watchlist, merge: false)
     }
     
-    private func userWatchlistDocument(userId: String, mediaId: String) -> DocumentReference {
-        userWatchlistCollection(userId: userId).document(mediaId)
-    }
-    
-    // MARK: - Watchlist Functions
-    
-    func createWatchlistForUser(userId: String) async throws {
-        let watchlist = UserWatchlist(userId: userId, lastUpdated: Timestamp())
-        try watchlistDocument(userId: userId).setData(from: watchlist, merge: false)
-    }
-    
-    func getWatchlist(userID: String) async throws -> UserWatchlist {
-        try await watchlistDocument(userId: userID).getDocument(as: UserWatchlist.self)
+    func getWatchlist() async throws -> UserWatchlist {
+        try await watchlistDocument().getDocument(as: UserWatchlist.self)
     }
     
     func deleteWatchlist(userId: String) async throws {
-        try await watchlistDocument(userId: userId).delete()
-        try await deleteUserWatchlist(userId: userId)
+        try await watchlistDocument().delete()
+        try await deleteUserWatchlist()
     }
     
-    // MARK: - User Watchlist Functions
+    // MARK: - User Watchlist
     
-    func deleteUserWatchlist(userId: String) async throws {
-        let snapshotDocuments = try await userWatchlistCollection(userId: userId).getDocuments().documents
+    private func userWatchlistCollection() throws -> CollectionReference {
+        try watchlistDocument().collection("userWatchlist")
+    }
+    
+    private func userWatchlistDocument(mediaId: String) throws -> DocumentReference {
+        try userWatchlistCollection().document(mediaId)
+    }
+    
+    func deleteUserWatchlist() async throws {
+        let snapshotDocuments = try await userWatchlistCollection().getDocuments().documents
         
         for snapshotDocument in snapshotDocuments {
-            try await userWatchlistCollection(userId: userId).document(snapshotDocument.documentID).delete()
+            try await userWatchlistCollection().document(snapshotDocument.documentID).delete()
         }
     }
     
-    func createNewMediaInWatchlist(userId: String, media: Media) async throws {
-        let document = userWatchlistCollection(userId: userId).document()
+    func createNewMediaInWatchlist(media: Media) async throws {
+        let document = try userWatchlistCollection().document()
         let dbMedia = DBMedia(media: media, watched: false, personalRating: nil)
         try document.setData(from: dbMedia)
     }
     
-    func toggleMediaWatched(userId: String, mediaId: Int, watched: Bool) async throws {
-        let userWatchlistDocument = userWatchlistDocument(userId: userId, mediaId: "\(mediaId)")
+    func toggleMediaWatched(mediaId: Int, watched: Bool) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(mediaId)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.watched.rawValue : watched
@@ -141,8 +139,8 @@ final class WatchlistManager {
         try await userWatchlistDocument.updateData(data)
     }
     
-    func setPersonalRatingForMedia(userId: String, mediaId: Int, personalRating: Double) async throws {
-        let userWatchlistDocument = userWatchlistDocument(userId: userId, mediaId: "\(mediaId)")
+    func setPersonalRatingForMedia(mediaId: Int, personalRating: Double) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(mediaId)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.personalRating.rawValue : personalRating
@@ -150,16 +148,46 @@ final class WatchlistManager {
         
         try await userWatchlistDocument.updateData(data)
     }
+    
+    func resetMedia(mediaId: String) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(mediaId)")
+        
+        let data: [String:Any] = [
+            DBMedia.CodingKeys.personalRating.rawValue : NSNull(),
+            DBMedia.CodingKeys.watched.rawValue : false,
+        ]
+        
+        try await userWatchlistDocument.updateData(data)
+    }
+    
+    // MARK: - Fetch Movies/TV Shows
+    
+    func getMedia(mediaType: MediaType) async throws -> [DBMedia] {
+        let query = try userWatchlistCollection()
+            .whereField(DBMedia.CodingKeys.mediaType.rawValue, isEqualTo: mediaType.rawValue)
+        
+        return try await query
+            .getDocuments(as: DBMedia.self)
+    }
 
     // MARK: - Function to Copy from Blackbird to Firebase
     func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
-        guard let user = try? AuthenticationManager.shared.getAuthenticatedUser(),
-              let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media) else { return }
+        guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media) else { return }
         
         if media.mediaType == .movie && media.id == 1 { return }
             
         let dbMedia = DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
-        let document = userWatchlistCollection(userId: user.uid).document()
-        try document.setData(from: dbMedia)
+        let document = try userWatchlistCollection().document()
+        try document.setData(from: dbMedia, merge: true)
+    }
+}
+
+extension Query {
+    func getDocuments<T>(as type: T.Type) async throws -> [T] where T : Decodable {
+        let snapshot = try await self.getDocuments()
+        
+        return try snapshot.documents.map { document in
+            try document.data(as: T.self)
+        }
     }
 }

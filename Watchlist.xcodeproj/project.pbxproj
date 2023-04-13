@@ -34,9 +34,7 @@
 		32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */; };
 		32952D9A29BB885E002B3596 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9929BB885E002B3596 /* View.swift */; };
 		32952D9C29BB9548002B3596 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9B29BB9548002B3596 /* Errors.swift */; };
-		32952D9E29BB9702002B3596 /* RowViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9D29BB9702002B3596 /* RowViewManager.swift */; };
 		3298920129C01A0C009989AA /* MediaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298920029C01A0C009989AA /* MediaModel.swift */; };
-		3298920329C0A718009989AA /* MediaDetailContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298920229C0A718009989AA /* MediaDetailContents.swift */; };
 		329A768729BA78200074A4F9 /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768629BA78200074A4F9 /* RowView.swift */; };
 		329A768929BA846F0074A4F9 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768829BA846F0074A4F9 /* PreviewProvider.swift */; };
 		329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768A29BAA8340074A4F9 /* MovieTabView.swift */; };
@@ -117,9 +115,7 @@
 		32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowTabView.swift; sourceTree = "<group>"; };
 		32952D9929BB885E002B3596 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		32952D9B29BB9548002B3596 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
-		32952D9D29BB9702002B3596 /* RowViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowViewManager.swift; sourceTree = "<group>"; };
 		3298920029C01A0C009989AA /* MediaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModel.swift; sourceTree = "<group>"; };
-		3298920229C0A718009989AA /* MediaDetailContents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetailContents.swift; sourceTree = "<group>"; };
 		3298920929C10C4D009989AA /* Watchlist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Watchlist.entitlements; sourceTree = "<group>"; };
 		329A768629BA78200074A4F9 /* RowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowView.swift; sourceTree = "<group>"; };
 		329A768829BA846F0074A4F9 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
@@ -251,7 +247,6 @@
 				324BAE9229BA5F1F002FBB6F /* Tab.swift */,
 				3258731129BD254C005E1394 /* Media.swift */,
 				3258731529BD7ABE005E1394 /* Genre.swift */,
-				3298920229C0A718009989AA /* MediaDetailContents.swift */,
 				32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */,
 			);
 			path = Models;
@@ -340,7 +335,6 @@
 			children = (
 				324BAE8029B92072002FBB6F /* TMDbManager.swift */,
 				32952D9B29BB9548002B3596 /* Errors.swift */,
-				32952D9D29BB9702002B3596 /* RowViewManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -683,12 +677,10 @@
 				324BAE9329BA5F1F002FBB6F /* Tab.swift in Sources */,
 				329A768929BA846F0074A4F9 /* PreviewProvider.swift in Sources */,
 				3258730929BCD53A005E1394 /* MediaModalView.swift in Sources */,
-				32952D9E29BB9702002B3596 /* RowViewManager.swift in Sources */,
 				324BAE7E29B91560002FBB6F /* Constants.swift in Sources */,
 				32B3E1D929E6137D00314B4F /* SocialView.swift in Sources */,
 				32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */,
 				3258731829BE5C46005E1394 /* WatchlistDetailsViewModel.swift in Sources */,
-				3298920329C0A718009989AA /* MediaDetailContents.swift in Sources */,
 				324BAE8129B92072002FBB6F /* TMDbManager.swift in Sources */,
 				32B3E1DD29E6154C00314B4F /* SettingsView.swift in Sources */,
 				32B3E1D729E60E8800314B4F /* UserManager.swift in Sources */,
