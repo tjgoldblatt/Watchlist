@@ -84,7 +84,7 @@ extension SocialView {
     private var linkButtons: some View {
         VStack {
             if !settingsVM.authProviders.contains(.google) {
-                Button("Link Google Account") {
+                Button("Sign in with Google") {
                     Task {
                         do {
                             try await settingsVM.linkGoogleAccount()
@@ -97,7 +97,7 @@ extension SocialView {
                 .padding()
             }
             if !settingsVM.authProviders.contains(.apple) {
-                Button("Sign in with Apple Account") {
+                Button("Sign in with Apple") {
                     Task {
                         do {
                             try await settingsVM.linkAppleAccount()

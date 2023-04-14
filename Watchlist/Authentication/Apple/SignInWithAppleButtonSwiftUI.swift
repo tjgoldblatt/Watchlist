@@ -74,52 +74,50 @@ struct SignInWithAppleButtonSwiftUI: View {
     
     var body: some View {
         SignInWithAppleButton(.continue,
-            onRequest: { request in
-                let nonce = randomNonceString()
-                currentNonce = nonce
-                request.requestedScopes = [.fullName, .email]
-                request.nonce = sha256(nonce)
-            },
-            
-            onCompletion: { result in
-                switch result {
-                    case .success(let authResults):
-                        switch authResults.credential {
-                            case let appleIDCredential as ASAuthorizationAppleIDCredential:
+                              onRequest: { request in
+            let nonce = randomNonceString()
+            currentNonce = nonce
+            request.requestedScopes = [.fullName, .email]
+            request.nonce = sha256(nonce)
+        },
+                              
+                              onCompletion: { result in
+            switch result {
+                case .success(let authResults):
+                    switch authResults.credential {
+                        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+                            guard let nonce = currentNonce else {
+                                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+                            }
+                            guard let appleIDToken = appleIDCredential.identityToken else {
+                                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+                            }
+                            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                                print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+                                return
+                            }
+                            
+                            let tokens = SignInWithAppleResult(token: idTokenString, nonce: nonce)
+                            
+                            Task {
+                                let authDataResult = try await AuthenticationManager.shared.signInWithApple(tokens: tokens)
+                                let user = DBUser(auth: authDataResult)
+                                try await UserManager.shared.createNewUser(user: user)
                                 if let fullName = appleIDCredential.fullName {
                                     if let givenName = fullName.givenName, let familyName = fullName.familyName {
-                                        Task {
-                                            try await UserManager.shared.updateDisplayNameForUser(displayName: "\(givenName) \(familyName)")
-                                        }
+                                        try await UserManager.shared.updateDisplayNameForUser(displayName: "\(givenName) \(familyName)")
                                     }
                                 }
-                                guard let nonce = currentNonce else {
-                                    fatalError("Invalid state: A login callback was received, but no login request was sent.")
-                                }
-                                guard let appleIDToken = appleIDCredential.identityToken else {
-                                    fatalError("Invalid state: A login callback was received, but no login request was sent.")
-                                }
-                                guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-                                    print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
-                                    return
-                                }
-                                
-                                let tokens = SignInWithAppleResult(token: idTokenString, nonce: nonce)
-                                
-                                Task {
-                                    let authDataResult = try await AuthenticationManager.shared.signInWithApple(tokens: tokens)
-                                    let user = DBUser(auth: authDataResult)
-                                    try await UserManager.shared.createNewUser(user: user)
-                                    showSignInView = false
-                                }
-                                
-                            default:
-                                break
-                        }
-                    default:
-                        break
-                }
+                                showSignInView = false
+                            }
+                            
+                        default:
+                            break
+                    }
+                default:
+                    break
             }
+        }
         )
         .frame(height: 55, alignment: .center)
         .clipShape(Capsule())

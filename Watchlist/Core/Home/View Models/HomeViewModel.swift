@@ -40,6 +40,8 @@ final class HomeViewModel: ObservableObject {
     /// Current selected tab
     @Published var selectedTab: Tab = .movies
     
+    @Published var editMode: EditMode = .inactive
+    
     var hapticFeedback = UIImpactFeedbackGenerator(style: .soft)
     
     var database: Blackbird.Database?

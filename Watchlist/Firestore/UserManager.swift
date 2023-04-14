@@ -63,7 +63,6 @@ final class UserManager {
     }
     
     func updateUserAfterLink(authDataResultModel: AuthDataResultModel) async throws {
-        let dbUser = try await getUser()
         let updatedDBUser = DBUser(auth: authDataResultModel)
         try userDocument().setData(from: updatedDBUser, merge: true)
     }

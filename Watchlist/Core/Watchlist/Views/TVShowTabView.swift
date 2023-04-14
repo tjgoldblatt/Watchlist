@@ -32,6 +32,7 @@ struct TVShowTabView: View {
                         
                         if !homeVM.tvList.isEmpty {
                             watchFilterOptions
+                                .disabled(vm.editMode == .active)
                         }
                         
                         if !sortedSearchResults.isEmpty {
@@ -48,7 +49,6 @@ struct TVShowTabView: View {
                     }
                 }
                 .onChange(of: homeVM.selectedTab) { _ in
-                    vm.editMode = .inactive
                     vm.filterText = ""
                 }
             }
@@ -74,6 +74,7 @@ extension TVShowTabView {
     // MARK: - Search
     var searchbar: some View {
         SearchBarView(searchText: $vm.filterText)
+            .disabled(vm.editMode == .active)
     }
     
     // MARK: - Watchlist
@@ -99,11 +100,19 @@ extension TVShowTabView {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !sortedSearchResults.isEmpty {
-                    EditButton()
-                        .foregroundColor(Color.theme.red)
-                        .padding()
-                        .contentShape(Rectangle())
-                        .buttonStyle(.plain)
+                    Button(vm.editMode == .active ? "Done" : "Edit") {
+                        if vm.editMode == .active {
+                            vm.editMode = .inactive
+                            homeVM.editMode = .inactive
+                        } else {
+                            vm.editMode = .active
+                            homeVM.editMode = .active
+                        }
+                    }
+                    .foregroundColor(Color.theme.red)
+                    .padding()
+                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
                 }
             }
             
@@ -121,6 +130,7 @@ extension TVShowTabView {
                                 try await homeVM.getWatchlists()
                                 vm.selectedRows = []
                                 vm.editMode = .inactive
+                                homeVM.editMode = .inactive
                             }
                         }
                 }
@@ -151,6 +161,7 @@ extension TVShowTabView {
                     }
                     try await homeVM.getWatchlists()
                     vm.editMode = .inactive
+                    homeVM.editMode = .inactive
                 }
             }
             .buttonStyle(.plain)

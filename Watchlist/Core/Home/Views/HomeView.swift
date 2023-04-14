@@ -16,59 +16,69 @@ struct HomeView: View {
     
     var body: some View {
         if homeVM.isGenresLoaded {
-            TabView(selection: $homeVM.selectedTab) {
-                MovieTabView()
-                    .environmentObject(homeVM)
-                    .tabItem {
-                        Image(systemName: Tab.movies.icon)
-                            .accessibilityIdentifier("MovieTab")
-                    }
-                    .tag(Tab.movies)
-                
-                    .onAppear {
-                        Task {
-                            // TODO: Delete this after enough people have transferred their databases
-                            homeVM.transferDatabase()
+            ZStack {
+                TabView(selection: $homeVM.selectedTab) {
+                    MovieTabView()
+                        .environmentObject(homeVM)
+                        .tabItem {
+                            Image(systemName: Tab.movies.icon)
+                                .accessibilityIdentifier("MovieTab")
                         }
-                    }
-                
-                TVShowTabView()
-                    .environmentObject(homeVM)
-                    .tabItem {
-                        Image(systemName: Tab.tvShows.icon)
-                            .accessibilityIdentifier("TVShowTab")
-                    }
-                    .tag(Tab.tvShows)
-                
-                ExploreTabView()
-                    .environmentObject(homeVM)
-                    .tabItem {
-                        Image(systemName: Tab.explore.icon)
-                            .accessibilityIdentifier("ExploreTab")
-                    }
-                    .tag(Tab.explore)
-                
-                SocialView()
-                    .environmentObject(homeVM)
-                    .tabItem {
-                        Image(systemName: Tab.social.icon)
-                    }
-                    .tag(Tab.social)
-            }
-            .accentColor(Color.theme.red)
-            .tint(Color.theme.red)
-            .onChange(of: homeVM.selectedTab) { newValue in
-                Task {
-                    try await homeVM.getWatchlists()
+                        .tag(Tab.movies)
+                    
+                        .onAppear {
+                            Task {
+                                // TODO: Delete this after enough people have transferred their databases
+                                homeVM.transferDatabase()
+                            }
+                        }
+                    
+                    TVShowTabView()
+                        .environmentObject(homeVM)
+                        .tabItem {
+                            Image(systemName: Tab.tvShows.icon)
+                                .accessibilityIdentifier("TVShowTab")
+                        }
+                        .tag(Tab.tvShows)
+                    
+                    ExploreTabView()
+                        .environmentObject(homeVM)
+                        .tabItem {
+                            Image(systemName: Tab.explore.icon)
+                                .accessibilityIdentifier("ExploreTab")
+                        }
+                        .tag(Tab.explore)
+                    
+                    SocialView()
+                        .environmentObject(homeVM)
+                        .tabItem {
+                            Image(systemName: Tab.social.icon)
+                        }
+                        .tag(Tab.social)
                 }
-                homeVM.genresSelected = []
-                homeVM.ratingSelected = 0
-            }
-            .task {
-                try? await homeVM.getWatchlists()
-            }
-            .onAppear {
-                homeVM.database = database
+                .accentColor(Color.theme.red)
+                .tint(Color.theme.red)
+                .onChange(of: homeVM.selectedTab) { newValue in
+                    Task {
+                        try await homeVM.getWatchlists()
+                    }
+                    homeVM.genresSelected = []
+                    homeVM.ratingSelected = 0
+                }
+                .task {
+                    try? await homeVM.getWatchlists()
+                }
+                .onAppear {
+                    homeVM.database = database
+                }
+                VStack {
+                    Spacer()
+                    if homeVM.editMode == .active {
+                        Rectangle()
+                            .fill(Color.white.opacity(0.001))
+                            .frame(width: .infinity, height: 50)
+                    }
+                }
             }
         } else {
             ProgressView()

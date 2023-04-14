@@ -33,6 +33,7 @@ struct MovieTabView: View {
                         
                         if !homeVM.movieList.isEmpty {
                             watchFilterOptions
+                                .disabled(vm.editMode == .active)
                         }
                         
                         if !sortedSearchResults.isEmpty {
@@ -50,7 +51,6 @@ struct MovieTabView: View {
                     }
                 }
                 .onChange(of: homeVM.selectedTab) { _ in
-                    vm.editMode = .inactive
                     vm.filterText = ""
                 }
             }
@@ -74,6 +74,7 @@ extension MovieTabView {
     // MARK: - Search
     var searchbar: some View {
         SearchBarView(searchText: $vm.filterText)
+            .disabled(vm.editMode == .active)
     }
     
     // MARK: - Watchlist
@@ -99,11 +100,19 @@ extension MovieTabView {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !sortedSearchResults.isEmpty {
-                    EditButton()
-                        .foregroundColor(Color.theme.red)
-                        .padding()
-                        .contentShape(Rectangle())
-                        .buttonStyle(.plain)
+                    Button(vm.editMode == .active ? "Done" : "Edit") {
+                        if vm.editMode == .active {
+                            vm.editMode = .inactive
+                            homeVM.editMode = .inactive
+                        } else {
+                            vm.editMode = .active
+                            homeVM.editMode = .active
+                        }
+                    }
+                    .foregroundColor(Color.theme.red)
+                    .padding()
+                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
                 }
             }
             
@@ -121,6 +130,7 @@ extension MovieTabView {
                                 try await homeVM.getWatchlists()
                                 vm.selectedRows = []
                                 vm.editMode = .inactive
+                                homeVM.editMode = .inactive
                             }
                         }
                 }
@@ -151,6 +161,7 @@ extension MovieTabView {
                     }
                     try await homeVM.getWatchlists()
                     vm.editMode = .inactive
+                    homeVM.editMode = .inactive
                 }
             }
             .buttonStyle(.plain)

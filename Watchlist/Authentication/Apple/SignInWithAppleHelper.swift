@@ -114,6 +114,15 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
             completitionHandler?(.failure(URLError(.badURL)))
             return
         }
+        
+        if let fullName = appleIDCredential.fullName {
+            if let givenName = fullName.givenName, let familyName = fullName.familyName {
+                Task {
+                    try await UserManager.shared.updateDisplayNameForUser(displayName: "\(givenName) \(familyName)")
+                }
+            }
+        }
+        
         let tokens = SignInWithAppleResult(token: idTokenString, nonce: nonce)
         
         completitionHandler?(.success(tokens))
