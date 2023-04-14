@@ -261,6 +261,14 @@ extension MovieTabView {
                 if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
                     return voteAverage1 < voteAverage2
                 }
+            } else if homeVM.sortingSelected == .alphabetical {
+                if let title1 = media1.title, let title2 = media2.title  {
+                    return title1 < title2
+                } else if let name1 = media1.name, let name2 = media2.name {
+                    return name1 < name2
+                } else {
+                    return false
+                }
             }
             return false
         }
