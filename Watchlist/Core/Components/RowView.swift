@@ -33,6 +33,7 @@ struct RowView: View {
             
             rightColumn
         }
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("RowView")
         .sheet(isPresented: $showRatingSheet, onDismiss: {
             Task {
@@ -108,8 +109,6 @@ extension RowView {
                 .foregroundColor(Color.theme.text)
                 .lineLimit(3)
             
-            Spacer()
-            
             if let genres = getGenres(genreIDs:  media.genreIDs) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
@@ -120,8 +119,6 @@ extension RowView {
                 }
             }
         }
-        
-        .frame(maxHeight: 110)
         .frame(minWidth: 50)
     }
     
@@ -170,7 +167,7 @@ extension RowView {
 
 struct ThumbnailView: View {
     @State var imagePath: String
-    @State var frameHeight: CGFloat = 120
+    @ScaledMetric(relativeTo: .title) var frameHeight: CGFloat = 120
     var frameWidth: CGFloat {
         return frameHeight * 0.70
     }

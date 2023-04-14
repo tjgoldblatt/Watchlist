@@ -187,6 +187,7 @@ extension MovieTabView {
                     }
             }
         }
+        .dynamicTypeSize(.medium ... .xLarge)
         .padding(.horizontal)
     }
     
@@ -257,9 +258,7 @@ extension MovieTabView {
 
 struct MovieTabView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack {
-            MovieTabView()
-                .environmentObject(dev.homeVM)
-        }
+        MovieTabView()
+            .environmentObject(dev.homeVM)
     }
 }

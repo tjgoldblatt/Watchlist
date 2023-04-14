@@ -188,6 +188,7 @@ extension TVShowTabView {
                     }
             }
         }
+        .dynamicTypeSize(.medium ... .xLarge)
         .padding(.horizontal)
     }
     

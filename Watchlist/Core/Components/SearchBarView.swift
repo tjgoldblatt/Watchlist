@@ -146,6 +146,7 @@ struct SearchBarView: View {
                 }
             }
         }
+        .dynamicTypeSize(.medium ... .xLarge)
         .onChange(of: homeVM.watchSelected) { _ in
             isFocused = false
         }

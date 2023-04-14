@@ -16,7 +16,7 @@ struct HeaderView: View {
         HStack {
             Text(currentTab.rawValue)
                 .foregroundColor(Color.theme.text)
-                .font(Font.system(size: 36, design: .default))
+                .font(.largeTitle)
                 .fontWeight(.bold)
           
             if showIcon {
@@ -24,6 +24,7 @@ struct HeaderView: View {
                     .foregroundColor(Color.theme.red)
                     .font(.system(.title))
                     .fontWeight(.semibold)
+                    .dynamicTypeSize(...DynamicTypeSize.xLarge)
             }
             
             Spacer()
