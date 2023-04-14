@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-class WatchlistDetailsViewModel: ObservableObject {
+@MainActor
+final class WatchlistDetailsViewModel: ObservableObject {
     /// Current filtered text
     @Published var filterText: String = ""
     
@@ -19,17 +20,25 @@ class WatchlistDetailsViewModel: ObservableObject {
     
     @Published var deleteConfirmationShowing: Bool = false
     
+    @Published var editMode: EditMode = .inactive
+    
     let emptyViewID = "HeaderView"
     
-    func getWatchedSelectedRows(mediaModelArray: [MediaModel]) -> [MediaModel] {
-        var watchedSelectedRows: [MediaModel] = []
+    func resetMedia(media: DBMedia) async throws {
+        try await WatchlistManager.shared.resetMedia(media: media)
+    }
+    
+    func getWatchedSelectedRows(mediaList: [DBMedia]) ->[DBMedia] {
+        var watchedSelectedRows: [DBMedia] = []
+        
         for id in selectedRows {
-            for mediaModel in mediaModelArray.filter({ $0.id == id }) {
-                if mediaModel.watched == true {
-                    watchedSelectedRows.append(mediaModel)
+            for media in mediaList.filter({ $0.id == id }) {
+                if media.watched == true {
+                    watchedSelectedRows.append(media)
                 }
             }
         }
+        
         return watchedSelectedRows
     }
 }

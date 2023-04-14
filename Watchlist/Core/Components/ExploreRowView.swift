@@ -6,21 +6,15 @@
 //
 
 import SwiftUI
-import Blackbird
 
 struct ExploreRowView: View {
-    @Environment(\.blackbirdDatabase) var database
     @EnvironmentObject var homeVM: HomeViewModel
-    
-    @State var rowContent: MediaDetailContents
-    
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
     
     @State var personalRating: Double?
     
     @State var isWatched: Bool = false
     
-    @State var media: Media
+    @State var media: DBMedia
     
     @State var currentTab: Tab
     
@@ -30,7 +24,9 @@ struct ExploreRowView: View {
     
     var body: some View {
         HStack(alignment: .center) {
-            ThumbnailView(imagePath: "\(rowContent.posterPath)", frameHeight: 80)
+            if let posterPath = media.posterPath {
+                ThumbnailView(imagePath: posterPath, frameHeight: 80)
+            }
             
             centerColumn
             
@@ -40,28 +36,22 @@ struct ExploreRowView: View {
         }
         .onTapGesture {
             homeVM.hapticFeedback.impactOccurred()
-            showingSheet.toggle()
+            showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
             Task {
-                await database?.fetchPersonalRating(media: media) { rating in
-                    personalRating = rating
-                }
-                await database?.fetchIsWatched(media: media) { watched in
-                    isWatched = watched
-                }
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                isWatched = newMedia.watched
+                personalRating = newMedia.personalRating
             }
         }, content: {
-            MediaModalView(mediaDetails: rowContent, media: media)
+            MediaModalView(media: media)
         })
         .onAppear {
             Task {
-                await database?.fetchIsWatched(media: media) { watched in
-                    isWatched = watched
-                }
-                await database?.fetchPersonalRating(media: media) { rating in
-                    personalRating = rating
-                }
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                isWatched = newMedia.watched
+                personalRating = newMedia.personalRating
             }
         }
     }
@@ -69,7 +59,7 @@ struct ExploreRowView: View {
 
 struct ExploreRowView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreRowView(rowContent: dev.rowContent, media: dev.mediaMock.first!, currentTab: .movies)
+        ExploreRowView(media: dev.mediaMock.first!, currentTab: .movies)
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }
@@ -78,12 +68,15 @@ struct ExploreRowView_Previews: PreviewProvider {
 extension ExploreRowView {
     var centerColumn: some View {
         VStack(alignment: .leading) {
-            Text(rowContent.title)
+            if let mediaType = media.mediaType,
+               let title = mediaType == .movie ? media.title : media.name {
+                Text(title)
                     .font(Font.system(.headline, design: .default))
                     .fontWeight(.bold)
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color.theme.text)
                     .lineLimit(2)
+            }
                 
                 if let mediaType = media.mediaType, mediaType == .tv {
                     Text("TV Series")
@@ -91,7 +84,7 @@ extension ExploreRowView {
                         .foregroundColor(Color.theme.text.opacity(0.6))
                 }
             
-            if let genres = rowContent.genres {
+            if let genres = getGenres(genreIDs: media.genreIDs) {
                 ScrollView(.horizontal) {
                     HStack {
                         ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
@@ -107,34 +100,42 @@ extension ExploreRowView {
     }
     
     var rightColumn: some View {
-        Text(!isInMedia(mediaModels: mediaList.results, media: media) ? "Add" : "Added")
-            .foregroundColor(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.red : Color.theme.genreText)
+        Text(!isInMedia(media: media) ? "Add" : "Added")
+            .foregroundColor(!isInMedia(media: media) ? Color.theme.red : Color.theme.genreText)
             .font(.subheadline)
             .fontWeight(.semibold)
             .frame(width: 80, height: 30)
-            .background(!isInMedia(mediaModels: mediaList.results, media: media) ? Color.theme.secondary : Color.theme.red)
+            .background(!isInMedia(media: media) ? Color.theme.secondary : Color.theme.red)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .fixedSize(horizontal: true, vertical: false)
             .onTapGesture {
                 homeVM.hapticFeedback.impactOccurred()
-                if !isInMedia(mediaModels: mediaList.results, media: media) {
-                    database?.saveMedia(media: media)
-                } else {
-                    database?.deleteMedia(media: media)
+                Task {
+                    if !isInMedia(media: media) {
+                        try await WatchlistManager.shared.createNewMediaInWatchlist(media: media)
+                    } else {
+                        try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
+                    }
+                    
+                    try await homeVM.getWatchlists()
                 }
             }
             .padding(.leading)
     }
     
-    func isInMedia(mediaModels: [MediaModel], media: Media) -> Bool {
-        for mediaModel in mediaModels {
-            if let decodedMedia = homeVM.decodeData(with: mediaModel.media) {
-                if decodedMedia.id == media.id {
-                    return true
-                }
+    func isInMedia(media: DBMedia) -> Bool {
+        let mediaList = homeVM.movieList + homeVM.tvList
+        for homeMedia in mediaList {
+            if homeMedia.id == media.id {
+                return true
             }
         }
         return false
+    }
+    
+    func getGenres(genreIDs: [Int]?) -> [Genre]? {
+        guard let genreIDs else { return nil }
+        return homeVM.getGenresForMediaType(for: media.mediaType ?? .movie, genreIDs: genreIDs)
     }
 }
 

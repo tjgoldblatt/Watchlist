@@ -13,6 +13,7 @@ enum Tab: String {
     case tvShows = "TV Shows"
     case movies = "Movies"
     case explore = "Explore"
+    case social = "Social"
     
     var searchTextLabel: String {
         switch self {
@@ -22,6 +23,8 @@ enum Tab: String {
                 return "Search your saved TV Shows..."
             case .movies:
                 return "Search your saved Movies..."
+            case .social:
+                return ""
         }
     }
     
@@ -33,6 +36,8 @@ enum Tab: String {
                 return "popcorn.fill"
             case .explore:
                 return "magnifyingglass"
+            case .social:
+                return "person.fill"
         }
     }
 }
