@@ -20,3 +20,8 @@ enum ViewError: LocalizedError {
         }
     }
 }
+
+
+enum FirebaseError: LocalizedError {
+    // TODO: Make Errors for Firebase
+}
