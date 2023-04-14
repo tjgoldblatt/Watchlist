@@ -18,6 +18,7 @@ struct HeaderView: View {
                 .foregroundColor(Color.theme.text)
                 .font(.largeTitle)
                 .fontWeight(.bold)
+                .dynamicTypeSize(.large...)
           
             if showIcon {
                 Image(systemName: currentTab.icon)

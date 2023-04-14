@@ -73,7 +73,7 @@ struct SignInWithAppleButtonSwiftUI: View {
     }
     
     var body: some View {
-        SignInWithAppleButton(
+        SignInWithAppleButton(.continue,
             onRequest: { request in
                 let nonce = randomNonceString()
                 currentNonce = nonce
@@ -86,7 +86,13 @@ struct SignInWithAppleButtonSwiftUI: View {
                     case .success(let authResults):
                         switch authResults.credential {
                             case let appleIDCredential as ASAuthorizationAppleIDCredential:
-                                
+                                if let fullName = appleIDCredential.fullName {
+                                    if let givenName = fullName.givenName, let familyName = fullName.familyName {
+                                        Task {
+                                            try await UserManager.shared.updateDisplayNameForUser(displayName: "\(givenName) \(familyName)")
+                                        }
+                                    }
+                                }
                                 guard let nonce = currentNonce else {
                                     fatalError("Invalid state: A login callback was received, but no login request was sent.")
                                 }
@@ -116,11 +122,12 @@ struct SignInWithAppleButtonSwiftUI: View {
             }
         )
         .frame(height: 55, alignment: .center)
+        .clipShape(Capsule())
     }
     
     struct SignInWithAppleButtonSwiftUI_Previews: PreviewProvider {
         static var previews: some View {
-            SignInWithAppleButtonSwiftUI(showSignInView: .constant(false))
+            SignInWithAppleView(showSignInView: .constant(false))
         }
     }
 }

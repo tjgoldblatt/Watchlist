@@ -16,10 +16,8 @@ struct GoogleSignInResult {
 final class SignInWithGoogleHelper {
     
     @MainActor
-    func signIn(viewController: UIViewController? = nil) async throws -> GoogleSignInResult {
-        guard let topViewController = viewController ?? topViewController() else {
-            throw URLError(.notConnectedToInternet)
-        }
+    func signIn() async throws -> GoogleSignInResult {
+        let topViewController = UIApplication.shared.rootController()
         
         let gidSignInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: topViewController)
         
@@ -30,23 +28,13 @@ final class SignInWithGoogleHelper {
         let accessToken = gidSignInResult.user.accessToken.tokenString
         return GoogleSignInResult(idToken: idToken, accessToken: accessToken)
     }
-    
-    @MainActor
-    func topViewController(controller: UIViewController? = nil) -> UIViewController? {
-        let controller = controller ?? UIApplication.shared.keyWindow?.rootViewController
+}
+
+extension UIApplication {
+    func rootController() -> UIViewController {
+        guard let window = connectedScenes.first as? UIWindowScene else { return .init() }
+        guard let viewController = window.windows.last?.rootViewController else { return .init() }
         
-        if let navigationController = controller as? UINavigationController {
-            return topViewController(controller: navigationController.visibleViewController)
-        }
-        if let tabController = controller as? UITabBarController {
-            if let selected = tabController.selectedViewController {
-                return topViewController(controller: selected)
-            }
-        }
-        if let presented = controller?.presentedViewController {
-            return topViewController(controller: presented)
-        }
-        return controller
+        return viewController
     }
-    
 }

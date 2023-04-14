@@ -44,10 +44,7 @@ final class SignInWithAppleHelper: NSObject {
     }
     
     func startSignInWithAppleFlow(completition: @escaping (Result<SignInWithAppleResult, Error>) -> Void) {
-        guard let topVC = SignInWithGoogleHelper().topViewController() else {
-            completition(.failure(URLError(.badURL)))
-            return
-        }
+        let topVC = UIApplication.shared.rootController()
         let nonce = randomNonceString()
         currentNonce = nonce
         completitionHandler = completition

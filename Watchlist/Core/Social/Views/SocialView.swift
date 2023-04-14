@@ -33,10 +33,9 @@ struct SocialView: View {
         NavigationStack {
             ZStack {
                 Color.theme.background.ignoresSafeArea()
-                
-                if settingsVM.authUser?.isAnonymous == false {
-                    // Show friends list
-                    VStack {
+                VStack {
+                    if settingsVM.authUser?.isAnonymous == false {
+                        // Show friends list
                         Text(settingsVM.authUser?.uid ?? "")
                             .padding()
                         Text(vm.displayName ?? "No Display Name")
@@ -48,8 +47,8 @@ struct SocialView: View {
                             }
                         }
                     }
-                } else {
-                    anonUser
+                    
+                    linkButtons
                 }
             }
             .onAppear {
@@ -82,7 +81,7 @@ struct SocialView_Previews: PreviewProvider {
 }
 
 extension SocialView {
-    private var anonUser: some View {
+    private var linkButtons: some View {
         VStack {
             if !settingsVM.authProviders.contains(.google) {
                 Button("Link Google Account") {
