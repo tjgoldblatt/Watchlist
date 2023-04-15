@@ -70,11 +70,6 @@ struct SettingsView: View {
                 }
             }
         }
-        .overlay(alignment: .topLeading) {
-            CloseButton()
-                .frame(width: 15)
-                .padding()
-        }
     }
 }
 
