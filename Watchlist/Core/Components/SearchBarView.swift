@@ -7,10 +7,8 @@
 
 import SwiftUI
 import Combine
-import Blackbird
 
 struct SearchBarView: View {
-    
     @EnvironmentObject var homeVM: HomeViewModel
     
     @StateObject private var textObserver = TextFieldObserver()
@@ -18,11 +16,6 @@ struct SearchBarView: View {
     @Binding var searchText: String
     
     @FocusState private var isFocused: Bool
-    
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.movie.rawValue, orderBy: .ascending(\.$title)) }) var movieList
-    
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0, matching: \.$mediaType == MediaType.tv.rawValue, orderBy: .ascending(\.$title)) }) var tvList
-    
     
     @State var showFilterSheet: Bool = false
     
@@ -32,12 +25,12 @@ struct SearchBarView: View {
     
     var queryToCallWhenTyping: (() -> Void)? = nil
     
-    var mediaListWithFilter: [Media] {
-        var mediaList: Set<Media> = []
+    var mediaListWithFilter: [DBMedia] {
+        var mediaList: Set<DBMedia> = []
         
         switch homeVM.selectedTab {
             case .movies:
-                let movieListAfterFilter = movieList.results.filter {
+                let movieListAfterFilter = homeVM.movieList.filter {
                     switch homeVM.watchSelected {
                         case .unwatched:
                             return !$0.watched
@@ -48,14 +41,12 @@ struct SearchBarView: View {
                     }
                 }
                 
-                for movieModel in movieListAfterFilter {
-                    if let media = homeVM.decodeData(with: movieModel.media) {
-                        mediaList.insert(media)
-                    }
+                for movie in movieListAfterFilter {
+                    mediaList.insert(movie)
                 }
                 
             case .tvShows:
-                let tvListAfterFilter = tvList.results.filter {
+                let tvListAfterFilter = homeVM.tvList.filter {
                     switch homeVM.watchSelected {
                         case .unwatched:
                             return !$0.watched
@@ -66,15 +57,15 @@ struct SearchBarView: View {
                     }
                 }
                 
-                for tvModel in tvListAfterFilter {
-                    if let media = homeVM.decodeData(with: tvModel.media) {
-                        mediaList.insert(media)
-                    }
+                for tvShow in tvListAfterFilter {
+                        mediaList.insert(tvShow)
                 }
             case .explore:
-                for media in homeVM.results {
+                for media in homeVM.results.map({ DBMedia(media: $0, watched: false, personalRating: nil) }) {
                     mediaList.insert(media)
                 }
+            case .social:
+                break
         }
         return Array(mediaList)
     }
@@ -104,6 +95,9 @@ struct SearchBarView: View {
                                     homeVM.hapticFeedback.impactOccurred()
                                     searchText = ""
                                     textObserver.searchText = ""
+                                    if homeVM.selectedTab == .explore {
+                                        homeVM.results = []
+                                    }
                                 }
                         } else if shouldShowFilterButton {
                             Image(systemName: "slider.horizontal.3")
@@ -128,6 +122,11 @@ struct SearchBarView: View {
                     .submitLabel(.search)
                     .onReceive(textObserver.$debouncedText) { val in
                         homeVM.searchText = val
+                        
+                        if homeVM.selectedTab == .explore && val.isEmpty {
+                            homeVM.results = []
+                        }
+                        
                         if(!textObserver.searchText.isEmpty) {
                             if let queryToCallWhenTyping {
                                 queryToCallWhenTyping()
@@ -141,13 +140,13 @@ struct SearchBarView: View {
             .contentShape(RoundedRectangle(cornerRadius: 20))
             .background(Color.theme.secondary)
             .cornerRadius(20)
-            .onAppear { homeVM.getMediaWatchlists() }
             .onTapGesture {
                 withAnimation(.spring()) {
                     isFocused = true
                 }
             }
         }
+        .dynamicTypeSize(.medium ... .xLarge)
         .onChange(of: homeVM.watchSelected) { _ in
             isFocused = false
         }
@@ -157,14 +156,15 @@ struct SearchBarView: View {
     var shouldShowFilterButton: Bool {
         switch homeVM.selectedTab {
             case .tvShows:
-                return !tvList.results.isEmpty
+                return !homeVM.tvList.isEmpty
             case .movies:
-                return movieList.results.count > 1
+                return !homeVM.movieList.isEmpty
             case .explore:
                 return !homeVM.results.isEmpty
+            case .social:
+                return false
         }
     }
-    
 }
 
 struct SearchBarView_Previews: PreviewProvider {
@@ -201,9 +201,7 @@ class TextFieldObserver : ObservableObject {
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] t in
-                if !t.isEmpty {
-                    self?.debouncedText = t
-                }
+                self?.debouncedText = t
             }
             .store(in: &subscriptions)
     }

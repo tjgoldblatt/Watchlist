@@ -16,14 +16,16 @@ struct HeaderView: View {
         HStack {
             Text(currentTab.rawValue)
                 .foregroundColor(Color.theme.text)
-                .font(Font.system(size: 36, design: .default))
+                .font(.largeTitle)
                 .fontWeight(.bold)
+                .dynamicTypeSize(.large...)
           
             if showIcon {
                 Image(systemName: currentTab.icon)
                     .foregroundColor(Color.theme.red)
                     .font(.system(.title))
                     .fontWeight(.semibold)
+                    .dynamicTypeSize(...DynamicTypeSize.xLarge)
             }
             
             Spacer()

@@ -9,16 +9,13 @@ import SwiftUI
 import Blackbird
 
 struct RowView: View {
-    @Environment(\.blackbirdDatabase) var database
     @EnvironmentObject var homeVM: HomeViewModel
-    
-    @State var rowContent: MediaDetailContents
     
     @State var personalRating: Double?
     
     @State var isWatched: Bool = false
     
-    @State var media: Media
+    @State var media: DBMedia
     
     @State var currentTab: Tab
     
@@ -28,45 +25,44 @@ struct RowView: View {
     
     var body: some View {
         HStack(alignment: .center) {
-            ThumbnailView(imagePath: "\(rowContent.posterPath)")
+            if let posterPath = media.posterPath {
+                ThumbnailView(imagePath: posterPath)
+            }
             
             centerColumn
             
             rightColumn
         }
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("RowView")
         .sheet(isPresented: $showRatingSheet, onDismiss: {
             Task {
-                await database?.fetchPersonalRating(media: media) { rating in
-                    personalRating = rating
-                    homeVM.getMediaWatchlists()
-                }
+                let newPersonalRating = try await WatchlistManager.shared.getUpdatedPersonalRating(media: media)
+                personalRating = newPersonalRating
+                
                 if personalRating != nil {
-                    await database?.setWatched(watched: true, media: media)
-                    await database?.fetchIsWatched(media: media) { watched in
-                        isWatched = watched
-                    }
+                    try await WatchlistManager.shared.toggleMediaWatched(media: media, watched: true)
                 }
+                
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                isWatched = newMedia.watched
+                try await homeVM.getWatchlists()
             }
         }) {
-            RatingModalView(media: media)
+            RatingModalView(media: media, shouldShowRatingModal: $showRatingSheet)
         }
         .onTapGesture {
             homeVM.hapticFeedback.impactOccurred()
-            showingSheet.toggle()
+            showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
             Task {
-                await database?.fetchPersonalRating(media: media) { rating in
-                    personalRating = rating
-                }
-                await database?.fetchIsWatched(media: media) { watched in
-                    isWatched = watched
-                }
-                homeVM.getMediaWatchlists()
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                personalRating = newMedia.personalRating
+                isWatched = newMedia.watched
             }
         }) {
-            MediaModalView(mediaDetails: rowContent, media: media)
+            MediaModalView(media: media)
         }
         .swipeActions(edge: .trailing) {
             if !isWatched {
@@ -75,20 +71,18 @@ struct RowView: View {
         }
         .onAppear {
             Task {
-                await database?.fetchIsWatched(media: media) { watched in
-                    isWatched = watched
-                }
-                await database?.fetchPersonalRating(media: media) { rating in
-                    personalRating = rating
-                }
+                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
+                isWatched = newMedia.watched
+                personalRating = newMedia.personalRating
             }
+            
         }
     }
 }
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
-        RowView(rowContent: dev.rowContent, media: dev.mediaMock.first!, currentTab: .movies)
+        RowView(media: dev.mediaMock.first!, currentTab: .movies)
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }
@@ -97,25 +91,25 @@ struct RowView_Previews: PreviewProvider {
 extension RowView {
     var centerColumn: some View {
         VStack(alignment: .leading) {
-            Text(rowContent.title)
-                .font(Font.system(.headline, design: .default))
-                .fontWeight(.bold)
-                .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(Color.theme.text)
-                .lineLimit(2)
-                .frame(alignment: .top)
-                .padding(.bottom, 1)
-            
-            Text(rowContent.overview)
+            if let mediaType = media.mediaType,
+               let title = mediaType == .movie ? media.title : media.name {
+                Text(title)
+                    .font(Font.system(.headline, design: .default))
+                    .fontWeight(.bold)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .foregroundColor(Color.theme.text)
+                    .lineLimit(2)
+                    .frame(alignment: .top)
+                    .padding(.bottom, 1)
+            }
+            Text(media.overview ?? "")
                 .font(.system(.caption, design: .default))
                 .fixedSize(horizontal: false, vertical: true)
                 .fontWeight(.light)
                 .foregroundColor(Color.theme.text)
                 .lineLimit(3)
             
-            Spacer()
-            
-            if let genres = rowContent.genres {
+            if let genres = getGenres(genreIDs:  media.genreIDs) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
@@ -125,14 +119,14 @@ extension RowView {
                 }
             }
         }
-        
-        .frame(maxHeight: 110)
         .frame(minWidth: 50)
     }
     
     var rightColumn: some View {
         VStack(spacing: 10) {
-            StarRatingView(text: "IMDb RATING", rating: rowContent.imdbRating)
+            if let voteAverage = media.voteAverage {
+                StarRatingView(text: "IMDb RATING", rating: voteAverage)
+            }
             
             if let rating = personalRating {
                 StarRatingView(text: "YOUR RATING", rating: rating)
@@ -158,17 +152,22 @@ extension RowView {
         .accessibilityIdentifier("MediaSwipeAction")
     }
     
-    func isMediaInWatchlist(media: Media) -> Bool {
-        for watchlistMedia in homeVM.tvWatchlist + homeVM.movieWatchlist {
+    func isMediaInWatchlist(media: DBMedia) -> Bool {
+        for watchlistMedia in homeVM.tvList + homeVM.movieList {
             if watchlistMedia == media { return true }
         }
         return false
+    }
+    
+    func getGenres(genreIDs: [Int]?) -> [Genre]? {
+        guard let genreIDs else { return nil }
+        return homeVM.getGenresForMediaType(for: media.mediaType ?? .movie, genreIDs: genreIDs)
     }
 }
 
 struct ThumbnailView: View {
     @State var imagePath: String
-    @State var frameHeight: CGFloat = 120
+    @ScaledMetric(relativeTo: .title) var frameHeight: CGFloat = 120
     var frameWidth: CGFloat {
         return frameHeight * 0.70
     }

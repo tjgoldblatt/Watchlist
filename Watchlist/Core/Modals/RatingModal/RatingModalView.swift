@@ -10,12 +10,12 @@ import Blackbird
 
 struct RatingModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    
-    @Environment(\.blackbirdDatabase) var database
     @Environment(\.dismiss) var dismiss
     
-    @State var media: Media
+    @State var media: DBMedia
     @State var rating: Int = 0
+    
+    @Binding var shouldShowRatingModal: Bool
     
     var posterPath: String? {
         return media.posterPath
@@ -92,8 +92,9 @@ struct RatingModalView: View {
                             if rating > 0 {
                                 homeVM.hapticFeedback.impactOccurred()
                                 Task {
-                                    await database?.sendRating(rating: Double(rating), media: media)
-                                    dismiss()
+                                    try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
+                                    try await homeVM.getWatchlists()
+                                    shouldShowRatingModal = false
                                 }
                             }
                         }
@@ -102,7 +103,6 @@ struct RatingModalView: View {
                     
                 }
                 .frame(maxWidth: geo.size.width - 50)
-                .offset(y: -50)
                 .padding(.bottom)
             }
             .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
@@ -119,7 +119,7 @@ struct RatingModalView: View {
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingModalView(media: dev.mediaMock.first!)
+        RatingModalView(media: dev.mediaMock.first!, shouldShowRatingModal: .constant(true))
     }
 }
 

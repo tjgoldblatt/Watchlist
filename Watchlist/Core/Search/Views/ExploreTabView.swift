@@ -9,8 +9,6 @@ import SwiftUI
 import Blackbird
 
 struct ExploreTabView: View {
-    @Environment(\.blackbirdDatabase) var database
-    
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var homeVM: HomeViewModel
@@ -18,8 +16,6 @@ struct ExploreTabView: View {
     var vm: SearchTabViewModel {
         SearchTabViewModel(homeVM: homeVM)
     }
-    
-    @State var rowViewManager: RowViewManager
     
     @State var isKeyboardShowing: Bool = false
     @State var isSubmitted: Bool = false
@@ -52,7 +48,6 @@ struct ExploreTabView: View {
                 Text("")
             }
         }
-        .onAppear { homeVM.getMediaWatchlists() }
     }
 }
 
@@ -81,8 +76,10 @@ extension ExploreTabView {
             return AnyView(
                 List {
                     ForEach(sortedSearchResults, id: \.id) { media in
-                        rowViewManager.createRowView(media: media, tab: .explore)
-                            .listRowBackground(Color.theme.background)
+                        if let _ = media.posterPath, let genreIds = media.genreIDs, !genreIds.isEmpty {
+                            ExploreRowView(media: media, currentTab: .explore)
+                                .listRowBackground(Color.theme.background)
+                        }
                     }
                     .listRowBackground(Color.clear)
                 }
@@ -97,15 +94,15 @@ extension ExploreTabView {
         }
     }
     
-    var searchResults: [Media] {
-        let groupedMedia = homeVM.results
+    var searchResults: [DBMedia] {
+        let groupedMedia = homeVM.results.map({ DBMedia(media: $0, watched: false, personalRating: nil) })
         if !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = groupedMedia
             
             /// Genre Filter
             if !homeVM.genresSelected.isEmpty {
                 filteredMedia = filteredMedia.filter { media in
-                    guard let genreIDs = media.genreIDS else { return false }
+                    guard let genreIDs = media.genreIDs else { return false }
                     for selectedGenre in homeVM.genresSelected {
                         return genreIDs.contains(selectedGenre.id)
                     }
@@ -128,7 +125,7 @@ extension ExploreTabView {
         }
     }
     
-    var sortedSearchResults: [Media] {
+    var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
             if homeVM.sortingSelected == .highToLow {
                 if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
@@ -147,7 +144,7 @@ extension ExploreTabView {
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreTabView(rowViewManager: RowViewManager(homeVM: dev.homeVM))
+        ExploreTabView()
             .environmentObject(dev.homeVM)
     }
 }

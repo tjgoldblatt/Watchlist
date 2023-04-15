@@ -19,19 +19,20 @@ class MediaModalViewModel: ObservableObject {
     @Published var selectedOption: String = "Clear Rating"
     let options = ["Clear Rating"]
     
-    let mediaDetails: MediaDetailContents
-    let media: Media
+//    let mediaDetails: MediaDetailContents
+    let media: DBMedia
     
     var imagePath: String {
-        if let backdropPath = mediaDetails.backdropPath {
+        if let backdropPath = media.backdropPath {
             return backdropPath
+        } else if let posterPath = media.posterPath {
+            return posterPath
         } else {
-            return mediaDetails.posterPath
+            return ""
         }
     }
     
-    init(mediaDetails: MediaDetailContents, media: Media) {
-        self.mediaDetails = mediaDetails
+    init(media: DBMedia) {
         self.media = media
     }
 }
