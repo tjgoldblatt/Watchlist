@@ -33,7 +33,17 @@ struct SocialView: View {
         NavigationStack {
             ZStack {
                 Color.theme.background.ignoresSafeArea()
-                VStack {
+                
+                VStack(alignment: .center) {
+                    VStack(alignment: .center) {
+                        Text("Tab Under")
+                        Text("Development")
+                        Text("😸")
+                    }
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color.theme.genreText)
+                    
                     if settingsVM.authUser?.isAnonymous == false {
                         // Show friends list
                         Text(settingsVM.authUser?.uid ?? "")
@@ -49,7 +59,10 @@ struct SocialView: View {
                     }
                     
                     linkButtons
+                    
+                    Spacer()
                 }
+                .padding(.top)
             }
             .onAppear {
                 settingsVM.loadAuthProviders()
