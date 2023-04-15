@@ -16,79 +16,104 @@ struct SettingsView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     
     @State var showReAuthView: Bool = false
+    @State var deleteAccountConfirmation: Bool = false
     
     var body: some View {
-        ZStack {
-            Color.theme.background
-            
-            VStack(spacing: 10) {
-                // Hide log out button if user is anon
-                //            if viewModel.authUser?.isAnonymous == false {
-                Button("Log Out") {
-                    homeVM.selectedTab = .movies
+        NavigationStack {
+            ZStack {
+                Color.theme.background.ignoresSafeArea()
+                
+                List {
+                    accountSection
+                }
+                .scrollContentBackground(.hidden)
+                .onAppear {
+                    viewModel.loadAuthProviders()
+                    viewModel.loadAuthUser()
+                }
+                .navigationTitle("Settings")
+                .navigationBarTitleDisplayMode(.inline)
+                .alert("Are you sure you'd like to delete your account?", isPresented: $deleteAccountConfirmation, actions: {
+                    Button("Delete", role: .destructive) {
+                        if viewModel.authUser?.isAnonymous == false {
+                            showReAuthView.toggle()
+                        } else {
+                            Task {
+                                do {
+                                    viewModel.loadAuthUser()
+                                    try await viewModel.delete()
+                                    homeVM.selectedTab = .movies
+                                    homeVM.showSignInView = true
+                                } catch(let error) {
+                                    print(error.localizedDescription)
+                                }
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    Button("Cancel", role: .cancel) {}
+                        .buttonStyle(.plain)
+                })
+                .fullScreenCover(isPresented: $showReAuthView, onDismiss: {
                     Task {
                         do {
-                            try viewModel.signOut()
+                            viewModel.loadAuthUser()
+                            try await viewModel.delete()
+                            homeVM.selectedTab = .movies
                             homeVM.showSignInView = true
                         } catch(let error) {
                             print(error.localizedDescription)
                         }
                     }
-                    //                }
+                }) {
+                    DeleteAccountView()
                 }
-                
-                Button(role: .destructive) {
-                    viewModel.loadAuthProviders()
-                    showReAuthView.toggle()
-                } label: {
-                    Text("Delete Account")
-                }
-                
             }
-            .sheet(isPresented: $showReAuthView, onDismiss: {
-                Task {
-                    do {
-                        try await viewModel.delete()
-                        homeVM.selectedTab = .movies
-                        homeVM.showSignInView = true
-                    } catch(let error) {
-                        print(error.localizedDescription)
-                    }
-                }
-            }) {
-                VStack {
-                    if viewModel.authProviders.contains(.google) {
-                        GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(scheme: .dark, style: .wide, state: .normal)) {
-                            Task {
-                                do {
-                                    try await authVM.signInGoogle()
-                                } catch {
-                                    print(error)
-                                }
-                            }
+        }
+        .overlay(alignment: .topLeading) {
+            CloseButton()
+                .frame(width: 15)
+                .padding()
+        }
+    }
+}
+
+extension SettingsView {
+    private var accountSection: some View {
+        Section {
+            // Hide log out button if user is anon
+            if viewModel.authUser?.isAnonymous == false {
+                Button("Log Out") {
+                    homeVM.selectedTab = .movies
+                    Task {
+                        do {
+                            try viewModel.signOut()
+                            homeVM.selectedTab = .movies
+                            homeVM.showSignInView = true
+                        } catch(let error) {
+                            print(error.localizedDescription)
                         }
                     }
-                    if viewModel.authProviders.contains(.apple) {
-                        SignInWithAppleView(showSignInView: $homeVM.showSignInView)
-                            .frame(height: 55)
-                    }
                 }
-                .onTapGesture {
-                    homeVM.showSignInView = true
-                }
+                .foregroundColor(Color.theme.text)
             }
-            .onAppear {
+            
+            
+            Button(role: .destructive) {
                 viewModel.loadAuthProviders()
-                viewModel.loadAuthUser()
+                deleteAccountConfirmation.toggle()
+            } label: {
+                Text("Delete Account")
             }
-            .navigationTitle("Settings")
+        } header: {
+            Text("Account")
         }
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-            SettingsView()
-                .environmentObject(SettingsViewModel())
+        SettingsView()
+            .environmentObject(SettingsViewModel())
     }
 }
