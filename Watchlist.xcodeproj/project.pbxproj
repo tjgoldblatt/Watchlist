@@ -55,7 +55,7 @@
 		32B3E1C829E60BDA00314B4F /* SignInWithAppleButtonSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1C729E60BDA00314B4F /* SignInWithAppleButtonSwiftUI.swift */; };
 		32B3E1CB29E60BF300314B4F /* SignInWithGoogleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1CA29E60BF300314B4F /* SignInWithGoogleHelper.swift */; };
 		32B3E1CD29E60C2300314B4F /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1CC29E60C2300314B4F /* AuthenticationManager.swift */; };
-		32B3E1D229E60CA800314B4F /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1D129E60CA800314B4F /* AuthenticationView.swift */; };
+		32B3E1D229E60CA800314B4F /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1D129E60CA800314B4F /* SignInView.swift */; };
 		32B3E1D429E60CAF00314B4F /* AuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1D329E60CAF00314B4F /* AuthenticationViewModel.swift */; };
 		32B3E1D729E60E8800314B4F /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1D629E60E8800314B4F /* UserManager.swift */; };
 		32B3E1D929E6137D00314B4F /* SocialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1D829E6137D00314B4F /* SocialView.swift */; };
@@ -69,6 +69,7 @@
 		32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */; };
 		32C89CC529E843330094D8E2 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 32C89CC429E843330094D8E2 /* FirebasePerformance */; };
 		32C89CC729E8BA920094D8E2 /* DisplayNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */; };
+		32C89CC929EAFA4B0094D8E2 /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C89CC829EAFA4B0094D8E2 /* DeleteAccountView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,7 +135,7 @@
 		32B3E1C729E60BDA00314B4F /* SignInWithAppleButtonSwiftUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInWithAppleButtonSwiftUI.swift; sourceTree = "<group>"; };
 		32B3E1CA29E60BF300314B4F /* SignInWithGoogleHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInWithGoogleHelper.swift; sourceTree = "<group>"; };
 		32B3E1CC29E60C2300314B4F /* AuthenticationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
-		32B3E1D129E60CA800314B4F /* AuthenticationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		32B3E1D129E60CA800314B4F /* SignInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		32B3E1D329E60CAF00314B4F /* AuthenticationViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationViewModel.swift; sourceTree = "<group>"; };
 		32B3E1D629E60E8800314B4F /* UserManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
 		32B3E1D829E6137D00314B4F /* SocialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialView.swift; sourceTree = "<group>"; };
@@ -147,6 +148,7 @@
 		32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalView.swift; sourceTree = "<group>"; };
 		32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalViewModel.swift; sourceTree = "<group>"; };
 		32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayNameView.swift; sourceTree = "<group>"; };
+		32C89CC829EAFA4B0094D8E2 /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -461,7 +463,8 @@
 			isa = PBXGroup;
 			children = (
 				32B3E1D829E6137D00314B4F /* SocialView.swift */,
-				32B3E1D129E60CA800314B4F /* AuthenticationView.swift */,
+				32B3E1D129E60CA800314B4F /* SignInView.swift */,
+				32C89CC829EAFA4B0094D8E2 /* DeleteAccountView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -698,7 +701,8 @@
 				32B5128C29CBB00000879AF6 /* RatingModalView.swift in Sources */,
 				32B3E1CD29E60C2300314B4F /* AuthenticationManager.swift in Sources */,
 				32B3E1C829E60BDA00314B4F /* SignInWithAppleButtonSwiftUI.swift in Sources */,
-				32B3E1D229E60CA800314B4F /* AuthenticationView.swift in Sources */,
+				32C89CC929EAFA4B0094D8E2 /* DeleteAccountView.swift in Sources */,
+				32B3E1D229E60CA800314B4F /* SignInView.swift in Sources */,
 				324BAE8429BA55BC002FBB6F /* Color.swift in Sources */,
 				32B5128529CB96FF00879AF6 /* Database+Extension.swift in Sources */,
 				3258730D29BCF939005E1394 /* StarRatingView.swift in Sources */,

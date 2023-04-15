@@ -57,7 +57,7 @@ struct WatchlistApp: App {
                 }
             }) {
                 NavigationStack {
-                    AuthenticationView(showSignInView: $vm.showSignInView)
+                    SignInView(showSignInView: $vm.showSignInView)
                         .environmentObject(authVM)
                 }
             }

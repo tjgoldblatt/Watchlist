@@ -9,7 +9,7 @@ import SwiftUI
 import GoogleSignInSwift
 import AuthenticationServices
 
-struct AuthenticationView: View {
+struct SignInView: View {
     @EnvironmentObject private var viewModel: AuthenticationViewModel
     @Binding var showSignInView: Bool
     @Environment(\.colorScheme) var currentScheme
@@ -18,7 +18,7 @@ struct AuthenticationView: View {
         ZStack {
             Color.theme.background.ignoresSafeArea()
             
-            ScrollView(.vertical, showsIndicators: false) {
+            VStack {
                 VStack(alignment: .center, spacing: 15) {
                     Image(systemName: "popcorn.fill")
                         .resizable()
@@ -28,7 +28,6 @@ struct AuthenticationView: View {
                     
                     Text("Welcome to Watchlist")
                         .foregroundColor(Color.theme.text)
-                    
                         .font(.title)
                         .fontWeight(.semibold)
                         .lineSpacing(10)
@@ -43,6 +42,7 @@ struct AuthenticationView: View {
                     // MARK: - Custom Apple Sign In Button
                     SignInWithAppleView(showSignInView: $showSignInView)
                         .padding(.horizontal)
+                        .frame(maxWidth: 500)
                     
                     // MARK: - Custom Google button
                     CustomButton(isGoogle: true)
@@ -74,6 +74,7 @@ struct AuthenticationView: View {
                 }
                 .padding(.top)
             }
+            .padding(.bottom, 50)
         }
     }
     
@@ -100,18 +101,19 @@ struct AuthenticationView: View {
                 .fontWeight(.medium)
                 .foregroundColor(.white)
                 .lineLimit(1)
-        }
+         }
         .frame(maxWidth: .infinity)
         .frame(height: 55)
         .background(.blue)
         .clipShape(Capsule())
         .padding(.horizontal)
+        .frame(maxWidth: 500)
     }
 }
 
 struct AuthenticationView_Previews: PreviewProvider {
     static var previews: some View {
-        AuthenticationView(showSignInView: .constant(false))
+        SignInView(showSignInView: .constant(false))
             .environmentObject(AuthenticationViewModel())
     }
 }

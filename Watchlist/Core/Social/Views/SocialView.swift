@@ -42,13 +42,15 @@ struct SocialView: View {
                     }
                     .font(.largeTitle)
                     .fontWeight(.semibold)
-                    .foregroundColor(Color.theme.genreText)
+                    .foregroundColor(Color.theme.text)
                     
                     if settingsVM.authUser?.isAnonymous == false {
                         // Show friends list
                         Text(settingsVM.authUser?.uid ?? "")
                             .padding()
                         Text(vm.displayName ?? "No Display Name")
+                            .padding()
+                        Text(settingsVM.authUser?.email ?? "")
                             .padding()
                         HStack {
                             ForEach(settingsVM.authProviders, id: \.self) { auth in
@@ -81,6 +83,8 @@ struct SocialView: View {
             .sheet(isPresented: $showSettingsView) {
                 SettingsView()
                     .environmentObject(settingsVM)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
             }
         }
     }
