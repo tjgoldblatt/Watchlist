@@ -83,6 +83,8 @@ struct SocialView: View {
             .sheet(isPresented: $showSettingsView) {
                 SettingsView()
                     .environmentObject(settingsVM)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
             }
         }
     }
