@@ -46,7 +46,7 @@ struct MediaModalView: View {
                         Task {
                             try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
                             vm.personalRating = nil
-                            try await WatchlistManager.shared.toggleMediaWatched(media: vm.media, watched: false)
+                            try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
                             try await homeVM.getWatchlists()
                             vm.isWatched = false
                         }
@@ -184,7 +184,7 @@ extension MediaModalView {
                 vm.personalRating = personalRating
                 
                 if vm.personalRating != nil {
-                    try await WatchlistManager.shared.toggleMediaWatched(media: vm.media, watched: true)
+                    try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: true)
                 }
                 
                 let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)

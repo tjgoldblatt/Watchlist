@@ -41,7 +41,7 @@ struct RowView: View {
                 personalRating = newPersonalRating
                 
                 if personalRating != nil {
-                    try await WatchlistManager.shared.toggleMediaWatched(media: media, watched: true)
+                    try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
                 }
                 
                 let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
