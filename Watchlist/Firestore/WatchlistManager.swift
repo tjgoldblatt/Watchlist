@@ -88,15 +88,16 @@ final class WatchlistManager {
     
     let watchlistCollection = Firestore.firestore().collection("watchlists")
     
-    func watchlistDocument() throws -> DocumentReference {
+    func watchlistDocument() async throws -> DocumentReference {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
+        try await updateLastUpdatedForUser(userDocument: watchlistCollection.document(authDataResult.uid))
         return watchlistCollection.document(authDataResult.uid)
     }
     
     func createWatchlistForUser() async throws {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
         let watchlist = UserWatchlist(userId: authDataResult.uid, lastUpdated: Timestamp())
-        try watchlistDocument().setData(from: watchlist, merge: true)
+        try await watchlistDocument().setData(from: watchlist, merge: true)
     }
     
     func getWatchlist() async throws -> UserWatchlist {
@@ -109,30 +110,38 @@ final class WatchlistManager {
     }
     
     func setTransferred() async throws {
-        let watchlistDocument = try watchlistDocument()
+        let watchlistDocument = try await watchlistDocument()
         
         let data: [String:Any] = [
-            UserWatchlist.CodingKeys.isTransferred.rawValue : Timestamp()
+            UserWatchlist.CodingKeys.isTransferred.rawValue : FieldValue.serverTimestamp(),
         ]
         
         try await watchlistDocument.setData(data)
     }
     
     func getTransferred() async throws -> Timestamp? {
-        let watchlistDocument = try watchlistDocument()
+        let watchlistDocument = try await watchlistDocument()
         
         let userWatchlist = try await watchlistDocument.getDocument(as: UserWatchlist.self)
         return userWatchlist.isTransferred
     }
     
-    // MARK: - User Watchlist
-    
-    private func userWatchlistCollection() throws -> CollectionReference {
-        try watchlistDocument().collection("userWatchlist")
+    func updateLastUpdatedForUser(userDocument: DocumentReference) async throws {
+        let data: [String:Any] = [
+            UserWatchlist.CodingKeys.lastUpdated.rawValue : FieldValue.serverTimestamp()
+        ]
+        
+        try await userDocument.setData(data)
     }
     
-    private func userWatchlistDocument(mediaId: String) throws -> DocumentReference {
-        try userWatchlistCollection().document(mediaId)
+    // MARK: - User Watchlist
+    
+    private func userWatchlistCollection() async throws -> CollectionReference {
+        try await watchlistDocument().collection("userWatchlist")
+    }
+    
+    private func userWatchlistDocument(mediaId: String) async throws -> DocumentReference {
+        try await userWatchlistCollection().document(mediaId)
     }
     
     func deleteUserWatchlist() async throws {
@@ -144,7 +153,7 @@ final class WatchlistManager {
     }
     
     func createNewMediaInWatchlist(media: DBMedia) async throws {
-        let document = try userWatchlistCollection().document("\(media.id)")
+        let document = try await userWatchlistCollection().document("\(media.id)")
         try document.setData(from: media)
     }
     
@@ -157,7 +166,7 @@ final class WatchlistManager {
     }
     
     func toggleMediaWatched(media: DBMedia, watched: Bool) async throws {
-        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        let userWatchlistDocument = try await userWatchlistDocument(mediaId: "\(media.id)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.watched.rawValue : watched
@@ -167,7 +176,7 @@ final class WatchlistManager {
     }
     
     func setPersonalRatingForMedia(media: DBMedia, personalRating: Double?) async throws {
-        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        let userWatchlistDocument = try await userWatchlistDocument(mediaId: "\(media.id)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.personalRating.rawValue : personalRating ?? NSNull()
@@ -177,7 +186,7 @@ final class WatchlistManager {
     }
     
     func getUpdatedUserMedia(media: DBMedia) async throws -> DBMedia {
-        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        let userWatchlistDocument = try await userWatchlistDocument(mediaId: "\(media.id)")
         return try await userWatchlistDocument.getDocument(as: DBMedia.self)
     }
     
@@ -187,7 +196,7 @@ final class WatchlistManager {
     }
     
     func resetMedia(media: DBMedia) async throws {
-        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        let userWatchlistDocument = try await userWatchlistDocument(mediaId: "\(media.id)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.personalRating.rawValue : NSNull(),
@@ -200,7 +209,7 @@ final class WatchlistManager {
     // MARK: - Fetch Movies/TV Shows
     
     func getMedia(mediaType: MediaType) async throws -> [DBMedia] {
-        let query = try userWatchlistCollection()
+        let query = try await userWatchlistCollection()
             .whereField(DBMedia.CodingKeys.mediaType.rawValue, isEqualTo: mediaType.rawValue)
         
         return try await query
@@ -214,7 +223,7 @@ final class WatchlistManager {
         if media.mediaType == .movie && media.id == 1 { return }
             
         let dbMedia = DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
-        let document = try userWatchlistCollection().document("\(mediaId)")
+        let document = try await userWatchlistCollection().document("\(mediaId)")
         try document.setData(from: dbMedia, merge: true)
     }
 }
