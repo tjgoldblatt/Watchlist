@@ -22,6 +22,15 @@ struct ExploreRowView: View {
     
     @State var addedToWatchlist: Bool = false
     
+    var dateConvertedToYear: String {
+        if let title = media.mediaType == .tv ? media.firstAirDate : media.releaseDate {
+            let date = title.components(separatedBy: "-")
+            return date[0]
+        }
+        
+        return ""
+    }
+    
     var body: some View {
         HStack(alignment: .center) {
             if let posterPath = media.posterPath {
@@ -34,6 +43,7 @@ struct ExploreRowView: View {
             
             rightColumn
         }
+        .contentShape(Rectangle())
         .onTapGesture {
             homeVM.hapticFeedback.impactOccurred()
             showingSheet = true
@@ -55,7 +65,7 @@ struct ExploreRowView: View {
 
 struct ExploreRowView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreRowView(media: dev.mediaMock.first!, currentTab: .movies)
+        ExploreRowView(media: dev.mediaMock[1], currentTab: .movies)
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }
@@ -63,7 +73,7 @@ struct ExploreRowView_Previews: PreviewProvider {
 
 extension ExploreRowView {
     var centerColumn: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 5) {
             if let title = media.mediaType == .movie ? media.title : media.name {
                 Text(title)
                     .font(Font.system(.headline, design: .default))
@@ -72,24 +82,18 @@ extension ExploreRowView {
                     .foregroundColor(Color.theme.text)
                     .lineLimit(2)
             }
-                
-            if media.mediaType == .tv {
-                    Text("TV Series")
-                        .font(.caption)
-                        .foregroundColor(Color.theme.text.opacity(0.6))
-                }
             
-            if let genres = getGenres(genreIDs: media.genreIDs) {
-                ScrollView(.horizontal) {
-                    HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                            if idx < 2 {
-                                GenreView(genreName: genre.name)
-                            }
-                        }
-                    }
-                }
+            if media.mediaType == .tv {
+                Text("TV Series")
+                    .font(.caption)
+                    .foregroundColor(Color.theme.text.opacity(0.6))
             }
+            
+            Text(dateConvertedToYear)
+                .font(.subheadline)
+                .foregroundColor(Color.theme.text.opacity(0.6))
+                .fontWeight(.medium)
+            
         }
         .frame(maxHeight: 75)
     }
