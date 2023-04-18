@@ -43,10 +43,12 @@ struct WatchlistApp: App {
                 let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
                 vm.showSignInView = authUser == nil
             }
+            .onFirstAppear {
+                try? vm.addListenerForMedia()
+            }
             .fullScreenCover(isPresented: $vm.showSignInView, onDismiss: {
                 vm.selectedTab = .movies
                 Task {
-                    try await vm.getWatchlists()
                     let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
                     
                     if authUser?.isAnonymous == false {

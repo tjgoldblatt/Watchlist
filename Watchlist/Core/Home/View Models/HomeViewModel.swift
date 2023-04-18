@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+import FirebaseFirestore
+import Combine
 import Blackbird
 
 @MainActor
@@ -18,10 +20,14 @@ final class HomeViewModel: ObservableObject {
     @Published var searchText: String = ""
     
     /// User Movie Watchlist
-    @Published private(set) var movieList: [DBMedia] = []
+    @Published var movieList: [DBMedia] = []
     
     /// User TVShow Watchlist
-    @Published private(set) var tvList: [DBMedia] = []
+    @Published var tvList: [DBMedia] = []
+    
+    private var userWatchlistListneer: ListenerRegistration? = nil
+    
+    private var cancellables = Set<AnyCancellable>()
     
     @Published var isMediaLoaded: Bool = false
     
@@ -68,10 +74,39 @@ final class HomeViewModel: ObservableObject {
         })
     }
     
-    func getWatchlists() async throws {
-        self.movieList = try await WatchlistManager.shared.getMedia(mediaType: .movie)
-        self.tvList = try await WatchlistManager.shared.getMedia(mediaType: .tv)
-        isMediaLoaded = true
+    func addListenerForMedia() throws {
+        let (publisher, listener) = try WatchlistManager.shared.addListenerForGetMedia()
+        self.userWatchlistListneer = listener
+        publisher
+            .sink { completion in
+            
+            } receiveValue: { [weak self] updatedMediaArray in
+                var updatedMovieList: [DBMedia] = []
+                var updatedTVList: [DBMedia] = []
+                
+                for media in updatedMediaArray {
+                    if media.mediaType == .movie {
+                        updatedMovieList.append(media)
+                    } else if media.mediaType == .tv {
+                        updatedTVList.append(media)
+                    }
+                }
+                
+                self?.movieList = updatedMovieList
+                self?.tvList = updatedTVList
+                
+                self?.isMediaLoaded = true
+            }
+            .store(in: &cancellables)
+    }
+    
+    func getUpdatedMediaFromList(mediaId: Int) -> DBMedia? {
+        for media in tvList + movieList {
+            if media.id == mediaId {
+                return media
+            }
+        }
+        return nil
     }
     
     // TODO: Blackbird Copy Func
@@ -81,7 +116,6 @@ final class HomeViewModel: ObservableObject {
             let transferredFlag = try await WatchlistManager.shared.getTransferred()
             
             if transferredFlag == nil {
-                try await getWatchlists()
                 let fbMediaList = movieList + tvList
                 
                 guard let database else { return }
@@ -97,7 +131,6 @@ final class HomeViewModel: ObservableObject {
                     }
                 }
                 try await WatchlistManager.shared.setTransferred()
-                try await getWatchlists()
             }
         }
     }

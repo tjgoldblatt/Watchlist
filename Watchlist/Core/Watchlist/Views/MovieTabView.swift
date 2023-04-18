@@ -127,7 +127,6 @@ extension MovieTabView {
                                 for watchedSelectedRow in watchedSelectedRows {
                                     try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
                                 }
-                                try await homeVM.getWatchlists()
                                 vm.selectedRows = []
                                 vm.editMode = .inactive
                                 homeVM.editMode = .inactive
@@ -149,6 +148,7 @@ extension MovieTabView {
                     .foregroundStyle(Color.theme.genreText, Color.theme.red)
                     .padding()
                     .onTapGesture {
+                        homeVM.hapticFeedback.impactOccurred()
                         vm.deleteConfirmationShowing.toggle()
                     }
             }
@@ -159,7 +159,6 @@ extension MovieTabView {
                     for id in vm.selectedRows {
                         try await WatchlistManager.shared.deleteMediaById(mediaId: id)
                     }
-                    try await homeVM.getWatchlists()
                     vm.editMode = .inactive
                     homeVM.editMode = .inactive
                 }

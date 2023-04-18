@@ -40,15 +40,15 @@ struct MediaModalView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            if isInMedia(media: vm.media) && vm.isWatched {
+            if isInMedia(media: vm.media) && vm.media.watched {
                 Menu {
                     Button(role: .destructive) {
                         Task {
                             try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
-                            vm.personalRating = nil
                             try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
-                            try await homeVM.getWatchlists()
-                            vm.isWatched = false
+                            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                vm.media = updatedMedia
+                            }
                         }
                     } label: {
                         Text("Reset")
@@ -67,13 +67,6 @@ struct MediaModalView: View {
                 }
             }
         }
-        .onAppear {
-            Task {
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)
-                vm.personalRating = newMedia.personalRating
-                vm.isWatched = newMedia.watched
-            }
-        }
         .ignoresSafeArea(edges: .top)
     }
 }
@@ -81,6 +74,7 @@ struct MediaModalView: View {
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
         MediaModalView(media: dev.mediaMock.first!)
+            .environmentObject(dev.homeVM)
     }
 }
 
@@ -113,15 +107,15 @@ extension MediaModalView {
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                if let mediaType = vm.media.mediaType,
-                   let title = mediaType == .movie ? vm.media.title : vm.media.name {
+                if let title = vm.media.mediaType == .movie ? vm.media.title : vm.media.name {
                     Text(title)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
                         .foregroundColor(Color.theme.text)
                         .multilineTextAlignment(.leading)
                 }
-                if vm.isWatched {
+                
+                if vm.media.watched {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(Color.theme.red)
                         .imageScale(.large)
@@ -152,7 +146,7 @@ extension MediaModalView {
             
             Spacer()
             
-            if let personalRating = vm.personalRating {
+            if let personalRating = vm.media.personalRating {
                 StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
             } else {
                 rateThisButton
@@ -179,17 +173,8 @@ extension MediaModalView {
             }
         }
         .sheet(isPresented: $vm.showingRating, onDismiss: {
-            Task {
-                let personalRating = try await WatchlistManager.shared.getUpdatedPersonalRating(media: vm.media)
-                vm.personalRating = personalRating
-                
-                if vm.personalRating != nil {
-                    try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: true)
-                }
-                
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)
-                vm.isWatched = newMedia.watched
-                try await homeVM.getWatchlists()
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                vm.media = updatedMedia
             }
         }) {
             RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
@@ -202,7 +187,9 @@ extension MediaModalView {
             if !isInMedia(media: vm.media) {
                 Task {
                     try await WatchlistManager.shared.createNewMediaInWatchlist(media: vm.media)
-                    try await homeVM.getWatchlists()
+                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                        vm.media = updatedMedia
+                    }
                 }
             } else {
                 vm.showDeleteConfirmation.toggle()
@@ -221,7 +208,6 @@ extension MediaModalView {
             Button("Delete", role: .destructive) {
                 Task {
                     try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
-                    try await homeVM.getWatchlists()
                 }
             }
                 .buttonStyle(.plain)

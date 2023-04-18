@@ -59,14 +59,8 @@ struct HomeView: View {
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
                 .onChange(of: homeVM.selectedTab) { newValue in
-                    Task {
-                        try await homeVM.getWatchlists()
-                    }
                     homeVM.genresSelected = []
                     homeVM.ratingSelected = 0
-                }
-                .task {
-                    try? await homeVM.getWatchlists()
                 }
                 .onAppear {
                     homeVM.database = database

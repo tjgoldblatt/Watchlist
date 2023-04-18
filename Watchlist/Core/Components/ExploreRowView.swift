@@ -39,19 +39,15 @@ struct ExploreRowView: View {
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
-            Task {
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
-                isWatched = newMedia.watched
-                personalRating = newMedia.personalRating
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                media = updatedMedia
             }
         }, content: {
             MediaModalView(media: media)
         })
         .onAppear {
-            Task {
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
-                isWatched = newMedia.watched
-                personalRating = newMedia.personalRating
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                media = updatedMedia
             }
         }
     }
@@ -68,8 +64,7 @@ struct ExploreRowView_Previews: PreviewProvider {
 extension ExploreRowView {
     var centerColumn: some View {
         VStack(alignment: .leading) {
-            if let mediaType = media.mediaType,
-               let title = mediaType == .movie ? media.title : media.name {
+            if let title = media.mediaType == .movie ? media.title : media.name {
                 Text(title)
                     .font(Font.system(.headline, design: .default))
                     .fontWeight(.bold)
@@ -78,7 +73,7 @@ extension ExploreRowView {
                     .lineLimit(2)
             }
                 
-                if let mediaType = media.mediaType, mediaType == .tv {
+            if media.mediaType == .tv {
                     Text("TV Series")
                         .font(.caption)
                         .foregroundColor(Color.theme.text.opacity(0.6))
@@ -117,7 +112,9 @@ extension ExploreRowView {
                         try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
                     }
                     
-                    try await homeVM.getWatchlists()
+                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                        media = updatedMedia
+                    }
                 }
             }
             .padding(.leading)
@@ -135,7 +132,7 @@ extension ExploreRowView {
     
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
         guard let genreIDs else { return nil }
-        return homeVM.getGenresForMediaType(for: media.mediaType ?? .movie, genreIDs: genreIDs)
+        return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)
     }
 }
 
