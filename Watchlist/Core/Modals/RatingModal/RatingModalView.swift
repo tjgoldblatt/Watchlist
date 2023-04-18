@@ -83,20 +83,23 @@ struct RatingModalView: View {
                     
                     Text("Rate")
                         .foregroundColor(Color.theme.red)
+                        .font(.headline)
                         .fontWeight(.semibold)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 50)
+                        .frame(height: 55)
+                        .frame(maxWidth: .infinity)
                         .background(Color.theme.secondary)
                         .cornerRadius(10)
+                        .disabled(rating == 0)
+                        .opacity(rating != 0 ? 1 : 0.5)
                         .onTapGesture {
-                            if rating > 0 {
                                 homeVM.hapticFeedback.impactOccurred()
                                 Task {
                                     try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
-                                    try await homeVM.getWatchlists()
+                                    
+                                    try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
+                                    
                                     shouldShowRatingModal = false
                                 }
-                            }
                         }
                         .accessibilityIdentifier("RateButton")
                         .padding()

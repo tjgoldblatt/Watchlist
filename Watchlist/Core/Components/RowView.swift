@@ -36,17 +36,8 @@ struct RowView: View {
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("RowView")
         .sheet(isPresented: $showRatingSheet, onDismiss: {
-            Task {
-                let newPersonalRating = try await WatchlistManager.shared.getUpdatedPersonalRating(media: media)
-                personalRating = newPersonalRating
-                
-                if personalRating != nil {
-                    try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
-                }
-                
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
-                isWatched = newMedia.watched
-                try await homeVM.getWatchlists()
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                media = updatedMedia
             }
         }) {
             RatingModalView(media: media, shouldShowRatingModal: $showRatingSheet)
@@ -56,10 +47,8 @@ struct RowView: View {
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
-            Task {
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
-                personalRating = newMedia.personalRating
-                isWatched = newMedia.watched
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                media = updatedMedia
             }
         }) {
             MediaModalView(media: media)
@@ -70,13 +59,18 @@ struct RowView: View {
             }
         }
         .onAppear {
-            Task {
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
-                isWatched = newMedia.watched
-                personalRating = newMedia.personalRating
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                media = updatedMedia
             }
-            
         }
+        .onReceive(media.mediaType == .movie ? homeVM.$movieList : homeVM.$tvList) { updatedList in
+            for updatedMedia in updatedList {
+                if media.id == updatedMedia.id {
+                    media = updatedMedia
+                }
+            }
+        }
+        
     }
 }
 
@@ -91,8 +85,7 @@ struct RowView_Previews: PreviewProvider {
 extension RowView {
     var centerColumn: some View {
         VStack(alignment: .leading) {
-            if let mediaType = media.mediaType,
-               let title = mediaType == .movie ? media.title : media.name {
+            if let title = media.mediaType == .movie ? media.title : media.name {
                 Text(title)
                     .font(Font.system(.headline, design: .default))
                     .fontWeight(.bold)
@@ -128,11 +121,11 @@ extension RowView {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage)
             }
             
-            if let rating = personalRating {
+            if let rating = media.personalRating {
                 StarRatingView(text: "YOUR RATING", rating: rating)
             }
             
-            if isWatched {
+            if media.watched {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(Color.theme.red)
                     .imageScale(.large)
@@ -161,7 +154,7 @@ extension RowView {
     
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
         guard let genreIDs else { return nil }
-        return homeVM.getGenresForMediaType(for: media.mediaType ?? .movie, genreIDs: genreIDs)
+        return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)
     }
 }
 

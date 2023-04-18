@@ -131,7 +131,7 @@ extension FilterModalView {
     }
     
     private var confirmationButtons: some View {
-        HStack(spacing: 40) {
+        HStack {
             Button("Clear") {
                 homeVM.hapticFeedback.impactOccurred()
                 dismiss()
@@ -140,10 +140,12 @@ extension FilterModalView {
             }
             .foregroundColor(Color.theme.red)
             .fontWeight(.medium)
-            .frame(width: 100, height: 40)
+            .frame(height: 55)
+            .frame(minWidth: 150)
             .background(Color.theme.secondary)
             .cornerRadius(10)
             .buttonStyle(.plain)
+            .padding()
             
             Button("Done") {
                 homeVM.hapticFeedback.impactOccurred()
@@ -152,11 +154,14 @@ extension FilterModalView {
             }
             .foregroundColor(Color.theme.genreText)
             .fontWeight(.medium)
-            .frame(width: 100, height: 40)
+            .frame(height: 55)
+            .frame(minWidth: 150)
             .background(Color.theme.red)
             .cornerRadius(10)
             .buttonStyle(.plain)
+            .padding()
         }
+        .padding(.horizontal)
         .padding(.bottom)
     }
     

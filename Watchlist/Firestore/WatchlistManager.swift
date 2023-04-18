@@ -8,11 +8,12 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import Combine
 
 struct DBMedia: Codable, Identifiable, Hashable {
     // Media
     let id: Int
-    let mediaType: MediaType?
+    let mediaType: MediaType
     let title, originalTitle: String?
     let name, originalName: String?
     let overview: String?
@@ -28,7 +29,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
     
     init(media: Media, watched: Bool, personalRating: Double?) {
         self.id = media.id ?? -1
-        self.mediaType = media.mediaType
+        self.mediaType = media.mediaType ?? .movie
         self.title = media.title
         self.originalTitle = media.originalTitle
         self.name = media.name
@@ -187,16 +188,6 @@ final class WatchlistManager {
         try await userWatchlistDocument.updateData(data)
     }
     
-    func getUpdatedUserMedia(media: DBMedia) async throws -> DBMedia {
-        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
-        return try await userWatchlistDocument.getDocument(as: DBMedia.self)
-    }
-    
-    func getUpdatedPersonalRating(media: DBMedia) async throws -> Double? {
-        let user = try await getUpdatedUserMedia(media: media)
-        return user.personalRating
-    }
-    
     func resetMedia(media: DBMedia) async throws {
         let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
         
@@ -217,6 +208,11 @@ final class WatchlistManager {
         return try await query
             .getDocuments(as: DBMedia.self)
     }
+    
+    func addListenerForGetMedia() throws -> (AnyPublisher<[DBMedia], Error>, ListenerRegistration) {
+        return try userWatchlistCollection()
+            .addSnapshotListener(as: DBMedia.self)
+    }
 
     // MARK: - Function to Copy from Blackbird to Firebase
     func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
@@ -227,15 +223,5 @@ final class WatchlistManager {
         let dbMedia = DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
         let document = try userWatchlistCollection().document("\(mediaId)")
         try document.setData(from: dbMedia, merge: true)
-    }
-}
-
-extension Query {
-    func getDocuments<T>(as type: T.Type) async throws -> [T] where T : Decodable {
-        let snapshot = try await self.getDocuments()
-        
-        return try snapshot.documents.map { document in
-            try document.data(as: T.self)
-        }
     }
 }
