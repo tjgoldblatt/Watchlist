@@ -9,9 +9,6 @@ import Foundation
 
 class MediaModalViewModel: ObservableObject {
     @Published var isAdded = false
-    @Published var isWatched = false
-    
-    @Published var personalRating: Double?
     
     @Published var showingRating = false
     @Published var showDeleteConfirmation = false
@@ -19,8 +16,7 @@ class MediaModalViewModel: ObservableObject {
     @Published var selectedOption: String = "Clear Rating"
     let options = ["Clear Rating"]
     
-//    let mediaDetails: MediaDetailContents
-    let media: DBMedia
+    @Published var media: DBMedia
     
     var imagePath: String {
         if let backdropPath = media.backdropPath {

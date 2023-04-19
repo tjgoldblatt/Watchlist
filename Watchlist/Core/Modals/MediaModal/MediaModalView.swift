@@ -11,18 +11,27 @@ struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
     
     @EnvironmentObject var homeVM: HomeViewModel
-    
     @StateObject var vm: MediaModalViewModel
     
-    init(media: DBMedia) {
-     _vm = StateObject(wrappedValue: MediaModalViewModel(media: media))
+    var dateConvertedToYear: String {
+        if let title = vm.media.mediaType == .tv ? vm.media.firstAirDate : vm.media.releaseDate {
+            let date = title.components(separatedBy: "-")
+            return date[0]
+        }
+        
+        return ""
     }
+    
+    init(media: DBMedia) {
+        _vm = StateObject(wrappedValue: MediaModalViewModel(media: media))
+    }
+    
     
     var body: some View {
         ScrollView {
             backdropSection
             
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(spacing: 30) {
                 titleSection
                 
                 ratingSection
@@ -30,6 +39,7 @@ struct MediaModalView: View {
                 overview
             }
             .padding(.horizontal)
+            .frame(maxWidth: UIScreen.main.bounds.width)
         }
         .overlay(alignment: .topLeading) {
             Button {
@@ -40,15 +50,15 @@ struct MediaModalView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            if isInMedia(media: vm.media) && vm.isWatched {
+            if isInMedia(media: vm.media) && vm.media.watched {
                 Menu {
                     Button(role: .destructive) {
                         Task {
                             try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
-                            vm.personalRating = nil
-                            try await WatchlistManager.shared.toggleMediaWatched(media: vm.media, watched: false)
-                            try await homeVM.getWatchlists()
-                            vm.isWatched = false
+                            try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                vm.media = updatedMedia
+                            }
                         }
                     } label: {
                         Text("Reset")
@@ -67,20 +77,12 @@ struct MediaModalView: View {
                 }
             }
         }
+        .ignoresSafeArea(edges: .top)
         .onAppear {
-            Task {
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)
-                vm.personalRating = newMedia.personalRating
-                vm.isWatched = newMedia.watched
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                vm.media = updatedMedia
             }
         }
-        .ignoresSafeArea(edges: .top)
-    }
-}
-
-struct MediaDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        MediaModalView(media: dev.mediaMock.first!)
     }
 }
 
@@ -101,30 +103,38 @@ extension MediaModalView {
     }
     
     private var genreSection: some View {
-        HStack {
+        VStack(alignment: .leading){
             if let genreIds = vm.media.genreIDs {
                 GenreSection(genres: getGenres(genreIDs: genreIds))
-            } else {
-                Spacer()
             }
         }
     }
     
     private var titleSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                if let mediaType = vm.media.mediaType,
-                   let title = mediaType == .movie ? vm.media.title : vm.media.name {
-                    Text(title)
-                        .font(.largeTitle)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color.theme.text)
-                        .multilineTextAlignment(.leading)
+        VStack(alignment: .leading, spacing: 15) {
+            VStack(alignment: .leading) {
+                HStack {
+                    if let title = vm.media.mediaType == .movie ? vm.media.title : vm.media.name {
+                        Text(title)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color.theme.text)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.leading)
+                    }
+                    
+                    if vm.media.watched {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Color.theme.red)
+                            .imageScale(.large)
+                    }
                 }
-                if vm.isWatched {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(Color.theme.red)
-                        .imageScale(.large)
+                
+                if (vm.media.releaseDate != nil) || (vm.media.firstAirDate != nil) {
+                    Text(dateConvertedToYear)
+                        .font(.headline)
+                        .foregroundColor(Color.theme.text.opacity(0.6))
+                        .fontWeight(.medium)
                 }
             }
             
@@ -141,25 +151,33 @@ extension MediaModalView {
     }
     
     private var ratingSection: some View {
-        HStack() {
+        HStack {
             addButton
+                .padding(.trailing)
             
             Spacer()
             
             if let voteAverage = vm.media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage, size: 18)
+                    .padding(.horizontal)
             }
             
             Spacer()
             
-            if let personalRating = vm.personalRating {
-                StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
-            } else {
-                rateThisButton
-                    .disabled(isInMedia(media: vm.media) ? false : true)
+            Group {
+                if let personalRating = vm.media.personalRating {
+                    StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
+                } else {
+                    rateThisButton
+                        .disabled(isInMedia(media: vm.media) ? false : true)
+                }
             }
+            .frame(minWidth: 110)
+            .padding(.leading)
+            
+            Spacer()
         }
-        .padding(.trailing)
+        .padding(.leading)
     }
     
     private var rateThisButton: some View {
@@ -179,17 +197,8 @@ extension MediaModalView {
             }
         }
         .sheet(isPresented: $vm.showingRating, onDismiss: {
-            Task {
-                let personalRating = try await WatchlistManager.shared.getUpdatedPersonalRating(media: vm.media)
-                vm.personalRating = personalRating
-                
-                if vm.personalRating != nil {
-                    try await WatchlistManager.shared.toggleMediaWatched(media: vm.media, watched: true)
-                }
-                
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: vm.media)
-                vm.isWatched = newMedia.watched
-                try await homeVM.getWatchlists()
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                vm.media = updatedMedia
             }
         }) {
             RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
@@ -202,7 +211,9 @@ extension MediaModalView {
             if !isInMedia(media: vm.media) {
                 Task {
                     try await WatchlistManager.shared.createNewMediaInWatchlist(media: vm.media)
-                    try await homeVM.getWatchlists()
+                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                        vm.media = updatedMedia
+                    }
                 }
             } else {
                 vm.showDeleteConfirmation.toggle()
@@ -221,10 +232,9 @@ extension MediaModalView {
             Button("Delete", role: .destructive) {
                 Task {
                     try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
-                    try await homeVM.getWatchlists()
                 }
             }
-                .buttonStyle(.plain)
+            .buttonStyle(.plain)
             Button("Cancel", role: .cancel) {}
                 .buttonStyle(.plain)
         })
@@ -242,7 +252,7 @@ extension MediaModalView {
     }
     
     func getGenres(genreIDs: [Int]) -> [Genre] {
-        return homeVM.getGenresForMediaType(for: .tv, genreIDs: genreIDs)
+        return homeVM.getGenresForMediaType(for: vm.media.mediaType, genreIDs: genreIDs)
     }
 }
 
@@ -252,8 +262,10 @@ struct GenreSection: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                ForEach(genres) { genre in
-                    GenreView(genreName: genre.name, size: 12)
+                ForEach(genres.indices, id: \.self) { index in
+                    if index < 3 {
+                        GenreView(genreName: genres[index].name, size: 12)
+                    }
                 }
             }
         }
@@ -318,5 +330,12 @@ struct ExpandableText: View {
         .font(.body)
         .fontWeight(.semibold)
         .buttonStyle(.plain)
+    }
+}
+
+struct MediaDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        MediaModalView(media: dev.mediaMock[0])
+            .environmentObject(dev.homeVM)
     }
 }

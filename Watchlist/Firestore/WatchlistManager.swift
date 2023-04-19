@@ -8,11 +8,12 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import Combine
 
 struct DBMedia: Codable, Identifiable, Hashable {
     // Media
     let id: Int
-    let mediaType: MediaType?
+    let mediaType: MediaType
     let title, originalTitle: String?
     let name, originalName: String?
     let overview: String?
@@ -21,6 +22,8 @@ struct DBMedia: Codable, Identifiable, Hashable {
     let posterPath: String?
     let backdropPath: String?
     let genreIDs: [Int]?
+    let releaseDate: String?
+    let firstAirDate: String?
     
     // Extra
     let watched: Bool
@@ -28,7 +31,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
     
     init(media: Media, watched: Bool, personalRating: Double?) {
         self.id = media.id ?? -1
-        self.mediaType = media.mediaType
+        self.mediaType = media.mediaType ?? .movie
         self.title = media.title
         self.originalTitle = media.originalTitle
         self.name = media.name
@@ -41,6 +44,8 @@ struct DBMedia: Codable, Identifiable, Hashable {
         self.genreIDs = media.genreIDS
         self.watched = watched
         self.personalRating = personalRating
+        self.releaseDate = media.releaseDate
+        self.firstAirDate = media.firstAirDate
     }
     
     enum CodingKeys: String, CodingKey {
@@ -59,6 +64,9 @@ struct DBMedia: Codable, Identifiable, Hashable {
         
         case watched
         case personalRating
+        
+        case releaseDate
+        case firstAirDate
     }
 }
 
@@ -112,7 +120,7 @@ final class WatchlistManager {
         let watchlistDocument = try watchlistDocument()
         
         let data: [String:Any] = [
-            UserWatchlist.CodingKeys.isTransferred.rawValue : Timestamp()
+            UserWatchlist.CodingKeys.isTransferred.rawValue : FieldValue.serverTimestamp(),
         ]
         
         try await watchlistDocument.setData(data)
@@ -123,6 +131,15 @@ final class WatchlistManager {
         
         let userWatchlist = try await watchlistDocument.getDocument(as: UserWatchlist.self)
         return userWatchlist.isTransferred
+    }
+    
+    func updateLastUpdatedForUser() async throws {
+        let watchlistDocument = try watchlistDocument()
+        let data: [String:Any] = [
+            UserWatchlist.CodingKeys.lastUpdated.rawValue : FieldValue.serverTimestamp()
+        ]
+        
+        try await watchlistDocument.setData(data)
     }
     
     // MARK: - User Watchlist
@@ -146,6 +163,13 @@ final class WatchlistManager {
     func createNewMediaInWatchlist(media: DBMedia) async throws {
         let document = try userWatchlistCollection().document("\(media.id)")
         try document.setData(from: media)
+        try await updateLastUpdatedForUser()
+    }
+    
+    func doesMediaExistInCollection(media: DBMedia) async throws -> Bool {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        let documentSnapshot = try await userWatchlistDocument.getDocument()
+        return documentSnapshot.exists
     }
     
     func deleteMediaInWatchlist(media: DBMedia) async throws {
@@ -154,15 +178,16 @@ final class WatchlistManager {
     
     func deleteMediaById(mediaId: Int) async throws {
         try await userWatchlistDocument(mediaId: "\(mediaId)").delete()
+        try await updateLastUpdatedForUser()
     }
     
-    func toggleMediaWatched(media: DBMedia, watched: Bool) async throws {
+    func setMediaWatched(media: DBMedia, watched: Bool) async throws {
         let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
         
         let data: [String:Any] = [
             DBMedia.CodingKeys.watched.rawValue : watched
         ]
-        
+        try await updateLastUpdatedForUser()
         try await userWatchlistDocument.updateData(data)
     }
     
@@ -172,18 +197,26 @@ final class WatchlistManager {
         let data: [String:Any] = [
             DBMedia.CodingKeys.personalRating.rawValue : personalRating ?? NSNull()
         ]
-        
+        try await updateLastUpdatedForUser()
         try await userWatchlistDocument.updateData(data)
     }
     
-    func getUpdatedUserMedia(media: DBMedia) async throws -> DBMedia {
+    func setReleaseOrAirDateForMedia(media: DBMedia) async throws {
         let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
-        return try await userWatchlistDocument.getDocument(as: DBMedia.self)
-    }
-    
-    func getUpdatedPersonalRating(media: DBMedia) async throws -> Double? {
-        let user = try await getUpdatedUserMedia(media: media)
-        return user.personalRating
+        
+        var data: [String:Any] = [:]
+        if media.mediaType == .movie {
+            data = [
+                DBMedia.CodingKeys.releaseDate.rawValue : media.releaseDate ?? NSNull()
+            ]
+        } else if media.mediaType == .tv {
+            data = [
+                DBMedia.CodingKeys.firstAirDate.rawValue : media.firstAirDate ?? NSNull()
+            ]
+        }
+        
+        try await updateLastUpdatedForUser()
+        try await userWatchlistDocument.updateData(data)
     }
     
     func resetMedia(media: DBMedia) async throws {
@@ -193,7 +226,7 @@ final class WatchlistManager {
             DBMedia.CodingKeys.personalRating.rawValue : NSNull(),
             DBMedia.CodingKeys.watched.rawValue : false,
         ]
-        
+        try await updateLastUpdatedForUser()
         try await userWatchlistDocument.updateData(data)
     }
     
@@ -206,25 +239,20 @@ final class WatchlistManager {
         return try await query
             .getDocuments(as: DBMedia.self)
     }
-
+    
+    func addListenerForGetMedia() throws -> (AnyPublisher<[DBMedia], Error>, ListenerRegistration) {
+        return try userWatchlistCollection()
+            .addSnapshotListener(as: DBMedia.self)
+    }
+    
     // MARK: - Function to Copy from Blackbird to Firebase
     func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
         guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media), let mediaId = media.id else { return }
         
         if media.mediaType == .movie && media.id == 1 { return }
-            
+        
         let dbMedia = DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
         let document = try userWatchlistCollection().document("\(mediaId)")
         try document.setData(from: dbMedia, merge: true)
-    }
-}
-
-extension Query {
-    func getDocuments<T>(as type: T.Type) async throws -> [T] where T : Decodable {
-        let snapshot = try await self.getDocuments()
-        
-        return try snapshot.documents.map { document in
-            try document.data(as: T.self)
-        }
     }
 }

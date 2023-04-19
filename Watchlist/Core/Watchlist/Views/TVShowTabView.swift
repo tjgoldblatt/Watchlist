@@ -41,6 +41,7 @@ struct TVShowTabView: View {
                             if homeVM.isMediaLoaded {
                                 EmptyListView()
                             } else {
+                                Spacer()
                                 ProgressView()
                             }
                         }
@@ -127,7 +128,6 @@ extension TVShowTabView {
                                 for watchedSelectedRow in watchedSelectedRows {
                                     try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
                                 }
-                                try await homeVM.getWatchlists()
                                 vm.selectedRows = []
                                 vm.editMode = .inactive
                                 homeVM.editMode = .inactive
@@ -149,6 +149,7 @@ extension TVShowTabView {
                     .foregroundStyle(Color.theme.genreText, Color.theme.red)
                     .padding()
                     .onTapGesture {
+                        homeVM.hapticFeedback.impactOccurred()
                         vm.deleteConfirmationShowing.toggle()
                     }
             }
@@ -159,7 +160,6 @@ extension TVShowTabView {
                     for id in vm.selectedRows {
                         try await WatchlistManager.shared.deleteMediaById(mediaId: id)
                     }
-                    try await homeVM.getWatchlists()
                     vm.editMode = .inactive
                     homeVM.editMode = .inactive
                 }
@@ -240,7 +240,7 @@ extension TVShowTabView {
             }
             
             if !vm.filterText.isEmpty {
-                filteredMedia = filteredMedia.filter { $0.title?.lowercased().contains(vm.filterText.lowercased()) ?? false }
+                filteredMedia = filteredMedia.filter { $0.name?.lowercased().contains(vm.filterText.lowercased()) ?? false }
             }
             
             return filteredMedia
@@ -248,7 +248,7 @@ extension TVShowTabView {
         } else if vm.filterText.isEmpty {
             return groupedMedia
         } else {
-            return groupedMedia.filter { $0.title?.lowercased().contains(vm.filterText.lowercased()) ?? false }
+            return groupedMedia.filter { $0.name?.lowercased().contains(vm.filterText.lowercased()) ?? false }
         }
     }
     

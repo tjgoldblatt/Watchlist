@@ -22,6 +22,7 @@ struct StarRatingView: View {
             Text(text)
                 .font(.caption)
                 .fontWeight(.light)
+                .fixedSize(horizontal: true, vertical: false)
             
             HStack(spacing: 2) {
                 Image(systemName: "star.fill")
@@ -38,6 +39,7 @@ struct StarRatingView: View {
                     .font(.system(size: size-2, design: .default))
                     .fontWeight(.light)
             }
+            .fixedSize(horizontal: true, vertical: false)
         }
     }
 }

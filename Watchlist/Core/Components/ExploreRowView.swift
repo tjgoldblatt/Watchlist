@@ -20,7 +20,14 @@ struct ExploreRowView: View {
     
     @State private var showingSheet = false
     
-    @State var addedToWatchlist: Bool = false
+    var dateConvertedToYear: String {
+        if let title = media.mediaType == .tv ? media.firstAirDate : media.releaseDate {
+            let date = title.components(separatedBy: "-")
+            return date[0]
+        }
+        
+        return ""
+    }
     
     var body: some View {
         HStack(alignment: .center) {
@@ -34,24 +41,26 @@ struct ExploreRowView: View {
             
             rightColumn
         }
+        .contentShape(Rectangle())
         .onTapGesture {
             homeVM.hapticFeedback.impactOccurred()
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
-            Task {
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
-                isWatched = newMedia.watched
-                personalRating = newMedia.personalRating
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                media = updatedMedia
             }
         }, content: {
             MediaModalView(media: media)
         })
         .onAppear {
             Task {
-                let newMedia = try await WatchlistManager.shared.getUpdatedUserMedia(media: media)
-                isWatched = newMedia.watched
-                personalRating = newMedia.personalRating
+                if try await WatchlistManager.shared.doesMediaExistInCollection(media: media) {
+                    try await WatchlistManager.shared.setReleaseOrAirDateForMedia(media: media)
+                }
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                    media = updatedMedia
+                }
             }
         }
     }
@@ -59,7 +68,7 @@ struct ExploreRowView: View {
 
 struct ExploreRowView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreRowView(media: dev.mediaMock.first!, currentTab: .movies)
+        ExploreRowView(media: dev.mediaMock[1], currentTab: .movies)
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }
@@ -67,9 +76,8 @@ struct ExploreRowView_Previews: PreviewProvider {
 
 extension ExploreRowView {
     var centerColumn: some View {
-        VStack(alignment: .leading) {
-            if let mediaType = media.mediaType,
-               let title = mediaType == .movie ? media.title : media.name {
+        VStack(alignment: .leading, spacing: 5) {
+            if let title = media.mediaType == .movie ? media.title : media.name {
                 Text(title)
                     .font(Font.system(.headline, design: .default))
                     .fontWeight(.bold)
@@ -77,24 +85,18 @@ extension ExploreRowView {
                     .foregroundColor(Color.theme.text)
                     .lineLimit(2)
             }
-                
-                if let mediaType = media.mediaType, mediaType == .tv {
-                    Text("TV Series")
-                        .font(.caption)
-                        .foregroundColor(Color.theme.text.opacity(0.6))
-                }
             
-            if let genres = getGenres(genreIDs: media.genreIDs) {
-                ScrollView(.horizontal) {
-                    HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                            if idx < 2 {
-                                GenreView(genreName: genre.name)
-                            }
-                        }
-                    }
-                }
+            if media.mediaType == .tv {
+                Text("TV Series")
+                    .font(.caption)
+                    .foregroundColor(Color.theme.text.opacity(0.6))
             }
+            
+            Text(dateConvertedToYear)
+                .font(.subheadline)
+                .foregroundColor(Color.theme.text.opacity(0.6))
+                .fontWeight(.medium)
+            
         }
         .frame(maxHeight: 75)
     }
@@ -117,7 +119,9 @@ extension ExploreRowView {
                         try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
                     }
                     
-                    try await homeVM.getWatchlists()
+                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                        media = updatedMedia
+                    }
                 }
             }
             .padding(.leading)
@@ -135,7 +139,7 @@ extension ExploreRowView {
     
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
         guard let genreIDs else { return nil }
-        return homeVM.getGenresForMediaType(for: media.mediaType ?? .movie, genreIDs: genreIDs)
+        return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)
     }
 }
 
