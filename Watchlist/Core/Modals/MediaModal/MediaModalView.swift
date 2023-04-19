@@ -146,14 +146,17 @@ extension MediaModalView {
             
             Spacer()
             
-            if let personalRating = vm.media.personalRating {
-                StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
-            } else {
-                rateThisButton
-                    .disabled(isInMedia(media: vm.media) ? false : true)
+            Group {
+                if let personalRating = vm.media.personalRating {
+                    StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
+                } else {
+                    rateThisButton
+                        .disabled(isInMedia(media: vm.media) ? false : true)
+                }
             }
+            .frame(minWidth: 110)
         }
-        .padding(.trailing)
+        .padding(.horizontal)
     }
     
     private var rateThisButton: some View {
@@ -199,7 +202,7 @@ extension MediaModalView {
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundColor(!isInMedia(media: vm.media) ? Color.theme.red : Color.theme.genreText)
-                .frame(width: 90, height: 30)
+                .frame(width: 90, height: 35)
                 .background(!isInMedia(media: vm.media) ? Color.theme.secondary : Color.theme.red)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .fixedSize(horizontal: true, vertical: false)
