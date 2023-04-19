@@ -35,6 +35,7 @@ struct RowView: View {
         }
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("RowView")
+        .contentShape(Rectangle())
         .sheet(isPresented: $showRatingSheet, onDismiss: {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia

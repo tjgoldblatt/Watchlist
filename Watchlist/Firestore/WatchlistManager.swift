@@ -22,6 +22,8 @@ struct DBMedia: Codable, Identifiable, Hashable {
     let posterPath: String?
     let backdropPath: String?
     let genreIDs: [Int]?
+    let releaseDate: String?
+    let firstAirDate: String?
     
     // Extra
     let watched: Bool
@@ -42,6 +44,8 @@ struct DBMedia: Codable, Identifiable, Hashable {
         self.genreIDs = media.genreIDS
         self.watched = watched
         self.personalRating = personalRating
+        self.releaseDate = media.releaseDate
+        self.firstAirDate = media.firstAirDate
     }
     
     enum CodingKeys: String, CodingKey {
@@ -60,6 +64,9 @@ struct DBMedia: Codable, Identifiable, Hashable {
         
         case watched
         case personalRating
+        
+        case releaseDate
+        case firstAirDate
     }
 }
 

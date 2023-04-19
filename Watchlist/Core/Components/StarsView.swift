@@ -11,13 +11,13 @@ import Blackbird
 struct StarsView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
     
-    @State var fontSize: CGFloat = 20
     @Binding var rating: Int
     
     var body: some View {
         ZStack {
             starsView
                 .overlay(overlayView.mask(starsView))
+                .padding()
         }
     }
     
@@ -37,7 +37,7 @@ struct StarsView: View {
         HStack {
             ForEach(1..<11) { index in
                 image(for: index)
-                    .font(.system(size: fontSize))
+                    .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(rating >= index ? Color.theme.red : Color.theme.red.opacity(0.3))
                     .onTapGesture {
@@ -62,7 +62,7 @@ struct StarsView: View {
 
 struct RatingView_Previews: PreviewProvider {
     static var previews: some View {
-        StarsView(fontSize: 12, rating: .constant(1))
+        StarsView(rating: .constant(1))
             .previewLayout(.sizeThatFits)
     }
 }

@@ -239,7 +239,7 @@ extension TVShowTabView {
             }
             
             if !vm.filterText.isEmpty {
-                filteredMedia = filteredMedia.filter { $0.title?.lowercased().contains(vm.filterText.lowercased()) ?? false }
+                filteredMedia = filteredMedia.filter { $0.name?.lowercased().contains(vm.filterText.lowercased()) ?? false }
             }
             
             return filteredMedia
@@ -247,7 +247,7 @@ extension TVShowTabView {
         } else if vm.filterText.isEmpty {
             return groupedMedia
         } else {
-            return groupedMedia.filter { $0.title?.lowercased().contains(vm.filterText.lowercased()) ?? false }
+            return groupedMedia.filter { $0.name?.lowercased().contains(vm.filterText.lowercased()) ?? false }
         }
     }
     

@@ -128,6 +128,7 @@ struct RatingModalView_Previews: PreviewProvider {
 
 struct CloseButton: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var homeVM: HomeViewModel
 
     var body: some View {
         Image(systemName: "xmark")
@@ -143,6 +144,7 @@ struct CloseButton: View {
             .accessibility(addTraits: .isButton)
             .accessibility(removeTraits: .isImage)
             .onTapGesture {
+                homeVM.hapticFeedback.impactOccurred()
                 dismiss()
             }
     }
