@@ -166,6 +166,12 @@ final class WatchlistManager {
         try await updateLastUpdatedForUser()
     }
     
+    func doesMediaExistInCollection(media: DBMedia) async throws -> Bool {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        let documentSnapshot = try await userWatchlistDocument.getDocument()
+        return documentSnapshot.exists
+    }
+    
     func deleteMediaInWatchlist(media: DBMedia) async throws {
         try await deleteMediaById(mediaId: media.id)
     }
@@ -195,6 +201,24 @@ final class WatchlistManager {
         try await userWatchlistDocument.updateData(data)
     }
     
+    func setReleaseOrAirDateForMedia(media: DBMedia) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+        
+        var data: [String:Any] = [:]
+        if media.mediaType == .movie {
+            data = [
+                DBMedia.CodingKeys.releaseDate.rawValue : media.releaseDate ?? NSNull()
+            ]
+        } else if media.mediaType == .tv {
+            data = [
+                DBMedia.CodingKeys.firstAirDate.rawValue : media.firstAirDate ?? NSNull()
+            ]
+        }
+        
+        try await updateLastUpdatedForUser()
+        try await userWatchlistDocument.updateData(data)
+    }
+    
     func resetMedia(media: DBMedia) async throws {
         let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
         
@@ -220,13 +244,13 @@ final class WatchlistManager {
         return try userWatchlistCollection()
             .addSnapshotListener(as: DBMedia.self)
     }
-
+    
     // MARK: - Function to Copy from Blackbird to Firebase
     func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
         guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media), let mediaId = media.id else { return }
         
         if media.mediaType == .movie && media.id == 1 { return }
-            
+        
         let dbMedia = DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
         let document = try userWatchlistCollection().document("\(mediaId)")
         try document.setData(from: dbMedia, merge: true)
