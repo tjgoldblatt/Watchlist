@@ -38,7 +38,7 @@ class DeveloperPreview {
                          originalLanguage: nil,
                          name: nil,
                          adult: nil,
-                         releaseDate: "2021-10-1",
+                         releaseDate: nil,
                          title: "Batman: The Long Halloween, Part Two",
                          video: nil,
                          profilePath: nil,

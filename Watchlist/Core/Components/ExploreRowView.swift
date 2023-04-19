@@ -20,8 +20,6 @@ struct ExploreRowView: View {
     
     @State private var showingSheet = false
     
-    @State var addedToWatchlist: Bool = false
-    
     var dateConvertedToYear: String {
         if let title = media.mediaType == .tv ? media.firstAirDate : media.releaseDate {
             let date = title.components(separatedBy: "-")
