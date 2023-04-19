@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import FirebaseFirestore
+import FirebaseCrashlytics
 import Combine
 import Blackbird
 
@@ -79,8 +80,14 @@ final class HomeViewModel: ObservableObject {
         self.userWatchlistListneer = listener
         publisher
             .sink { completion in
-            
+                switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        Crashlytics.crashlytics().record(error: error)
+                }
             } receiveValue: { [weak self] updatedMediaArray in
+                guard let self else { return }
                 var updatedMovieList: [DBMedia] = []
                 var updatedTVList: [DBMedia] = []
                 
@@ -92,10 +99,10 @@ final class HomeViewModel: ObservableObject {
                     }
                 }
                 
-                self?.movieList = updatedMovieList
-                self?.tvList = updatedTVList
-                
-                self?.isMediaLoaded = true
+                self.movieList = updatedMovieList
+                self.tvList = updatedTVList
+            
+                self.isMediaLoaded = true
             }
             .store(in: &cancellables)
     }

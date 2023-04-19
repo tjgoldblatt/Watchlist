@@ -41,6 +41,7 @@ struct TVShowTabView: View {
                             if homeVM.isMediaLoaded {
                                 EmptyListView()
                             } else {
+                                Spacer()
                                 ProgressView()
                             }
                         }
