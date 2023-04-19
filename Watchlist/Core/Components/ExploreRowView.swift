@@ -54,8 +54,13 @@ struct ExploreRowView: View {
             MediaModalView(media: media)
         })
         .onAppear {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
-                media = updatedMedia
+            Task {
+                if try await WatchlistManager.shared.doesMediaExistInCollection(media: media) {
+                    try await WatchlistManager.shared.setReleaseOrAirDateForMedia(media: media)
+                }
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                    media = updatedMedia
+                }
             }
         }
     }
