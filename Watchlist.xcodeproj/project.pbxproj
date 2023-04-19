@@ -67,6 +67,7 @@
 		32B5128C29CBB00000879AF6 /* RatingModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5128B29CBB00000879AF6 /* RatingModalView.swift */; };
 		32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */; };
 		32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */; };
+		32C45AB929F02D6D0025BEE0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 32C45AB829F02D6D0025BEE0 /* FirebaseCrashlytics */; };
 		32C89CC529E843330094D8E2 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 32C89CC429E843330094D8E2 /* FirebasePerformance */; };
 		32C89CC729E8BA920094D8E2 /* DisplayNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */; };
 		32C89CC929EAFA4B0094D8E2 /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C89CC829EAFA4B0094D8E2 /* DeleteAccountView.swift */; };
@@ -165,6 +166,7 @@
 				32B3E1C229E60AE800314B4F /* GoogleSignInSwift in Frameworks */,
 				32B3E1B429E6098000314B4F /* FirebaseFirestore in Frameworks */,
 				32B3E1BB29E60A7600314B4F /* FirebaseAnalytics in Frameworks */,
+				32C45AB929F02D6D0025BEE0 /* FirebaseCrashlytics in Frameworks */,
 				32B3E1B629E6098000314B4F /* FirebaseFirestoreSwift in Frameworks */,
 				32B3E1C029E60AE800314B4F /* GoogleSignIn in Frameworks */,
 			);
@@ -527,6 +529,7 @@
 				324BAE5829B8D3D9002FBB6F /* Sources */,
 				324BAE5929B8D3D9002FBB6F /* Frameworks */,
 				324BAE5A29B8D3D9002FBB6F /* Resources */,
+				32C45ABA29F02D9A0025BEE0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -543,6 +546,7 @@
 				32B3E1BF29E60AE800314B4F /* GoogleSignIn */,
 				32B3E1C129E60AE800314B4F /* GoogleSignInSwift */,
 				32C89CC429E843330094D8E2 /* FirebasePerformance */,
+				32C45AB829F02D6D0025BEE0 /* FirebaseCrashlytics */,
 			);
 			productName = Watchlist;
 			productReference = 324BAE5C29B8D3D9002FBB6F /* Watchlist.app */;
@@ -658,6 +662,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		32C45ABA29F02D9A0025BEE0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		324BAE5829B8D3D9002FBB6F /* Sources */ = {
@@ -872,6 +899,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"Watchlist/Preview Content\"";
 				DEVELOPMENT_TEAM = B64CHFDG7W;
 				ENABLE_PREVIEWS = YES;
@@ -1119,6 +1147,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 32B3E1BE29E60AE800314B4F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		32C45AB829F02D6D0025BEE0 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
 		};
 		32C89CC429E843330094D8E2 /* FirebasePerformance */ = {
 			isa = XCSwiftPackageProductDependency;
