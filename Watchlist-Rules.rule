@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Permissions for the User:
+    // anyone can create, read, or update a user, but only the user can delete themselves
+    match /users/{userId} {
+    	allow create, read, update: if isAuthenticated(request);
+        allow delete: if isUser(request, userId);
+    }
+
+    // Permissions for the Users Watchlist:
+    // only the user can write to their watchlist, but anyone can read it
+    match /watchlists/{userId} {
+    	allow read: if isAuthenticated(request);
+        allow write: if isUser(request, userId);
+
+      // Permissions for Contents of the User's Watchlist:
+      // only the user can write to their watchlist, but their friends can also read it
+      match /userWatchlist/{mediaId} {
+        // add check for if auth user is a friend of the user
+        // allow read: if isUser(request, userId) || isFriendOfUser(request, userId);
+      	allow read: if isAuthenticated(request);
+        allow write: if isUser(request, userId);
+      }
+    }
+
+    // Checks if request is authenticated
+    function isAuthenticated(request) {
+    	return request.auth != null;
+    }
+
+    // Checks if request is authenticated and is the user
+    function isUser(request, userId) {
+    	return isAuthenticated(request) && request.auth.uid == userId;
+    }
+
+    // write a function to check if the user is a friend of the user
+    // function isFriendOfUser(request, userId) {
+    // 	let requestId = request.auth.uid;
+    //     return exists(/database/$(database)/documents/users/$(userId)/friends/$(requestId);
+    // }
+  }
+}
