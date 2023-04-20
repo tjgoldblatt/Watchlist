@@ -28,8 +28,12 @@ struct HomeView: View {
                     
                         .onAppear {
                             Task {
-                                // TODO: Delete this after enough people have transferred their databases
-                                homeVM.transferDatabase()
+                                if database != nil {
+                                    // TODO: Delete this after enough people have transferred their databases
+                                    try await homeVM.transferDatabase()
+                                } else {
+                                    try await WatchlistManager.shared.setTransferred()
+                                }
                             }
                         }
                     

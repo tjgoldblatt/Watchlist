@@ -110,28 +110,26 @@ final class HomeViewModel: ObservableObject {
     }
     
     // TODO: Remove Blackbird Copy Func
-    func transferDatabase() {
-        Task {
-            try await WatchlistManager.shared.createWatchlistForUser()
-            let transferredFlag = try await WatchlistManager.shared.getTransferred()
+    func transferDatabase() async throws {
+        let transferredFlag = try await WatchlistManager.shared.getTransferred()
+        
+        if transferredFlag == nil {
+            let fbMediaList = movieList + tvList
             
-            if transferredFlag == nil {
-                let fbMediaList = movieList + tvList
-                
-                guard let database else { return }
-                let mediaModels = try await MediaModel.read(from: database)
-                
-                for mediaModel in mediaModels {
-                    if !fbMediaList.map({ $0.id }).contains(mediaModel.id) && mediaModel.id != 1 {
-                        do {
-                            try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
-                        } catch {
-                            CrashlyticsManager.handleError(error: error)
-                        }
+            guard let database else { return }
+            let mediaModels = try await MediaModel.read(from: database)
+            
+            for mediaModel in mediaModels {
+                if !fbMediaList.map({ $0.id }).contains(mediaModel.id) && mediaModel.id != 1 {
+                    do {
+                        try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
+                    } catch {
+                        CrashlyticsManager.handleError(error: error)
                     }
                 }
-                try await WatchlistManager.shared.setTransferred()
             }
+            
+            try await WatchlistManager.shared.setTransferred()
         }
     }
     
