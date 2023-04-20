@@ -73,8 +73,8 @@ final class UserManager {
     
     func deleteUser() async throws {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-        try await userDocument().delete()
         try await WatchlistManager.shared.deleteWatchlist(userId: authDataResult.uid)
+        try await userDocument().delete()
     }
     
     func getDisplayNameForUser() async throws -> String? {

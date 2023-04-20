@@ -43,6 +43,7 @@
 		329A768D29BACF070074A4F9 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768C29BACF070074A4F9 /* HeaderView.swift */; };
 		32A6995D29D4BCEE0026AC63 /* WatchlistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A6995C29D4BCEE0026AC63 /* WatchlistTests.swift */; };
 		32A6997329D4FDEC0026AC63 /* WatchlistMediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A6997229D4FDEC0026AC63 /* WatchlistMediaTests.swift */; };
+		32ABEB7129F1CB4A0008EA06 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ABEB7029F1CB4A0008EA06 /* RootView.swift */; };
 		32B3E1B229E6098000314B4F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 32B3E1B129E6098000314B4F /* FirebaseAuth */; };
 		32B3E1B429E6098000314B4F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 32B3E1B329E6098000314B4F /* FirebaseFirestore */; };
 		32B3E1B629E6098000314B4F /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 32B3E1B529E6098000314B4F /* FirebaseFirestoreSwift */; };
@@ -132,6 +133,7 @@
 		32A6995C29D4BCEE0026AC63 /* WatchlistTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistTests.swift; sourceTree = "<group>"; };
 		32A6996729D4BCFA0026AC63 /* WatchlistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WatchlistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32A6997229D4FDEC0026AC63 /* WatchlistMediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistMediaTests.swift; sourceTree = "<group>"; };
+		32ABEB7029F1CB4A0008EA06 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		32B3E1B729E60A2200314B4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		32B3E1C529E60BB100314B4F /* SignInWithAppleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleHelper.swift; sourceTree = "<group>"; };
 		32B3E1C729E60BDA00314B4F /* SignInWithAppleButtonSwiftUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInWithAppleButtonSwiftUI.swift; sourceTree = "<group>"; };
@@ -229,10 +231,9 @@
 				324BAE7F29B92057002FBB6F /* Utilities */,
 				324BAE8229BA559E002FBB6F /* Extensions */,
 				324BAE6D29B8D721002FBB6F /* Models */,
-				324BAE6E29B8D73E002FBB6F /* Core */,
-				32B3E1DA29E6154200314B4F /* Settings */,
 				32B3E1C429E60B9700314B4F /* Authentication */,
 				32B3E1D529E60E7C00314B4F /* Firestore */,
+				324BAE6E29B8D73E002FBB6F /* Core */,
 				324BAE6129B8D3D9002FBB6F /* ContentView.swift */,
 				324BAE6329B8D3DA002FBB6F /* Assets.xcassets */,
 				32B3E1B729E60A2200314B4F /* GoogleService-Info.plist */,
@@ -265,12 +266,14 @@
 		324BAE6E29B8D73E002FBB6F /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				32ABEB7029F1CB4A0008EA06 /* RootView.swift */,
 				32B5128A29CBAFE700879AF6 /* Modals */,
 				324BAE6F29B8D768002FBB6F /* Components */,
 				324BAE7129B8D776002FBB6F /* Home */,
 				324BAE7729B8E78E002FBB6F /* Watchlist */,
 				324BAE8529BA5744002FBB6F /* Search */,
 				32B3E1C329E60B3C00314B4F /* Social */,
+				32B3E1DA29E6154200314B4F /* Settings */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -345,8 +348,8 @@
 			isa = PBXGroup;
 			children = (
 				324BAE8029B92072002FBB6F /* TMDbManager.swift */,
-				32952D9B29BB9548002B3596 /* Errors.swift */,
 				327DCF9929F19AC5003EA412 /* CrashlyticsManager.swift */,
+				32952D9B29BB9548002B3596 /* Errors.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -715,6 +718,7 @@
 				3258731029BD252A005E1394 /* TMDbService.swift in Sources */,
 				324BAE9929BA6F66002FBB6F /* ExploreTabView.swift in Sources */,
 				324BAE8D29BA5979002FBB6F /* SearchBarView.swift in Sources */,
+				32ABEB7129F1CB4A0008EA06 /* RootView.swift in Sources */,
 				324BAE9329BA5F1F002FBB6F /* Tab.swift in Sources */,
 				329A768929BA846F0074A4F9 /* PreviewProvider+EXT.swift in Sources */,
 				3258730929BCD53A005E1394 /* MediaModalView.swift in Sources */,

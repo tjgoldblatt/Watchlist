@@ -72,17 +72,20 @@ struct DBMedia: Codable, Identifiable, Hashable {
 
 struct UserWatchlist: Codable {
     let userId: String
+    let displayName: String?
     let isTransferred: Timestamp?
     @ServerTimestamp var lastUpdated: Timestamp?
     
-    init(userId: String, lastUpdated: Timestamp?) {
+    init(userId: String, displayName: String?, lastUpdated: Timestamp?) {
         self.userId = userId
+        self.displayName = displayName
         self.lastUpdated = lastUpdated
         self.isTransferred = nil
     }
     
     enum CodingKeys: String, CodingKey {
         case userId
+        case displayName
         case isTransferred
         case lastUpdated
     }
@@ -103,7 +106,7 @@ final class WatchlistManager {
     
     func createWatchlistForUser() async throws {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-        let watchlist = UserWatchlist(userId: authDataResult.uid, lastUpdated: Timestamp())
+        let watchlist = UserWatchlist(userId: authDataResult.uid, displayName: authDataResult.displayName, lastUpdated: Timestamp())
         try watchlistDocument().setData(from: watchlist, merge: true)
     }
     
@@ -116,6 +119,22 @@ final class WatchlistManager {
         try await deleteUserWatchlist()
     }
     
+    func setDisplayName() async throws {
+        let watchlistDocument = try watchlistDocument()
+        let user = try await UserManager.shared.getUser()
+        
+        guard let displayName = user.displayName else {
+            return
+        }
+        
+        let data: [String:Any] = [
+            UserWatchlist.CodingKeys.displayName.rawValue : displayName,
+        ]
+        
+        try await watchlistDocument.setData(data, merge: true)
+    }
+    
+    // TODO: Eventually delete this once we move from Blackbird
     func setTransferred() async throws {
         let watchlistDocument = try watchlistDocument()
         
@@ -123,7 +142,7 @@ final class WatchlistManager {
             UserWatchlist.CodingKeys.isTransferred.rawValue : FieldValue.serverTimestamp(),
         ]
         
-        try await watchlistDocument.setData(data)
+        try await watchlistDocument.setData(data, merge: true)
     }
     
     func getTransferred() async throws -> Timestamp? {
@@ -139,7 +158,8 @@ final class WatchlistManager {
             UserWatchlist.CodingKeys.lastUpdated.rawValue : FieldValue.serverTimestamp()
         ]
         
-        try await watchlistDocument.setData(data)
+        try await setDisplayName()
+        try await watchlistDocument.setData(data, merge: true)
     }
     
     // MARK: - User Watchlist
@@ -162,7 +182,7 @@ final class WatchlistManager {
     
     func createNewMediaInWatchlist(media: DBMedia) async throws {
         let document = try userWatchlistCollection().document("\(media.id)")
-        try document.setData(from: media)
+        try document.setData(from: media, merge: true)
         try await updateLastUpdatedForUser()
     }
     

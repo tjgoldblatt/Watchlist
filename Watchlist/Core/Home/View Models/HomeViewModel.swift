@@ -111,7 +111,7 @@ final class HomeViewModel: ObservableObject {
     
     // TODO: Remove Blackbird Copy Func
     func transferDatabase() async throws {
-        let transferredFlag = try await WatchlistManager.shared.getTransferred()
+        let transferredFlag = try? await WatchlistManager.shared.getTransferred()
         
         if transferredFlag == nil {
             let fbMediaList = movieList + tvList

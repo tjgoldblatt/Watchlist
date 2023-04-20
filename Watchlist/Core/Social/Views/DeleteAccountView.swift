@@ -49,6 +49,10 @@ struct DeleteAccountView: View {
                 homeVM.showSignInView = true
             }
         }
+        .overlay(alignment: .topLeading) {
+            CloseButton()
+                .padding()
+        }
     }
     
     @ViewBuilder
