@@ -25,7 +25,7 @@ class TMDbManager {
                 case .success(let mediaResponse):
                     mediaArray.append(contentsOf: mediaResponse)
                 case .failure(let error):
-                    print(error.localizedDescription)
+                    CrashlyticsManager.handleError(error: error)
                     
             }
             group.leave()

@@ -30,6 +30,9 @@ struct WatchlistApp: App {
                         .environmentObject(vm)
                         .environmentObject(authVM)
                         .environment(\.blackbirdDatabase, database)
+                        .onFirstAppear {
+                            try? vm.addListenerForMedia()
+                        }
                         .onAppear {
                             Task {
                                 // Not really sure why we need to save fake data on load for db to save everything 🤷‍♂️
@@ -42,9 +45,6 @@ struct WatchlistApp: App {
             .onAppear {
                 let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
                 vm.showSignInView = authUser == nil
-            }
-            .onFirstAppear {
-                try? vm.addListenerForMedia()
             }
             .fullScreenCover(isPresented: $vm.showSignInView, onDismiss: {
                 vm.selectedTab = .movies

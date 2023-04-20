@@ -14,7 +14,7 @@ extension Blackbird.Database {
         do {
             try await model.write(to: self)
         } catch {
-            print("[🔥] \(error)")
+            CrashlyticsManager.handleError(error: error)
         }
     }
     
@@ -66,8 +66,8 @@ extension Blackbird.Database {
         do {
             let watched = try result.get()
             completionHandler(watched)
-        } catch let error {
-            print("[🔥] \(error)")
+        } catch {
+            CrashlyticsManager.handleError(error: error)
         }
     }
     
@@ -85,8 +85,8 @@ extension Blackbird.Database {
         do {
             let rating = try result.get()
             completionHandler(rating)
-        } catch let error {
-            print("[🔥] \(error)")
+        } catch {
+            CrashlyticsManager.handleError(error: error)
         }
     }
     
@@ -96,8 +96,8 @@ extension Blackbird.Database {
                 guard var mediaModel = try await MediaModel.read(from: self, id: id) else { return }
                 mediaModel.personalRating = rating
                 await upsert(model: mediaModel)
-            } catch let error {
-                print("[🔥] \(error)")
+            } catch {
+                CrashlyticsManager.handleError(error: error)
             }
         }
     }
@@ -108,8 +108,8 @@ extension Blackbird.Database {
                 guard var mediaModel = try await MediaModel.read(from: self, id: id) else { return }
                 mediaModel.watched = watched
                 await upsert(model: mediaModel)
-            } catch let error {
-                print("[🔥] \(error)")
+            } catch {
+                CrashlyticsManager.handleError(error: error)
             }
         }
     }

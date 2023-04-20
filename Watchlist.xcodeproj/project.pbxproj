@@ -30,6 +30,8 @@
 		3258731229BD254C005E1394 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258731129BD254C005E1394 /* Media.swift */; };
 		3258731629BD7ABE005E1394 /* Genre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258731529BD7ABE005E1394 /* Genre.swift */; };
 		3258731829BE5C46005E1394 /* WatchlistDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3258731729BE5C46005E1394 /* WatchlistDetailsViewModel.swift */; };
+		327DCF9829F191B9003EA412 /* WatchlistUserAuthTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327DCF9729F191B9003EA412 /* WatchlistUserAuthTest.swift */; };
+		327DCF9A29F19AC5003EA412 /* CrashlyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327DCF9929F19AC5003EA412 /* CrashlyticsManager.swift */; };
 		3283E40529D255CB0002490F /* ExploreRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3283E40429D255CB0002490F /* ExploreRowView.swift */; };
 		32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */; };
 		32952D9A29BB885E002B3596 /* View+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9929BB885E002B3596 /* View+EXT.swift */; };
@@ -116,6 +118,8 @@
 		3258731129BD254C005E1394 /* Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
 		3258731529BD7ABE005E1394 /* Genre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genre.swift; sourceTree = "<group>"; };
 		3258731729BE5C46005E1394 /* WatchlistDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistDetailsViewModel.swift; sourceTree = "<group>"; };
+		327DCF9729F191B9003EA412 /* WatchlistUserAuthTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistUserAuthTest.swift; sourceTree = "<group>"; };
+		327DCF9929F19AC5003EA412 /* CrashlyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashlyticsManager.swift; sourceTree = "<group>"; };
 		3283E40429D255CB0002490F /* ExploreRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreRowView.swift; sourceTree = "<group>"; };
 		32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowTabView.swift; sourceTree = "<group>"; };
 		32952D9929BB885E002B3596 /* View+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+EXT.swift"; sourceTree = "<group>"; };
@@ -346,6 +350,7 @@
 			children = (
 				324BAE8029B92072002FBB6F /* TMDbManager.swift */,
 				32952D9B29BB9548002B3596 /* Errors.swift */,
+				327DCF9929F19AC5003EA412 /* CrashlyticsManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -409,6 +414,7 @@
 				32A6996929D4BCFA0026AC63 /* WatchlistUITests.swift */,
 				32A6996B29D4BCFA0026AC63 /* WatchlistUITestsLaunchTests.swift */,
 				32A6997229D4FDEC0026AC63 /* WatchlistAddMediaTest.swift */,
+				327DCF9729F191B9003EA412 /* WatchlistUserAuthTest.swift */,
 			);
 			path = WatchlistUITests;
 			sourceTree = "<group>";
@@ -722,6 +728,7 @@
 				32B3E1D929E6137D00314B4F /* SocialView.swift in Sources */,
 				32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */,
 				3258731829BE5C46005E1394 /* WatchlistDetailsViewModel.swift in Sources */,
+				327DCF9A29F19AC5003EA412 /* CrashlyticsManager.swift in Sources */,
 				324BAE8129B92072002FBB6F /* TMDbManager.swift in Sources */,
 				32B3E1DD29E6154C00314B4F /* SettingsView.swift in Sources */,
 				32B3E1D729E60E8800314B4F /* UserManager.swift in Sources */,
@@ -756,6 +763,7 @@
 			files = (
 				32A6996C29D4BCFA0026AC63 /* WatchlistUITestsLaunchTests.swift in Sources */,
 				32A6997329D4FDEC0026AC63 /* WatchlistAddMediaTest.swift in Sources */,
+				327DCF9829F191B9003EA412 /* WatchlistUserAuthTest.swift in Sources */,
 				32A6996A29D4BCFA0026AC63 /* WatchlistUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

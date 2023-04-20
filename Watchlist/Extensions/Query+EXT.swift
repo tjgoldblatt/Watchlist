@@ -38,7 +38,7 @@ extension Query {
         
         let listener = self.addSnapshotListener { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
-                print("No documents")
+                CrashlyticsManager.handleWarning(warning: "No documents for query snapshot")
                 return
             }
             let data: [T] = documents.compactMap { try? $0.data(as: T.self) }
