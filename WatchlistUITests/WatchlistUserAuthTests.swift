@@ -1,5 +1,5 @@
 //
-//  WatchlistUserAuthTest.swift
+//  WatchlistUserAuthTests.swift
 //  WatchlistUITests
 //
 //  Created by TJ Goldblatt on 4/20/23.
@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class WatchlistUserAuthTest: XCTestCase {
+final class WatchlistUserAuthTests: XCTestCase {
     let app = XCUIApplication()
     
     override func setUpWithError() throws {
