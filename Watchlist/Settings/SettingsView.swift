@@ -44,8 +44,8 @@ struct SettingsView: View {
                                     try await viewModel.delete()
                                     homeVM.selectedTab = .movies
                                     homeVM.showSignInView = true
-                                } catch(let error) {
-                                    print(error.localizedDescription)
+                                } catch {
+                                    CrashlyticsManager.handleError(error: error)
                                 }
                             }
                         }
@@ -61,8 +61,8 @@ struct SettingsView: View {
                             try await viewModel.delete()
                             homeVM.selectedTab = .movies
                             homeVM.showSignInView = true
-                        } catch(let error) {
-                            print(error.localizedDescription)
+                        } catch {
+                            CrashlyticsManager.handleError(error: error)
                         }
                     }
                 }) {
@@ -85,8 +85,8 @@ extension SettingsView {
                             try viewModel.signOut()
                             homeVM.selectedTab = .movies
                             homeVM.showSignInView = true
-                        } catch(let error) {
-                            print(error.localizedDescription)
+                        } catch {
+                            CrashlyticsManager.handleError(error: error)
                         }
                     }
                 }

@@ -52,7 +52,7 @@ struct SignInView: View {
                                     try await viewModel.signInGoogle()
                                     showSignInView = false
                                 } catch {
-                                    print(error)
+                                    CrashlyticsManager.handleError(error: error)
                                 }
                             }
                         }
@@ -64,7 +64,7 @@ struct SignInView: View {
                             try await viewModel.signInAnonymous()
                             showSignInView = false
                         } catch {
-                            print(error)
+                            CrashlyticsManager.handleError(error: error)
                         }
                     }
                 } label: {

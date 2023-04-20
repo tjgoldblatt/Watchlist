@@ -111,7 +111,7 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
             let nonce = currentNonce,
             let appleIDToken = appleIDCredential.identityToken,
             let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-            completitionHandler?(.failure(URLError(.badURL)))
+            completitionHandler?(.failure(FirebaseError.signInWithApple()))
             return
         }
         
@@ -130,9 +130,7 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         
-        completitionHandler?(.failure(URLError(.badURL)))
-        
-        print("Sign in with Apple errored: \(error)")
+        completitionHandler?(.failure(FirebaseError.signInWithApple(debugDescription: error.localizedDescription.debugDescription)))
     }
     
 }

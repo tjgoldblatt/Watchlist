@@ -7,20 +7,6 @@
 
 import Foundation
 
-enum TMDbError: LocalizedError {
-    case failedToGetData
-    case failedToEncodeData
-    
-    var errorDescription: String {
-        switch self {
-            case .failedToGetData:
-                return "[💣] Failed to get data"
-            case .failedToEncodeData:
-                return "[💣] Failed to encode data"
-        }
-    }
-}
-
 class TMDbService {
     private init() { }
     

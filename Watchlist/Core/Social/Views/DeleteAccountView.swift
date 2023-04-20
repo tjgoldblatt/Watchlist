@@ -31,7 +31,7 @@ struct DeleteAccountView: View {
                                 do {
                                     try await authVM.signInGoogle()
                                 } catch {
-                                    print(error)
+                                    CrashlyticsManager.handleError(error: error)
                                 }
                             }
                         }

@@ -22,7 +22,7 @@ final class SignInWithGoogleHelper {
         let gidSignInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: topViewController)
         
         guard let idToken = gidSignInResult.user.idToken?.tokenString else {
-            throw URLError(.badServerResponse)
+            throw FirebaseError.signInWithGoogle
         }
         
         let accessToken = gidSignInResult.user.accessToken.tokenString
