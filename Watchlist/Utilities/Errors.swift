@@ -7,21 +7,58 @@
 
 import Foundation
 
-enum ViewError: LocalizedError {
-    /// Thrown when trying to create new row with Media
-    case invalidMediaView(media: Media)
+enum FirebaseError: LocalizedError {
+    case getAuthenticatedUser
+    case getProviders
+    case deleteUser
+    case linkCredential
     
-    case unknown
+    case signInWithGoogle
+    case signInWithApple(debugDescription: String = "")
     
     var errorDescription: String? {
         switch self {
-            case .invalidMediaView(media: let media): return "[🔥] Bad response from Media: \(media)"
-            case .unknown: return "[⚠️] Unknown error occured"
+            case .getAuthenticatedUser:
+                return "[🔥] Failed to get authenticated user"
+            case .getProviders:
+                return "[🔥] Failed to get provider data"
+            case .deleteUser:
+                return "[🔥] Failed to delete User"
+            case .linkCredential:
+                return "[🔥] Failed to link user credential"
+            case .signInWithGoogle:
+                return "[🔥] Failed to sign in with Google"
+            case .signInWithApple(let debugDescription):
+                return "[🔥] Failed to sign in with Apple. \(debugDescription)"
         }
     }
 }
 
-
-enum FirebaseError: LocalizedError {
-    // TODO: Make Errors for Firebase
+enum NetworkError: LocalizedError {
+    case decode(error: Error)
+    case encode(error: Error)
+    
+    var errorDescription: String? {
+        switch self {
+            case .decode(let error):
+                return "[💣] Failed to decode. \(error)"
+            case .encode(let error):
+                return "[💣] Failed to encode. \(error)"
+        }
+    }
 }
+
+enum TMDbError: LocalizedError {
+    case failedToGetData
+    case failedToEncodeData
+    
+    var errorDescription: String {
+        switch self {
+            case .failedToGetData:
+                return "[💣] Failed to get data"
+            case .failedToEncodeData:
+                return "[💣] Failed to encode data"
+        }
+    }
+}
+

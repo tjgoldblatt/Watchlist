@@ -93,7 +93,7 @@ struct SignInWithAppleButtonSwiftUI: View {
                                 fatalError("Invalid state: A login callback was received, but no login request was sent.")
                             }
                             guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-                                print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+                                CrashlyticsManager.handleError(error: FirebaseError.signInWithApple(debugDescription: appleIDToken.debugDescription))
                                 return
                             }
                             

@@ -38,14 +38,14 @@ final class AuthenticationManager {
     // not reaching out to server, only reaching out locally
     func getAuthenticatedUser() throws -> AuthDataResultModel {
         guard let user = Auth.auth().currentUser else {
-            throw URLError(.badServerResponse)
+            throw FirebaseError.getAuthenticatedUser
         }
         return AuthDataResultModel(user: user)
     }
 
     func getProviders() throws -> [AuthProviderOption] {
         guard let providerData = Auth.auth().currentUser?.providerData else {
-            throw URLError(.badServerResponse)
+            throw FirebaseError.getProviders
         }
         
         var providers: [AuthProviderOption] = []
@@ -67,7 +67,7 @@ final class AuthenticationManager {
     
     func delete() async throws {
         guard let user = Auth.auth().currentUser else {
-            throw URLError(.badURL)
+            throw FirebaseError.deleteUser
         }
         
         try await UserManager.shared.deleteUser()
@@ -115,7 +115,7 @@ extension AuthenticationManager {
     
     private func linkCredential(credential: AuthCredential) async throws -> AuthDataResultModel {
         guard let user = Auth.auth().currentUser else {
-            throw URLError(.badURL)
+            throw FirebaseError.linkCredential
         }
         
         let authDataResult = try await user.link(with: credential)

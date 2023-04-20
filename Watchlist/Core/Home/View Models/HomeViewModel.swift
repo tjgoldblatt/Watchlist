@@ -109,7 +109,7 @@ final class HomeViewModel: ObservableObject {
         return nil
     }
     
-    // TODO: Blackbird Copy Func
+    // TODO: Remove Blackbird Copy Func
     func transferDatabase() {
         Task {
             try await WatchlistManager.shared.createWatchlistForUser()
@@ -126,7 +126,7 @@ final class HomeViewModel: ObservableObject {
                         do {
                             try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
                         } catch {
-                            print(error)
+                            CrashlyticsManager.handleError(error: error)
                         }
                     }
                 }
@@ -143,13 +143,13 @@ final class HomeViewModel: ObservableObject {
                 if !movieGenreList.isEmpty {
                     genreNames = movieGenreList.filter({ return genreIDs.contains($0.id) })
                 } else {
-                    print("[🔥] Movie Genre List Empty")
+                    CrashlyticsManager.handleWarning(warning: "Movie Genre List Empty")
                 }
             case .tv:
                 if !tvGenreList.isEmpty {
                     genreNames = tvGenreList.filter({ return genreIDs.contains($0.id) })
                 } else {
-                    print("[🔥] TV Genre List Empty")
+                    CrashlyticsManager.handleWarning(warning: "TV Genre List Empty")
                 }
             case .person:
                 break
@@ -213,7 +213,7 @@ final class HomeViewModel: ObservableObject {
         do {
             return try JSONEncoder().encode(media)
         } catch let error {
-            print("[💣] Failed to encode. \(error)")
+            CrashlyticsManager.handleError(error: NetworkError.encode(error: error))
             return nil
         }
     }
@@ -222,7 +222,7 @@ final class HomeViewModel: ObservableObject {
         do {
             return try JSONDecoder().decode(Media.self, from: data)
         } catch let error {
-            print("[💣] Failed to decode. \(error)")
+            CrashlyticsManager.handleError(error: NetworkError.decode(error: error))
             return nil
         }
     }

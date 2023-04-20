@@ -22,4 +22,8 @@ class CrashlyticsManager {
     static func handleError(error: Error) {
         Crashlytics.crashlytics().record(error: error)
     }
+    
+    static func handleWarning(warning: String) {
+        Crashlytics.crashlytics().log("[⚠️] " + warning)
+    }
 }

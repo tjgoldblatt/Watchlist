@@ -31,11 +31,7 @@ struct WatchlistApp: App {
                         .environmentObject(authVM)
                         .environment(\.blackbirdDatabase, database)
                         .onFirstAppear {
-                            do {
-                                try vm.addListenerForMedia()
-                            } catch {
-                                print("[⚠️] User hasn't signed in yet")
-                            }
+                            try? vm.addListenerForMedia()
                         }
                         .onAppear {
                             Task {

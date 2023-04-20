@@ -105,9 +105,8 @@ extension SocialView {
                     Task {
                         do {
                             try await settingsVM.linkGoogleAccount()
-                            print("GOOGLE LINKED")
-                        } catch(let error) {
-                            print(error.localizedDescription)
+                        } catch {
+                            CrashlyticsManager.handleError(error: error)
                         }
                     }
                 }
@@ -118,9 +117,8 @@ extension SocialView {
                     Task {
                         do {
                             try await settingsVM.linkAppleAccount()
-                            print("APPLE LINKED")
-                        } catch(let error) {
-                            print(error.localizedDescription)
+                        } catch {
+                            CrashlyticsManager.handleError(error: error)
                         }
                     }
                 }
