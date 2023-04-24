@@ -40,6 +40,7 @@ final class AuthenticationManager {
         guard let user = Auth.auth().currentUser else {
             throw FirebaseError.getAuthenticatedUser
         }
+        CrashlyticsManager.setUserId(userId: user.uid)
         return AuthDataResultModel(user: user)
     }
 
