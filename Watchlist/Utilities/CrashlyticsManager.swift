@@ -10,6 +10,12 @@ import Combine
 import FirebaseCrashlytics
 
 class CrashlyticsManager {
+    private init() {}
+    
+    static func setUserId(userId: String) {
+        Crashlytics.crashlytics().setUserID(userId)
+    }
+    
     static func handleCompletition(completition: Subscribers.Completion<Error>) {
         switch completition {
             case .finished:
