@@ -267,7 +267,9 @@ final class WatchlistManager {
     
     // MARK: - Function to Copy from Blackbird to Firebase
     func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
-        guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media), let mediaId = media.id else { return }
+        guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media), let mediaId = media.id else {
+            throw FirebaseError.blackbirdTransferError(mediaModel: mediaModel)
+        }
         
         if media.mediaType == .movie && media.id == 1 { return }
         
