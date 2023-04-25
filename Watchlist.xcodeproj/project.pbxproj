@@ -72,6 +72,9 @@
 		32C89CC529E843330094D8E2 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 32C89CC429E843330094D8E2 /* FirebasePerformance */; };
 		32C89CC729E8BA920094D8E2 /* DisplayNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */; };
 		32C89CC929EAFA4B0094D8E2 /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C89CC829EAFA4B0094D8E2 /* DeleteAccountView.swift */; };
+		32E1EF6C29F75CAA00D3CDA7 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6B29F75CAA00D3CDA7 /* Nuke */; };
+		32E1EF6E29F75CAA00D3CDA7 /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6D29F75CAA00D3CDA7 /* NukeExtensions */; };
+		32E1EF7029F75CAA00D3CDA7 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6F29F75CAA00D3CDA7 /* NukeUI */; };
 		32E8462329EE082C00C1815A /* Query+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E8462229EE082C00C1815A /* Query+EXT.swift */; };
 /* End PBXBuildFile section */
 
@@ -161,10 +164,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32E1EF7029F75CAA00D3CDA7 /* NukeUI in Frameworks */,
 				32B3E1BD29E60A7600314B4F /* FirebaseAnalyticsSwift in Frameworks */,
 				322BB68529D32A4D007CD536 /* Blackbird in Frameworks */,
 				32C89CC529E843330094D8E2 /* FirebasePerformance in Frameworks */,
 				32B3E1B229E6098000314B4F /* FirebaseAuth in Frameworks */,
+				32E1EF6C29F75CAA00D3CDA7 /* Nuke in Frameworks */,
+				32E1EF6E29F75CAA00D3CDA7 /* NukeExtensions in Frameworks */,
 				32B3E1C229E60AE800314B4F /* GoogleSignInSwift in Frameworks */,
 				32B3E1B429E6098000314B4F /* FirebaseFirestore in Frameworks */,
 				32B3E1BB29E60A7600314B4F /* FirebaseAnalytics in Frameworks */,
@@ -550,6 +556,9 @@
 				32B3E1C129E60AE800314B4F /* GoogleSignInSwift */,
 				32C89CC429E843330094D8E2 /* FirebasePerformance */,
 				32C45AB829F02D6D0025BEE0 /* FirebaseCrashlytics */,
+				32E1EF6B29F75CAA00D3CDA7 /* Nuke */,
+				32E1EF6D29F75CAA00D3CDA7 /* NukeExtensions */,
+				32E1EF6F29F75CAA00D3CDA7 /* NukeUI */,
 			);
 			productName = Watchlist;
 			productReference = 324BAE5C29B8D3D9002FBB6F /* Watchlist.app */;
@@ -627,6 +636,7 @@
 				322BB68329D32A4D007CD536 /* XCRemoteSwiftPackageReference "Blackbird" */,
 				32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				32B3E1BE29E60AE800314B4F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			productRefGroup = 324BAE5D29B8D3D9002FBB6F /* Products */;
 			projectDirPath = "";
@@ -1109,6 +1119,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1161,6 +1179,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebasePerformance;
+		};
+		32E1EF6B29F75CAA00D3CDA7 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		32E1EF6D29F75CAA00D3CDA7 /* NukeExtensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeExtensions;
+		};
+		32E1EF6F29F75CAA00D3CDA7 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

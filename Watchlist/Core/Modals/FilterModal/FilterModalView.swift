@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Blackbird
 
 struct FilterModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
@@ -88,17 +89,19 @@ struct MediaModalView: View {
 
 extension MediaModalView {
     private var backdropSection: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(vm.imagePath)")) { image in
-            image
-                .resizable()
-                .scaledToFill()
-                .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
-                .frame(maxHeight: 300)
-                .clipped()
-                .shadow(color: Color.black.opacity(0.3), radius: 5)
-        } placeholder: {
-            ProgressView()
-                .frame(height: 200)
+        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(vm.imagePath)")) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
+                    .frame(maxHeight: 300)
+                    .clipped()
+                    .shadow(color: Color.black.opacity(0.3), radius: 5)
+            } else {
+                ProgressView()
+                    .frame(height: 200)
+            }
         }
     }
     
