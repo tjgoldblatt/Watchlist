@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Blackbird
 
 struct ExploreTabView: View {
     @Environment(\.dismiss) var dismiss

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Blackbird
 
 struct TVShowTabView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
