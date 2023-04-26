@@ -14,6 +14,9 @@ class TMDbManager {
     static private var movieGenreList: [Genre] = []
     static private var tvGenreList: [Genre] = []
     
+    /// Searches for media using the TMDbService with the given search term.
+    /// - Parameter searchTerm: The search term to use.
+    /// - Returns: An array of Media objects that match the search term.
     func searchForMedia(for searchTerm: String) -> [Media] {
         var mediaArray: [Media] = []
         
