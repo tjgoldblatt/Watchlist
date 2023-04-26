@@ -7,6 +7,7 @@
 
 import SwiftUI
 import NukeUI
+import FirebaseAnalyticsSwift
 
 struct RatingModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
@@ -123,6 +124,7 @@ struct RatingModalView: View {
             .ignoresSafeArea(edges: .vertical)
             .accessibilityIdentifier("RatingModalView")
         }
+        .analyticsScreen(name: "RatingModalView")
     }
 }
 

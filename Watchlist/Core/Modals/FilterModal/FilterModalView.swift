@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAnalyticsSwift
 
 struct FilterModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
@@ -66,6 +67,7 @@ struct FilterModalView: View {
                 }
             }
         }
+        .analyticsScreen(name: "FilterModalView")
         .task {
             vm.genresSelected = homeVM.genresSelected
         }

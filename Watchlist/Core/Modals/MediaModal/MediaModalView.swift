@@ -7,6 +7,7 @@
 
 import SwiftUI
 import NukeUI
+import FirebaseAnalyticsSwift
 
 struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
@@ -42,6 +43,7 @@ struct MediaModalView: View {
             .padding(.horizontal)
             .frame(maxWidth: UIScreen.main.bounds.width)
         }
+        .analyticsScreen(name: "MediaModalView")
         .overlay(alignment: .topLeading) {
             Button {
                 dismiss()
