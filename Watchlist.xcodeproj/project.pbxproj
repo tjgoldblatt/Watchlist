@@ -75,6 +75,7 @@
 		32E1EF6C29F75CAA00D3CDA7 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6B29F75CAA00D3CDA7 /* Nuke */; };
 		32E1EF6E29F75CAA00D3CDA7 /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6D29F75CAA00D3CDA7 /* NukeExtensions */; };
 		32E1EF7029F75CAA00D3CDA7 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6F29F75CAA00D3CDA7 /* NukeUI */; };
+		32E1EF7229F8C1BE00D3CDA7 /* ColorSchemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E1EF7129F8C1BE00D3CDA7 /* ColorSchemeManager.swift */; };
 		32E8462329EE082C00C1815A /* Query+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E8462229EE082C00C1815A /* Query+EXT.swift */; };
 /* End PBXBuildFile section */
 
@@ -156,6 +157,7 @@
 		32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalViewModel.swift; sourceTree = "<group>"; };
 		32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayNameView.swift; sourceTree = "<group>"; };
 		32C89CC829EAFA4B0094D8E2 /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
+		32E1EF7129F8C1BE00D3CDA7 /* ColorSchemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSchemeManager.swift; sourceTree = "<group>"; };
 		32E8462229EE082C00C1815A /* Query+EXT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Query+EXT.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -355,6 +357,7 @@
 			children = (
 				324BAE8029B92072002FBB6F /* TMDbManager.swift */,
 				327DCF9929F19AC5003EA412 /* CrashlyticsManager.swift */,
+				32E1EF7129F8C1BE00D3CDA7 /* ColorSchemeManager.swift */,
 				32952D9B29BB9548002B3596 /* Errors.swift */,
 			);
 			path = Utilities;
@@ -725,6 +728,7 @@
 				32B3E1E029E61F7100314B4F /* WatchlistManager.swift in Sources */,
 				329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */,
 				32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */,
+				32E1EF7229F8C1BE00D3CDA7 /* ColorSchemeManager.swift in Sources */,
 				3258731029BD252A005E1394 /* TMDbService.swift in Sources */,
 				324BAE9929BA6F66002FBB6F /* ExploreTabView.swift in Sources */,
 				324BAE8D29BA5979002FBB6F /* SearchBarView.swift in Sources */,

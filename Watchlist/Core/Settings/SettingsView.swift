@@ -14,6 +14,7 @@ struct SettingsView: View {
     
     @StateObject var authVM = AuthenticationViewModel()
     @EnvironmentObject var homeVM: HomeViewModel
+    @EnvironmentObject var csManager: ColorSchemeManager
     
     @State var showReAuthView: Bool = false
     @State var deleteAccountConfirmation: Bool = false
@@ -24,6 +25,7 @@ struct SettingsView: View {
                 Color.theme.background.ignoresSafeArea()
                 
                 List {
+                    appearanceSection
                     accountSection
                 }
                 .scrollContentBackground(.hidden)
@@ -74,6 +76,18 @@ struct SettingsView: View {
 }
 
 extension SettingsView {
+    private var appearanceSection: some View {
+        Section {
+            Picker("Theme", selection: $csManager.colorScheme) {
+                Text("Light").tag(ColorScheme.light)
+                Text("Dark").tag(ColorScheme.dark)
+                Text("System").tag(ColorScheme.unspecified)
+            }
+        } header: {
+            Text("Appearance")
+        }
+    }
+    
     private var accountSection: some View {
         Section {
             // Hide log out button if user is anon
@@ -110,5 +124,6 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
             .environmentObject(SettingsViewModel())
+            .environmentObject(ColorSchemeManager())
     }
 }

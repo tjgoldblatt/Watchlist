@@ -12,6 +12,7 @@ import Blackbird
 @main
 struct WatchlistApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var csManager = ColorSchemeManager()
     
     @StateObject private var vm = HomeViewModel()
     @StateObject private var authVM = AuthenticationViewModel()
@@ -24,6 +25,10 @@ struct WatchlistApp: App {
                 .environmentObject(vm)
                 .environmentObject(authVM)
                 .environment(\.blackbirdDatabase, database)
+                .environmentObject(csManager)
+                .onAppear {
+                    csManager.applyColorScheme()
+                }
         }
     }
 }
