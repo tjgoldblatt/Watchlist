@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Blackbird
 
 struct StarsView: View {
     @EnvironmentObject private var homeVM: HomeViewModel

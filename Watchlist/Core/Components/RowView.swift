@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Blackbird
+import NukeUI
 
 struct RowView: View {
     @EnvironmentObject var homeVM: HomeViewModel
@@ -139,6 +139,7 @@ extension RowView {
             if personalRating == nil {
                 showRatingSheet = true
             }
+            AnalyticsManager.shared.logEvent(name: "RowView_SwipeAction")
         } label: {
             Image(systemName: "checkmark.circle")
         }
@@ -167,46 +168,14 @@ struct ThumbnailView: View {
     }
     
     var body: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { phase in
-            if let image = phase.image {
+        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { state in
+            if let image = state.image {
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .clipShape(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
-            } else if phase.error != nil {
-                AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .clipShape(
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            )
-                    } else if phase.error != nil {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(Color.theme.secondary)
-                            .overlay(alignment: .center) {
-                                Image(systemName: "photo")
-                                    .resizable()
-                                    .foregroundColor(Color.theme.red)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: frameWidth/2)
-                                    .offset(x: -2)
-                            }
-                    } else {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(Color.theme.secondary)
-                            .overlay(alignment: .center) {
-                                ProgressView()
-                                    .foregroundColor(Color.theme.text)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: frameWidth/2)
-                                    .offset(x: -2)
-                            }
-                    }
-                }
             } else {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundColor(Color.theme.secondary)

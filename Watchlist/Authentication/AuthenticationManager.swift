@@ -41,6 +41,10 @@ final class AuthenticationManager {
             throw FirebaseError.getAuthenticatedUser
         }
         CrashlyticsManager.setUserId(userId: user.uid)
+        
+        AnalyticsManager.shared.setUserId(userId: user.uid)
+        AnalyticsManager.shared.setUserProperty(value: user.isAnonymous.description, property: "isAnonymous")
+        
         return AuthDataResultModel(user: user)
     }
 
@@ -106,11 +110,13 @@ extension AuthenticationManager {
     
     func linkApple(tokens: SignInWithAppleResult) async throws -> AuthDataResultModel {
         let credential = OAuthProvider.credential(withProviderID: AuthProviderOption.apple.rawValue, idToken: tokens.token, rawNonce: tokens.nonce)
+        AnalyticsManager.shared.logEvent(name: "LinkAppleAccount")
         return try await linkCredential(credential: credential)
     }
     
     func linkGoogle(tokens: GoogleSignInResult) async throws -> AuthDataResultModel {
         let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken, accessToken: tokens.accessToken)
+        AnalyticsManager.shared.logEvent(name: "LinkGoogleAccount")
         return try await linkCredential(credential: credential)
     }
     

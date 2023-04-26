@@ -111,6 +111,7 @@ struct SearchBarView: View {
                                 .onTapGesture {
                                     homeVM.hapticFeedback.impactOccurred()
                                     showFilterSheet.toggle()
+                                    AnalyticsManager.shared.logEvent(name: "FilterButton_Tapped")
                                 }
                         }
                     }
@@ -142,6 +143,7 @@ struct SearchBarView: View {
             .cornerRadius(20)
             .onTapGesture {
                 withAnimation(.spring()) {
+                    AnalyticsManager.shared.logEvent(name: "SearchBar_Tapped")
                     isFocused = true
                 }
             }

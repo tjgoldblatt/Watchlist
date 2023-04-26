@@ -6,7 +6,8 @@
 //
 
 import SwiftUI
-import Blackbird
+import NukeUI
+import FirebaseAnalyticsSwift
 
 struct RatingModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
@@ -28,15 +29,18 @@ struct RatingModalView: View {
                     ZStack {
                         Color.black.ignoresSafeArea()
                         
-                        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { image in
-                            image
-                                .resizable()
-                                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-                                .scaledToFit()
-                                .blur(radius: 20)
-                        } placeholder: {
-                            Color.black
+                        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                                    .scaledToFit()
+                                    .blur(radius: 20)
+                            } else {
+                                Color.black
+                            }
                         }
+                            
                         LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top)
                     }
                     .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height)
@@ -46,15 +50,17 @@ struct RatingModalView: View {
                 
                 VStack(alignment: .center) {
                     if let posterPath {
-                        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 300, alignment: .trailing)
-                            
-                        } placeholder: {
-                            Color.theme.background
-                                .frame(width: 200, height: 300)
+                        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 300, alignment: .trailing)
+                            } else {
+                                Color.theme.background
+                                    .frame(width: 200, height: 300)
+
+                            }
                         }
                         .overlay {
                             rating > 0 ?
@@ -90,7 +96,7 @@ struct RatingModalView: View {
                         .background(Color.theme.secondary)
                         .cornerRadius(10)
                         .disabled(rating == 0)
-                        .opacity(rating != 0 ? 1 : 0.5)
+                        .opacity(rating != 0 ? 1 : 0.7)
                         .onTapGesture {
                                 homeVM.hapticFeedback.impactOccurred()
                                 Task {
@@ -100,6 +106,7 @@ struct RatingModalView: View {
                                     
                                     shouldShowRatingModal = false
                                 }
+                            AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")
                         }
                         .accessibilityIdentifier("RateButton")
                         .padding()
@@ -117,6 +124,7 @@ struct RatingModalView: View {
             .ignoresSafeArea(edges: .vertical)
             .accessibilityIdentifier("RatingModalView")
         }
+        .analyticsScreen(name: "RatingModalView")
     }
 }
 

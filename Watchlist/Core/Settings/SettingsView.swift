@@ -8,12 +8,14 @@
 import SwiftUI
 import GoogleSignInSwift
 import AuthenticationServices
+import FirebaseAnalyticsSwift
 
 struct SettingsView: View {
     @EnvironmentObject private var viewModel: SettingsViewModel
     
     @StateObject var authVM = AuthenticationViewModel()
     @EnvironmentObject var homeVM: HomeViewModel
+    @EnvironmentObject var csManager: ColorSchemeManager
     
     @State var showReAuthView: Bool = false
     @State var deleteAccountConfirmation: Bool = false
@@ -24,6 +26,7 @@ struct SettingsView: View {
                 Color.theme.background.ignoresSafeArea()
                 
                 List {
+                    appearanceSection
                     accountSection
                 }
                 .scrollContentBackground(.hidden)
@@ -35,18 +38,15 @@ struct SettingsView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .alert("Are you sure you'd like to delete your account?", isPresented: $deleteAccountConfirmation, actions: {
                     Button("Delete", role: .destructive) {
-                        if viewModel.authUser?.isAnonymous == false {
-                            showReAuthView.toggle()
-                        } else {
-                            Task {
-                                do {
-                                    viewModel.loadAuthUser()
-                                    try await viewModel.delete()
-                                    homeVM.selectedTab = .movies
-                                    homeVM.showSignInView = true
-                                } catch {
-                                    CrashlyticsManager.handleError(error: error)
-                                }
+                        AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
+                        Task {
+                            do {
+                                viewModel.loadAuthUser()
+                                try await viewModel.delete()
+                                homeVM.selectedTab = .movies
+                                homeVM.showSignInView = true
+                            } catch {
+                                CrashlyticsManager.handleError(error: error)
                             }
                         }
                     }
@@ -70,15 +70,29 @@ struct SettingsView: View {
                 }
             }
         }
+        .analyticsScreen(name: "SettingsView")
     }
 }
 
 extension SettingsView {
+    private var appearanceSection: some View {
+        Section {
+            Picker("Theme", selection: $csManager.colorScheme) {
+                Text("Light").tag(ColorScheme.light)
+                Text("Dark").tag(ColorScheme.dark)
+                Text("System").tag(ColorScheme.unspecified)
+            }
+        } header: {
+            Text("Appearance")
+        }
+    }
+    
     private var accountSection: some View {
         Section {
             // Hide log out button if user is anon
             if viewModel.authUser?.isAnonymous == false {
                 Button("Log Out") {
+                    AnalyticsManager.shared.logEvent(name: "SettingsView_LogOut")
                     homeVM.selectedTab = .movies
                     Task {
                         do {
@@ -110,5 +124,6 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
             .environmentObject(SettingsViewModel())
+            .environmentObject(ColorSchemeManager())
     }
 }

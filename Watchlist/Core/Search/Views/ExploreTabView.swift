@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Blackbird
+import FirebaseAnalyticsSwift
 
 struct ExploreTabView: View {
     @Environment(\.dismiss) var dismiss
@@ -48,6 +48,7 @@ struct ExploreTabView: View {
                 Text("")
             }
         }
+        .analyticsScreen(name: "ExploreTabView")
     }
 }
 

@@ -53,7 +53,7 @@ struct HomeView: View {
                         }
                         .tag(Tab.explore)
                     
-                    SocialView()
+                    SocialTabView()
                         .environmentObject(homeVM)
                         .tabItem {
                             Image(systemName: Tab.social.icon)

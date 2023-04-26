@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import NukeUI
+import FirebaseAnalyticsSwift
 
 struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
@@ -41,6 +43,7 @@ struct MediaModalView: View {
             .padding(.horizontal)
             .frame(maxWidth: UIScreen.main.bounds.width)
         }
+        .analyticsScreen(name: "MediaModalView")
         .overlay(alignment: .topLeading) {
             Button {
                 dismiss()
@@ -53,6 +56,7 @@ struct MediaModalView: View {
             if isInMedia(media: vm.media) && vm.media.watched {
                 Menu {
                     Button(role: .destructive) {
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
                         Task {
                             try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
                             try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
@@ -88,17 +92,19 @@ struct MediaModalView: View {
 
 extension MediaModalView {
     private var backdropSection: some View {
-        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/original\(vm.imagePath)")) { image in
-            image
-                .resizable()
-                .scaledToFill()
-                .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
-                .frame(maxHeight: 300)
-                .clipped()
-                .shadow(color: Color.black.opacity(0.3), radius: 5)
-        } placeholder: {
-            ProgressView()
-                .frame(height: 200)
+        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(vm.imagePath)")) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
+                    .frame(maxHeight: 300)
+                    .clipped()
+                    .shadow(color: Color.black.opacity(0.3), radius: 5)
+            } else {
+                ProgressView()
+                    .frame(height: 200)
+            }
         }
     }
     
@@ -184,6 +190,7 @@ extension MediaModalView {
         Button {
             homeVM.hapticFeedback.impactOccurred()
             vm.showingRating.toggle()
+            AnalyticsManager.shared.logEvent(name: "MediaModalView_RateButton_Tapped")
         } label: {
             VStack {
                 Image(systemName: "star")
@@ -214,6 +221,7 @@ extension MediaModalView {
                     if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
                         vm.media = updatedMedia
                     }
+                    AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
                 }
             } else {
                 vm.showDeleteConfirmation.toggle()
@@ -232,6 +240,7 @@ extension MediaModalView {
             Button("Delete", role: .destructive) {
                 Task {
                     try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
+                    AnalyticsManager.shared.logEvent(name: "MediaModalView_DeleteMedia")
                 }
             }
             .buttonStyle(.plain)
