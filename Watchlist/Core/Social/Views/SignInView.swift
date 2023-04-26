@@ -8,6 +8,8 @@
 import SwiftUI
 import GoogleSignInSwift
 import AuthenticationServices
+import FirebaseAnalytics
+import FirebaseAnalyticsSwift
 
 struct SignInView: View {
     @EnvironmentObject private var viewModel: AuthenticationViewModel
@@ -75,6 +77,10 @@ struct SignInView: View {
                 .padding(.top)
             }
             .padding(.bottom, 50)
+        }
+        .analyticsScreen(name: "SignInView")
+        .onDisappear {
+            AnalyticsManager.shared.logEvent(name: AnalyticsEventLogin)
         }
     }
     

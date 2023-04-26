@@ -139,6 +139,7 @@ extension RowView {
             if personalRating == nil {
                 showRatingSheet = true
             }
+            AnalyticsManager.shared.logEvent(name: "RowView_SwipeAction")
         } label: {
             Image(systemName: "checkmark.circle")
         }

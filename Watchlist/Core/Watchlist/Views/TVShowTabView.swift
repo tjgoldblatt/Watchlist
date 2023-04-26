@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAnalyticsSwift
 
 struct TVShowTabView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
@@ -58,6 +59,7 @@ struct TVShowTabView: View {
                 }
             }
         }
+        .analyticsScreen(name: "TVTabView")
     }
 }
 
@@ -123,6 +125,7 @@ extension TVShowTabView {
                         .foregroundColor(Color.theme.red)
                         .padding()
                         .onTapGesture {
+                            AnalyticsManager.shared.logEvent(name: "TVTabView_ResetMedia")
                             Task {
                                 for watchedSelectedRow in watchedSelectedRows {
                                     try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
@@ -158,6 +161,7 @@ extension TVShowTabView {
                 Task {
                     for id in vm.selectedRows {
                         try await WatchlistManager.shared.deleteMediaById(mediaId: id)
+                        AnalyticsManager.shared.logEvent(name: "TVTabView_MultiDeleteMedia")
                     }
                     vm.editMode = .inactive
                     homeVM.editMode = .inactive
@@ -192,6 +196,7 @@ extension TVShowTabView {
                     .onTapGesture {
                         homeVM.hapticFeedback.impactOccurred()
                         if homeVM.watchSelected != watchOption {
+                            AnalyticsManager.shared.logEvent(name: "TVTabView_\(watchOption.rawValue)_Tapped")
                             homeVM.watchSelected = watchOption
                             vm.filterText = ""
                         }

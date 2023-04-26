@@ -115,8 +115,10 @@ extension ExploreRowView {
                 Task {
                     if !isInMedia(media: media) {
                         try await WatchlistManager.shared.createNewMediaInWatchlist(media: media)
+                        AnalyticsManager.shared.logEvent(name: "ExploreTabView_AddMedia")
                     } else {
                         try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
+                        AnalyticsManager.shared.logEvent(name: "ExploreTabView_DeleteMedia")
                     }
                     
                     if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {

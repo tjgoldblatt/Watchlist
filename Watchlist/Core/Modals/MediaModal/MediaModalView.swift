@@ -54,6 +54,7 @@ struct MediaModalView: View {
             if isInMedia(media: vm.media) && vm.media.watched {
                 Menu {
                     Button(role: .destructive) {
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
                         Task {
                             try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
                             try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
@@ -187,6 +188,7 @@ extension MediaModalView {
         Button {
             homeVM.hapticFeedback.impactOccurred()
             vm.showingRating.toggle()
+            AnalyticsManager.shared.logEvent(name: "MediaModalView_RateButton_Tapped")
         } label: {
             VStack {
                 Image(systemName: "star")
@@ -217,6 +219,7 @@ extension MediaModalView {
                     if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
                         vm.media = updatedMedia
                     }
+                    AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
                 }
             } else {
                 vm.showDeleteConfirmation.toggle()
@@ -235,6 +238,7 @@ extension MediaModalView {
             Button("Delete", role: .destructive) {
                 Task {
                     try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
+                    AnalyticsManager.shared.logEvent(name: "MediaModalView_DeleteMedia")
                 }
             }
             .buttonStyle(.plain)

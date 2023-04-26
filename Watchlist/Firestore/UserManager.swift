@@ -80,14 +80,16 @@ final class UserManager {
     
     /// Deletes the user data and the watchlist for the authenticated user.
     func deleteUser() async throws {
-        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-        try await WatchlistManager.shared.deleteWatchlist(userId: authDataResult.uid)
+        try await WatchlistManager.shared.deleteWatchlist()
         try await userDocument().delete()
     }
     
     /// Returns the display name for the authenticated user.
     func getDisplayNameForUser() async throws -> String? {
         let user = try await getUser()
+        
+        AnalyticsManager.shared.setUserProperty(value: user.displayName, property: "displayName")
+        
         return user.displayName
     }
     
