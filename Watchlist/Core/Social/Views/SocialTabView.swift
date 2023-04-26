@@ -1,5 +1,5 @@
 //
-//  SocialView.swift
+//  SocialTabView.swift
 //  Watchlist
 //
 //  Created by TJ Goldblatt on 4/11/23.
@@ -19,7 +19,7 @@ final class SocialViewModel: ObservableObject {
     }
 }
 
-struct SocialView: View {
+struct SocialTabView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     
     @StateObject var settingsVM = SettingsViewModel()
@@ -87,17 +87,18 @@ struct SocialView: View {
                     .presentationDragIndicator(.visible)
             }
         }
+        .analyticsScreen(name: "SocialTabView")
     }
 }
 
 struct SocialView_Previews: PreviewProvider {
     static var previews: some View {
-        SocialView()
+        SocialTabView()
             .environmentObject(dev.homeVM)
     }
 }
 
-extension SocialView {
+extension SocialTabView {
     private var linkButtons: some View {
         VStack {
             if !settingsVM.authProviders.contains(.google) {

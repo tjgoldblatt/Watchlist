@@ -105,6 +105,7 @@ struct RatingModalView: View {
                                     
                                     shouldShowRatingModal = false
                                 }
+                            AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")
                         }
                         .accessibilityIdentifier("RateButton")
                         .padding()

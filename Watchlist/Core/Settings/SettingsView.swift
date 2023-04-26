@@ -8,6 +8,7 @@
 import SwiftUI
 import GoogleSignInSwift
 import AuthenticationServices
+import FirebaseAnalyticsSwift
 
 struct SettingsView: View {
     @EnvironmentObject private var viewModel: SettingsViewModel
@@ -37,18 +38,15 @@ struct SettingsView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .alert("Are you sure you'd like to delete your account?", isPresented: $deleteAccountConfirmation, actions: {
                     Button("Delete", role: .destructive) {
-                        if viewModel.authUser?.isAnonymous == false {
-                            showReAuthView.toggle()
-                        } else {
-                            Task {
-                                do {
-                                    viewModel.loadAuthUser()
-                                    try await viewModel.delete()
-                                    homeVM.selectedTab = .movies
-                                    homeVM.showSignInView = true
-                                } catch {
-                                    CrashlyticsManager.handleError(error: error)
-                                }
+                        AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
+                        Task {
+                            do {
+                                viewModel.loadAuthUser()
+                                try await viewModel.delete()
+                                homeVM.selectedTab = .movies
+                                homeVM.showSignInView = true
+                            } catch {
+                                CrashlyticsManager.handleError(error: error)
                             }
                         }
                     }
@@ -72,6 +70,7 @@ struct SettingsView: View {
                 }
             }
         }
+        .analyticsScreen(name: "SettingsView")
     }
 }
 
@@ -93,6 +92,7 @@ extension SettingsView {
             // Hide log out button if user is anon
             if viewModel.authUser?.isAnonymous == false {
                 Button("Log Out") {
+                    AnalyticsManager.shared.logEvent(name: "SettingsView_LogOut")
                     homeVM.selectedTab = .movies
                     Task {
                         do {
