@@ -59,6 +59,24 @@ final class SocialViewModel: ObservableObject {
         }
     }
     
+    func acceptFriendRequest(userId: String) {
+        Task {
+            try await UserManager.shared.acceptFriendRequest(from: userId)
+        }
+    }
+    
+    func declineFriendRequest(userId: String) {
+        Task {
+            try await UserManager.shared.declineFriendRequest(from: userId)
+        }
+    }
+    
+    func removeFriend(userId: String) {
+        Task {
+            try await UserManager.shared.removeFriend(friendUserId: userId)
+        }
+    }
+    
     func addListenerForUser() throws {
         let (publisher, listener) = try UserManager.shared.addListenerForUser()
         self.userListener = listener

@@ -27,28 +27,44 @@ struct SocialTabView: View {
                     header
                     
                     if settingsVM.authUser?.isAnonymous == false {
-                        // Show friends list
-//                        Text(settingsVM.authUser?.uid ?? "")
-//                            .padding()
-//                        Text(vm.displayName ?? "No Display Name")
-//                            .padding()
-//                        Text(settingsVM.authUser?.email ?? "")
-//                            .padding()
-//                        HStack {
-//                            ForEach(settingsVM.authProviders, id: \.self) { auth in
-//                                Text(auth.rawValue)
-//                                    .padding()
-//                            }
-//                        }
-                        
-                        Text("Friend Requests")
-                            .font(.headline)
+                        if !vm.friendRequests.isEmpty {
+                            Text("Friend Requests")
+                                .font(.headline)
+                            
+                            ForEach(vm.friendRequests) { friendRequest in
+                                HStack {
+                                    Text(friendRequest.displayName ?? "None")
+                                    
+                                    Button("Accept") {
+                                        vm.acceptFriendRequest(userId: friendRequest.userId)
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    
+                                    Button("Decline") {
+                                        vm.declineFriendRequest(userId: friendRequest.userId)
+                                    }
+                                    .buttonStyle(.bordered)
+                                }
+                            }
                             .padding()
-                        
-                        ForEach(vm.friendRequests) { friendRequest in
-                            Text(friendRequest.displayName ?? "None")
                         }
-                        .padding()
+                        
+                        if !vm.friends.isEmpty {
+                            Text("Friends")
+                                .font(.headline)
+                            
+                            ForEach(vm.friends) { friend in
+                                HStack {
+                                    Text(friend.displayName ?? "None")
+                                    
+                                    Button("Remove Friend") {
+                                        vm.removeFriend(userId: friend.userId)
+                                    }
+                                    .buttonStyle(.bordered)
+                                }
+                            }
+                            .padding()
+                        }
                         
                         
                         ScrollView {

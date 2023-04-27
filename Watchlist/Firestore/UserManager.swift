@@ -173,7 +173,7 @@ extension UserManager {
         try await addFriend(friendUserId: anotherUserId)
     }
     
-    func denyFriendRequest(from anotherUserId: String) async throws {
+    func declineFriendRequest(from anotherUserId: String) async throws {
         try await removeFriendRequest(from: anotherUserId)
     }
     
@@ -192,6 +192,24 @@ extension UserManager {
             DBUser.CodingKeys.friends.rawValue : FieldValue.arrayUnion([currentUser.uid])
         ]
         
-        try await userDocument().updateData(friendUserData)
+        try await userDocument(userId: friendUserId).updateData(friendUserData)
+    }
+    
+    func removeFriend(friendUserId: String) async throws {
+        // Add friend id to current user friends list
+        let currentUserData: [String:Any] = [
+            DBUser.CodingKeys.friends.rawValue : FieldValue.arrayRemove([friendUserId])
+        ]
+        
+        try await userDocument().updateData(currentUserData)
+        
+        // Add current user id to new friend's list
+        let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
+        
+        let friendUserData: [String:Any] = [
+            DBUser.CodingKeys.friends.rawValue : FieldValue.arrayRemove([currentUser.uid])
+        ]
+        
+        try await userDocument(userId: friendUserId).updateData(friendUserData)
     }
 }
