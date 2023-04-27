@@ -8,24 +8,6 @@
 import SwiftUI
 import FirebaseFirestoreSwift
 
-@MainActor
-final class SocialViewModel: ObservableObject {
-    @Published var displayName: String? = nil
-    @Published var allUsers: [DBUser] = []
-    
-    func getDisplayName() {
-        Task {
-            displayName = try await UserManager.shared.getDisplayNameForUser()
-        }
-    }
-    
-    func getAllUsers() {
-        Task {
-            allUsers = try await UserManager.shared.getAllUsers()
-        }
-    }
-}
-
 struct SocialTabView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     
@@ -42,27 +24,57 @@ struct SocialTabView: View {
                 Color.theme.background.ignoresSafeArea()
                 
                 VStack(alignment: .center) {
-                    VStack(alignment: .center) {
-                        Text("Tab Under")
-                        Text("Development")
-                        Text("😸")
-                    }
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color.theme.text)
+                    header
                     
                     if settingsVM.authUser?.isAnonymous == false {
                         // Show friends list
-                        Text(settingsVM.authUser?.uid ?? "")
+//                        Text(settingsVM.authUser?.uid ?? "")
+//                            .padding()
+//                        Text(vm.displayName ?? "No Display Name")
+//                            .padding()
+//                        Text(settingsVM.authUser?.email ?? "")
+//                            .padding()
+//                        HStack {
+//                            ForEach(settingsVM.authProviders, id: \.self) { auth in
+//                                Text(auth.rawValue)
+//                                    .padding()
+//                            }
+//                        }
+                        
+                        Text("Friend Requests")
+                            .font(.headline)
                             .padding()
-                        Text(vm.displayName ?? "No Display Name")
-                            .padding()
-                        Text(settingsVM.authUser?.email ?? "")
-                            .padding()
-                        HStack {
-                            ForEach(settingsVM.authProviders, id: \.self) { auth in
-                                Text(auth.rawValue)
+                        
+                        ForEach(vm.friendRequests) { friendRequest in
+                            Text(friendRequest.displayName ?? "None")
+                        }
+                        .padding()
+                        
+                        
+                        ScrollView {
+                            ForEach(vm.allUsers.sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" }), id: \.userId) { user in
+                                if let currentUser = settingsVM.authUser, currentUser.uid != user.userId {
+                                    HStack {
+                                        VStack {
+                                            Text(user.displayName ?? "No Display Name")
+                                                .font(.headline)
+                                                .fontWeight(.semibold)
+                                            Text(user.userId)
+                                                .font(.callout)
+                                        }
+                                        
+                                        Button("Add Friend") {
+                                            vm.sendFriendRequest(userId: user.userId)
+                                        }
+                                        .buttonStyle(.borderedProminent)
+                                        
+                                        Button("Cancel") {
+                                            vm.cancelFriendRequest(userId: user.userId)
+                                        }
+                                        .buttonStyle(.bordered)
+                                    }
                                     .padding()
+                                }
                             }
                         }
                     }
@@ -73,10 +85,32 @@ struct SocialTabView: View {
                 }
                 .padding(.top)
             }
+            .onChange(of: vm.friendRequestIds) { requestIds in
+                guard let requestIds else { return }
+                Task {
+                    var friendRequests: [DBUser] = []
+                    for id in requestIds {
+                        friendRequests.append(try await vm.convertUserIdToUser(userId: id))
+                    }
+                    vm.friendRequests = friendRequests
+                }
+            }
+            .onChange(of: vm.friendIds) { friendIds in
+                guard let friendIds else { return }
+                Task {
+                    var friends: [DBUser] = []
+                    for id in friendIds {
+                        friends.append(try await vm.convertUserIdToUser(userId: id))
+                    }
+                    vm.friends = friends
+                }
+            }
+            .onFirstAppear {
+                try? vm.addListenerForUser()
+            }
             .onAppear {
                 settingsVM.loadAuthProviders()
                 settingsVM.loadAuthUser()
-                vm.getDisplayName()
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -102,6 +136,14 @@ struct SocialView_Previews: PreviewProvider {
     static var previews: some View {
         SocialTabView()
             .environmentObject(dev.homeVM)
+    }
+}
+
+extension SocialTabView {
+    // MARK: - Header
+    var header: some View {
+        HeaderView(currentTab: .constant(.social), showIcon: true)
+            .padding(.horizontal)
     }
 }
 

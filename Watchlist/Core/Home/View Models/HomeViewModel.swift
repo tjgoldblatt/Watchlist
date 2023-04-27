@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 import FirebaseFirestore
-import FirebaseCrashlytics
 import Combine
 import Blackbird
 
@@ -26,8 +25,10 @@ final class HomeViewModel: ObservableObject {
     /// User TVShow Watchlist
     @Published var tvList: [DBMedia] = []
     
-    private var userWatchlistListneer: ListenerRegistration? = nil
+    /// Watchlist Listener
+    private var userWatchlistListner: ListenerRegistration? = nil
     
+    /// Cancellables
     private var cancellables = Set<AnyCancellable>()
     
     @Published var isMediaLoaded: Bool = false
@@ -65,41 +66,6 @@ final class HomeViewModel: ObservableObject {
         }
     }
     
-    /// Fetches the list of genres from the API
-    @MainActor func fetchGenreLists() async throws {
-        try await withThrowingTaskGroup(of: Void.self, body: { group in
-            group.addTask(operation: { try await self.getMovieGenreList() })
-            group.addTask(operation: { try await self.getTVGenreList() })
-            try await group.waitForAll()
-            isGenresLoaded = true
-        })
-    }
-    
-    func addListenerForMedia() throws {
-        let (publisher, listener) = try WatchlistManager.shared.addListenerForGetMedia()
-        self.userWatchlistListneer = listener
-        publisher
-            .sink(receiveCompletion: CrashlyticsManager.handleCompletition, receiveValue: { [weak self] updatedMediaArray in
-                guard let self else { return }
-                var updatedMovieList: [DBMedia] = []
-                var updatedTVList: [DBMedia] = []
-                
-                for media in updatedMediaArray {
-                    if media.mediaType == .movie {
-                        updatedMovieList.append(media)
-                    } else if media.mediaType == .tv {
-                        updatedTVList.append(media)
-                    }
-                }
-                
-                self.movieList = updatedMovieList
-                self.tvList = updatedTVList
-                
-                self.isMediaLoaded = true
-            })
-            .store(in: &cancellables)
-    }
-    
     func getUpdatedMediaFromList(mediaId: Int) -> DBMedia? {
         for media in tvList + movieList {
             if media.id == mediaId {
@@ -131,6 +97,48 @@ final class HomeViewModel: ObservableObject {
             
             try await WatchlistManager.shared.setTransferred()
         }
+    }
+}
+
+// MARK: - Media Listener
+extension HomeViewModel {
+    func addListenerForMedia() throws {
+        let (publisher, listener) = try WatchlistManager.shared.addListenerForGetMedia()
+        self.userWatchlistListner = listener
+        publisher
+            .sink(receiveCompletion: CrashlyticsManager.handleCompletition) { [weak self] updatedMediaArray in
+                guard let self else { return }
+                var updatedMovieList: [DBMedia] = []
+                var updatedTVList: [DBMedia] = []
+                
+                for media in updatedMediaArray {
+                    if media.mediaType == .movie {
+                        updatedMovieList.append(media)
+                    } else if media.mediaType == .tv {
+                        updatedTVList.append(media)
+                    }
+                }
+                
+                self.movieList = updatedMovieList
+                self.tvList = updatedTVList
+                
+                self.isMediaLoaded = true
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: - Genre
+extension HomeViewModel {
+    /// Fetches the list of genres from the API
+    @MainActor
+    func fetchGenreLists() async throws {
+        try await withThrowingTaskGroup(of: Void.self, body: { group in
+            group.addTask(operation: { try await self.getMovieGenreList() })
+            group.addTask(operation: { try await self.getTVGenreList() })
+            try await group.waitForAll()
+            isGenresLoaded = true
+        })
     }
     
     /// Get Genres for a specific MediaType
@@ -206,7 +214,10 @@ final class HomeViewModel: ObservableObject {
             self.tvGenreList = genres
         }
     }
-    
+}
+
+// MARK: - Media Codable
+extension HomeViewModel {
     func encodeData(with media: Media) -> Data? {
         do {
             return try JSONEncoder().encode(media)

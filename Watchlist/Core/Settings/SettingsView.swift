@@ -28,6 +28,7 @@ struct SettingsView: View {
                 List {
                     appearanceSection
                     accountSection
+                    userInfoSection
                 }
                 .scrollContentBackground(.hidden)
                 .onAppear {
@@ -116,6 +117,17 @@ extension SettingsView {
             }
         } header: {
             Text("Account")
+        }
+    }
+    private var userInfoSection: some View {
+        Section {
+            if let currentUser = viewModel.authUser {
+                Text(currentUser.uid)
+                
+                Text(currentUser.email ?? "No email associated")
+            }
+        } header: {
+            Text("User Info")
         }
     }
 }
