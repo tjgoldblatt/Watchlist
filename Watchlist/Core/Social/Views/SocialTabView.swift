@@ -11,10 +11,17 @@ import FirebaseFirestoreSwift
 @MainActor
 final class SocialViewModel: ObservableObject {
     @Published var displayName: String? = nil
+    @Published var allUsers: [DBUser] = []
     
     func getDisplayName() {
         Task {
             displayName = try await UserManager.shared.getDisplayNameForUser()
+        }
+    }
+    
+    func getAllUsers() {
+        Task {
+            allUsers = try await UserManager.shared.getAllUsers()
         }
     }
 }
@@ -72,7 +79,7 @@ struct SocialTabView: View {
                 vm.getDisplayName()
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Image(systemName: "gear")
                         .font(.headline)
                         .onTapGesture {

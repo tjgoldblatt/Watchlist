@@ -16,6 +16,8 @@ struct DBUser: Codable {
     let email: String?
     let photoUrl: String?
     let dateCreated: Timestamp?
+    let friendRequests: [String]
+    let friends: [String]
     
     init(auth: AuthDataResultModel) {
         self.userId = auth.uid
@@ -24,15 +26,27 @@ struct DBUser: Codable {
         self.displayName = auth.displayName
         self.photoUrl = auth.photoUrl
         self.dateCreated = Timestamp()
+        self.friendRequests = []
+        self.friends = []
     }
     
-    init(userId: String, isAnonymous: Bool? = nil, email: String? = nil, photoUrl: String? = nil, dateCreated: Date? = nil, displayName: String? = nil) {
+    init(userId: String,
+         isAnonymous: Bool? = nil,
+         email: String? = nil,
+         photoUrl: String? = nil,
+         dateCreated: Date? = nil,
+         displayName: String? = nil,
+         friendRequests: [String] = [],
+         friends: [String] = []
+    ) {
         self.userId = userId
         self.isAnonymous = isAnonymous
         self.email = email
         self.photoUrl = photoUrl
         self.displayName = displayName
         self.dateCreated = Timestamp()
+        self.friends = friends
+        self.friendRequests = friendRequests
     }
     
     enum CodingKeys: String, CodingKey {
@@ -42,6 +56,8 @@ struct DBUser: Codable {
         case photoUrl
         case dateCreated
         case displayName
+        case friendRequests
+        case friends
     }
 }
 
@@ -101,5 +117,64 @@ final class UserManager {
         ]
         
         try await userDocument().updateData(data)
+    }
+}
+
+// MARK: - Social
+extension UserManager {
+    // TODO: Send push notification when a user adds another user OR a user accepts another users friend request
+    func getAllUsers() async throws -> [DBUser] {
+        try await userCollection
+            .order(by: DBUser.CodingKeys.displayName.rawValue, descending: true)
+            .getDocuments(as: DBUser.self)
+    }
+    
+    private func userDocument(userId: String) throws -> DocumentReference {
+        return userCollection.document(userId)
+    }
+    
+    func sendFriendRequest(to anotherUserId: String) async throws {
+        let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
+        
+        let data: [String:Any] = [
+            DBUser.CodingKeys.friendRequests.rawValue : FieldValue.arrayUnion([currentUser.uid])
+        ]
+        
+        try await userDocument(userId: anotherUserId).updateData(data)
+    }
+    
+    func removeFriendRequest(from anotherUserId: String) async throws {
+        let currentUserData: [String:Any] = [
+            DBUser.CodingKeys.friendRequests.rawValue : FieldValue.arrayRemove([anotherUserId])
+        ]
+        
+        try await userDocument().updateData(currentUserData)
+    }
+    
+    func acceptFriendRequest(from anotherUserId: String) async throws {
+        try await removeFriendRequest(from: anotherUserId)
+        try await addFriend(friendUserId: anotherUserId)
+    }
+    
+    func denyFriendRequest(from anotherUserId: String) async throws {
+        try await removeFriendRequest(from: anotherUserId)
+    }
+    
+    func addFriend(friendUserId: String) async throws {
+        // Add friend id to current user friends list
+        let currentUserData: [String:Any] = [
+            DBUser.CodingKeys.friends.rawValue : FieldValue.arrayUnion([friendUserId])
+        ]
+        
+        try await userDocument().updateData(currentUserData)
+        
+        // Add current user id to new friend's list
+        let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
+        
+        let friendUserData: [String:Any] = [
+            DBUser.CodingKeys.friends.rawValue : FieldValue.arrayUnion([currentUser.uid])
+        ]
+        
+        try await userDocument().updateData(friendUserData)
     }
 }
