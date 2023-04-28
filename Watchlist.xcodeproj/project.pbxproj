@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		320FB73F29FAF2D600CA9310 /* DocumentReference+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320FB73E29FAF2D600CA9310 /* DocumentReference+EXT.swift */; };
 		320FB74129FAF52000CA9310 /* SocialViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320FB74029FAF52000CA9310 /* SocialViewModel.swift */; };
-		320FB74529FB566400CA9310 /* SocialTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320FB74429FB566400CA9310 /* SocialTabView.swift */; };
 		320FB74729FB568600CA9310 /* AddFriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320FB74629FB568600CA9310 /* AddFriendsView.swift */; };
+		320FB74929FBF10100CA9310 /* SocialTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320FB74829FBF10100CA9310 /* SocialTabView.swift */; };
 		32246F4029D9ECBD002EDFC9 /* FilterOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */; };
 		322BB68529D32A4D007CD536 /* Blackbird in Frameworks */ = {isa = PBXBuildFile; productRef = 322BB68429D32A4D007CD536 /* Blackbird */; };
 		322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322BF19929DC4CD000161820 /* MediaModalViewModel.swift */; };
@@ -104,8 +104,8 @@
 /* Begin PBXFileReference section */
 		320FB73E29FAF2D600CA9310 /* DocumentReference+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DocumentReference+EXT.swift"; sourceTree = "<group>"; };
 		320FB74029FAF52000CA9310 /* SocialViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialViewModel.swift; sourceTree = "<group>"; };
-		320FB74429FB566400CA9310 /* SocialTabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SocialTabView.swift; path = ../../../../../../../../.Trash/SocialTabView.swift; sourceTree = "<group>"; };
 		320FB74629FB568600CA9310 /* AddFriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendsView.swift; sourceTree = "<group>"; };
+		320FB74829FBF10100CA9310 /* SocialTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialTabView.swift; sourceTree = "<group>"; };
 		32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptions.swift; sourceTree = "<group>"; };
 		322BF19929DC4CD000161820 /* MediaModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModalViewModel.swift; sourceTree = "<group>"; };
 		324BAE5C29B8D3D9002FBB6F /* Watchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Watchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -494,7 +494,7 @@
 		32B3E1D029E60C9400314B4F /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				320FB74429FB566400CA9310 /* SocialTabView.swift */,
+				320FB74829FBF10100CA9310 /* SocialTabView.swift */,
 				320FB74629FB568600CA9310 /* AddFriendsView.swift */,
 				32B3E1D129E60CA800314B4F /* SignInView.swift */,
 				32C89CC829EAFA4B0094D8E2 /* DeleteAccountView.swift */,
@@ -742,6 +742,7 @@
 				32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */,
 				32B5128929CBABC800879AF6 /* StarsView.swift in Sources */,
 				32C89CC729E8BA920094D8E2 /* DisplayNameView.swift in Sources */,
+				320FB74929FBF10100CA9310 /* SocialTabView.swift in Sources */,
 				32B3E1E029E61F7100314B4F /* WatchlistManager.swift in Sources */,
 				329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */,
 				32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */,
@@ -753,7 +754,6 @@
 				320FB74729FB568600CA9310 /* AddFriendsView.swift in Sources */,
 				324BAE9329BA5F1F002FBB6F /* Tab.swift in Sources */,
 				329A768929BA846F0074A4F9 /* PreviewProvider+EXT.swift in Sources */,
-				320FB74529FB566400CA9310 /* SocialTabView.swift in Sources */,
 				320FB74129FAF52000CA9310 /* SocialViewModel.swift in Sources */,
 				3258730929BCD53A005E1394 /* MediaModalView.swift in Sources */,
 				324BAE7E29B91560002FBB6F /* Constants.swift in Sources */,

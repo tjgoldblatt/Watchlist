@@ -8,13 +8,14 @@
 import SwiftUI
 import FirebaseFirestoreSwift
 
+
 struct SocialTabView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     
-    @StateObject var settingsVM = SettingsViewModel()
-    
-    @State private var showSignInView: Bool = false
     @StateObject var vm = SocialViewModel()
+    
+    @StateObject var settingsVM = SettingsViewModel()
+    @State private var showSignInView: Bool = false
     
     @State var showSettingsView: Bool = false
     
@@ -65,34 +66,6 @@ struct SocialTabView: View {
                             }
                             .padding()
                         }
-                        
-                        
-                        ScrollView {
-                            ForEach(vm.allUsers.sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" }), id: \.userId) { user in
-                                if let currentUser = settingsVM.authUser, currentUser.uid != user.userId {
-                                    HStack {
-                                        VStack {
-                                            Text(user.displayName ?? "No Display Name")
-                                                .font(.headline)
-                                                .fontWeight(.semibold)
-                                            Text(user.userId)
-                                                .font(.callout)
-                                        }
-                                        
-                                        Button("Add Friend") {
-                                            vm.sendFriendRequest(userId: user.userId)
-                                        }
-                                        .buttonStyle(.borderedProminent)
-                                        
-                                        Button("Cancel") {
-                                            vm.cancelFriendRequest(userId: user.userId)
-                                        }
-                                        .buttonStyle(.bordered)
-                                    }
-                                    .padding()
-                                }
-                            }
-                        }
                     }
                     
                     linkButtons
@@ -103,6 +76,7 @@ struct SocialTabView: View {
             }
             .onChange(of: vm.friendRequestIds) { requestIds in
                 guard let requestIds else { return }
+                homeVM.pendingFriendRequests = requestIds.count
                 Task {
                     var friendRequests: [DBUser] = []
                     for id in requestIds {
