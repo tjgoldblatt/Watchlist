@@ -12,10 +12,13 @@ import FirebaseFirestoreSwift
 struct SocialTabView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     
-    @StateObject var vm = SocialViewModel()
+    @StateObject var vm: SocialViewModel
+    @StateObject private var settingsVM: SettingsViewModel
     
-    @StateObject var settingsVM = SettingsViewModel()
-    @State private var showSignInView: Bool = false
+    init(vm: SocialViewModel = SocialViewModel(), settingsVM: SettingsViewModel = SettingsViewModel()) {
+        _vm = StateObject(wrappedValue: vm)
+        _settingsVM = StateObject(wrappedValue: settingsVM)
+    }
     
     @State var showSettingsView: Bool = false
     
@@ -98,10 +101,6 @@ struct SocialTabView: View {
             .onFirstAppear {
                 try? vm.addListenerForUser()
             }
-            .onAppear {
-                settingsVM.loadAuthProviders()
-                settingsVM.loadAuthUser()
-            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Image(systemName: "gear")
@@ -124,7 +123,7 @@ struct SocialTabView: View {
 
 struct SocialView_Previews: PreviewProvider {
     static var previews: some View {
-        SocialTabView()
+        SocialTabView(vm: dev.socialVM, settingsVM: dev.settingsVM)
             .environmentObject(dev.homeVM)
     }
 }

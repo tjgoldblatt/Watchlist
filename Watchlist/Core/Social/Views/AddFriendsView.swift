@@ -8,14 +8,8 @@
 import SwiftUI
 
 struct AddFriendsView: View {
-    
-#if DEBUG
-    let socialVM: SocialViewModel
-    let settingsVM: SettingsViewModel
-#else
-    @StateObject var socialVM = SocialViewModel()
+    @EnvironmentObject var socialVM: SocialViewModel
     @EnvironmentObject var settingsVM: SettingsViewModel
-#endif
     
     var body: some View {
         ScrollView {
@@ -47,6 +41,8 @@ struct AddFriendsView: View {
 
 struct AddFriendsView_Previews: PreviewProvider {
     static var previews: some View {
-        AddFriendsView(socialVM: dev.socialVM, settingsVM: dev.settingsVM)
+        AddFriendsView()
+            .environmentObject(dev.socialVM)
+            .environmentObject(dev.settingsVM)
     }
 }
