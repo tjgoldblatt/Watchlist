@@ -6,11 +6,14 @@
 //
 
 import Foundation
+import FirebaseAuth
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
     @Published var authProviders: [AuthProviderOption] = []
     @Published var authUser: AuthDataResultModel? = nil
+    
+    init() {}
     
     func loadAuthProviders() {
         if let providers = try? AuthenticationManager.shared.getProviders() {
@@ -40,3 +43,14 @@ final class SettingsViewModel: ObservableObject {
         self.authUser = try await AuthenticationManager.shared.linkApple(tokens: tokens)
     }
 }
+
+#if DEBUG
+extension SettingsViewModel {
+    convenience init(forPreview: Bool = true) {
+        self.init()
+        //Hard code your mock data for the preview here
+        self.authUser = AuthDataResultModel(uid: "abcds")
+        self.authProviders = [.apple, .google]
+    }
+}
+#endif

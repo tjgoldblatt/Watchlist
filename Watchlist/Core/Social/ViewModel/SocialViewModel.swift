@@ -9,7 +9,6 @@ import Foundation
 import FirebaseFirestore
 import Combine
 
-@MainActor
 final class SocialViewModel: ObservableObject {
     @Published var currentUser: DBUser?
     @Published var allUsers: [DBUser] = []
@@ -90,3 +89,17 @@ final class SocialViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 }
+
+#if DEBUG
+extension SocialViewModel {
+    convenience init(forPreview: Bool = true) {
+        self.init()
+        //Hard code your mock data for the preview here
+        self.currentUser = DBUser(userId: "AB123", isAnonymous: false, email: "foo@gmail.com", displayName: "Steve", friendRequests: ["1a2HaoZWplUcDp7hxS1Ln6mkWmy1", "82rN4294VtT3gyXV8O0bV1I40mN2"], friends: [])
+        self.friendRequests = [DBUser(userId: "aaa123", displayName: "John Smith"), DBUser(userId: "bbb456", displayName: "Maggie Jones")]
+        self.friends = []
+        
+        self.allUsers = [DBUser(userId: "aaa123", displayName: "John Smith"), DBUser(userId: "bbb456", displayName: "Maggie Jones")]
+    }
+}
+#endif

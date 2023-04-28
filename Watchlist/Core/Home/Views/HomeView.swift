@@ -59,6 +59,7 @@ struct HomeView: View {
                             Image(systemName: Tab.social.icon)
                         }
                         .tag(Tab.social)
+                        .badge(homeVM.pendingFriendRequests)
                 }
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)

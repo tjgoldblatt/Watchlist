@@ -50,6 +50,8 @@ final class HomeViewModel: ObservableObject {
     
     @Published var editMode: EditMode = .inactive
     
+    @Published var pendingFriendRequests = 0
+    
     var hapticFeedback = UIImpactFeedbackGenerator(style: .soft)
     
     var database: Blackbird.Database?

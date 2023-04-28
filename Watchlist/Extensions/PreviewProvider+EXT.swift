@@ -19,6 +19,9 @@ class DeveloperPreview {
     
     let homeVM = HomeViewModel()
     
+    let socialVM = SocialViewModel(forPreview: true)
+    let settingsVM = SettingsViewModel(forPreview: true)
+    
     let mediaMock: [DBMedia] = [
         DBMedia(
             media: Media(mediaType: .movie,
