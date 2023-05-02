@@ -17,7 +17,7 @@ extension PreviewProvider {
 class DeveloperPreview {
     static let instance = DeveloperPreview()
     
-    let homeVM = HomeViewModel()
+    let homeVM = HomeViewModel(forPreview: true)
     
     let socialVM = SocialViewModel(forPreview: true)
     let settingsVM = SettingsViewModel(forPreview: true)
@@ -34,17 +34,10 @@ class DeveloperPreview {
                          posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg",
                          backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg",
                          genreIDS: [18],
-                         popularity: nil,
-                         firstAirDate: nil,
-                         originCountry: nil,
-                         originalLanguage: nil,
-                         name: nil,
-                         adult: nil,
                          releaseDate: "2021-10-1",
-                         title: "Batman: The Long Halloween, Part Two",
-                         video: nil,
-                         profilePath: nil,
-                         knownFor: nil), watched: false, personalRating: 7.0),
+                         title: "Batman: The Long Halloween, Part Two"),
+            watched: false,
+            personalRating: 7.0),
         
         DBMedia(
             media: Media(mediaType: .tv,
@@ -57,18 +50,10 @@ class DeveloperPreview {
                          posterPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
                          backdropPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
                          genreIDS: [13],
-                         popularity: nil,
                          firstAirDate: "2021-10-1",
-                         originCountry: nil,
-                         originalLanguage: nil,
-                         name: "Batman: The Brave and the Bold",
-                         adult: nil,
-                         releaseDate: nil,
-                         title: nil,
-                         video: nil,
-                         profilePath: nil,
-                         knownFor: nil),
-            watched: true, personalRating: 2),
+                         name: "Batman: The Brave and the Bold"),
+            watched: true,
+            personalRating: 2),
         
         DBMedia(
             media: Media(mediaType: .movie,
@@ -81,17 +66,10 @@ class DeveloperPreview {
                          posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg",
                          backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg",
                          genreIDS: [18],
-                         popularity: nil,
-                         firstAirDate: nil,
-                         originCountry: nil,
-                         originalLanguage: nil,
-                         name: nil,
-                         adult: nil,
                          releaseDate: "2021-10-1",
-                         title: "Batman: The Long Halloween, Part Two",
-                         video: nil,
-                         profilePath: nil,
-                         knownFor: nil), watched: false, personalRating: 7.0),
+                         title: "Batman: The Long Halloween, Part Two"),
+            watched: false,
+            personalRating: 7.0),
         
         DBMedia(
             media: Media(mediaType: .tv,
@@ -104,17 +82,9 @@ class DeveloperPreview {
                          posterPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
                          backdropPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
                          genreIDS: [13],
-                         popularity: nil,
                          firstAirDate: "2021-10-1",
-                         originCountry: nil,
-                         originalLanguage: nil,
-                         name: nil,
-                         adult: nil,
-                         releaseDate: nil,
-                         title: "Batman: The Brave and the Bold",
-                         video: nil,
-                         profilePath: nil,
-                         knownFor: nil),
-            watched: true, personalRating: 2),
+                         name: "Batman: The Brave and the Bold"),
+            watched: true,
+            personalRating: 2),
     ]
 }

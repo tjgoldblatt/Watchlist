@@ -126,6 +126,13 @@ extension UserManager {
             .getDocuments(as: DBUser.self)
     }
     
+    func getUsersWithFriendRequestFor(userId: String) async throws -> [DBUser] {
+        try await userCollection
+            .whereField(DBUser.CodingKeys.isAnonymous.rawValue, isEqualTo: false)
+            .whereField(DBUser.CodingKeys.friendRequests.rawValue, arrayContains: userId)
+            .getDocuments(as: DBUser.self)
+    }
+    
     /// Returns the user data for the given user id.
     func getUser(userId: String) async throws -> DBUser {
         return try await userDocument(userId: userId).getDocument(as: DBUser.self)

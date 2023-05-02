@@ -37,7 +37,7 @@ enum Tab: String {
             case .explore:
                 return "magnifyingglass"
             case .social:
-                return "person.fill"
+                return "person.2.fill"
         }
     }
 }

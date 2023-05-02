@@ -8,7 +8,8 @@
 import Foundation
 import Combine
 
-class SearchTabViewModel: ObservableObject {
+@MainActor
+final class SearchTabViewModel: ObservableObject {
     @Published var isSearching = false
     
     private var cancellables = Set<AnyCancellable>()

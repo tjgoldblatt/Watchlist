@@ -139,10 +139,11 @@ struct CloseButton: View {
     @EnvironmentObject var homeVM: HomeViewModel
 
     var body: some View {
-        Image(systemName: "xmark")
+        Image(systemName: "xmark.circle.fill")
             .resizable()
-            .frame(width: 20, height: 20)
-            .foregroundColor(Color.theme.genreText)
+            .scaledToFit()
+            .frame(width: 25, height: 25)
+            .foregroundStyle(Color.theme.text, Color.theme.background)
             .fontWeight(.semibold)
             .buttonStyle(.plain)
             .padding(.all, 5)

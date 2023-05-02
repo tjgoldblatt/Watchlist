@@ -9,6 +9,7 @@ import Foundation
 import FirebaseFirestore
 import Combine
 
+@MainActor
 final class SocialViewModel: ObservableObject {
     @Published var currentUser: DBUser?
     @Published var allUsers: [DBUser] = []
@@ -19,6 +20,8 @@ final class SocialViewModel: ObservableObject {
     @Published var friendRequests: [DBUser] = []
     @Published var friends: [DBUser] = []
     
+    @Published var usersWithFriendRequest: [DBUser] = []
+    
     /// Watchlist Listener
     private var userListener: ListenerRegistration? = nil
     
@@ -26,7 +29,7 @@ final class SocialViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        Task {
+        Task { @MainActor in
             self.currentUser = try? await UserManager.shared.getUser()
         }
         if let currentUser {
@@ -37,7 +40,7 @@ final class SocialViewModel: ObservableObject {
     }
     
     func getAllUsers() {
-        Task {
+        Task { @MainActor in
             allUsers = try await UserManager.shared.getAllUsers()
         }
     }
@@ -76,11 +79,18 @@ final class SocialViewModel: ObservableObject {
         }
     }
     
+    func getUsersWithFriendRequestFor(userId: String) {
+        Task { @MainActor in
+            self.usersWithFriendRequest = try await UserManager.shared.getUsersWithFriendRequestFor(userId: userId)
+        }
+    }
+    
     func addListenerForUser() throws {
         let (publisher, listener) = try UserManager.shared.addListenerForUser()
         self.userListener = listener
         
         publisher
+            .receive(on: RunLoop.main)
             .sink(receiveCompletion: CrashlyticsManager.handleCompletition) { [weak self] updatedUser in
                 guard let self else { return }
                 self.friendRequestIds = updatedUser.friendRequests
@@ -97,7 +107,7 @@ extension SocialViewModel {
         //Hard code your mock data for the preview here
         self.currentUser = DBUser(userId: "AB123", isAnonymous: false, email: "foo@gmail.com", displayName: "Steve", friendRequests: ["1a2HaoZWplUcDp7hxS1Ln6mkWmy1", "82rN4294VtT3gyXV8O0bV1I40mN2"], friends: [])
         self.friendRequests = [DBUser(userId: "aaa123", displayName: "John Smith"), DBUser(userId: "bbb456", displayName: "Maggie Jones")]
-        self.friends = []
+        self.friends = [DBUser(userId: "ccc789", displayName: "Jane Doe"), DBUser(userId: "ddd012", displayName: "Joe Schmoe")]
         
         self.allUsers = [DBUser(userId: "aaa123", displayName: "John Smith"), DBUser(userId: "bbb456", displayName: "Maggie Jones")]
     }

@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseAuth
 
-
+@MainActor
 final class SettingsViewModel: ObservableObject {
     @Published var authProviders: [AuthProviderOption] = []
     @Published var authUser: AuthDataResultModel? = nil
