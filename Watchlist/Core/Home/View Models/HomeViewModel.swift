@@ -109,18 +109,10 @@ extension HomeViewModel {
         self.userWatchlistListner = listener
         publisher
             .receive(on: RunLoop.main)
-            .sink(receiveCompletion: CrashlyticsManager.handleCompletition) { [weak self] updatedMediaArray in
+            .sink(receiveCompletion: NetworkingManager.handleCompletition) { [weak self] updatedMediaArray in
                 guard let self else { return }
-                var updatedMovieList: [DBMedia] = []
-                var updatedTVList: [DBMedia] = []
-                
-                for media in updatedMediaArray {
-                    if media.mediaType == .movie {
-                        updatedMovieList.append(media)
-                    } else if media.mediaType == .tv {
-                        updatedTVList.append(media)
-                    }
-                }
+                let updatedMovieList = updatedMediaArray.compactMap { $0.mediaType == .movie ? $0 : nil }
+                let updatedTVList = updatedMediaArray.compactMap { $0.mediaType == .tv ? $0 : nil }
                 
                 self.movieList = updatedMovieList
                 self.tvList = updatedTVList
@@ -239,7 +231,7 @@ extension HomeViewModel {
         }
     }
 }
-#if DEBUG
+
 extension HomeViewModel {
     convenience init(forPreview: Bool = true) {
         self.init()
@@ -342,4 +334,4 @@ extension HomeViewModel {
         ]
     }
 }
-#endif
+

@@ -14,6 +14,8 @@ struct HomeView: View {
     @Environment(\.blackbirdDatabase) var database
     @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
     
+    @State var showDebugView = false
+    
     var body: some View {
         if homeVM.isGenresLoaded {
             ZStack {
@@ -79,6 +81,14 @@ struct HomeView: View {
                             .frame(width: .infinity, height: 50)
                     }
                 }
+            }
+            .onShake {
+                if ApplicationHelper.isDebug {
+                    showDebugView.toggle()
+                }
+            }
+            .sheet(isPresented: $showDebugView) {
+                DebugView()
             }
         } else {
             ProgressView()

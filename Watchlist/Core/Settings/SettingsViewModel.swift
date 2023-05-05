@@ -47,7 +47,7 @@ final class SettingsViewModel: ObservableObject {
     }
 }
 
-#if DEBUG
+
 extension SettingsViewModel {
     convenience init(forPreview: Bool = true) {
         self.init()
@@ -56,4 +56,4 @@ extension SettingsViewModel {
         self.authProviders = [.apple]
     }
 }
-#endif
+

@@ -86,7 +86,7 @@ extension MovieTabView {
                 .id(vm.emptyViewID)
             
             ForEach(sortedSearchResults) { movie in
-                RowView(media: movie, currentTab: .movies)
+                RowView(media: movie)
                     .allowsHitTesting(vm.editMode == .inactive)
                     .listRowBackground(Color.theme.background)
             }

@@ -17,8 +17,6 @@ struct RowView: View {
     
     @State var media: DBMedia
     
-    @State var currentTab: Tab
-    
     @State private var showingSheet = false
     /// For showing the rating modal on swipe - need to work on still
     @State private var showRatingSheet = false
@@ -77,7 +75,7 @@ struct RowView: View {
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
-        RowView(media: dev.mediaMock.first!, currentTab: .movies)
+        RowView(media: dev.mediaMock.first!)
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }

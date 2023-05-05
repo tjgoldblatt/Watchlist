@@ -24,6 +24,9 @@ struct SocialTabView: View {
     @State var showAddFriendsView: Bool = false
     @State var filterText: String = ""
     
+    @GestureState var press = false
+    @State var showMenu = false
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -73,9 +76,6 @@ struct SocialTabView: View {
             }
             .onFirstAppear {
                 try? vm.addListenerForUser()
-            }
-            .onAppear {
-                
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -232,26 +232,20 @@ extension SocialTabView {
                         .clipShape(Circle())
                         .padding(.trailing)
                         
-                        VStack(alignment: .leading) {
+                        HStack {
                             Text(friend.displayName ?? "None")
                                 .font(.title3)
                                 .fontWeight(.semibold)
-                            
-                            Button("Remove Friend") {
-                                vm.removeFriend(userId: friend.userId)
-                            }
-                            .foregroundColor(Color.theme.genreText)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .frame(height: 40)
-                            .frame(minWidth: 120)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.theme.red)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .fixedSize(horizontal: true, vertical: false)
-                            
                         }
                         Spacer()
+                    }
+                    .contentShape(Rectangle())
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            vm.removeFriend(userId: friend.userId)
+                        } label: {
+                            Label("Remove Friend", systemImage: "xmark")
+                        }
                     }
                     .padding(.vertical)
                 }

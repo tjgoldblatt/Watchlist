@@ -16,15 +16,6 @@ class CrashlyticsManager {
         Crashlytics.crashlytics().setUserID(userId)
     }
     
-    static func handleCompletition(completition: Subscribers.Completion<Error>) {
-        switch completition {
-            case .finished:
-                break
-            case .failure(let error):
-                Crashlytics.crashlytics().record(error: error)
-        }
-    }
-    
     static func handleError(error: Error) {
         Crashlytics.crashlytics().record(error: error)
     }

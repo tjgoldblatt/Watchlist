@@ -10,87 +10,6 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import Combine
 
-struct DBMedia: Codable, Identifiable, Hashable {
-    // Media
-    let id: Int
-    let mediaType: MediaType
-    let title, originalTitle: String?
-    let name, originalName: String?
-    let overview: String?
-    let voteAverage: Double?
-    let voteCount: Int?
-    let posterPath: String?
-    let backdropPath: String?
-    let genreIDs: [Int]?
-    let releaseDate: String?
-    let firstAirDate: String?
-    
-    // Extra
-    let watched: Bool
-    let personalRating: Double?
-    
-    init(media: Media, watched: Bool, personalRating: Double?) {
-        self.id = media.id ?? -1
-        self.mediaType = media.mediaType ?? .movie
-        self.title = media.title
-        self.originalTitle = media.originalTitle
-        self.name = media.name
-        self.originalName = media.originalName
-        self.overview = media.overview
-        self.voteAverage = media.voteAverage
-        self.voteCount = media.voteCount
-        self.posterPath = media.posterPath
-        self.backdropPath = media.backdropPath
-        self.genreIDs = media.genreIDS
-        self.watched = watched
-        self.personalRating = personalRating
-        self.releaseDate = media.releaseDate
-        self.firstAirDate = media.firstAirDate
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case mediaType
-        case title
-        case originalTitle
-        case name
-        case originalName
-        case overview
-        case voteAverage
-        case voteCount
-        case posterPath
-        case backdropPath
-        case genreIDs
-        
-        case watched
-        case personalRating
-        
-        case releaseDate
-        case firstAirDate
-    }
-}
-
-struct UserWatchlist: Codable {
-    let userId: String
-    let displayName: String?
-    let isTransferred: Timestamp?
-    @ServerTimestamp var lastUpdated: Timestamp?
-    
-    init(userId: String, displayName: String?, lastUpdated: Timestamp?) {
-        self.userId = userId
-        self.displayName = displayName
-        self.lastUpdated = lastUpdated
-        self.isTransferred = nil
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case userId
-        case displayName
-        case isTransferred
-        case lastUpdated
-    }
-}
-
 final class WatchlistManager {
     static let shared = WatchlistManager()
     private init() {}
@@ -295,8 +214,14 @@ final class WatchlistManager {
     /// Fetches all media of a given type from the user's watchlist.
     /// - Parameter mediaType: The type of media to fetch.
     /// - Returns: An array of `DBMedia` objects representing the user's watchlist.
-    func getMedia(mediaType: MediaType) async throws -> [DBMedia] {
-        let query = try userWatchlistCollection()
+	func getMedia(mediaType: MediaType, forUser userId: String? = nil) async throws -> [DBMedia] {
+		var watchlistCollection = try userWatchlistCollection()
+		
+		if let userId {
+			watchlistCollection = userWatchlistCollection(for: userId)
+		}
+		
+        let query = watchlistCollection
             .whereField(DBMedia.CodingKeys.mediaType.rawValue, isEqualTo: mediaType.rawValue)
         
         return try await query
@@ -326,4 +251,20 @@ final class WatchlistManager {
         let document = try userWatchlistCollection().document("\(mediaId)")
         try document.setData(from: dbMedia, merge: true)
     }
+}
+
+// MARK: - Social
+extension WatchlistManager {
+	func getWatchlistDocument(for userId: String) -> DocumentReference {
+		return watchlistCollection.document(userId)
+	}
+	
+	func getWatchlist(for userId: String) async throws -> UserWatchlist {
+		try await getWatchlistDocument(for: userId).getDocument(as: UserWatchlist.self)
+	}
+	
+	/// Returns the userWatchlist collection reference.
+	func userWatchlistCollection(for userId: String) -> CollectionReference {
+		getWatchlistDocument(for: userId).collection("userWatchlist")
+	}
 }

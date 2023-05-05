@@ -30,77 +30,78 @@ struct MediaModalView: View {
     
     
     var body: some View {
-        ScrollView {
-            backdropSection
-            
-            VStack(spacing: 30) {
-                titleSection
+        GeometryReader { geo in
+            ScrollView {
+                backdropSection(geo: geo)
                 
-                ratingSection
-                
-                overview
+                VStack(alignment: .center, spacing: 30) {
+                    titleSection
+                    
+                    ratingSection
+                    
+                    overview
+                }
+                .padding(.horizontal)
+                .frame(maxWidth: geo.size.width)
             }
-            .padding(.horizontal)
-            .frame(maxWidth: UIScreen.main.bounds.width)
-        }
-        .analyticsScreen(name: "MediaModalView")
-        .overlay(alignment: .topLeading) {
-            Button {
-                dismiss()
-            } label: {
-                CloseButton()
-                    .padding()
-            }
-        }
-        .overlay(alignment: .topTrailing) {
-            if isInMedia(media: vm.media) && vm.media.watched {
-                Menu {
-                    Button(role: .destructive) {
-                        AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
-                        Task {
-                            try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
-                            try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
-                            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                                vm.media = updatedMedia
-                            }
-                        }
-                    } label: {
-                        Text("Reset")
-                        Image(systemName: "arrow.counterclockwise.circle")
-                    }
-                    .buttonStyle(.plain)
+            .analyticsScreen(name: "MediaModalView")
+            .overlay(alignment: .topLeading) {
+                Button {
+                    dismiss()
                 } label: {
-                    Image(systemName: "ellipsis.circle.fill")
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                        .fontWeight(.semibold)
-                        .padding(10)
-                        .foregroundColor(Color.theme.genreText)
-                        .shadow(color: Color.theme.background.opacity(0.4), radius: 2)
+                    CloseButton()
                         .padding()
                 }
             }
-        }
-        .ignoresSafeArea(edges: .top)
-        .onAppear {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                vm.media = updatedMedia
+            .overlay(alignment: .topTrailing) {
+                if isInMedia(media: vm.media) && vm.media.watched {
+                    Menu {
+                        Button(role: .destructive) {
+                            AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
+                            Task {
+                                try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
+                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                    vm.media = updatedMedia
+                                }
+                            }
+                        } label: {
+                            Text("Reset")
+                            Image(systemName: "arrow.counterclockwise.circle")
+                        }
+                        .buttonStyle(.plain)
+                    } label: {
+                        Image(systemName: "ellipsis.circle.fill")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.theme.text, Color.theme.background)
+                            .shadow(color: Color.black.opacity(0.4), radius: 2)
+                            .padding()
+                    }
+                }
             }
+            .ignoresSafeArea(edges: .top)
+            .onAppear {
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                    vm.media = updatedMedia
+                }
+        }
         }
     }
 }
 
 extension MediaModalView {
-    private var backdropSection: some View {
+    func backdropSection(geo: GeometryProxy) -> some View {
         LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(vm.imagePath)")) { state in
             if let image = state.image {
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
-                    .frame(maxHeight: 300)
-                    .clipped()
-                    .shadow(color: Color.black.opacity(0.3), radius: 5)
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : geo.size.width)
+                        .frame(maxHeight: 300)
+                        .clipped()
+                        .shadow(color: Color.black.opacity(0.3), radius: 5)
             } else {
                 ProgressView()
                     .frame(height: 200)
@@ -117,34 +118,44 @@ extension MediaModalView {
     }
     
     private var titleSection: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            VStack(alignment: .leading) {
-                HStack {
-                    if let title = vm.media.mediaType == .movie ? vm.media.title : vm.media.name {
-                        Text(title)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color.theme.text)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.leading)
-                    }
-                    
-                    if vm.media.watched {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(Color.theme.red)
-                            .imageScale(.large)
-                    }
+        VStack(alignment: .center, spacing: 15) {
+            
+            HStack {
+                if let title = vm.media.mediaType == .movie ? vm.media.title : vm.media.name {
+                    Text(title)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color.theme.text)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
                 }
-                
+            }
+            
+            HStack(spacing: 15) {
                 if (vm.media.releaseDate != nil) || (vm.media.firstAirDate != nil) {
                     Text(dateConvertedToYear)
                         .font(.headline)
                         .foregroundColor(Color.theme.text.opacity(0.6))
                         .fontWeight(.medium)
+                    
+                    Color.theme.secondary.frame(width: 1, height: 20)
+                }
+                
+                if let genreIds = vm.media.genreIDs, let genre = getGenres(genreIDs: genreIds).first {
+                    Text(genre.name)
+                        .font(.headline)
+                        .foregroundColor(Color.theme.text.opacity(0.6))
+                        .fontWeight(.medium)
+                }
+                
+                if vm.media.watched {
+                    Color.theme.secondary.frame(width: 1, height: 20)
+
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(Color.theme.red)
+                        .imageScale(.large)
                 }
             }
-            
-            genreSection
         }
     }
     
@@ -231,7 +242,7 @@ extension MediaModalView {
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundColor(!isInMedia(media: vm.media) ? Color.theme.red : Color.theme.genreText)
-                .frame(width: 90, height: 30)
+                .frame(width: 90, height: 35)
                 .background(!isInMedia(media: vm.media) ? Color.theme.secondary : Color.theme.red)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .fixedSize(horizontal: true, vertical: false)

@@ -87,7 +87,7 @@ extension TVShowTabView {
                 .id(vm.emptyViewID)
             
             ForEach(sortedSearchResults) { tvShow in
-                RowView(media: tvShow, currentTab: .tvShows)
+                RowView(media: tvShow)
                     .allowsHitTesting(vm.editMode == .inactive)
                     .listRowBackground(Color.theme.background)
             }
