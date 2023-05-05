@@ -5,9 +5,9 @@
 //  Created by TJ Goldblatt on 3/11/23.
 //
 
-import SwiftUI
-import NukeUI
 import FirebaseAnalyticsSwift
+import NukeUI
+import SwiftUI
 
 struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
@@ -27,7 +27,6 @@ struct MediaModalView: View {
     init(media: DBMedia) {
         _vm = StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
-    
     
     var body: some View {
         GeometryReader { geo in
@@ -86,7 +85,7 @@ struct MediaModalView: View {
                 if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
                     vm.media = updatedMedia
                 }
-        }
+            }
         }
     }
 }
@@ -95,13 +94,13 @@ extension MediaModalView {
     func backdropSection(geo: GeometryProxy) -> some View {
         LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(vm.imagePath)")) { state in
             if let image = state.image {
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : geo.size.width)
-                        .frame(maxHeight: 300)
-                        .clipped()
-                        .shadow(color: Color.black.opacity(0.3), radius: 5)
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : geo.size.width)
+                    .frame(maxHeight: 300)
+                    .clipped()
+                    .shadow(color: Color.black.opacity(0.3), radius: 5)
             } else {
                 ProgressView()
                     .frame(height: 200)
@@ -110,7 +109,7 @@ extension MediaModalView {
     }
     
     private var genreSection: some View {
-        VStack(alignment: .leading){
+        VStack(alignment: .leading) {
             if let genreIds = vm.media.genreIDs {
                 GenreSection(genres: getGenres(genreIDs: genreIds))
             }
@@ -119,7 +118,6 @@ extension MediaModalView {
     
     private var titleSection: some View {
         VStack(alignment: .center, spacing: 15) {
-            
             HStack {
                 if let title = vm.media.mediaType == .movie ? vm.media.title : vm.media.name {
                     Text(title)
@@ -342,7 +340,7 @@ struct ExpandableText: View {
     
     var button: some View {
         Button(isExpanded ? "Less" : "More") {
-            withAnimation(.interactiveSpring()){
+            withAnimation(.interactiveSpring()) {
                 isExpanded.toggle()
             }
         }

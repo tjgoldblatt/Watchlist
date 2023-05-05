@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 3/8/23.
 //
 
-import SwiftUI
 import Blackbird
+import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
@@ -65,7 +65,7 @@ struct HomeView: View {
                 }
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
-                .onChange(of: homeVM.selectedTab) { newValue in
+                .onChange(of: homeVM.selectedTab) { _ in
                     homeVM.hapticFeedback.impactOccurred()
                     homeVM.genresSelected = []
                     homeVM.ratingSelected = 0
@@ -97,7 +97,6 @@ struct HomeView: View {
 }
 
 struct HomeView_Previews: PreviewProvider {
-    
     static var previews: some View {
         HomeView()
             .environmentObject(dev.homeVM)

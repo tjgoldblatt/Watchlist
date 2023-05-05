@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 4/27/23.
 //
 
-import SwiftUI
 import NukeUI
+import SwiftUI
 
 struct AddFriendsView: View {
     @EnvironmentObject var socialVM: SocialViewModel
@@ -30,7 +30,7 @@ struct AddFriendsView: View {
                 AddFriendsFilterView(filterText: $filterText)
                     .padding(.bottom)
                 
-                ScrollView {                    
+                ScrollView {
                     HStack {
                         Text("Quick Add")
                             .font(.title3)
@@ -72,7 +72,7 @@ struct AddFriendsView: View {
                                     Button(doesUserContainCurrentUser(user: user) ? "Cancel" : "Add") {
                                         if doesUserContainCurrentUser(user: user) {
                                             socialVM.cancelFriendRequest(userId: user.userId)
-                                        } else{
+                                        } else {
                                             socialVM.sendFriendRequest(userId: user.userId)
                                         }
                                         
@@ -104,8 +104,8 @@ struct AddFriendsView: View {
                     .fontWeight(.semibold)
                     .buttonStyle(.plain)
                     .padding(.all, 5)
-                    .accessibility(label:Text("Close"))
-                    .accessibility(hint:Text("Tap to close the screen"))
+                    .accessibility(label: Text("Close"))
+                    .accessibility(hint: Text("Tap to close the screen"))
                     .accessibility(addTraits: .isButton)
                     .accessibility(removeTraits: .isImage)
                     .onTapGesture {
@@ -124,9 +124,9 @@ struct AddFriendsView: View {
     
     var users: [DBUser] {
         filterText.isEmpty ?
-        socialVM.allUsers.sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" })
-        :
-        socialVM.allUsers.sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" }).filter({ $0.displayName?.lowercased().contains(filterText.lowercased()) ?? false })
+            socialVM.allUsers.sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" })
+            :
+            socialVM.allUsers.sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" }).filter { $0.displayName?.lowercased().contains(filterText.lowercased()) ?? false }
     }
     
     func doesUserContainCurrentUser(user: DBUser) -> Bool {
@@ -170,6 +170,5 @@ struct AddFriendsFilterView: View {
         .contentShape(RoundedRectangle(cornerRadius: 20))
         .background(Color.theme.secondary)
         .cornerRadius(20)
-        
     }
 }

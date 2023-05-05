@@ -5,14 +5,13 @@
 //  Created by TJ Goldblatt on 4/8/23.
 //
 
-import Foundation
-import FirebaseFirestoreSwift
-import FirebaseFirestore
 import Combine
+import FirebaseFirestore
+import FirebaseFirestoreSwift
+import Foundation
 
 /// This class manages the user data in Firestore. It provides functions to create, update, and delete user data.
 final class UserManager {
-    
     static let shared = UserManager()
     private init() {}
     
@@ -52,8 +51,8 @@ final class UserManager {
     /// Updates the display name for the authenticated user in Firestore.
     /// - Parameter displayName: The new display name.
     func updateDisplayNameForUser(displayName: String) async throws {
-        let data: [String:Any] = [
-            DBUser.CodingKeys.displayName.rawValue : displayName
+        let data: [String: Any] = [
+            DBUser.CodingKeys.displayName.rawValue: displayName
         ]
         
         try await userDocument().updateData(data)
@@ -61,6 +60,7 @@ final class UserManager {
 }
 
 // MARK: - Social
+
 extension UserManager {
     // TODO: Send push notification when a user adds another user OR a user accepts another users friend request
     private func userDocument(userId: String) throws -> DocumentReference {
@@ -93,8 +93,8 @@ extension UserManager {
     func sendFriendRequest(to anotherUserId: String) async throws {
         let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
         
-        let data: [String:Any] = [
-            DBUser.CodingKeys.friendRequests.rawValue : FieldValue.arrayUnion([currentUser.uid])
+        let data: [String: Any] = [
+            DBUser.CodingKeys.friendRequests.rawValue: FieldValue.arrayUnion([currentUser.uid])
         ]
         
         try await userDocument(userId: anotherUserId).updateData(data)
@@ -103,8 +103,8 @@ extension UserManager {
     func cancelFriendRequest(to anotherUserId: String) async throws {
         let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
         
-        let otherUserData: [String:Any] = [
-            DBUser.CodingKeys.friendRequests.rawValue : FieldValue.arrayRemove([currentUser.uid])
+        let otherUserData: [String: Any] = [
+            DBUser.CodingKeys.friendRequests.rawValue: FieldValue.arrayRemove([currentUser.uid])
         ]
         
         try await userDocument(userId: anotherUserId).updateData(otherUserData)
@@ -115,8 +115,8 @@ extension UserManager {
     ///   - anotherUserId: The user ID of the friend request to be removed.
     /// - Throws: An error of type `Error` if the operation fails.
     func removeFriendRequest(from anotherUserId: String) async throws {
-        let currentUserData: [String:Any] = [
-            DBUser.CodingKeys.friendRequests.rawValue : FieldValue.arrayRemove([anotherUserId])
+        let currentUserData: [String: Any] = [
+            DBUser.CodingKeys.friendRequests.rawValue: FieldValue.arrayRemove([anotherUserId])
         ]
         
         try await userDocument().updateData(currentUserData)
@@ -133,8 +133,8 @@ extension UserManager {
     
     func addFriend(friendUserId: String) async throws {
         // Add friend id to current user friends list
-        let currentUserData: [String:Any] = [
-            DBUser.CodingKeys.friends.rawValue : FieldValue.arrayUnion([friendUserId])
+        let currentUserData: [String: Any] = [
+            DBUser.CodingKeys.friends.rawValue: FieldValue.arrayUnion([friendUserId])
         ]
         
         try await userDocument().updateData(currentUserData)
@@ -142,8 +142,8 @@ extension UserManager {
         // Add current user id to new friend's list
         let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
         
-        let friendUserData: [String:Any] = [
-            DBUser.CodingKeys.friends.rawValue : FieldValue.arrayUnion([currentUser.uid])
+        let friendUserData: [String: Any] = [
+            DBUser.CodingKeys.friends.rawValue: FieldValue.arrayUnion([currentUser.uid])
         ]
         
         try await userDocument(userId: friendUserId).updateData(friendUserData)
@@ -151,8 +151,8 @@ extension UserManager {
     
     func removeFriend(friendUserId: String) async throws {
         // Add friend id to current user friends list
-        let currentUserData: [String:Any] = [
-            DBUser.CodingKeys.friends.rawValue : FieldValue.arrayRemove([friendUserId])
+        let currentUserData: [String: Any] = [
+            DBUser.CodingKeys.friends.rawValue: FieldValue.arrayRemove([friendUserId])
         ]
         
         try await userDocument().updateData(currentUserData)
@@ -160,8 +160,8 @@ extension UserManager {
         // Add current user id to new friend's list
         let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
         
-        let friendUserData: [String:Any] = [
-            DBUser.CodingKeys.friends.rawValue : FieldValue.arrayRemove([currentUser.uid])
+        let friendUserData: [String: Any] = [
+            DBUser.CodingKeys.friends.rawValue: FieldValue.arrayRemove([currentUser.uid])
         ]
         
         try await userDocument(userId: friendUserId).updateData(friendUserData)

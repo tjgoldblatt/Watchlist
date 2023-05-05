@@ -5,9 +5,9 @@
 //  Created by TJ Goldblatt on 4/11/23.
 //
 
-import SwiftUI
 import FirebaseFirestoreSwift
 import NukeUI
+import SwiftUI
 
 struct SocialTabView: View {
     @EnvironmentObject var homeVM: HomeViewModel
@@ -40,7 +40,6 @@ struct SocialTabView: View {
                     
                     ScrollView {
                         if settingsVM.authUser?.isAnonymous == false {
-                            
                             friendRequests
                             
                             friends
@@ -59,7 +58,7 @@ struct SocialTabView: View {
                 Task {
                     var friendRequests: [DBUser] = []
                     for id in requestIds {
-                        friendRequests.append(try await vm.convertUserIdToUser(userId: id))
+                        try friendRequests.append(await vm.convertUserIdToUser(userId: id))
                     }
                     vm.friendRequests = friendRequests
                 }
@@ -69,7 +68,7 @@ struct SocialTabView: View {
                 Task {
                     var friends: [DBUser] = []
                     for id in friendIds {
-                        friends.append(try await vm.convertUserIdToUser(userId: id))
+                        try friends.append(await vm.convertUserIdToUser(userId: id))
                     }
                     vm.friends = friends
                 }
@@ -123,6 +122,7 @@ struct SocialView_Previews: PreviewProvider {
 
 extension SocialTabView {
     // MARK: - Header
+
     private var header: some View {
         HeaderView(currentTab: .constant(.social), showIcon: true)
             .padding(.horizontal)
@@ -191,7 +191,6 @@ extension SocialTabView {
                                     Spacer()
                                 }
                                 .frame(maxWidth: .infinity)
-                                
                             }
                             Spacer()
                         }

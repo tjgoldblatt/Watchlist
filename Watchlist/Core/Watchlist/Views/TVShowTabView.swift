@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 3/21/23.
 //
 
-import SwiftUI
 import FirebaseAnalyticsSwift
+import SwiftUI
 
 struct TVShowTabView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
@@ -21,11 +21,11 @@ struct TVShowTabView: View {
         NavigationStack {
             ZStack {
                 // MARK: - Background
+
                 Color.theme.background.ignoresSafeArea()
                 
                 ScrollViewReader { proxy in
                     VStack(spacing: 10) {
-                        
                         header
                         
                         searchbar
@@ -65,6 +65,7 @@ struct TVShowTabView: View {
 
 extension TVShowTabView {
     // MARK: - Header
+
     var header: some View {
         HStack {
             HeaderView(currentTab: .constant(.tvShows), showIcon: true)
@@ -74,12 +75,14 @@ extension TVShowTabView {
     }
     
     // MARK: - Search
+
     var searchbar: some View {
         SearchBarView(searchText: $vm.filterText)
             .disabled(vm.editMode == .active)
     }
     
     // MARK: - Watchlist
+
     func watchlist(scrollProxy: ScrollViewProxy) -> some View {
         List(selection: $vm.selectedRows) {
             /// Used to scroll to top of list
@@ -178,7 +181,6 @@ extension TVShowTabView {
     }
 }
 
-
 extension TVShowTabView {
     var watchFilterOptions: some View {
         HStack {
@@ -208,13 +210,13 @@ extension TVShowTabView {
     }
     
     var searchResults: [DBMedia] {
-        let groupedMedia = homeVM.tvList.filter({ !$0.watched })
+        let groupedMedia = homeVM.tvList.filter { !$0.watched }
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched})
+            var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched })
             
             /// Watched Filter
             if homeVM.watchSelected == .watched {
-                filteredMedia = filteredMedia.filter({ $0.watched })
+                filteredMedia = filteredMedia.filter { $0.watched }
             } else if homeVM.watchSelected == .any {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
             } else {
@@ -227,7 +229,7 @@ extension TVShowTabView {
                     guard let genreIDs = media.genreIDs else { return false }
                     var genreFound = false
                     for selectedGenre in homeVM.genresSelected {
-                        if genreIDs.contains(selectedGenre.id) && genreFound != true {
+                        if genreIDs.contains(selectedGenre.id), genreFound != true {
                             genreFound = true
                         }
                     }
@@ -267,7 +269,7 @@ extension TVShowTabView {
                     return voteAverage1 < voteAverage2
                 }
             } else if homeVM.sortingSelected == .alphabetical {
-                if let title1 = media1.title, let title2 = media2.title  {
+                if let title1 = media1.title, let title2 = media2.title {
                     return title1 < title2
                 } else if let name1 = media1.name, let name2 = media2.name {
                     return name1 < name2

@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 4/8/23.
 //
 
-import Foundation
 import FirebaseAuth
+import Foundation
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
@@ -47,13 +47,13 @@ final class SettingsViewModel: ObservableObject {
     }
 }
 
-
 extension SettingsViewModel {
     convenience init(forPreview: Bool = true) {
         self.init()
-        //Hard code your mock data for the preview here
-        self.authUser = AuthDataResultModel(uid: "abcds")
-        self.authProviders = [.apple]
+        if ApplicationHelper.isDebug {
+            // Hard code your mock data for the preview here
+            self.authUser = AuthDataResultModel(uid: "abcds")
+            self.authProviders = [.apple]
+        }
     }
 }
-
