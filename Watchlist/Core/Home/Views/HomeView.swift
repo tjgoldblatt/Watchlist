@@ -5,14 +5,16 @@
 //  Created by TJ Goldblatt on 3/8/23.
 //
 
-import SwiftUI
 import Blackbird
+import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
     
     @Environment(\.blackbirdDatabase) var database
     @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
+    
+    @State var showDebugView = false
     
     var body: some View {
         if homeVM.isGenresLoaded {
@@ -59,11 +61,11 @@ struct HomeView: View {
                             Image(systemName: Tab.social.icon)
                         }
                         .tag(Tab.social)
+                        .badge(homeVM.pendingFriendRequests)
                 }
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
-                .onChange(of: homeVM.selectedTab) { newValue in
-                    homeVM.hapticFeedback.impactOccurred()
+                .onChange(of: homeVM.selectedTab) { _ in
                     homeVM.genresSelected = []
                     homeVM.ratingSelected = 0
                 }
@@ -79,6 +81,14 @@ struct HomeView: View {
                     }
                 }
             }
+            .onShake {
+                if ApplicationHelper.isDebug {
+                    showDebugView.toggle()
+                }
+            }
+            .sheet(isPresented: $showDebugView) {
+                DebugView()
+            }
         } else {
             ProgressView()
         }
@@ -86,7 +96,6 @@ struct HomeView: View {
 }
 
 struct HomeView_Previews: PreviewProvider {
-    
     static var previews: some View {
         HomeView()
             .environmentObject(dev.homeVM)

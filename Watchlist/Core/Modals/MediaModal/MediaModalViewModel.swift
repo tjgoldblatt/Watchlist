@@ -7,7 +7,8 @@
 
 import Foundation
 
-class MediaModalViewModel: ObservableObject {
+@MainActor
+final class MediaModalViewModel: ObservableObject {
     @Published var isAdded = false
     
     @Published var showingRating = false

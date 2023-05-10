@@ -15,6 +15,6 @@ enum WatchOptions: String, CaseIterable {
 
 enum SortingOptions: String, CaseIterable{
     case alphabetical = "Alphabetical"
-    case highToLow = "Rating (High to Low)"
-    case lowToHigh = "Rating (Low to High)"
+    case imdbRating = "IMDb Rating"
+    case personalRating = "Personal Rating"
 }

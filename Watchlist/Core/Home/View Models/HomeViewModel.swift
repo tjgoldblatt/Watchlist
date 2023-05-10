@@ -5,12 +5,11 @@
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
+import Blackbird
+import Combine
+import FirebaseFirestore
 import Foundation
 import SwiftUI
-import FirebaseFirestore
-import FirebaseCrashlytics
-import Combine
-import Blackbird
 
 @MainActor
 final class HomeViewModel: ObservableObject {
@@ -25,10 +24,6 @@ final class HomeViewModel: ObservableObject {
     
     /// User TVShow Watchlist
     @Published var tvList: [DBMedia] = []
-    
-    private var userWatchlistListneer: ListenerRegistration? = nil
-    
-    private var cancellables = Set<AnyCancellable>()
     
     @Published var isMediaLoaded: Bool = false
     
@@ -49,6 +44,8 @@ final class HomeViewModel: ObservableObject {
     
     @Published var editMode: EditMode = .inactive
     
+    @Published var pendingFriendRequests = 0
+    
     var hapticFeedback = UIImpactFeedbackGenerator(style: .soft)
     
     var database: Blackbird.Database?
@@ -56,48 +53,17 @@ final class HomeViewModel: ObservableObject {
     /// To track filtering
     @Published var genresSelected: Set<Genre> = []
     @Published var ratingSelected: Int = 0
-    @Published var watchSelected: WatchOptions = WatchOptions.unwatched
-    @Published var sortingSelected: SortingOptions = SortingOptions.alphabetical
+    @Published var watchSelected: WatchOptions = .unwatched
+    @Published var sortingSelected: SortingOptions = .alphabetical
     
+    /// Watchlist Listener
+    private var userWatchlistListener: ListenerRegistration? = nil
+    
+    /// Cancellables
+    private var cancellables = Set<AnyCancellable>()
+
     init() {
-        Task {
-            try await fetchGenreLists()
-        }
-    }
-    
-    /// Fetches the list of genres from the API
-    @MainActor func fetchGenreLists() async throws {
-        try await withThrowingTaskGroup(of: Void.self, body: { group in
-            group.addTask(operation: { try await self.getMovieGenreList() })
-            group.addTask(operation: { try await self.getTVGenreList() })
-            try await group.waitForAll()
-            isGenresLoaded = true
-        })
-    }
-    
-    func addListenerForMedia() throws {
-        let (publisher, listener) = try WatchlistManager.shared.addListenerForGetMedia()
-        self.userWatchlistListneer = listener
-        publisher
-            .sink(receiveCompletion: CrashlyticsManager.handleCompletition, receiveValue: { [weak self] updatedMediaArray in
-                guard let self else { return }
-                var updatedMovieList: [DBMedia] = []
-                var updatedTVList: [DBMedia] = []
-                
-                for media in updatedMediaArray {
-                    if media.mediaType == .movie {
-                        updatedMovieList.append(media)
-                    } else if media.mediaType == .tv {
-                        updatedTVList.append(media)
-                    }
-                }
-                
-                self.movieList = updatedMovieList
-                self.tvList = updatedTVList
-                
-                self.isMediaLoaded = true
-            })
-            .store(in: &cancellables)
+        fetchGenreLists()
     }
     
     func getUpdatedMediaFromList(mediaId: Int) -> DBMedia? {
@@ -132,6 +98,40 @@ final class HomeViewModel: ObservableObject {
             try await WatchlistManager.shared.setTransferred()
         }
     }
+}
+
+// MARK: - Media Listener
+
+extension HomeViewModel {
+    func addListenerForMedia() throws {
+        let (publisher, listener) = try WatchlistManager.shared.addListenerForGetMedia()
+        userWatchlistListener = listener
+        publisher
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: NetworkingManager.handleCompletition) { [weak self] updatedMediaArray in
+                guard let self else { return }
+                let updatedMovieList = updatedMediaArray.compactMap { $0.mediaType == .movie ? $0 : nil }
+                let updatedTVList = updatedMediaArray.compactMap { $0.mediaType == .tv ? $0 : nil }
+                
+                self.movieList = updatedMovieList
+                self.tvList = updatedTVList
+                
+                self.isMediaLoaded = true
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: - Genre
+
+extension HomeViewModel {
+    /// Fetches the list of genres from the API
+    @MainActor
+    func fetchGenreLists() {
+        self.getMovieGenreList()
+        self.getTVGenreList()
+        isGenresLoaded = true
+    }
     
     /// Get Genres for a specific MediaType
     func getGenresForMediaType(for type: MediaType, genreIDs: [Int]) -> [Genre] {
@@ -139,13 +139,13 @@ final class HomeViewModel: ObservableObject {
         switch type {
             case .movie:
                 if !movieGenreList.isEmpty {
-                    genreNames = movieGenreList.filter({ return genreIDs.contains($0.id) })
+                    genreNames = movieGenreList.filter { genreIDs.contains($0.id) }
                 } else {
                     CrashlyticsManager.handleWarning(warning: "Movie Genre List Empty")
                 }
             case .tv:
                 if !tvGenreList.isEmpty {
-                    genreNames = tvGenreList.filter({ return genreIDs.contains($0.id) })
+                    genreNames = tvGenreList.filter { genreIDs.contains($0.id) }
                 } else {
                     CrashlyticsManager.handleWarning(warning: "TV Genre List Empty")
                 }
@@ -173,44 +173,34 @@ final class HomeViewModel: ObservableObject {
         return Array(Set(foundGenres))
     }
     
-    func getMovieGenreList() async throws {
-        let genres: [Genre] = try await withCheckedThrowingContinuation({ continuation in
-            TMDbService.getMovieGenreList { result in
-                switch result {
-                    case .success(let genres):
-                        continuation.resume(returning: genres)
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                }
+    /// Fetches movie genre list from TMDBService
+    func getMovieGenreList() {
+        TMDbService.getMovieGenreList()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: NetworkingManager.handleCompletition) { genres in
+                self.movieGenreList = genres
             }
-        })
-        DispatchQueue.main.async {
-            self.movieGenreList = genres
-        }
-        
+            .store(in: &cancellables)
     }
     
-    func getTVGenreList() async throws {
-        let genres: [Genre] = try await withCheckedThrowingContinuation({ continuation in
-            TMDbService.getTVGenreList { result in
-                switch result {
-                    case .success(let genres):
-                        continuation.resume(returning: genres)
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                }
+    /// Fetches tv genre list from TMDBService
+    func getTVGenreList() {
+        TMDbService.getTVGenreList()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: NetworkingManager.handleCompletition) { genres in
+                self.tvGenreList = genres
             }
-        })
-        
-        DispatchQueue.main.async {
-            self.tvGenreList = genres
-        }
+            .store(in: &cancellables)
     }
-    
+}
+
+// MARK: - Media Codable
+
+extension HomeViewModel {
     func encodeData(with media: Media) -> Data? {
         do {
             return try JSONEncoder().encode(media)
-        } catch let error {
+        } catch {
             CrashlyticsManager.handleError(error: NetworkError.encode(error: error))
             return nil
         }
@@ -219,9 +209,114 @@ final class HomeViewModel: ObservableObject {
     func decodeData(with data: Data) -> Media? {
         do {
             return try JSONDecoder().decode(Media.self, from: data)
-        } catch let error {
+        } catch {
             CrashlyticsManager.handleError(error: NetworkError.decode(error: error))
             return nil
+        }
+    }
+}
+
+extension HomeViewModel {
+    convenience init(forPreview: Bool = false) {
+        self.init()
+        if ApplicationHelper.isDebug && forPreview {
+            // Hard code your mock data for the preview here
+            self.isMediaLoaded = true
+            self.movieList = [
+                DBMedia(
+                    media: Media(mediaType: .movie,
+                                 id: 5,
+                                 originalTitle: "Batman: The Long Halloween, Part Two",
+                                 originalName: nil,
+                                 overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
+                                 voteAverage: 7.532,
+                                 voteCount: 13,
+                                 posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg",
+                                 backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg",
+                                 genreIDS: [18],
+                                 releaseDate: "2021-10-1",
+                                 title: "Batman: The Long Halloween, Part Two"),
+                    watched: true,
+                    personalRating: 7.0),
+                DBMedia(
+                    media: Media(mediaType: .movie,
+                                 id: 5,
+                                 originalTitle: "Batman: The Long Halloween, Part Two",
+                                 originalName: nil,
+                                 overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
+                                 voteAverage: 7.532,
+                                 voteCount: 13,
+                                 posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg",
+                                 backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg",
+                                 genreIDS: [18],
+                                 releaseDate: "2021-10-1",
+                                 title: "Batman: The Long Halloween, Part Two"),
+                    watched: false,
+                    personalRating: 7.0),
+                DBMedia(
+                    media: Media(mediaType: .movie,
+                                 id: 5,
+                                 originalTitle: "Batman: The Long Halloween, Part Two",
+                                 originalName: nil,
+                                 overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
+                                 voteAverage: 7.532,
+                                 voteCount: 13,
+                                 posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg",
+                                 backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg",
+                                 genreIDS: [18],
+                                 releaseDate: "2021-10-1",
+                                 title: "Batman: The Long Halloween, Part Two"),
+                    watched: false,
+                    personalRating: 7.0),
+            ]
+            
+            self.tvList = [
+                DBMedia(
+                    media: Media(mediaType: .tv,
+                                 id: 1,
+                                 originalTitle: nil,
+                                 originalName: "Batman: The Brave and the Bold",
+                                 overview: "The Caped Crusader is teamed up with Blue Beetle, Green Arrow, Aquaman and countless others in his quest to uphold justice.",
+                                 voteAverage: 7.532,
+                                 voteCount: 13,
+                                 posterPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
+                                 backdropPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
+                                 genreIDS: [13],
+                                 firstAirDate: "2021-10-1",
+                                 name: "Batman: The Brave and the Bold"),
+                    watched: false,
+                    personalRating: 2),
+                DBMedia(
+                    media: Media(mediaType: .tv,
+                                 id: 1,
+                                 originalTitle: nil,
+                                 originalName: "Batman: The Brave and the Bold",
+                                 overview: "The Caped Crusader is teamed up with Blue Beetle, Green Arrow, Aquaman and countless others in his quest to uphold justice.",
+                                 voteAverage: 7.532,
+                                 voteCount: 13,
+                                 posterPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
+                                 backdropPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
+                                 genreIDS: [13],
+                                 firstAirDate: "2021-10-1",
+                                 name: "Batman: The Brave and the Bold"),
+                    watched: true,
+                    personalRating: 2),
+                DBMedia(
+                    media: Media(mediaType: .tv,
+                                 id: 1,
+                                 originalTitle: nil,
+                                 originalName: "Batman: The Brave and the Bold",
+                                 overview: "The Caped Crusader is teamed up with Blue Beetle, Green Arrow, Aquaman and countless others in his quest to uphold justice.",
+                                 voteAverage: 7.532,
+                                 voteCount: 13,
+                                 posterPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
+                                 backdropPath: "/roAoQx0TTDMCg6nXoo8ClP2TSe8.jpg",
+                                 genreIDS: [13],
+                                 firstAirDate: "2021-10-1",
+                                 name: "Batman: The Brave and the Bold"),
+                    watched: false,
+                    personalRating: 2),
+            ]
         }
     }
 }

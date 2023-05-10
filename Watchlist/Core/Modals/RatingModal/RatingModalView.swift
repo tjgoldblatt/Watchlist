@@ -98,7 +98,6 @@ struct RatingModalView: View {
                         .disabled(rating == 0)
                         .opacity(rating != 0 ? 1 : 0.7)
                         .onTapGesture {
-                                homeVM.hapticFeedback.impactOccurred()
                                 Task {
                                     try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
                                     
@@ -139,20 +138,18 @@ struct CloseButton: View {
     @EnvironmentObject var homeVM: HomeViewModel
 
     var body: some View {
-        Image(systemName: "xmark")
+        Image(systemName: "xmark.circle.fill")
             .resizable()
-            .frame(width: 20, height: 20)
-            .foregroundColor(Color.theme.genreText)
+            .scaledToFit()
+            .frame(width: 25, height: 25)
+            .foregroundStyle(Color.theme.text, Color.theme.background)
             .fontWeight(.semibold)
-            .buttonStyle(.plain)
-            .padding(.all, 5)
             .shadow(color: Color.black.opacity(0.4), radius: 2)
             .accessibility(label:Text("Close"))
             .accessibility(hint:Text("Tap to close the screen"))
             .accessibility(addTraits: .isButton)
             .accessibility(removeTraits: .isImage)
             .onTapGesture {
-                homeVM.hapticFeedback.impactOccurred()
                 dismiss()
             }
     }
