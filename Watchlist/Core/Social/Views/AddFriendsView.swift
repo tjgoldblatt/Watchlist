@@ -55,8 +55,8 @@ struct AddFriendsView: View {
                                                 .background(Color.theme.secondary)
                                         }
                                     }
-                                    .frame(width: 50, height: 50)
                                     .clipShape(Circle())
+                                    .frame(width: 50, height: 50)
                                     .padding(.trailing)
                                     
                                     VStack(alignment: .leading) {
@@ -109,7 +109,6 @@ struct AddFriendsView: View {
                     .accessibility(addTraits: .isButton)
                     .accessibility(removeTraits: .isImage)
                     .onTapGesture {
-                        homeVM.hapticFeedback.impactOccurred()
                         dismiss()
                     }
             }
@@ -123,10 +122,10 @@ struct AddFriendsView: View {
     }
     
     var users: [DBUser] {
-        filterText.isEmpty ?
-            socialVM.allUsers.sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" })
+        return filterText.isEmpty ?
+            socialVM.allUsers
             :
-            socialVM.allUsers.sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" }).filter { $0.displayName?.lowercased().contains(filterText.lowercased()) ?? false }
+            socialVM.allUsers.filter { $0.displayName?.lowercased().contains(filterText.lowercased()) ?? false }
     }
     
     func doesUserContainCurrentUser(user: DBUser) -> Bool {
@@ -163,6 +162,22 @@ struct AddFriendsFilterView: View {
                 .foregroundColor(Color.theme.text)
                 .font(.system(size: 16, design: .default))
                 .submitLabel(.search)
+                .focused($isFocused)
+                .overlay(alignment: .trailing) {
+                    if isFocused, !filterText.isEmpty {
+                        Image(systemName: "xmark.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 15, height: 15)
+                            .padding()
+                            .offset(x: 15)
+                            .foregroundColor(Color.theme.text)
+                            .opacity(!isFocused ? 0.0 : 1.0)
+                            .onTapGesture {
+                                filterText = ""
+                            }
+                    }
+                }
         }
         .font(.headline)
         .padding()

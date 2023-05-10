@@ -66,7 +66,6 @@ struct HomeView: View {
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
                 .onChange(of: homeVM.selectedTab) { _ in
-                    homeVM.hapticFeedback.impactOccurred()
                     homeVM.genresSelected = []
                     homeVM.ratingSelected = 0
                 }

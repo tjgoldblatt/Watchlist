@@ -1,5 +1,5 @@
 //
-//  SeachDetailsViewModel.swift
+//  SearchTabViewModel.swift
 //  Watchlist
 //
 //  Created by TJ Goldblatt on 3/9/23.

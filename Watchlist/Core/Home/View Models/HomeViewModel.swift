@@ -25,12 +25,6 @@ final class HomeViewModel: ObservableObject {
     /// User TVShow Watchlist
     @Published var tvList: [DBMedia] = []
     
-    /// Watchlist Listener
-    private var userWatchlistListner: ListenerRegistration? = nil
-    
-    /// Cancellables
-    private var cancellables = Set<AnyCancellable>()
-    
     @Published var isMediaLoaded: Bool = false
     
     /// Explore page results
@@ -62,10 +56,14 @@ final class HomeViewModel: ObservableObject {
     @Published var watchSelected: WatchOptions = .unwatched
     @Published var sortingSelected: SortingOptions = .alphabetical
     
+    /// Watchlist Listener
+    private var userWatchlistListener: ListenerRegistration? = nil
+    
+    /// Cancellables
+    private var cancellables = Set<AnyCancellable>()
+
     init() {
-        Task {
-            try await fetchGenreLists()
-        }
+        fetchGenreLists()
     }
     
     func getUpdatedMediaFromList(mediaId: Int) -> DBMedia? {
@@ -107,7 +105,7 @@ final class HomeViewModel: ObservableObject {
 extension HomeViewModel {
     func addListenerForMedia() throws {
         let (publisher, listener) = try WatchlistManager.shared.addListenerForGetMedia()
-        userWatchlistListner = listener
+        userWatchlistListener = listener
         publisher
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { [weak self] updatedMediaArray in
@@ -129,13 +127,10 @@ extension HomeViewModel {
 extension HomeViewModel {
     /// Fetches the list of genres from the API
     @MainActor
-    func fetchGenreLists() async throws {
-        try await withThrowingTaskGroup(of: Void.self, body: { group in
-            group.addTask(operation: { try await self.getMovieGenreList() })
-            group.addTask(operation: { try await self.getTVGenreList() })
-            try await group.waitForAll()
-            isGenresLoaded = true
-        })
+    func fetchGenreLists() {
+        self.getMovieGenreList()
+        self.getTVGenreList()
+        isGenresLoaded = true
     }
     
     /// Get Genres for a specific MediaType
@@ -178,37 +173,24 @@ extension HomeViewModel {
         return Array(Set(foundGenres))
     }
     
-    func getMovieGenreList() async throws {
-        let genres: [Genre] = try await withCheckedThrowingContinuation { continuation in
-            TMDbService.getMovieGenreList { result in
-                switch result {
-                    case .success(let genres):
-                        continuation.resume(returning: genres)
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                }
+    /// Fetches movie genre list from TMDBService
+    func getMovieGenreList() {
+        TMDbService.getMovieGenreList()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: NetworkingManager.handleCompletition) { genres in
+                self.movieGenreList = genres
             }
-        }
-        DispatchQueue.main.async {
-            self.movieGenreList = genres
-        }
+            .store(in: &cancellables)
     }
     
-    func getTVGenreList() async throws {
-        let genres: [Genre] = try await withCheckedThrowingContinuation { continuation in
-            TMDbService.getTVGenreList { result in
-                switch result {
-                    case .success(let genres):
-                        continuation.resume(returning: genres)
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                }
+    /// Fetches tv genre list from TMDBService
+    func getTVGenreList() {
+        TMDbService.getTVGenreList()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: NetworkingManager.handleCompletition) { genres in
+                self.tvGenreList = genres
             }
-        }
-        
-        DispatchQueue.main.async {
-            self.tvGenreList = genres
-        }
+            .store(in: &cancellables)
     }
 }
 
@@ -235,9 +217,9 @@ extension HomeViewModel {
 }
 
 extension HomeViewModel {
-    convenience init(forPreview: Bool = true) {
+    convenience init(forPreview: Bool = false) {
         self.init()
-        if ApplicationHelper.isDebug {
+        if ApplicationHelper.isDebug && forPreview {
             // Hard code your mock data for the preview here
             self.isMediaLoaded = true
             self.movieList = [

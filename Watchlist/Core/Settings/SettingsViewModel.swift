@@ -48,9 +48,9 @@ final class SettingsViewModel: ObservableObject {
 }
 
 extension SettingsViewModel {
-    convenience init(forPreview: Bool = true) {
+    convenience init(forPreview: Bool = false) {
         self.init()
-        if ApplicationHelper.isDebug {
+        if ApplicationHelper.isDebug, forPreview {
             // Hard code your mock data for the preview here
             self.authUser = AuthDataResultModel(uid: "abcds")
             self.authProviders = [.apple]

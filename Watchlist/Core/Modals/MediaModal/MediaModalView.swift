@@ -87,6 +87,7 @@ struct MediaModalView: View {
                 }
             }
         }
+        .background(Color.theme.background)
     }
 }
 
@@ -197,7 +198,6 @@ extension MediaModalView {
     
     private var rateThisButton: some View {
         Button {
-            homeVM.hapticFeedback.impactOccurred()
             vm.showingRating.toggle()
             AnalyticsManager.shared.logEvent(name: "MediaModalView_RateButton_Tapped")
         } label: {
@@ -223,7 +223,6 @@ extension MediaModalView {
     
     private var addButton: some View {
         Button {
-            homeVM.hapticFeedback.impactOccurred()
             if !isInMedia(media: vm.media) {
                 Task {
                     try await WatchlistManager.shared.createNewMediaInWatchlist(media: vm.media)

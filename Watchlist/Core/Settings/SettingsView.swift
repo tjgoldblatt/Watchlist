@@ -27,8 +27,10 @@ struct SettingsView: View {
                 
                 List {
                     appearanceSection
+                        .listRowBackground(Color.theme.secondary)
                     accountSection
-                    userInfoSection
+                        .listRowBackground(Color.theme.secondary)
+//                    userInfoSection
                 }
                 .scrollContentBackground(.hidden)
                 .onAppear {
@@ -90,7 +92,6 @@ extension SettingsView {
     
     private var accountSection: some View {
         Section {
-            // Hide log out button if user is anon
             if viewModel.authUser?.isAnonymous == false {
                 Button("Log Out") {
                     AnalyticsManager.shared.logEvent(name: "SettingsView_LogOut")

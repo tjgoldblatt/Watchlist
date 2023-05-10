@@ -92,7 +92,6 @@ struct SearchBarView: View {
                                 .foregroundColor(Color.theme.text)
                                 .opacity(!isFocused ? 0.0 : 1.0)
                                 .onTapGesture {
-                                    homeVM.hapticFeedback.impactOccurred()
                                     searchText = ""
                                     textObserver.searchText = ""
                                     if homeVM.selectedTab == .explore {
@@ -109,7 +108,6 @@ struct SearchBarView: View {
                                 .foregroundColor(Color.theme.red)
                                 .opacity(!isFocused ? 1.0 : 0.0)
                                 .onTapGesture {
-                                    homeVM.hapticFeedback.impactOccurred()
                                     showFilterSheet.toggle()
                                     AnalyticsManager.shared.logEvent(name: "FilterButton_Tapped")
                                 }

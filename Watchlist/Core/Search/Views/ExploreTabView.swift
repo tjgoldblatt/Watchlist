@@ -130,13 +130,13 @@ extension ExploreTabView {
     
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
-            if homeVM.sortingSelected == .highToLow {
+            if homeVM.sortingSelected == .imdbRating {
                 if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
                     return voteAverage1 > voteAverage2
                 }
-            } else if homeVM.sortingSelected == .lowToHigh {
-                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                    return voteAverage1 < voteAverage2
+            } else if homeVM.sortingSelected == .personalRating {
+                if let personalRating1 = media1.personalRating, let personalRating2 = media2.personalRating {
+                    return personalRating1 > personalRating2
                 }
             }
             return false

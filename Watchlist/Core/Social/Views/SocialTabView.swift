@@ -35,8 +35,8 @@ struct SocialTabView: View {
                 VStack(spacing: 10) {
                     header
                     
-                    AddFriendsFilterView(filterText: $filterText)
-                        .padding(.horizontal)
+//                    AddFriendsFilterView(filterText: $filterText)
+//                        .padding(.horizontal)
                     
                     ScrollView {
                         if settingsVM.authUser?.isAnonymous == false {
@@ -154,8 +154,8 @@ extension SocialTabView {
                                         .background(Color.theme.secondary)
                                 }
                             }
-                            .frame(width: 60, height: 60)
                             .clipShape(Circle())
+                            .frame(width: 60, height: 60)
                             .padding(.trailing)
                             
                             VStack(alignment: .leading) {
@@ -213,40 +213,45 @@ extension SocialTabView {
                 }
                 
                 ForEach(vm.friends) { friend in
-                    HStack {
-                        LazyImage(url: URL(string: friend.photoUrl ?? "")) { state in
-                            if let image = state.image {
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                            } else {
-                                Image(systemName: "person.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding()
-                                    .background(Color.theme.secondary)
+                    NavigationLink {
+                        FriendWatchlistView(userId: friend.userId)
+                    } label: {
+                        HStack {
+                            LazyImage(url: URL(string: friend.photoUrl ?? "")) { state in
+                                if let image = state.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                } else {
+                                    Image(systemName: "person.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .padding()
+                                        .background(Color.theme.secondary)
+                                }
+                            }
+                            .clipShape(Circle())
+                            .frame(width: 80, height: 80)
+                            .padding(.trailing)
+                            
+                            HStack {
+                                Text(friend.displayName ?? "None")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                            }
+                            Spacer()
+                        }
+                        .contentShape(Rectangle())
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                vm.removeFriend(userId: friend.userId)
+                            } label: {
+                                Label("Remove Friend", systemImage: "xmark")
                             }
                         }
-                        .frame(width: 80, height: 80)
-                        .clipShape(Circle())
-                        .padding(.trailing)
-                        
-                        HStack {
-                            Text(friend.displayName ?? "None")
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                        }
-                        Spacer()
+                        .padding(.vertical)
                     }
-                    .contentShape(Rectangle())
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            vm.removeFriend(userId: friend.userId)
-                        } label: {
-                            Label("Remove Friend", systemImage: "xmark")
-                        }
-                    }
-                    .padding(.vertical)
+                    .foregroundColor(Color.theme.text)
                 }
             }
         }

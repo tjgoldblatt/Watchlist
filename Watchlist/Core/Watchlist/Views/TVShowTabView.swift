@@ -154,7 +154,6 @@ extension TVShowTabView {
                     .foregroundStyle(Color.theme.genreText, Color.theme.red)
                     .padding()
                     .onTapGesture {
-                        homeVM.hapticFeedback.impactOccurred()
                         vm.deleteConfirmationShowing.toggle()
                     }
             }
@@ -196,7 +195,6 @@ extension TVShowTabView {
                             .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.red : Color.theme.secondary.opacity(0.6))
                     }
                     .onTapGesture {
-                        homeVM.hapticFeedback.impactOccurred()
                         if homeVM.watchSelected != watchOption {
                             AnalyticsManager.shared.logEvent(name: "TVTabView_\(watchOption.rawValue)_Tapped")
                             homeVM.watchSelected = watchOption
@@ -260,22 +258,21 @@ extension TVShowTabView {
     
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
-            if homeVM.sortingSelected == .highToLow {
-                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                    return voteAverage1 > voteAverage2
-                }
-            } else if homeVM.sortingSelected == .lowToHigh {
-                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                    return voteAverage1 < voteAverage2
-                }
-            } else if homeVM.sortingSelected == .alphabetical {
-                if let title1 = media1.title, let title2 = media2.title {
-                    return title1 < title2
-                } else if let name1 = media1.name, let name2 = media2.name {
-                    return name1 < name2
-                } else {
-                    return false
-                }
+            switch homeVM.sortingSelected {
+                case .alphabetical:
+                    if let title1 = media1.title, let title2 = media2.title {
+                        return title1 < title2
+                    } else if let name1 = media1.name, let name2 = media2.name {
+                        return name1 < name2
+                    } else {
+                        return false
+                    }
+                case .imdbRating:
+                    if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                        return voteAverage1 > voteAverage2
+                    }
+                case .personalRating:
+                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) > (media2.personalRating ?? 0, media2.voteAverage ?? 0)
             }
             return false
         }

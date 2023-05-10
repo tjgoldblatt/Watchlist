@@ -23,8 +23,8 @@ struct DBMedia: Codable, Identifiable, Hashable {
     let firstAirDate: String?
 	
     // Extra
-    let watched: Bool
-    let personalRating: Double?
+    var watched: Bool
+    var personalRating: Double?
 	
     init(media: Media, watched: Bool, personalRating: Double?) {
         self.id = media.id ?? -1

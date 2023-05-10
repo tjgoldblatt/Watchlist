@@ -42,7 +42,6 @@ struct RowView: View {
             RatingModalView(media: media, shouldShowRatingModal: $showRatingSheet)
         }
         .onTapGesture {
-            homeVM.hapticFeedback.impactOccurred()
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
