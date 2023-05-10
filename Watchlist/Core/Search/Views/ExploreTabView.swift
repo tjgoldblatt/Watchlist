@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
-import SwiftUI
 import FirebaseAnalyticsSwift
+import SwiftUI
 
 struct ExploreTabView: View {
     @Environment(\.dismiss) var dismiss
@@ -24,6 +24,7 @@ struct ExploreTabView: View {
         NavigationStack {
             ZStack {
                 // MARK: - Background
+
                 Color.theme.background.ignoresSafeArea()
                 
                 VStack(spacing: 10) {
@@ -54,6 +55,7 @@ struct ExploreTabView: View {
 
 extension ExploreTabView {
     // MARK: - Header
+
     var header: some View {
         NavigationStack {
             HeaderView(currentTab: .constant(.explore), showIcon: true)
@@ -62,16 +64,16 @@ extension ExploreTabView {
     }
     
     // MARK: - Search
+
     var searchBar: some View {
         SearchBarView(searchText: $homeVM.searchText) {
-            Task {
-                await vm.search()
-            }
+            vm.search()
         }
         .padding(.bottom)
     }
     
     // MARK: - Search Results
+
     var searchResultsView: some View {
         if !vm.isSearching && homeVM.selectedTab == .explore {
             return AnyView(
@@ -84,11 +86,11 @@ extension ExploreTabView {
                     }
                     .listRowBackground(Color.clear)
                 }
-                    .background(.clear)
-                    .scrollContentBackground(.hidden)
-                    .scrollIndicators(.hidden)
-                    .listStyle(.plain)
-                    .scrollDismissesKeyboard(.immediately)
+                .background(.clear)
+                .scrollContentBackground(.hidden)
+                .scrollIndicators(.hidden)
+                .listStyle(.plain)
+                .scrollDismissesKeyboard(.immediately)
             )
         } else {
             return AnyView(ProgressView())
@@ -96,7 +98,7 @@ extension ExploreTabView {
     }
     
     var searchResults: [DBMedia] {
-        let groupedMedia = homeVM.results.map({ DBMedia(media: $0, watched: false, personalRating: nil) })
+        let groupedMedia = homeVM.results.map { DBMedia(media: $0, watched: false, personalRating: nil) }
         if !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = groupedMedia
             
@@ -128,18 +130,17 @@ extension ExploreTabView {
     
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
-            if homeVM.sortingSelected == .highToLow {
+            if homeVM.sortingSelected == .imdbRating {
                 if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
                     return voteAverage1 > voteAverage2
                 }
-            } else if homeVM.sortingSelected == .lowToHigh {
-                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                    return voteAverage1 < voteAverage2
+            } else if homeVM.sortingSelected == .personalRating {
+                if let personalRating1 = media1.personalRating, let personalRating2 = media2.personalRating {
+                    return personalRating1 > personalRating2
                 }
             }
             return false
         }
-        
     }
 }
 

@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
-import SwiftUI
 import NukeUI
+import SwiftUI
 
 struct RowView: View {
     @EnvironmentObject var homeVM: HomeViewModel
@@ -16,8 +16,6 @@ struct RowView: View {
     @State var isWatched: Bool = false
     
     @State var media: DBMedia
-    
-    @State var currentTab: Tab
     
     @State private var showingSheet = false
     /// For showing the rating modal on swipe - need to work on still
@@ -44,7 +42,6 @@ struct RowView: View {
             RatingModalView(media: media, shouldShowRatingModal: $showRatingSheet)
         }
         .onTapGesture {
-            homeVM.hapticFeedback.impactOccurred()
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
@@ -71,13 +68,12 @@ struct RowView: View {
                 }
             }
         }
-        
     }
 }
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
-        RowView(media: dev.mediaMock.first!, currentTab: .movies)
+        RowView(media: dev.mediaMock.first!)
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }
@@ -103,10 +99,10 @@ extension RowView {
                 .foregroundColor(Color.theme.text)
                 .lineLimit(3)
             
-            if let genres = getGenres(genreIDs:  media.genreIDs) {
+            if let genres = getGenres(genreIDs: media.genreIDs) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
+                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { _, genre in
                             GenreView(genreName: genre.name)
                         }
                     }
@@ -183,7 +179,7 @@ struct ThumbnailView: View {
                         ProgressView()
                             .foregroundColor(Color.theme.text)
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: frameWidth/2)
+                            .frame(width: frameWidth / 2)
                             .offset(x: -2)
                     }
             }

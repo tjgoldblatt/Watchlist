@@ -43,7 +43,6 @@ struct ExploreRowView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            homeVM.hapticFeedback.impactOccurred()
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet, onDismiss: {
@@ -111,7 +110,6 @@ extension ExploreRowView {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .fixedSize(horizontal: true, vertical: false)
             .onTapGesture {
-                homeVM.hapticFeedback.impactOccurred()
                 Task {
                     if !isInMedia(media: media) {
                         try await WatchlistManager.shared.createNewMediaInWatchlist(media: media)
