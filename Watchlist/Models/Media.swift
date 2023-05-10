@@ -38,6 +38,30 @@ struct Media: Codable, Identifiable, Hashable {
     let profilePath: String?
     let knownFor: [Media]?
     
+    init(mediaType: MediaType?, id: Int?, originalTitle: String? = nil, originalName: String? = nil, overview: String? = nil, voteAverage: Double? = nil, voteCount: Int? = nil, posterPath: String? = nil, backdropPath: String? = nil, genreIDS: [Int]? = nil, popularity: Double? = nil, firstAirDate: String? = nil, originCountry: [String]? = nil, originalLanguage: String? = nil, name: String? = nil, adult: Bool? = nil, releaseDate: String? = nil, title: String? = nil, video: Bool? = nil, profilePath: String? = nil, knownFor: [Media]? = nil) {
+        self.mediaType = mediaType
+        self.id = id
+        self.originalTitle = originalTitle
+        self.originalName = originalName
+        self.overview = overview
+        self.voteAverage = voteAverage
+        self.voteCount = voteCount
+        self.posterPath = posterPath
+        self.backdropPath = backdropPath
+        self.genreIDS = genreIDS
+        self.popularity = popularity
+        self.firstAirDate = firstAirDate
+        self.originCountry = originCountry
+        self.originalLanguage = originalLanguage
+        self.name = name
+        self.adult = adult
+        self.releaseDate = releaseDate
+        self.title = title
+        self.video = video
+        self.profilePath = profilePath
+        self.knownFor = knownFor
+    }
+    
     enum CodingKeys: String, CodingKey {
         case posterPath = "poster_path"
         case popularity, id, overview

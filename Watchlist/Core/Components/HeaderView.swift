@@ -9,12 +9,13 @@ import SwiftUI
 
 struct HeaderView: View {
     @Binding var currentTab: Tab
+    @State var headerString = ""
     
     var showIcon: Bool
     
     var body: some View {
         HStack {
-            Text(currentTab.rawValue)
+            Text(headerString.isEmpty ? currentTab.rawValue : headerString)
                 .foregroundColor(Color.theme.text)
                 .font(.largeTitle)
                 .fontWeight(.bold)

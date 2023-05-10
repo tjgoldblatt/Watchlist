@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
-import SwiftUI
 import FirebaseAnalyticsSwift
+import SwiftUI
 
 struct MovieTabView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
@@ -21,6 +21,7 @@ struct MovieTabView: View {
         NavigationStack {
             ZStack {
                 // MARK: - Background
+
                 Color.theme.background.ignoresSafeArea()
                 
                 ScrollViewReader { proxy in
@@ -66,6 +67,7 @@ struct MovieTabView: View {
 
 extension MovieTabView {
     // MARK: - Header
+
     var header: some View {
         HeaderView(currentTab: .constant(.movies), showIcon: true)
             .transition(.slide)
@@ -73,12 +75,14 @@ extension MovieTabView {
     }
     
     // MARK: - Search
+
     var searchbar: some View {
         SearchBarView(searchText: $vm.filterText)
             .disabled(vm.editMode == .active)
     }
     
     // MARK: - Watchlist
+
     func watchlist(scrollProxy: ScrollViewProxy) -> some View {
         List(selection: $vm.selectedRows) {
             /// Used to scroll to top of list
@@ -86,7 +90,7 @@ extension MovieTabView {
                 .id(vm.emptyViewID)
             
             ForEach(sortedSearchResults) { movie in
-                RowView(media: movie, currentTab: .movies)
+                RowView(media: movie)
                     .allowsHitTesting(vm.editMode == .inactive)
                     .listRowBackground(Color.theme.background)
             }
@@ -150,7 +154,6 @@ extension MovieTabView {
                     .foregroundStyle(Color.theme.genreText, Color.theme.red)
                     .padding()
                     .onTapGesture {
-                        homeVM.hapticFeedback.impactOccurred()
                         vm.deleteConfirmationShowing.toggle()
                     }
             }
@@ -192,7 +195,6 @@ extension MovieTabView {
                             .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.red : Color.theme.secondary.opacity(0.6))
                     }
                     .onTapGesture {
-                        homeVM.hapticFeedback.impactOccurred()
                         if homeVM.watchSelected != watchOption {
                             AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
                             homeVM.watchSelected = watchOption
@@ -206,13 +208,13 @@ extension MovieTabView {
     }
     
     var searchResults: [DBMedia] {
-        let groupedMedia = homeVM.movieList.filter({ !$0.watched })
+        let groupedMedia = homeVM.movieList.filter { !$0.watched }
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
-            var filteredMedia = homeVM.movieList.sorted(by: { !$0.watched && $1.watched})
+            var filteredMedia = homeVM.movieList.sorted(by: { !$0.watched && $1.watched })
             
             /// Watched Filter
             if homeVM.watchSelected == .watched {
-                filteredMedia = filteredMedia.filter({ $0.watched })
+                filteredMedia = filteredMedia.filter { $0.watched }
             } else if homeVM.watchSelected == .any {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
             } else {
@@ -225,7 +227,7 @@ extension MovieTabView {
                     guard let genreIDs = media.genreIDs else { return false }
                     var genreFound = false
                     for selectedGenre in homeVM.genresSelected {
-                        if genreIDs.contains(selectedGenre.id) && genreFound != true {
+                        if genreIDs.contains(selectedGenre.id), genreFound != true {
                             genreFound = true
                         }
                     }
@@ -256,22 +258,21 @@ extension MovieTabView {
     
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
-            if homeVM.sortingSelected == .highToLow {
-                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                    return voteAverage1 > voteAverage2
-                }
-            } else if homeVM.sortingSelected == .lowToHigh {
-                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                    return voteAverage1 < voteAverage2
-                }
-            } else if homeVM.sortingSelected == .alphabetical {
-                if let title1 = media1.title, let title2 = media2.title  {
-                    return title1 < title2
-                } else if let name1 = media1.name, let name2 = media2.name {
-                    return name1 < name2
-                } else {
-                    return false
-                }
+            switch homeVM.sortingSelected {
+                case .alphabetical:
+                    if let title1 = media1.title, let title2 = media2.title {
+                        return title1 < title2
+                    } else if let name1 = media1.name, let name2 = media2.name {
+                        return name1 < name2
+                    } else {
+                        return false
+                    }
+                case .imdbRating:
+                    if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                        return voteAverage1 > voteAverage2
+                    }
+                case .personalRating:
+                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) > (media2.personalRating ?? 0, media2.voteAverage ?? 0)
             }
             return false
         }

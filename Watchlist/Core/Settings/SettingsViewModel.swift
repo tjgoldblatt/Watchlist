@@ -5,12 +5,18 @@
 //  Created by TJ Goldblatt on 4/8/23.
 //
 
+import FirebaseAuth
 import Foundation
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
     @Published var authProviders: [AuthProviderOption] = []
     @Published var authUser: AuthDataResultModel? = nil
+    
+    init() {
+        loadAuthUser()
+        loadAuthProviders()
+    }
     
     func loadAuthProviders() {
         if let providers = try? AuthenticationManager.shared.getProviders() {
@@ -38,5 +44,16 @@ final class SettingsViewModel: ObservableObject {
     func linkAppleAccount() async throws {
         let tokens = try await SignInWithAppleHelper().signIn()
         self.authUser = try await AuthenticationManager.shared.linkApple(tokens: tokens)
+    }
+}
+
+extension SettingsViewModel {
+    convenience init(forPreview: Bool = false) {
+        self.init()
+        if ApplicationHelper.isDebug, forPreview {
+            // Hard code your mock data for the preview here
+            self.authUser = AuthDataResultModel(uid: "abcds")
+            self.authProviders = [.apple]
+        }
     }
 }

@@ -22,6 +22,20 @@ struct AuthDataResultModel {
         self.displayName = user.displayName
         self.isAnonymous = user.isAnonymous
     }
+    
+    init(
+    uid: String = "",
+    email: String? = nil,
+    photoUrl: String? = nil,
+    displayName: String? = nil,
+    isAnonymous: Bool = false
+    ) {
+        self.uid = uid
+        self.email = email
+        self.photoUrl = photoUrl
+        self.displayName = displayName
+        self.isAnonymous = isAnonymous
+    }
 }
 
 enum AuthProviderOption: String {

@@ -32,7 +32,7 @@ struct RootView: View {
                 let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
                 
                 if authUser?.isAnonymous == false {
-                    if try await UserManager.shared.getDisplayNameForUser() == nil {
+                    if try await UserManager.shared.getUser().displayName == nil {
                         showDisplayNameView.toggle()
                     }
                 }
@@ -52,5 +52,7 @@ struct RootView: View {
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
         RootView()
+            .environmentObject(dev.homeVM)
+            .environmentObject(AuthenticationViewModel())
     }
 }
