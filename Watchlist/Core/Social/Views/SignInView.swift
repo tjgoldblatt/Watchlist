@@ -60,21 +60,21 @@ struct SignInView: View {
                         }
                 }
                 
-                Button {
-                    Task {
-                        do {
-                            try await viewModel.signInAnonymous()
-                            showSignInView = false
-                        } catch {
-                            CrashlyticsManager.handleError(error: error)
-                        }
-                    }
-                } label: {
-                    Text("Continue Without Signing In")
-                        .font(.subheadline)
-                        .foregroundColor(Color.theme.red)
-                }
-                .padding(.top)
+//                Button {
+//                    Task {
+//                        do {
+//                            try await viewModel.signInAnonymous()
+//                            showSignInView = false
+//                        } catch {
+//                            CrashlyticsManager.handleError(error: error)
+//                        }
+//                    }
+//                } label: {
+//                    Text("Continue Without Signing In")
+//                        .font(.subheadline)
+//                        .foregroundColor(Color.theme.red)
+//                }
+//                .padding(.top)
             }
             .padding(.bottom, 50)
         }

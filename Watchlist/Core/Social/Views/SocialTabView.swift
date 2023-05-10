@@ -80,7 +80,7 @@ struct SocialTabView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Image(systemName: "gear")
                         .font(.headline)
-                        .foregroundColor(Color.theme.text)
+                        .foregroundColor(Color.theme.red)
                         .onTapGesture {
                             showSettingsView.toggle()
                         }
@@ -89,7 +89,7 @@ struct SocialTabView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Image(systemName: "plus")
                         .font(.headline)
-                        .foregroundColor(Color.theme.text)
+                        .foregroundColor(Color.theme.red)
                         .onTapGesture {
                             showAddFriendsView.toggle()
                         }
@@ -110,13 +110,6 @@ struct SocialTabView: View {
             }
         }
         .analyticsScreen(name: "SocialTabView")
-    }
-}
-
-struct SocialView_Previews: PreviewProvider {
-    static var previews: some View {
-        SocialTabView(forPreview: true)
-            .environmentObject(dev.homeVM)
     }
 }
 
@@ -286,6 +279,15 @@ extension SocialTabView {
                 }
                 .padding()
             }
+        }
+    }
+}
+
+struct SocialView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            SocialTabView(forPreview: true)
+                .environmentObject(dev.homeVM)
         }
     }
 }
