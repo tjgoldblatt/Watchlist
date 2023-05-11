@@ -26,13 +26,13 @@ struct FriendRowView: View {
             if let posterPath = media.posterPath {
                 ThumbnailView(imagePath: posterPath)
                     .overlay(alignment: .topTrailing) {
-                        if isMediaInWatchlist(media: media) {
+                        if homeVM.isDBMediaInWatchlist(dbMedia: media) {
                             Image(systemName: "checkmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 20)
                                 .foregroundStyle(Color.theme.genreText, Color.theme.red)
-                                .offset(x: -15, y: 10)
+                                .offset(x: -10, y: 5)
                         }
                     }
             }
@@ -51,7 +51,7 @@ struct FriendRowView: View {
             MediaModalView(media: media)
         }
         .swipeActions(edge: .trailing) {
-            if !isMediaInWatchlist(media: media) {
+            if !homeVM.isDBMediaInWatchlist(dbMedia: media) {
                 swipeActionToAddToWatchlist
             }
         }
@@ -121,13 +121,6 @@ extension FriendRowView {
         }
         .tint(Color.theme.secondaryBackground)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")
-    }
-    
-    func isMediaInWatchlist(media: DBMedia) -> Bool {
-        for watchlistMedia in homeVM.tvList + homeVM.movieList {
-            if watchlistMedia.id == media.id { return true }
-        }
-        return false
     }
     
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
