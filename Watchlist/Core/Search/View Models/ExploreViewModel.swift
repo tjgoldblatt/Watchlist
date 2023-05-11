@@ -43,14 +43,20 @@ final class ExploreViewModel: ObservableObject {
         TMDbService.getPopularMovies()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { popularMovies in
-                self.popularMovies = popularMovies.map { DBMedia(media: $0, watched: false, personalRating: nil) }
+                self.popularMovies = popularMovies.compactMap { [weak self] in
+                    guard let self else { return nil }
+                    return DBMedia(media: $0, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
+                }
             }
             .store(in: &cancellables)
         
         TMDbService.getPopularTVShows()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { popularTVShows in
-                self.popularTVShows = popularTVShows.map { DBMedia(media: $0, watched: false, personalRating: nil) }
+                self.popularTVShows = popularTVShows.compactMap { [weak self] in
+                    guard let self else { return nil }
+                    return DBMedia(media: $0, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
+                }
             }
             .store(in: &cancellables)
     }
@@ -59,14 +65,20 @@ final class ExploreViewModel: ObservableObject {
         TMDbService.getTrendingMovies()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { trendingMovies in
-                self.trendingMovies = trendingMovies.map { DBMedia(media: $0, watched: false, personalRating: nil) }
+                self.trendingMovies = trendingMovies.compactMap { [weak self] in
+                    guard let self else { return nil }
+                    return DBMedia(media: $0, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
+                }
             }
             .store(in: &cancellables)
         
         TMDbService.getTrendingTVShows()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { trendingTVShows in
-                self.trendingTVShows = trendingTVShows.map { DBMedia(media: $0, watched: false, personalRating: nil) }
+                self.trendingTVShows = trendingTVShows.compactMap { [weak self] in
+                    guard let self else { return nil }
+                    return DBMedia(media: $0, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
+                }
             }
             .store(in: &cancellables)
     }

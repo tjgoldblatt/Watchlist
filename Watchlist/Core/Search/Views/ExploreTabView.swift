@@ -170,6 +170,8 @@ struct ExploreThumbnailView: View {
     var title: String
     var mediaArray: [DBMedia]
     
+    @State var selectedMedia: DBMedia? = nil
+    
     var body: some View {
         VStack {
             HStack {
@@ -189,7 +191,7 @@ struct ExploreThumbnailView: View {
                         if let posterPath = media.posterPath {
                             ThumbnailView(imagePath: posterPath)
                                 .overlay(alignment: .topTrailing) {
-                                    if homeVM.isMediaInWatchlist(media: media) {
+                                    if homeVM.isDBMediaInWatchlist(dbMedia: media) {
                                         Image(systemName: "checkmark.circle.fill")
                                             .resizable()
                                             .scaledToFit()
@@ -199,11 +201,12 @@ struct ExploreThumbnailView: View {
                                     }
                                 }
                                 .onTapGesture {
+                                    selectedMedia = media
                                     showingSheet.toggle()
                                 }
-                                .sheet(isPresented: $showingSheet) {
+                                .sheet(item: $selectedMedia, content: { media in
                                     MediaModalView(media: media)
-                                }
+                                })
                         }
                     }
                 }
