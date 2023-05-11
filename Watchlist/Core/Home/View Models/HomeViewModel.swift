@@ -66,6 +66,13 @@ final class HomeViewModel: ObservableObject {
         fetchGenreLists()
     }
     
+    func isMediaInWatchlist(media: DBMedia) -> Bool {
+        for watchlistMedia in tvList + movieList {
+            if watchlistMedia == media { return true }
+        }
+        return false
+    }
+    
     func getUpdatedMediaFromList(mediaId: Int) -> DBMedia? {
         for media in tvList + movieList {
             if media.id == mediaId {

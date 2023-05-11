@@ -26,7 +26,7 @@ struct FriendRowView: View {
             if let posterPath = media.posterPath {
                 ThumbnailView(imagePath: posterPath)
                     .overlay(alignment: .topTrailing) {
-                        if isMediaInWatchlist(media: media) {
+                        if homeVM.isMediaInWatchlist(media: media) {
                             Image(systemName: "checkmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
@@ -51,7 +51,7 @@ struct FriendRowView: View {
             MediaModalView(media: media)
         }
         .swipeActions(edge: .trailing) {
-            if !isMediaInWatchlist(media: media) {
+            if !homeVM.isMediaInWatchlist(media: media) {
                 swipeActionToAddToWatchlist
             }
         }
@@ -121,13 +121,6 @@ extension FriendRowView {
         }
         .tint(Color.theme.secondaryBackground)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")
-    }
-    
-    func isMediaInWatchlist(media: DBMedia) -> Bool {
-        for watchlistMedia in homeVM.tvList + homeVM.movieList {
-            if watchlistMedia.id == media.id { return true }
-        }
-        return false
     }
     
     func getGenres(genreIDs: [Int]?) -> [Genre]? {

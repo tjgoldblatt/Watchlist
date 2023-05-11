@@ -95,7 +95,6 @@ extension ExploreRowView {
                 .font(.subheadline)
                 .foregroundColor(Color.theme.text.opacity(0.6))
                 .fontWeight(.medium)
-            
         }
         .frame(maxHeight: 75)
     }
@@ -142,4 +141,3 @@ extension ExploreRowView {
         return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)
     }
 }
-
