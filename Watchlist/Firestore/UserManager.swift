@@ -48,6 +48,11 @@ final class UserManager {
         try await userDocument().delete()
     }
     
+    func deleteUser(userId: String) async throws {
+        try await WatchlistManager.shared.deleteWatchlist(userId: userId)
+        try await userDocument(userId: userId).delete()
+    }
+    
     /// Updates the display name for the authenticated user in Firestore.
     /// - Parameter displayName: The new display name.
     func updateDisplayNameForUser(displayName: String) async throws {
@@ -73,6 +78,7 @@ extension UserManager {
             .getDocuments(as: DBUser.self)
     }
     
+    /// Returns all users that have pending friend request from userId
     func getUsersWithFriendRequestFor(userId: String) async throws -> [DBUser] {
         try await userCollection
             .whereField(DBUser.CodingKeys.isAnonymous.rawValue, isEqualTo: false)

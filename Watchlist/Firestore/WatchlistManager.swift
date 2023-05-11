@@ -26,6 +26,10 @@ final class WatchlistManager {
         return watchlistCollection.document(authDataResult.uid)
     }
     
+    func watchlistDocument(userId: String) throws -> DocumentReference {
+        return watchlistCollection.document(userId)
+    }
+    
     /// Creates a new watchlist for the authenticated user.
     /// - Throws: An error if the user is not authenticated or if the watchlist creation fails.
     func createWatchlistForUser() async throws {
@@ -46,6 +50,11 @@ final class WatchlistManager {
     func deleteWatchlist() async throws {
         try await watchlistDocument().delete()
         try await deleteUserWatchlist()
+    }
+    
+    func deleteWatchlist(userId: String) async throws {
+        try await watchlistDocument(userId: userId).delete()
+        try await deleteWatchlist(userId: userId)
     }
     
     /// Sets the display name of the user in the watchlist document.

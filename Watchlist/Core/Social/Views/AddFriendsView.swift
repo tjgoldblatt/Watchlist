@@ -18,117 +18,100 @@ struct AddFriendsView: View {
     @State var filterText: String = ""
     
     var body: some View {
-        ZStack {
-            Color.theme.background.ignoresSafeArea()
-            
-            VStack {
-                Text("Add Friends")
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .foregroundColor(Color.theme.text)
+        NavigationStack {
+            ZStack {
+                Color.theme.background.ignoresSafeArea()
                 
-                AddFriendsFilterView(filterText: $filterText)
-                    .padding(.bottom)
-                
-                ScrollView {
-                    HStack {
-                        Text("Quick Add")
-                            .font(.title3)
-                            .fontWeight(.medium)
-                        Spacer()
-                    }
+                VStack {
+                    AddFriendsFilterView(filterText: $filterText)
+                        .padding(.bottom)
                     
-                    VStack {
-                        ForEach(users, id: \.userId) { user in
-                            if let currentUser = settingsVM.authUser, currentUser.uid != user.userId {
-                                HStack {
-                                    LazyImage(url: URL(string: user.photoUrl ?? "")) { state in
-                                        if let image = state.image {
-                                            image
-                                                .resizable()
-                                                .scaledToFit()
-                                        } else {
-                                            Image(systemName: "person.fill")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .padding()
-                                                .background(Color.theme.secondary)
+                    ScrollView(showsIndicators: false) {
+                        VStack {
+                            ForEach(users, id: \.userId) { user in
+                                if let currentUser = settingsVM.authUser, currentUser.uid != user.userId {
+                                    HStack {
+                                        LazyImage(url: URL(string: user.photoUrl ?? "")) { state in
+                                            if let image = state.image {
+                                                image
+                                                    .resizable()
+                                                    .scaledToFit()
+                                            } else {
+                                                Image(systemName: "person.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .padding()
+                                                    .background(Color.theme.secondary)
+                                            }
                                         }
-                                    }
-                                    .clipShape(Circle())
-                                    .frame(width: 50, height: 50)
-                                    .padding(.trailing)
-                                    
-                                    VStack(alignment: .leading) {
-                                        Text(user.displayName ?? "No Display Name")
-                                            .font(.title3)
-                                            .fontWeight(.semibold)
+                                        .clipShape(Circle())
+                                        .frame(width: 50, height: 50)
+                                        .padding(.trailing)
                                         
-                                        Text(user.email ?? "No email")
-                                            .font(.caption)
-                                    }
-                                    Spacer()
-                                    
-                                    Button(doesUserContainCurrentUser(user: user) ? "Cancel" : "Add") {
-                                        if doesUserContainCurrentUser(user: user) {
-                                            socialVM.cancelFriendRequest(userId: user.userId)
-                                        } else {
-                                            socialVM.sendFriendRequest(userId: user.userId)
+                                        VStack(alignment: .leading) {
+                                            Text(user.displayName ?? "No Display Name")
+                                                .font(.title3)
+                                                .fontWeight(.semibold)
+                                            
+                                            Text(user.email ?? "No email")
+                                                .font(.caption)
                                         }
+                                        Spacer()
                                         
-                                        socialVM.getUsersWithFriendRequestFor(userId: currentUser.uid)
+                                        Button(doesUserHavingPendingRequestFromCurrentUser(user: user) ? "Cancel" : "Add") {
+                                            if doesUserHavingPendingRequestFromCurrentUser(user: user) {
+                                                socialVM.cancelFriendRequest(userId: user.userId)
+                                            } else {
+                                                socialVM.sendFriendRequest(userId: user.userId)
+                                            }
+                                            
+                                            socialVM.getUsersWithFriendRequestFor(userId: currentUser.uid)
+                                        }
+                                        .foregroundColor(!doesUserHavingPendingRequestFromCurrentUser(user: user) ? Color.theme.red : Color.theme.genreText)
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .frame(width: 80, height: 30)
+                                        .background(!doesUserHavingPendingRequestFromCurrentUser(user: user) ? Color.theme.secondary : Color.theme.red)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .fixedSize(horizontal: true, vertical: false)
                                     }
-                                    .foregroundColor(!doesUserContainCurrentUser(user: user) ? Color.theme.red : Color.theme.genreText)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .frame(width: 80, height: 30)
-                                    .background(!doesUserContainCurrentUser(user: user) ? Color.theme.secondary : Color.theme.red)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .fixedSize(horizontal: true, vertical: false)
+                                    .padding(.vertical)
                                 }
-                                .padding(.vertical)
                             }
                         }
                     }
-                    .padding()
-                    .background(Color.theme.secondary.opacity(0.5))
-                    .cornerRadius(10)
                 }
-            }
-            .overlay(alignment: .topLeading) {
-                Image(systemName: "chevron.down")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(Color.theme.text)
-                    .fontWeight(.semibold)
-                    .buttonStyle(.plain)
-                    .padding(.all, 5)
-                    .accessibility(label: Text("Close"))
-                    .accessibility(hint: Text("Tap to close the screen"))
-                    .accessibility(addTraits: .isButton)
-                    .accessibility(removeTraits: .isImage)
-                    .onTapGesture {
-                        dismiss()
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(Color.theme.red)
+                            .fontWeight(.semibold)
                     }
-            }
-            .onAppear {
-                if let currentUser = settingsVM.authUser {
-                    socialVM.getUsersWithFriendRequestFor(userId: currentUser.uid)
                 }
+                .onAppear {
+                    if let currentUser = settingsVM.authUser {
+                        socialVM.getUsersWithFriendRequestFor(userId: currentUser.uid)
+                    }
+                }
+                .padding()
             }
-            .padding()
+            .navigationTitle("Find Friends")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
     var users: [DBUser] {
-        return filterText.isEmpty ?
+        let firstFilter = filterText.isEmpty ?
             socialVM.allUsers
             :
             socialVM.allUsers.filter { $0.displayName?.lowercased().contains(filterText.lowercased()) ?? false }
+        
+        return firstFilter
+            .filter { !(socialVM.currentUser?.friends?.contains($0.userId) ?? false) }
     }
     
-    func doesUserContainCurrentUser(user: DBUser) -> Bool {
+    /// Returns a bool on whether or not the passed in user has a pending request from the currnet user
+    func doesUserHavingPendingRequestFromCurrentUser(user: DBUser) -> Bool {
         let usersWithFriendRequest = socialVM.usersWithFriendRequest
         for otherUser in usersWithFriendRequest {
             if otherUser.userId == user.userId {
@@ -141,10 +124,12 @@ struct AddFriendsView: View {
 
 struct AddFriendsView_Previews: PreviewProvider {
     static var previews: some View {
-        AddFriendsView()
-            .environmentObject(dev.socialVM)
-            .environmentObject(dev.settingsVM)
-            .environmentObject(dev.homeVM)
+        NavigationStack {
+            AddFriendsView()
+                .environmentObject(dev.socialVM)
+                .environmentObject(dev.settingsVM)
+                .environmentObject(dev.homeVM)
+        }
     }
 }
 

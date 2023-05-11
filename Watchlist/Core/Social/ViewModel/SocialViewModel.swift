@@ -82,7 +82,7 @@ final class SocialViewModel: ObservableObject {
             try await UserManager.shared.removeFriend(friendUserId: userId)
         }
     }
-    
+    /// Returns all users that have pending friend request from userId
     func getUsersWithFriendRequestFor(userId: String) {
         Task { @MainActor in
             self.usersWithFriendRequest = try await UserManager.shared.getUsersWithFriendRequestFor(userId: userId)
