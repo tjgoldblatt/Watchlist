@@ -60,7 +60,6 @@ struct FriendWatchlistView: View {
                             .foregroundColor(Color.theme.red)
                     }
                 }
-                .toolbarRole(.editor)
             }
         }
     }

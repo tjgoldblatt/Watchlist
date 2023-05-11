@@ -22,7 +22,6 @@ struct SocialTabView: View {
     
     @State var showSettingsView: Bool = false
     @State var showAddFriendsView: Bool = false
-    @State var filterText: String = ""
     
     @GestureState var press = false
     @State var showMenu = false
@@ -35,22 +34,20 @@ struct SocialTabView: View {
                 VStack(spacing: 10) {
                     header
                     
-//                    AddFriendsFilterView(filterText: $filterText)
-//                        .padding(.horizontal)
-                    
                     ScrollView {
                         if settingsVM.authUser?.isAnonymous == false {
-                            friendRequests
+                            if !vm.friendRequests.isEmpty {
+                                friendRequests
+                            }
                             
-                            friends
+                            if !vm.friends.isEmpty {
+                                friends
+                            }
                         } else {
                             linkButtons
                         }
-                        
-                        Spacer()
                     }
                 }
-                .padding(.top)
             }
             .onChange(of: vm.friendRequestIds) { requestIds in
                 guard let requestIds else { return }
@@ -123,72 +120,70 @@ extension SocialTabView {
     
     private var friendRequests: some View {
         VStack {
-            if !vm.friendRequests.isEmpty {
-                HStack {
-                    Text("Friend Requests")
-                        .font(.title3)
-                        .fontWeight(.medium)
-                    Spacer()
-                }
+            HStack {
+                Text("Friend Requests")
+                    .font(.title3)
+                    .fontWeight(.medium)
+                Spacer()
+            }
                 
-                VStack {
-                    ForEach(vm.friendRequests) { friendRequest in
-                        HStack {
-                            LazyImage(url: URL(string: friendRequest.photoUrl ?? "")) { state in
-                                if let image = state.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                } else {
-                                    Image(systemName: "person.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding()
-                                        .background(Color.theme.secondary)
-                                }
-                            }
-                            .clipShape(Circle())
-                            .frame(width: 60, height: 60)
-                            .padding(.trailing)
-                            
-                            VStack(alignment: .leading) {
-                                Text(friendRequest.displayName ?? "None")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                
-                                HStack {
-                                    Button("Accept") {
-                                        vm.acceptFriendRequest(userId: friendRequest.userId)
-                                    }
-                                    .foregroundColor(Color.theme.genreText)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .frame(height: 30)
-                                    .frame(minWidth: 100)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.theme.red)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .fixedSize(horizontal: true, vertical: false)
-                                    
-                                    Button("Decline") {
-                                        vm.declineFriendRequest(userId: friendRequest.userId)
-                                    }
-                                    .foregroundColor(Color.theme.red)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .frame(height: 30)
-                                    .frame(minWidth: 100)
+            VStack {
+                ForEach(vm.friendRequests) { friendRequest in
+                    HStack {
+                        LazyImage(url: URL(string: friendRequest.photoUrl ?? "")) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            } else {
+                                Image(systemName: "person.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding()
                                     .background(Color.theme.secondary)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .fixedSize(horizontal: true, vertical: false)
-                                    Spacer()
-                                }
-                                .frame(maxWidth: .infinity)
                             }
-                            Spacer()
                         }
-                        .padding(.vertical)
+                        .clipShape(Circle())
+                        .frame(width: 60, height: 60)
+                        .padding(.trailing)
+                            
+                        VStack(alignment: .leading) {
+                            Text(friendRequest.displayName ?? "None")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                
+                            HStack {
+                                Button("Accept") {
+                                    vm.acceptFriendRequest(userId: friendRequest.userId)
+                                }
+                                .foregroundColor(Color.theme.genreText)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(height: 30)
+                                .frame(minWidth: 100)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.theme.red)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .fixedSize(horizontal: true, vertical: false)
+                                    
+                                Button("Decline") {
+                                    vm.declineFriendRequest(userId: friendRequest.userId)
+                                }
+                                .foregroundColor(Color.theme.red)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(height: 30)
+                                .frame(minWidth: 100)
+                                .background(Color.theme.secondary)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .fixedSize(horizontal: true, vertical: false)
+                                Spacer()
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        Spacer()
                     }
+                    .padding(.vertical)
                 }
             }
         }
@@ -197,55 +192,57 @@ extension SocialTabView {
     
     private var friends: some View {
         VStack {
-            if !vm.friends.isEmpty {
-                HStack {
-                    Text("Friends")
-                        .font(.title3)
-                        .fontWeight(.medium)
-                    Spacer()
-                }
+            HStack {
+                Text("Friends")
+                    .font(.title3)
+                    .fontWeight(.medium)
+                Spacer()
+            }
                 
-                ForEach(vm.friends) { friend in
-                    NavigationLink {
-                        FriendWatchlistView(userId: friend.userId)
-                    } label: {
-                        HStack {
-                            LazyImage(url: URL(string: friend.photoUrl ?? "")) { state in
-                                if let image = state.image {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                } else {
-                                    Image(systemName: "person.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding()
-                                        .background(Color.theme.secondary)
-                                }
+            ForEach(vm.friends) { friend in
+                NavigationLink {
+                    FriendWatchlistView(userId: friend.userId)
+                } label: {
+                    HStack {
+                        LazyImage(url: URL(string: friend.photoUrl ?? "")) { state in
+                            if let image = state.image {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            } else {
+                                Image(systemName: "person.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding()
+                                    .background(Color.theme.secondary)
                             }
-                            .clipShape(Circle())
-                            .frame(width: 80, height: 80)
-                            .padding(.trailing)
+                        }
+                        .clipShape(Circle())
+                        .frame(width: 60, height: 60)
+                        .padding(.trailing)
                             
-                            HStack {
-                                Text(friend.displayName ?? "None")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                            }
-                            Spacer()
+                        HStack {
+                            Text(friend.displayName ?? "None")
+                                .font(.title3)
+                                .fontWeight(.semibold)
                         }
-                        .contentShape(Rectangle())
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                vm.removeFriend(userId: friend.userId)
-                            } label: {
-                                Label("Remove Friend", systemImage: "xmark")
-                            }
-                        }
-                        .padding(.vertical)
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(Color.theme.text)
+                            .padding(.trailing)
                     }
-                    .foregroundColor(Color.theme.text)
+                    .contentShape(Rectangle())
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            vm.removeFriend(userId: friend.userId)
+                        } label: {
+                            Label("Remove Friend", systemImage: "xmark")
+                        }
+                    }
+                    .padding(.vertical)
                 }
+                .foregroundColor(Color.theme.text)
             }
         }
         .padding()
