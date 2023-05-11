@@ -85,18 +85,15 @@ extension TVShowTabView {
 
     func watchlist(scrollProxy: ScrollViewProxy) -> some View {
         List(selection: $vm.selectedRows) {
-            /// Used to scroll to top of list
-            EmptyView()
-                .id(vm.emptyViewID)
-            
             ForEach(sortedSearchResults) { tvShow in
                 RowView(media: tvShow)
                     .allowsHitTesting(vm.editMode == .inactive)
                     .listRowBackground(Color.theme.background)
             }
+            .id(vm.emptyViewID)
             .onChange(of: homeVM.watchSelected) { _ in
                 if sortedSearchResults.count > 3 {
-                    scrollProxy.scrollTo(vm.emptyViewID)
+                    scrollProxy.scrollTo(vm.emptyViewID, anchor: .top)
                 }
             }
             .listRowBackground(Color.theme.background)
