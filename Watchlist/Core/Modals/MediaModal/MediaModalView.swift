@@ -244,7 +244,10 @@ extension MediaModalView {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .fixedSize(horizontal: true, vertical: false)
         }
-        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.showDeleteConfirmation, actions: {
+        .confirmationDialog("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.showDeleteConfirmation, actions: {
+            Button("Cancel", role: .cancel) {}
+                .buttonStyle(.plain)
+            
             Button("Delete", role: .destructive) {
                 Task {
                     try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
@@ -252,8 +255,6 @@ extension MediaModalView {
                 }
             }
             .buttonStyle(.plain)
-            Button("Cancel", role: .cancel) {}
-                .buttonStyle(.plain)
         })
         .frame(width: 100, alignment: .center)
     }

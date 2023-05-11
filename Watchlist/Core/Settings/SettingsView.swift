@@ -39,7 +39,7 @@ struct SettingsView: View {
                 }
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.inline)
-                .alert("Are you sure you'd like to delete your account?", isPresented: $deleteAccountConfirmation, actions: {
+                .confirmationDialog("Are you sure you'd like to delete your account?", isPresented: $deleteAccountConfirmation, actions: {
                     Button("Delete", role: .destructive) {
                         AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
                         Task {

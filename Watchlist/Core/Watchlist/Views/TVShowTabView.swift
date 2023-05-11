@@ -158,7 +158,7 @@ extension TVShowTabView {
                     }
             }
         }
-        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.deleteConfirmationShowing) {
+        .confirmationDialog("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.deleteConfirmationShowing) {
             Button("Delete", role: .destructive) {
                 Task {
                     for id in vm.selectedRows {
@@ -170,9 +170,6 @@ extension TVShowTabView {
                 }
             }
             .buttonStyle(.plain)
-            
-            Button("Cancel", role: .cancel) {}
-                .buttonStyle(.plain)
         }
         .scrollIndicators(.hidden)
         .listStyle(.plain)
