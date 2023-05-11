@@ -158,7 +158,10 @@ extension MovieTabView {
                     }
             }
         }
-        .alert("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.deleteConfirmationShowing) {
+        .confirmationDialog("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.deleteConfirmationShowing) {
+            Button("Cancel", role: .cancel) {}
+                .buttonStyle(.plain)
+            
             Button("Delete", role: .destructive) {
                 Task {
                     for id in vm.selectedRows {
@@ -170,9 +173,6 @@ extension MovieTabView {
                 }
             }
             .buttonStyle(.plain)
-            
-            Button("Cancel", role: .cancel) {}
-                .buttonStyle(.plain)
         }
         .scrollIndicators(.hidden)
         .listStyle(.plain)
