@@ -143,13 +143,6 @@ extension RowView {
         .accessibilityIdentifier("MediaSwipeAction")
     }
     
-    func isMediaInWatchlist(media: DBMedia) -> Bool {
-        for watchlistMedia in homeVM.tvList + homeVM.movieList {
-            if watchlistMedia == media { return true }
-        }
-        return false
-    }
-    
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
         guard let genreIDs else { return nil }
         return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)

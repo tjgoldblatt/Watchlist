@@ -47,7 +47,7 @@ struct HomeView: View {
                         }
                         .tag(Tab.tvShows)
                     
-                    ExploreTabView()
+                    ExploreTabView(homeVM: homeVM)
                         .environmentObject(homeVM)
                         .tabItem {
                             Image(systemName: Tab.explore.icon)

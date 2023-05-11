@@ -6,6 +6,7 @@
 //
 
 import FirebaseAnalyticsSwift
+import NukeUI
 import SwiftUI
 
 struct ExploreTabView: View {
@@ -13,8 +14,10 @@ struct ExploreTabView: View {
     
     @EnvironmentObject var homeVM: HomeViewModel
     
-    var vm: SearchTabViewModel {
-        SearchTabViewModel(homeVM: homeVM)
+    @StateObject private var vm: ExploreViewModel
+    
+    init(homeVM: HomeViewModel) {
+        _vm = StateObject(wrappedValue: ExploreViewModel(homeVM: homeVM))
     }
     
     @State var isKeyboardShowing: Bool = false
@@ -33,7 +36,7 @@ struct ExploreTabView: View {
                     searchBar
                     
                     if sortedSearchResults.isEmpty {
-                        Color.theme.background
+                        emptySearch
                     } else {
                         searchResultsView
                     }
@@ -69,7 +72,6 @@ extension ExploreTabView {
         SearchBarView(searchText: $homeVM.searchText) {
             vm.search()
         }
-        .padding(.bottom)
     }
     
     // MARK: - Search Results
@@ -142,11 +144,77 @@ extension ExploreTabView {
             return false
         }
     }
+    
+    // MARK: - Empty Search
+    
+    private var emptySearch: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 10) {
+                ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
+                
+                ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
+                
+                ExploreThumbnailView(title: "Popular Movies", mediaArray: vm.popularMovies)
+                
+                ExploreThumbnailView(title: "Popular TV Shows", mediaArray: vm.popularTVShows)
+            }
+            .padding()
+        }
+    }
+}
+
+struct ExploreThumbnailView: View {
+    @EnvironmentObject var homeVM: HomeViewModel
+    @State var showingSheet = false
+    
+    var title: String
+    var mediaArray: [DBMedia]
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text(title)
+                    .foregroundColor(Color.theme.text)
+                    .fontWeight(.medium)
+                    .padding(.trailing, 5)
+                Capsule()
+                    .frame(height: 2)
+                    .foregroundColor(Color.theme.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(mediaArray) { media in
+                        if let posterPath = media.posterPath {
+                            ThumbnailView(imagePath: posterPath)
+                                .overlay(alignment: .topTrailing) {
+                                    if homeVM.isMediaInWatchlist(media: media) {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 20)
+                                            .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                            .offset(x: -15, y: 10)
+                                    }
+                                }
+                                .onTapGesture {
+                                    showingSheet.toggle()
+                                }
+                                .sheet(isPresented: $showingSheet) {
+                                    MediaModalView(media: media)
+                                }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreTabView()
+        ExploreTabView(homeVM: dev.homeVM)
             .environmentObject(dev.homeVM)
     }
 }
