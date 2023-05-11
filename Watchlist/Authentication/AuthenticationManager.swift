@@ -92,6 +92,13 @@ final class AuthenticationManager {
         try await UserManager.shared.deleteUser()
         try await user.delete()
     }
+    
+    /// To delete a specific user from the DB, still need to remove them from the Auth Tab in FireBase.
+    /// Used for deleting Apple testers when pushing to TestFlight
+    /// - Parameter userId: userId of Apple Tester
+    func delete(userId: String) async throws {
+        try await UserManager.shared.deleteUser(userId: userId)
+    }
 }
 
 // MARK: - Sign In SSO
