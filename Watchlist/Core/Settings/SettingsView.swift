@@ -5,32 +5,32 @@
 //  Created by TJ Goldblatt on 4/6/23.
 //
 
-import SwiftUI
-import GoogleSignInSwift
 import AuthenticationServices
 import FirebaseAnalyticsSwift
+import GoogleSignInSwift
+import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var viewModel: SettingsViewModel
-    
+
     @StateObject var authVM = AuthenticationViewModel()
     @EnvironmentObject var homeVM: HomeViewModel
     @EnvironmentObject var csManager: ColorSchemeManager
-    
+
     @State var showReAuthView: Bool = false
     @State var deleteAccountConfirmation: Bool = false
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.theme.background.ignoresSafeArea()
-                
+
                 List {
                     appearanceSection
                         .listRowBackground(Color.theme.secondary)
                     accountSection
                         .listRowBackground(Color.theme.secondary)
-//                    userInfoSection
+                    userInfoSection
                 }
                 .scrollContentBackground(.hidden)
                 .onAppear {
@@ -89,7 +89,7 @@ extension SettingsView {
             Text("Appearance")
         }
     }
-    
+
     private var accountSection: some View {
         Section {
             if viewModel.authUser?.isAnonymous == false {
@@ -108,8 +108,7 @@ extension SettingsView {
                 }
                 .foregroundColor(Color.theme.text)
             }
-            
-            
+
             Button(role: .destructive) {
                 viewModel.loadAuthProviders()
                 deleteAccountConfirmation.toggle()
@@ -120,11 +119,10 @@ extension SettingsView {
             Text("Account")
         }
     }
+
     private var userInfoSection: some View {
         Section {
             if let currentUser = viewModel.authUser {
-                Text(currentUser.uid)
-                
                 Text(currentUser.email ?? "No email associated")
             }
         } header: {

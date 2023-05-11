@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 4/6/23.
 //
 
-import Foundation
 import FirebaseAuth
+import Foundation
 
 struct AuthDataResultModel {
     let uid: String
@@ -24,11 +24,11 @@ struct AuthDataResultModel {
     }
     
     init(
-    uid: String = "",
-    email: String? = nil,
-    photoUrl: String? = nil,
-    displayName: String? = nil,
-    isAnonymous: Bool = false
+        uid: String = "",
+        email: String? = nil,
+        photoUrl: String? = nil,
+        displayName: String? = nil,
+        isAnonymous: Bool = false
     ) {
         self.uid = uid
         self.email = email
@@ -45,9 +45,8 @@ enum AuthProviderOption: String {
 }
 
 final class AuthenticationManager {
-    
     static let shared = AuthenticationManager()
-    private init() { }
+    private init() {}
     
     // not reaching out to server, only reaching out locally
     func getAuthenticatedUser() throws -> AuthDataResultModel {
@@ -102,6 +101,7 @@ final class AuthenticationManager {
 }
 
 // MARK: - Sign In SSO
+
 extension AuthenticationManager {
     @discardableResult
     func signInWithGoogle(tokens: GoogleSignInResult) async throws -> AuthDataResultModel {
@@ -122,6 +122,7 @@ extension AuthenticationManager {
 }
 
 // MARK: - Sign In Anonymous
+
 extension AuthenticationManager {
     @discardableResult
     func signInAnonymously() async throws -> AuthDataResultModel {

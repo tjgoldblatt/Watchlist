@@ -5,9 +5,9 @@
 //  Created by TJ Goldblatt on 3/8/23.
 //
 
-import SwiftUI
-import Firebase
 import Blackbird
+import Firebase
+import SwiftUI
 
 @main
 struct WatchlistApp: App {
@@ -34,16 +34,12 @@ struct WatchlistApp: App {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
         return true
     }
     
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        
-    }
+    func applicationDidBecomeActive(_ application: UIApplication) {}
     
-    func applicationWillResignActive(_ application: UIApplication) {
-        
-    }
+    func applicationWillResignActive(_ application: UIApplication) {}
 }
