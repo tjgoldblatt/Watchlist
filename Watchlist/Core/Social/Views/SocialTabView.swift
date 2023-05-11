@@ -34,18 +34,23 @@ struct SocialTabView: View {
                 VStack(spacing: 10) {
                     header
                     
-                    ScrollView {
-                        if settingsVM.authUser?.isAnonymous == false {
-                            if !vm.friendRequests.isEmpty {
-                                friendRequests
-                            }
-                            
-                            if !vm.friends.isEmpty {
-                                friends
-                            }
+                    if settingsVM.authUser?.isAnonymous == false {
+                        if vm.friends.isEmpty, vm.friendRequests.isEmpty {
+                            SocialEmptyListView()
+                                .environmentObject(homeVM)
                         } else {
-                            linkButtons
+                            ScrollView {
+                                if !vm.friendRequests.isEmpty {
+                                    friendRequests
+                                }
+                                
+                                if !vm.friends.isEmpty {
+                                    friends
+                                }
+                            }
                         }
+                    } else {
+                        linkButtons
                     }
                 }
             }
@@ -276,6 +281,28 @@ extension SocialTabView {
                 }
                 .padding()
             }
+        }
+    }
+}
+
+struct SocialEmptyListView: View {
+    @EnvironmentObject private var homeVM: HomeViewModel
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            
+            Image(systemName: Tab.social.icon)
+                .resizable()
+                .foregroundColor(Color.theme.secondary)
+                .scaledToFit()
+                .frame(maxHeight: 150)
+            Text("Add friends by clicking the +")
+                .font(.headline)
+                .foregroundColor(Color.theme.secondary)
+                .padding()
+            
+            Spacer()
         }
     }
 }
