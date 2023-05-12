@@ -237,7 +237,7 @@ extension HomeViewModel {
 extension HomeViewModel {
     convenience init(forPreview: Bool = false) {
         self.init()
-        if ApplicationHelper.isDebug && forPreview {
+        if ApplicationHelper.isDebug, forPreview {
             // Hard code your mock data for the preview here
             self.isMediaLoaded = true
             self.movieList = [

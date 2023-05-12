@@ -62,6 +62,8 @@ struct FriendWatchlistView: View {
                 }
             }
         }
+        .ignoresSafeArea(edges: .bottom)
+        .toolbar(.hidden, for: .tabBar)
     }
 
     var filteredMedia: [DBMedia] {

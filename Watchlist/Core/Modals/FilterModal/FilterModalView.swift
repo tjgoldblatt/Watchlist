@@ -5,8 +5,8 @@
 //  Created by TJ Goldblatt on 3/25/23.
 //
 
-import SwiftUI
 import FirebaseAnalyticsSwift
+import SwiftUI
 
 struct FilterModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
@@ -180,7 +180,7 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
     let content: (Data.Element) -> Content
     @State var elementsSize: [Data.Element: CGSize] = [:]
     
-    var body : some View {
+    var body: some View {
         VStack(alignment: alignment, spacing: spacing) {
             ForEach(computeRows(), id: \.self) { rowElements in
                 HStack(spacing: spacing) {
@@ -220,7 +220,6 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
         return rows
     }
 }
-
 
 extension View {
     func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
