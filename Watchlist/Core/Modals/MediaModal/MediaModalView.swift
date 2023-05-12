@@ -12,6 +12,8 @@ import SwiftUI
 struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
     
+    @State private var showSafari: Bool = false
+    
     @EnvironmentObject var homeVM: HomeViewModel
     @StateObject var vm: MediaModalViewModel
     
@@ -24,13 +26,13 @@ struct MediaModalView: View {
         return ""
     }
     
-    init(media: DBMedia) {
-        _vm = StateObject(wrappedValue: MediaModalViewModel(media: media))
+    init(media: DBMedia, forPreview: Bool = false) {
+        _vm = forPreview ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true)) : StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
     
     var body: some View {
         GeometryReader { geo in
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 backdropSection(geo: geo)
                 
                 VStack(alignment: .center, spacing: 30) {
@@ -39,6 +41,8 @@ struct MediaModalView: View {
                     ratingSection
                     
                     overview
+                    
+                    providers
                 }
                 .padding(.horizontal)
                 .frame(maxWidth: geo.size.width)
@@ -194,6 +198,88 @@ extension MediaModalView {
             Spacer()
         }
         .padding(.leading)
+    }
+    
+    @ViewBuilder
+    private var providers: some View {
+        VStack(spacing: 10) {
+            if let countryProvider = vm.countryProvider,
+               let link = countryProvider.link
+            {
+                VStack(spacing: 0) {
+                    Text("Where To Watch")
+                        .foregroundColor(Color.theme.text)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack {
+                        Text("Brought to you by".uppercased())
+                            .fontWeight(.light)
+                            .font(.caption2)
+                        
+                        Image("JustWatch")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 15, height: 15)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        if let stream = countryProvider.flatrate {
+                            ForEach(stream, id: \.self) { provider in
+                                ProviderView(provider: provider, providerType: "stream", link: link)
+                            }
+                        }
+                        if let free = countryProvider.free {
+                            ForEach(free, id: \.self) { provider in
+                                ProviderView(provider: provider, providerType: "free", link: link)
+                            }
+                        }
+                        if let ads = countryProvider.ads {
+                            ForEach(ads, id: \.self) { provider in
+                                ProviderView(provider: provider, providerType: "ads", link: link)
+                            }
+                        }
+                        if let rent = countryProvider.rent {
+                            ForEach(rent, id: \.self) { provider in
+                                ProviderView(provider: provider, providerType: "rent", link: link)
+                            }
+                        }
+                        if let buy = countryProvider.buy {
+                            ForEach(buy, id: \.self) { provider in
+                                ProviderView(provider: provider, providerType: "buy", link: link)
+                            }
+                        }
+                    }
+                }
+                
+                // Iteration one
+//                if let stream = countryProvider.flatrate {
+//                    ProviderView(providers: stream, providerType: "stream", link: link)
+//                }
+//
+//                if let free = countryProvider.free {
+//                    ProviderView(providers: free, providerType: "free", link: link)
+//                }
+//
+//                if let ads = countryProvider.ads {
+//                    ProviderView(providers: ads, providerType: "ads", link: link)
+//                }
+//
+//                if let rent = countryProvider.rent {
+//                    ProviderView(providers: rent, providerType: "rent", link: link)
+//                }
+//
+//                if let buy = countryProvider.buy {
+//                    ProviderView(providers: buy, providerType: "buy", link: link)
+//                }
+            }
+        }
+        .padding(.bottom)
     }
     
     private var rateThisButton: some View {
@@ -353,7 +439,7 @@ struct ExpandableText: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaModalView(media: dev.mediaMock[0])
+        MediaModalView(media: dev.mediaMock[0], forPreview: true)
             .environmentObject(dev.homeVM)
     }
 }
