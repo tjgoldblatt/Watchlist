@@ -5,9 +5,9 @@
 //  Created by TJ Goldblatt on 3/22/23.
 //
 
-import SwiftUI
-import NukeUI
 import FirebaseAnalyticsSwift
+import NukeUI
+import SwiftUI
 
 struct RatingModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
@@ -59,20 +59,19 @@ struct RatingModalView: View {
                             } else {
                                 Color.theme.background
                                     .frame(width: 200, height: 300)
-
                             }
                         }
                         .overlay {
                             rating > 0 ?
-                            ZStack {
-                                Color.black.opacity(0.9)
+                                ZStack {
+                                    Color.black.opacity(0.9)
                                 
-                                Text("\(rating)")
-                                    .font(.system(size: 90))
-                                    .fontWeight(.light)
-                                    .foregroundColor(Color.theme.genreText)
-                            }
-                            : nil
+                                    Text("\(rating)")
+                                        .font(.system(size: 90))
+                                        .fontWeight(.light)
+                                        .foregroundColor(Color.theme.genreText)
+                                }
+                                : nil
                         }
                         .cornerRadius(10)
                         .padding()
@@ -98,18 +97,17 @@ struct RatingModalView: View {
                         .disabled(rating == 0)
                         .opacity(rating != 0 ? 1 : 0.7)
                         .onTapGesture {
-                                Task {
-                                    try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
+                            Task {
+                                try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
                                     
-                                    try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
+                                try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
                                     
-                                    shouldShowRatingModal = false
-                                }
+                                shouldShowRatingModal = false
+                            }
                             AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")
                         }
                         .accessibilityIdentifier("RateButton")
                         .padding()
-                    
                 }
                 .frame(maxWidth: geo.size.width - 50)
                 .padding(.bottom)
@@ -145,8 +143,8 @@ struct CloseButton: View {
             .foregroundStyle(Color.theme.text, Color.theme.background)
             .fontWeight(.semibold)
             .shadow(color: Color.black.opacity(0.4), radius: 2)
-            .accessibility(label:Text("Close"))
-            .accessibility(hint:Text("Tap to close the screen"))
+            .accessibility(label: Text("Close"))
+            .accessibility(hint: Text("Tap to close the screen"))
             .accessibility(addTraits: .isButton)
             .accessibility(removeTraits: .isImage)
             .onTapGesture {

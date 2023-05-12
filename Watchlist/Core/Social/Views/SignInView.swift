@@ -5,11 +5,11 @@
 //  Created by TJ Goldblatt on 4/6/23.
 //
 
-import SwiftUI
-import GoogleSignInSwift
 import AuthenticationServices
 import FirebaseAnalytics
 import FirebaseAnalyticsSwift
+import GoogleSignInSwift
+import SwiftUI
 
 struct SignInView: View {
     @EnvironmentObject private var viewModel: AuthenticationViewModel
@@ -34,19 +34,19 @@ struct SignInView: View {
                         .fontWeight(.semibold)
                         .lineSpacing(10)
                         .padding(.top)
-                    
                 }
                 .padding(.top, 50)
                 .padding(.bottom)
                 
-                
                 VStack(spacing: 20) {
                     // MARK: - Custom Apple Sign In Button
+
                     SignInWithAppleView(showSignInView: $showSignInView)
                         .padding(.horizontal)
                         .frame(maxWidth: 500)
                     
                     // MARK: - Custom Google button
+
                     CustomButton(isGoogle: true)
                         .onTapGesture {
                             Task {
@@ -107,7 +107,7 @@ struct SignInView: View {
                 .fontWeight(.medium)
                 .foregroundColor(.white)
                 .lineLimit(1)
-         }
+        }
         .frame(maxWidth: .infinity)
         .frame(height: 55)
         .background(.blue)

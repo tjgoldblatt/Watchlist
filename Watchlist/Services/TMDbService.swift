@@ -26,6 +26,15 @@ class TMDbService {
             .eraseToAnyPublisher()
     }
     
+    static func getWatchProviders(mediaType: MediaType,for id: Int) -> AnyPublisher<Results, Error> {
+        guard let url = URL(string: "\(Constants.baseURL)/3/\(mediaType.rawValue)/\(id)/watch/providers?api_key=\(Constants.API_KEY)") else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
+        
+        return NetworkingManager.download(url: url)
+            .decode(type: WatchProvider.self, decoder: JSONDecoder())
+            .compactMap(\.results)
+            .eraseToAnyPublisher()
+    }
+    
     /// Fetches trending movies from the TMDb API.
     /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getTrendingMovies() -> AnyPublisher<[Media], Error> {
