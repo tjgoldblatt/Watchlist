@@ -15,6 +15,7 @@ struct HomeView: View {
     @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
     
     @State var showDebugView = false
+    @State private var currentTab: Tab = .movies
     
     var body: some View {
         if homeVM.isGenresLoaded {
@@ -64,9 +65,16 @@ struct HomeView: View {
                         .badge(homeVM.pendingFriendRequests)
                 }
                 .tint(Color.theme.red)
-                .onChange(of: homeVM.selectedTab) { _ in
+                .onChange(of: homeVM.selectedTab) { updatedTab in
+                    currentTab = updatedTab
                     homeVM.genresSelected = []
                     homeVM.ratingSelected = 0
+                }
+                .onReceive(homeVM.$selectedTab) { selectedTab in
+                    if currentTab == .explore, selectedTab == .explore {
+                        homeVM.searchText = ""
+                        homeVM.results = []
+                    }
                 }
                 .onAppear {
                     homeVM.database = database

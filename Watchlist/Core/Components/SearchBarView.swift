@@ -132,6 +132,12 @@ struct SearchBarView: View {
                             }
                         }
                     }
+                    .onChange(of: homeVM.searchText) { text in
+                        if homeVM.selectedTab == .explore, text.isEmpty {
+                            searchText = ""
+                            textObserver.searchText = ""
+                        }
+                    }
             }
             .font(.headline)
             .padding()

@@ -160,6 +160,7 @@ extension ExploreTabView {
             }
             .padding()
         }
+        .scrollDismissesKeyboard(.immediately)
     }
 }
 
@@ -188,7 +189,9 @@ struct ExploreThumbnailView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(mediaArray) { media in
-                        if let posterPath = media.posterPath {
+                        if let posterPath = media.posterPath,
+                           let overview = media.overview, !overview.isEmpty
+                        {
                             ThumbnailView(imagePath: posterPath)
                                 .overlay(alignment: .topTrailing) {
                                     if homeVM.isDBMediaInWatchlist(dbMedia: media) {
@@ -204,13 +207,14 @@ struct ExploreThumbnailView: View {
                                     selectedMedia = media
                                     showingSheet.toggle()
                                 }
-                                .sheet(item: $selectedMedia, content: { media in
+                                .sheet(item: $selectedMedia) { media in
                                     MediaModalView(media: media)
-                                })
+                                }
                         }
                     }
                 }
             }
+            .scrollDismissesKeyboard(.immediately)
         }
     }
 }

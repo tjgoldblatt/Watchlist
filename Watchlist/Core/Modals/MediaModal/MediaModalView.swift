@@ -124,7 +124,7 @@ extension MediaModalView {
     private var titleSection: some View {
         VStack(alignment: .center, spacing: 15) {
             HStack {
-                if let title = vm.media.mediaType == .movie ? vm.media.title : vm.media.name {
+                if let title = vm.media.mediaType == .movie ? vm.media.title ?? vm.media.originalTitle : vm.media.name ?? vm.media.originalName {
                     Text(title)
                         .font(.largeTitle)
                         .fontWeight(.semibold)

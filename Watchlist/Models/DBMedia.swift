@@ -26,9 +26,9 @@ struct DBMedia: Codable, Identifiable, Hashable {
     var watched: Bool
     var personalRating: Double?
 	
-    init(media: Media, watched: Bool, personalRating: Double?) {
+    init(media: Media, mediaType: MediaType = .movie, watched: Bool, personalRating: Double?) {
         self.id = media.id ?? -1
-        self.mediaType = media.mediaType ?? .movie
+        self.mediaType = media.mediaType ?? mediaType
         self.title = media.title
         self.originalTitle = media.originalTitle
         self.name = media.name
