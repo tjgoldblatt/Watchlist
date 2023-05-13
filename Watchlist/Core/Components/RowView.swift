@@ -102,8 +102,10 @@ extension RowView {
             if let genres = getGenres(genreIDs: media.genreIDs) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { _, genre in
-                            GenreView(genreName: genre.name)
+                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
+                            if idx < 2 {
+                                GenreView(genreName: genre.name)
+                            }
                         }
                     }
                 }

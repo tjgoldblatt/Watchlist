@@ -27,10 +27,11 @@ struct SettingsView: View {
 
                 List {
                     appearanceSection
-                        .listRowBackground(Color.theme.secondary)
+                        .listRowBackground(Color.gray.opacity(0.1))
                     accountSection
-                        .listRowBackground(Color.theme.secondary)
+                      .listRowBackground(Color.gray.opacity(0.1))
                     userInfoSection
+                        .listRowBackground(Color.gray.opacity(0.1))
                 }
                 .scrollContentBackground(.hidden)
                 .onAppear {

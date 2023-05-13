@@ -63,7 +63,6 @@ struct HomeView: View {
                         .tag(Tab.social)
                         .badge(homeVM.pendingFriendRequests)
                 }
-                .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
                 .onChange(of: homeVM.selectedTab) { _ in
                     homeVM.genresSelected = []

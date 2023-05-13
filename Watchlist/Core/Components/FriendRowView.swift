@@ -53,6 +53,8 @@ struct FriendRowView: View {
         .swipeActions(edge: .trailing) {
             if !homeVM.isDBMediaInWatchlist(dbMedia: media) {
                 swipeActionToAddToWatchlist
+            } else {
+                swipeActionToRemoveFromWatchlist
             }
         }
     }
@@ -81,8 +83,10 @@ extension FriendRowView {
             if let genres = getGenres(genreIDs: media.genreIDs) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { _, genre in
-                            GenreView(genreName: genre.name)
+                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
+                            if idx < 2 {
+                                GenreView(genreName: genre.name)
+                            }
                         }
                     }
                 }
@@ -110,17 +114,29 @@ extension FriendRowView {
                 newMedia.watched = false
                 newMedia.personalRating = nil
                 try await WatchlistManager.shared.createNewMediaInWatchlist(media: newMedia)
-                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: newMedia.id) {
-                    media = updatedMedia
-                }
             }
-            AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction")
+            AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Add")
             
         } label: {
             Image(systemName: "plus.circle.fill")
         }
         .tint(Color.theme.secondaryBackground)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")
+    }
+    
+    private var swipeActionToRemoveFromWatchlist: some View {
+        Button {
+            Task {
+                try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
+            }
+            AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Delete")
+            
+        } label: {
+            Image(systemName: "xmark")
+        }
+        .tint(Color.theme.red)
+        .accessibilityIdentifier("AddToWatchlistSwipeAction")
+
     }
     
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
