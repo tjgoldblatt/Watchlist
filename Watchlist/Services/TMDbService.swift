@@ -60,7 +60,7 @@ class TMDbService {
     /// Fetches popular movies from the TMDb API.
     /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getPopularMovies() -> AnyPublisher<[Media], Error> {
-        guard let url = URL(string: "\(Constants.baseURL)/3/movie/popular?api_key=\(Constants.API_KEY)&language=en-US&page=1") else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
+        guard let url = URL(string: "\(Constants.baseURL)/3/movie/popular?api_key=\(Constants.API_KEY)") else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
             
         return NetworkingManager.download(url: url)
             .decode(type: MediaResponse.self, decoder: JSONDecoder())
@@ -71,7 +71,7 @@ class TMDbService {
     /// Fetches popular TV shows from the TMDb API.
     /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getPopularTVShows() -> AnyPublisher<[Media], Error> {
-        guard let url = URL(string: "\(Constants.baseURL)/3/tv/popular?api_key=\(Constants.API_KEY)&language=en-US&page=1") else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
+        guard let url = URL(string: "\(Constants.baseURL)/3/tv/popular?api_key=\(Constants.API_KEY)") else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
             
         return NetworkingManager.download(url: url)
             .decode(type: MediaResponse.self, decoder: JSONDecoder())

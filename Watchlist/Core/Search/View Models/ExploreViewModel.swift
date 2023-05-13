@@ -45,7 +45,7 @@ final class ExploreViewModel: ObservableObject {
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { popularMovies in
                 self.popularMovies = popularMovies.compactMap { [weak self] in
                     guard let self else { return nil }
-                    return DBMedia(media: $0, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
+                    return DBMedia(media: $0, mediaType: .movie, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
                 }
             }
             .store(in: &cancellables)
@@ -53,9 +53,9 @@ final class ExploreViewModel: ObservableObject {
         TMDbService.getPopularTVShows()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { popularTVShows in
-                self.popularTVShows = popularTVShows.compactMap { [weak self] in
+                self.popularTVShows = popularTVShows.compactMap { [weak self] media in
                     guard let self else { return nil }
-                    return DBMedia(media: $0, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
+                    return DBMedia(media: media, mediaType: .tv, watched: self.homeVM.isMediaInWatchlist(media: media), personalRating: nil)
                 }
             }
             .store(in: &cancellables)
@@ -67,7 +67,7 @@ final class ExploreViewModel: ObservableObject {
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { trendingMovies in
                 self.trendingMovies = trendingMovies.compactMap { [weak self] in
                     guard let self else { return nil }
-                    return DBMedia(media: $0, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
+                    return DBMedia(media: $0, mediaType: .movie, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
                 }
             }
             .store(in: &cancellables)
@@ -77,7 +77,7 @@ final class ExploreViewModel: ObservableObject {
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { trendingTVShows in
                 self.trendingTVShows = trendingTVShows.compactMap { [weak self] in
                     guard let self else { return nil }
-                    return DBMedia(media: $0, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
+                    return DBMedia(media: $0, mediaType: .tv, watched: self.homeVM.isMediaInWatchlist(media: $0), personalRating: nil)
                 }
             }
             .store(in: &cancellables)
