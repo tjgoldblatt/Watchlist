@@ -160,6 +160,7 @@ extension ExploreTabView {
             }
             .padding()
         }
+        .scrollDismissesKeyboard(.immediately)
     }
 }
 
@@ -211,6 +212,7 @@ struct ExploreThumbnailView: View {
                     }
                 }
             }
+            .scrollDismissesKeyboard(.immediately)
         }
     }
 }
