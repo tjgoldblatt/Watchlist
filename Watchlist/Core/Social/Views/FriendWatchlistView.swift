@@ -125,7 +125,7 @@ extension FriendWatchlistView {
         HStack {
             ForEach(options, id: \.self) { option in
                 Text(option.rawValue)
-                    .foregroundColor(selectedOption == option ? .watchlistGenreText : .watchlistText.opacity(0.6))
+                    .foregroundColor(selectedOption == option ? .watchlistGenreText : .watchlistText.opacity(0.8))
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .frame(width: 110, height: 35)
