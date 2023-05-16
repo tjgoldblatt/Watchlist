@@ -29,7 +29,7 @@ struct SettingsView: View {
                     appearanceSection
                         .listRowBackground(Color.gray.opacity(0.1))
                     accountSection
-                      .listRowBackground(Color.gray.opacity(0.1))
+                        .listRowBackground(Color.gray.opacity(0.1))
                     userInfoSection
                         .listRowBackground(Color.gray.opacity(0.1))
                 }
@@ -40,24 +40,27 @@ struct SettingsView: View {
                 }
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.inline)
-                .confirmationDialog("Are you sure you'd like to delete your account?", isPresented: $deleteAccountConfirmation, actions: {
-                    Button("Delete", role: .destructive) {
-                        AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
-                        Task {
-                            do {
-                                viewModel.loadAuthUser()
-                                try await viewModel.delete()
-                                homeVM.selectedTab = .movies
-                                homeVM.showSignInView = true
-                            } catch {
-                                CrashlyticsManager.handleError(error: error)
+                .confirmationDialog(
+                    "Are you sure you'd like to delete your account?",
+                    isPresented: $deleteAccountConfirmation,
+                    actions: {
+                        Button("Delete", role: .destructive) {
+                            AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
+                            Task {
+                                do {
+                                    viewModel.loadAuthUser()
+                                    try await viewModel.delete()
+                                    homeVM.selectedTab = .movies
+                                    homeVM.showSignInView = true
+                                } catch {
+                                    CrashlyticsManager.handleError(error: error)
+                                }
                             }
                         }
-                    }
-                    .buttonStyle(.plain)
-                    Button("Cancel", role: .cancel) {}
                         .buttonStyle(.plain)
-                })
+                        Button("Cancel", role: .cancel) { }
+                            .buttonStyle(.plain)
+                    })
                 .fullScreenCover(isPresented: $showReAuthView, onDismiss: {
                     Task {
                         do {

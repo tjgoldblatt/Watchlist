@@ -10,9 +10,9 @@ import SwiftUI
 struct HeaderView: View {
     @Binding var currentTab: Tab
     @State var headerString = ""
-    
+
     var showIcon: Bool
-    
+
     var body: some View {
         HStack {
             Text(headerString.isEmpty ? currentTab.rawValue : headerString)
@@ -20,7 +20,7 @@ struct HeaderView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .dynamicTypeSize(.large...)
-          
+
             if showIcon {
                 Image(systemName: currentTab.icon)
                     .foregroundColor(Color.theme.red)
@@ -28,7 +28,7 @@ struct HeaderView: View {
                     .fontWeight(.semibold)
                     .dynamicTypeSize(...DynamicTypeSize.xLarge)
             }
-            
+
             Spacer()
         }
     }

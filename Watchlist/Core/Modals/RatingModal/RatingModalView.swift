@@ -12,23 +12,23 @@ import SwiftUI
 struct RatingModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @Environment(\.dismiss) var dismiss
-    
+
     @State var media: DBMedia
     @State var rating: Int = 0
-    
+
     @Binding var shouldShowRatingModal: Bool
-    
+
     var posterPath: String? {
         return media.posterPath
     }
-    
+
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .center) {
                 if let posterPath {
                     ZStack {
                         Color.black.ignoresSafeArea()
-                        
+
                         LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { state in
                             if let image = state.image {
                                 image
@@ -40,14 +40,14 @@ struct RatingModalView: View {
                                 Color.black
                             }
                         }
-                            
+
                         LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top)
                     }
                     .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height)
                 } else {
                     Color.theme.background
                 }
-                
+
                 VStack(alignment: .center) {
                     if let posterPath {
                         LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { state in
@@ -62,10 +62,10 @@ struct RatingModalView: View {
                             }
                         }
                         .overlay {
-                            rating > 0 ?
-                                ZStack {
+                            rating > 0
+                                ? ZStack {
                                     Color.black.opacity(0.9)
-                                
+
                                     Text("\(rating)")
                                         .font(.system(size: 90))
                                         .fontWeight(.light)
@@ -81,11 +81,11 @@ struct RatingModalView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(Color.theme.genreText)
                         .padding()
-                    
+
                     StarsView(rating: $rating)
                         .padding()
                         .accessibilityIdentifier("StarRatingInModal")
-                    
+
                     Text("Rate")
                         .foregroundColor(Color.theme.red)
                         .font(.headline)
@@ -98,10 +98,12 @@ struct RatingModalView: View {
                         .opacity(rating != 0 ? 1 : 0.7)
                         .onTapGesture {
                             Task {
-                                try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
-                                    
+                                try await WatchlistManager.shared.setPersonalRatingForMedia(
+                                    media: media,
+                                    personalRating: Double(rating))
+
                                 try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
-                                    
+
                                 shouldShowRatingModal = false
                             }
                             AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")

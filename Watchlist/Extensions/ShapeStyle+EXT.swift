@@ -17,11 +17,9 @@ extension ShapeStyle where Self == Color {
     static var watchlistGenreText: Color { Color("GenreTextColor") }
 }
 
-/*
- let secondaryBackground = Color("BackgroundColor")
- let background = Color("SecondaryBackgroundColor")
- let red = Color("RedColor")
- let secondary = Color("SecondaryColor")
- let text = Color("TextColor")
- let genreText = Color("GenreTextColor")
- */
+// let secondaryBackground = Color("BackgroundColor")
+// let background = Color("SecondaryBackgroundColor")
+// let red = Color("RedColor")
+// let secondary = Color("SecondaryColor")
+// let text = Color("TextColor")
+// let genreText = Color("GenreTextColor")

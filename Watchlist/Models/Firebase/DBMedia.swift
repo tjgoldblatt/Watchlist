@@ -23,33 +23,33 @@ struct DBMedia: Codable, Identifiable, Hashable {
     var genreIDs: [Int]?
     let releaseDate: String?
     let firstAirDate: String?
-    
+
     // Extra
     var watched: Bool
     var personalRating: Double?
-    
+
     init(media: Media, mediaType: MediaType? = nil, watched: Bool, personalRating: Double?) throws {
         guard let mediaId = media.id,
               let type = media.mediaType ?? mediaType else { throw TMDbError.failedToEncodeData }
-        
-        self.id = mediaId
+
+        id = mediaId
         self.mediaType = type
-        self.title = media.title
-        self.originalTitle = media.originalTitle
-        self.name = media.name
-        self.originalName = media.originalName
-        self.overview = media.overview
-        self.voteAverage = media.voteAverage
-        self.voteCount = media.voteCount
-        self.posterPath = media.posterPath
-        self.backdropPath = media.backdropPath
-        self.genreIDs = media.genreIDS
+        title = media.title
+        originalTitle = media.originalTitle
+        name = media.name
+        originalName = media.originalName
+        overview = media.overview
+        voteAverage = media.voteAverage
+        voteCount = media.voteCount
+        posterPath = media.posterPath
+        backdropPath = media.backdropPath
+        genreIDs = media.genreIDS
         self.watched = watched
         self.personalRating = personalRating
-        self.releaseDate = media.releaseDate
-        self.firstAirDate = media.firstAirDate
+        releaseDate = media.releaseDate
+        firstAirDate = media.firstAirDate
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case mediaType
@@ -63,10 +63,10 @@ struct DBMedia: Codable, Identifiable, Hashable {
         case posterPath
         case backdropPath
         case genreIDs
-        
+
         case watched
         case personalRating
-        
+
         case releaseDate
         case firstAirDate
     }

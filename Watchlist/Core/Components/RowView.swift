@@ -10,25 +10,25 @@ import SwiftUI
 
 struct RowView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    
+
     @State var personalRating: Double?
-    
+
     @State var isWatched: Bool = false
-    
+
     @State var media: DBMedia
-    
+
     @State private var showingSheet = false
 
     @State private var showRatingSheet = false
-    
+
     var body: some View {
         HStack(alignment: .center) {
             if let posterPath = media.posterPath {
                 ThumbnailView(imagePath: posterPath)
             }
-            
+
             centerColumn
-            
+
             rightColumn
         }
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
@@ -101,7 +101,7 @@ extension RowView {
                 .fontWeight(.light)
                 .foregroundColor(Color.theme.text)
                 .lineLimit(3)
-            
+
             if let genres = getGenres(genreIDs: media.genreIDs) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
@@ -116,17 +116,17 @@ extension RowView {
         }
         .frame(minWidth: 50)
     }
-    
+
     var rightColumn: some View {
         VStack(spacing: 10) {
             if let voteAverage = media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage)
             }
-            
+
             if let rating = media.personalRating {
                 StarRatingView(text: "YOUR RATING", rating: rating)
             }
-            
+
             if media.watched {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(Color.theme.red)
@@ -134,7 +134,7 @@ extension RowView {
             }
         }
     }
-    
+
     private var swipeActionToSetWatched: some View {
         Button {
             if personalRating == nil {
@@ -147,7 +147,7 @@ extension RowView {
         .tint(Color.theme.secondary)
         .accessibilityIdentifier("MediaSwipeAction")
     }
-    
+
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
         guard let genreIDs else { return nil }
         return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)
@@ -160,7 +160,7 @@ struct ThumbnailView: View {
     var frameWidth: CGFloat {
         return frameHeight * 0.70
     }
-    
+
     var body: some View {
         LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { state in
             if let image = state.image {
@@ -168,8 +168,7 @@ struct ThumbnailView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .clipShape(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    )
+                        RoundedRectangle(cornerRadius: 10, style: .continuous))
             } else {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundColor(Color.theme.secondary)

@@ -5,84 +5,84 @@
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct SearchBarView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    
+
     @StateObject private var textObserver = TextFieldObserver()
-    
+
     @Binding var searchText: String
-    
+
     @FocusState private var isFocused: Bool
-    
+
     @State var showFilterSheet: Bool = false
-    
+
     var textFieldString: String {
         return homeVM.selectedTab.searchTextLabel
     }
-    
+
     var queryToCallWhenTyping: (() -> Void)? = nil
-    
+
     var mediaListWithFilter: [DBMedia] {
         var mediaList: Set<DBMedia> = []
-        
+
         switch homeVM.selectedTab {
-            case .movies:
-                let movieListAfterFilter = homeVM.movieList.filter {
-                    switch homeVM.watchSelected {
-                        case .unwatched:
-                            return !$0.watched
-                        case .watched:
-                            return $0.watched
-                        case .any:
-                            return true
-                    }
+        case .movies:
+            let movieListAfterFilter = homeVM.movieList.filter {
+                switch homeVM.watchSelected {
+                case .unwatched:
+                    return !$0.watched
+                case .watched:
+                    return $0.watched
+                case .any:
+                    return true
                 }
-                
-                for movie in movieListAfterFilter {
-                    mediaList.insert(movie)
+            }
+
+            for movie in movieListAfterFilter {
+                mediaList.insert(movie)
+            }
+
+        case .tvShows:
+            let tvListAfterFilter = homeVM.tvList.filter {
+                switch homeVM.watchSelected {
+                case .unwatched:
+                    return !$0.watched
+                case .watched:
+                    return $0.watched
+                case .any:
+                    return true
                 }
-                
-            case .tvShows:
-                let tvListAfterFilter = homeVM.tvList.filter {
-                    switch homeVM.watchSelected {
-                        case .unwatched:
-                            return !$0.watched
-                        case .watched:
-                            return $0.watched
-                        case .any:
-                            return true
-                    }
-                }
-                
-                for tvShow in tvListAfterFilter {
-                        mediaList.insert(tvShow)
-                }
-            case .explore:
-                for media in homeVM.results.compactMap({ try? DBMedia(media: $0, watched: false, personalRating: nil) }) {
-                    mediaList.insert(media)
-                }
-            case .social:
-                break
+            }
+
+            for tvShow in tvListAfterFilter {
+                mediaList.insert(tvShow)
+            }
+        case .explore:
+            for media in homeVM.results.compactMap({ try? DBMedia(media: $0, watched: false, personalRating: nil) }) {
+                mediaList.insert(media)
+            }
+        case .social:
+            break
         }
         return Array(mediaList)
     }
-    
+
     var body: some View {
         HStack {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(!isFocused ? Color.theme.red : Color.theme.text)
                     .imageScale(.medium)
-                
+
                 TextField(textFieldString, text: homeVM.selectedTab == .explore ? $textObserver.searchText : $searchText)
                     .foregroundColor(Color.theme.text)
                     .font(.system(size: 16, design: .default))
                     .focused($isFocused)
                     .overlay(alignment: .trailing) {
-                        if isFocused && !(homeVM.selectedTab == .explore ? textObserver.searchText.isEmpty : searchText.isEmpty) {
+                        if isFocused, !(homeVM.selectedTab == .explore ? textObserver.searchText.isEmpty : searchText.isEmpty) {
                             Image(systemName: "xmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
@@ -114,19 +114,21 @@ struct SearchBarView: View {
                         }
                     }
                     .sheet(isPresented: $showFilterSheet) {
-                        FilterModalView(genresToFilter: homeVM.convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
+                        FilterModalView(
+                            genresToFilter: homeVM
+                                .convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
                             .presentationDetents([.large])
                             .presentationDragIndicator(.visible)
                     }
                     .submitLabel(.search)
                     .onReceive(textObserver.$debouncedText) { val in
                         homeVM.searchText = val
-                        
-                        if homeVM.selectedTab == .explore && val.isEmpty {
+
+                        if homeVM.selectedTab == .explore, val.isEmpty {
                             homeVM.results = []
                         }
-                        
-                        if(!textObserver.searchText.isEmpty) {
+
+                        if !textObserver.searchText.isEmpty {
                             if let queryToCallWhenTyping {
                                 queryToCallWhenTyping()
                             }
@@ -158,17 +160,17 @@ struct SearchBarView: View {
         }
         .padding(.horizontal)
     }
-    
+
     var shouldShowFilterButton: Bool {
         switch homeVM.selectedTab {
-            case .tvShows:
-                return !homeVM.tvList.isEmpty
-            case .movies:
-                return !homeVM.movieList.isEmpty
-            case .explore:
-                return !homeVM.results.isEmpty
-            case .social:
-                return false
+        case .tvShows:
+            return !homeVM.tvList.isEmpty
+        case .movies:
+            return !homeVM.movieList.isEmpty
+        case .explore:
+            return !homeVM.results.isEmpty
+        case .social:
+            return false
         }
     }
 }
@@ -197,12 +199,12 @@ extension View {
     }
 }
 
-class TextFieldObserver : ObservableObject {
+class TextFieldObserver: ObservableObject {
     @Published var debouncedText = ""
     @Published var searchText = ""
-    
+
     private var subscriptions = Set<AnyCancellable>()
-    
+
     init() {
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)

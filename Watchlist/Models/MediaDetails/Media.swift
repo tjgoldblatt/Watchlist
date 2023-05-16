@@ -7,12 +7,12 @@
 
 import Foundation
 
-
 struct MediaResponse: Codable {
     let results: [Media]
 }
 
 // MARK: - Result
+
 struct Media: Codable, Identifiable, Hashable {
     let mediaType: MediaType?
     let id: Int?
@@ -27,18 +27,40 @@ struct Media: Codable, Identifiable, Hashable {
 
     let popularity: Double?
     let firstAirDate: String?
-    
+
     let originCountry: [String]?
     let originalLanguage: String?
-    
+
     let name: String?
     let adult: Bool?
     let releaseDate, title: String?
     let video: Bool?
     let profilePath: String?
     let knownFor: [Media]?
-    
-    init(mediaType: MediaType?, id: Int?, originalTitle: String? = nil, originalName: String? = nil, overview: String? = nil, voteAverage: Double? = nil, voteCount: Int? = nil, posterPath: String? = nil, backdropPath: String? = nil, genreIDS: [Int]? = nil, popularity: Double? = nil, firstAirDate: String? = nil, originCountry: [String]? = nil, originalLanguage: String? = nil, name: String? = nil, adult: Bool? = nil, releaseDate: String? = nil, title: String? = nil, video: Bool? = nil, profilePath: String? = nil, knownFor: [Media]? = nil) {
+
+    init(
+        mediaType: MediaType?,
+        id: Int?,
+        originalTitle: String? = nil,
+        originalName: String? = nil,
+        overview: String? = nil,
+        voteAverage: Double? = nil,
+        voteCount: Int? = nil,
+        posterPath: String? = nil,
+        backdropPath: String? = nil,
+        genreIDS: [Int]? = nil,
+        popularity: Double? = nil,
+        firstAirDate: String? = nil,
+        originCountry: [String]? = nil,
+        originalLanguage: String? = nil,
+        name: String? = nil,
+        adult: Bool? = nil,
+        releaseDate: String? = nil,
+        title: String? = nil,
+        video: Bool? = nil,
+        profilePath: String? = nil,
+        knownFor: [Media]? = nil)
+    {
         self.mediaType = mediaType
         self.id = id
         self.originalTitle = originalTitle
@@ -61,7 +83,7 @@ struct Media: Codable, Identifiable, Hashable {
         self.profilePath = profilePath
         self.knownFor = knownFor
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case posterPath = "poster_path"
         case popularity, id, overview
@@ -85,7 +107,7 @@ struct Media: Codable, Identifiable, Hashable {
 }
 
 enum MediaType: String, Codable {
-    case movie = "movie"
-    case tv = "tv"
-    case person = "person"
+    case movie
+    case tv
+    case person
 }

@@ -11,37 +11,39 @@ import SwiftUI
 
 struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
-    
+
     @State private var showSafari: Bool = false
-    
+
     @EnvironmentObject var homeVM: HomeViewModel
     @StateObject var vm: MediaModalViewModel
-    
+
     var dateConvertedToYear: String {
         if let title = vm.media.mediaType == .tv ? vm.media.firstAirDate : vm.media.releaseDate {
             let date = title.components(separatedBy: "-")
             return date[0]
         }
-        
+
         return ""
     }
-    
+
     init(media: DBMedia, forPreview: Bool = false) {
-        _vm = forPreview ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true)) : StateObject(wrappedValue: MediaModalViewModel(media: media))
+        _vm = forPreview
+            ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true))
+            : StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
-    
+
     var body: some View {
         GeometryReader { geo in
             ScrollView(showsIndicators: false) {
                 backdropSection(geo: geo)
-                
+
                 VStack(alignment: .center, spacing: 30) {
                     titleSection
-                    
+
                     ratingSection
-                    
+
                     overview
-                    
+
                     providers
                 }
                 .padding(.horizontal)
@@ -57,7 +59,7 @@ struct MediaModalView: View {
                 }
             }
             .overlay(alignment: .topTrailing) {
-                if isInMedia(media: vm.media) && vm.media.watched {
+                if isInMedia(media: vm.media), vm.media.watched {
                     Menu {
                         Button(role: .destructive) {
                             AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
@@ -112,7 +114,7 @@ extension MediaModalView {
             }
         }
     }
-    
+
     private var genreSection: some View {
         VStack(alignment: .leading) {
             if let genreIds = vm.media.genreIDs {
@@ -120,11 +122,14 @@ extension MediaModalView {
             }
         }
     }
-    
+
     private var titleSection: some View {
         VStack(alignment: .center, spacing: 15) {
             HStack {
-                if let title = vm.media.mediaType == .movie ? vm.media.title ?? vm.media.originalTitle : vm.media.name ?? vm.media.originalName {
+                if let title = vm.media.mediaType == .movie
+                    ? vm.media.title ?? vm.media.originalTitle
+                    : vm.media.name ?? vm.media.originalName
+                {
                     Text(title)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
@@ -133,24 +138,24 @@ extension MediaModalView {
                         .multilineTextAlignment(.leading)
                 }
             }
-            
+
             HStack(spacing: 15) {
                 if (vm.media.releaseDate != nil) || (vm.media.firstAirDate != nil) {
                     Text(dateConvertedToYear)
                         .font(.headline)
                         .foregroundColor(Color.theme.text.opacity(0.6))
                         .fontWeight(.medium)
-                    
+
                     Color.theme.secondary.frame(width: 1, height: 20)
                 }
-                
+
                 if let genreIds = vm.media.genreIDs, let genre = getGenres(genreIDs: genreIds).first {
                     Text(genre.name)
                         .font(.headline)
                         .foregroundColor(Color.theme.text.opacity(0.6))
                         .fontWeight(.medium)
                 }
-                
+
                 if vm.media.watched {
                     Color.theme.secondary.frame(width: 1, height: 20)
 
@@ -161,7 +166,7 @@ extension MediaModalView {
             }
         }
     }
-    
+
     private var overview: some View {
         if let overview = vm.media.overview {
             return AnyView(ExpandableText(text: overview, lineLimit: 3))
@@ -169,21 +174,21 @@ extension MediaModalView {
             return AnyView(EmptyView())
         }
     }
-    
+
     private var ratingSection: some View {
         HStack {
             addButton
                 .padding(.trailing)
-            
+
             Spacer()
-            
+
             if let voteAverage = vm.media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage, size: 18)
                     .padding(.horizontal)
             }
-            
+
             Spacer()
-            
+
             Group {
                 if let personalRating = vm.media.personalRating {
                     StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
@@ -194,12 +199,12 @@ extension MediaModalView {
             }
             .frame(minWidth: 110)
             .padding(.leading)
-            
+
             Spacer()
         }
         .padding(.leading)
     }
-    
+
     @ViewBuilder
     private var providers: some View {
         VStack(spacing: 10) {
@@ -212,12 +217,12 @@ extension MediaModalView {
                         .font(.title2)
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     HStack {
                         Text("Brought to you by".uppercased())
                             .fontWeight(.light)
                             .font(.caption2)
-                        
+
                         Image("JustWatch")
                             .resizable()
                             .scaledToFit()
@@ -225,8 +230,7 @@ extension MediaModalView {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
-                
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         if let stream = countryProvider.flatrate {
@@ -256,7 +260,7 @@ extension MediaModalView {
                         }
                     }
                 }
-                
+
                 // Iteration one
 //                if let stream = countryProvider.flatrate {
 //                    ProviderView(providers: stream, providerType: "stream", link: link)
@@ -281,7 +285,7 @@ extension MediaModalView {
         }
         .padding(.bottom)
     }
-    
+
     private var rateThisButton: some View {
         Button {
             vm.showingRating.toggle()
@@ -306,7 +310,7 @@ extension MediaModalView {
             RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
         }
     }
-    
+
     private var addButton: some View {
         Button {
             if !isInMedia(media: vm.media) {
@@ -330,21 +334,24 @@ extension MediaModalView {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .fixedSize(horizontal: true, vertical: false)
         }
-        .confirmationDialog("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.showDeleteConfirmation, actions: {
-            Button("Cancel", role: .cancel) {}
-                .buttonStyle(.plain)
-            
-            Button("Delete", role: .destructive) {
-                Task {
-                    try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
-                    AnalyticsManager.shared.logEvent(name: "MediaModalView_DeleteMedia")
+        .confirmationDialog(
+            "Are you sure you'd like to delete from your Watchlist?",
+            isPresented: $vm.showDeleteConfirmation,
+            actions: {
+                Button("Cancel", role: .cancel) { }
+                    .buttonStyle(.plain)
+
+                Button("Delete", role: .destructive) {
+                    Task {
+                        try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_DeleteMedia")
+                    }
                 }
-            }
-            .buttonStyle(.plain)
-        })
+                .buttonStyle(.plain)
+            })
         .frame(width: 100, alignment: .center)
     }
-    
+
     func isInMedia(media: DBMedia) -> Bool {
         let mediaList = homeVM.movieList + homeVM.tvList
         for homeMedia in mediaList {
@@ -354,7 +361,7 @@ extension MediaModalView {
         }
         return false
     }
-    
+
     func getGenres(genreIDs: [Int]) -> [Genre] {
         return homeVM.getGenresForMediaType(for: vm.media.mediaType, genreIDs: genreIDs)
     }
@@ -362,7 +369,7 @@ extension MediaModalView {
 
 struct GenreSection: View {
     @State var genres: [Genre]
-    
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
@@ -379,10 +386,10 @@ struct GenreSection: View {
 struct ExpandableText: View {
     let text: String
     let lineLimit: Int
-    
+
     @State private var isExpanded: Bool = false
     @State private var isTruncated: Bool? = nil
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(text)
@@ -393,7 +400,7 @@ struct ExpandableText: View {
                         isExpanded = true
                     }
                 }
-            
+
             if isTruncated == true {
                 button
             }
@@ -402,7 +409,7 @@ struct ExpandableText: View {
         // Re-calculate isTruncated for the new text
         .onChange(of: text, perform: { _ in isTruncated = nil })
     }
-    
+
     func calculateTruncation(text: String) -> some View {
         // Select the view that fits in the background of the line-limited text.
         ViewThatFits(in: .vertical) {
@@ -423,7 +430,7 @@ struct ExpandableText: View {
                 }
         }
     }
-    
+
     var button: some View {
         Button(isExpanded ? "Less" : "More") {
             withAnimation(.interactiveSpring()) {

@@ -27,7 +27,7 @@ struct MovieDetails: Codable {
     let video: Bool?
     let voteAverage: Double?
     let voteCount: Int?
-    
+
     enum CodingKeys: String, CodingKey {
         case adult
         case backdropPath = "backdrop_path"
@@ -47,10 +47,26 @@ struct MovieDetails: Codable {
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
     }
-    
+
     func convertToMedia(dbMedia: DBMedia) -> DBMedia? {
-        let media = Media(mediaType: .movie, id: id, originalTitle: originalTitle, overview: overview, voteAverage: voteAverage, voteCount: voteCount, posterPath: posterPath, backdropPath: backdropPath, genreIDS: genres?.map{ $0.id }, popularity: popularity, firstAirDate: dbMedia.firstAirDate, originalLanguage: originalLanguage, adult: adult, releaseDate: releaseDate, title: title, video: video)
-        
+        let media = Media(
+            mediaType: .movie,
+            id: id,
+            originalTitle: originalTitle,
+            overview: overview,
+            voteAverage: voteAverage,
+            voteCount: voteCount,
+            posterPath: posterPath,
+            backdropPath: backdropPath,
+            genreIDS: genres?.map(\.id),
+            popularity: popularity,
+            firstAirDate: dbMedia.firstAirDate,
+            originalLanguage: originalLanguage,
+            adult: adult,
+            releaseDate: releaseDate,
+            title: title,
+            video: video)
+
         do {
             return try DBMedia(media: media, watched: dbMedia.watched, personalRating: dbMedia.personalRating)
         } catch {
@@ -61,11 +77,12 @@ struct MovieDetails: Codable {
 }
 
 // MARK: - ProductionCompany
+
 struct ProductionCompany: Codable {
     let id: Int?
     let logoPath: String?
     let name, originCountry: String?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case logoPath = "logo_path"
