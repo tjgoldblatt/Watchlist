@@ -28,9 +28,12 @@ struct DBMedia: Codable, Identifiable, Hashable {
     var watched: Bool
     var personalRating: Double?
     
-    init(media: Media, mediaType: MediaType = .movie, watched: Bool, personalRating: Double?) {
-        self.id = media.id ?? -1
-        self.mediaType = media.mediaType ?? mediaType
+    init(media: Media, mediaType: MediaType? = nil, watched: Bool, personalRating: Double?) throws {
+        guard let mediaId = media.id,
+              let type = media.mediaType ?? mediaType else { throw TMDbError.failedToEncodeData }
+        
+        self.id = mediaId
+        self.mediaType = type
         self.title = media.title
         self.originalTitle = media.originalTitle
         self.name = media.name
