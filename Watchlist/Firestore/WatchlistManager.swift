@@ -185,6 +185,11 @@ final class WatchlistManager {
         try await userWatchlistDocument.updateData(data)
     }
     
+    func updateMediaInWatchlist(media: DBMedia) async throws {
+        let document = try userWatchlistCollection().document("\(media.id)")
+        try document.setData(from: media, merge: true)
+    }
+    
     /// Sets the release or air date of a media.
     /// - Parameter media: The media to be updated.
     func setReleaseOrAirDateForMedia(media: DBMedia) async throws {
@@ -225,11 +230,11 @@ final class WatchlistManager {
     /// - Returns: An array of `DBMedia` objects representing the user's watchlist.
     func getMedia(mediaType: MediaType, forUser userId: String? = nil) async throws -> [DBMedia] {
         var watchlistCollection = try userWatchlistCollection()
-		
+        
         if let userId {
             watchlistCollection = userWatchlistCollection(for: userId)
         }
-		
+        
         let query = watchlistCollection
             .whereField(DBMedia.CodingKeys.mediaType.rawValue, isEqualTo: mediaType.rawValue)
         
@@ -245,7 +250,7 @@ final class WatchlistManager {
     }
     
     // MARK: - Function to Copy from Blackbird to Firebase
-
+    
     // TODO: Remove this for release
     /// Copies a media object from Blackbird to Firebase for the current user.
     /// - Parameter mediaModel: The `MediaModel` object to copy.
@@ -269,11 +274,11 @@ extension WatchlistManager {
     func getWatchlistDocument(for userId: String) -> DocumentReference {
         return watchlistCollection.document(userId)
     }
-	
+    
     func getWatchlist(for userId: String) async throws -> UserWatchlist {
         try await getWatchlistDocument(for: userId).getDocument(as: UserWatchlist.self)
     }
-	
+    
     /// Returns the userWatchlist collection reference.
     func userWatchlistCollection(for userId: String) -> CollectionReference {
         getWatchlistDocument(for: userId).collection("userWatchlist")

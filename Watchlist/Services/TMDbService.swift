@@ -26,6 +26,11 @@ class TMDbService {
             .eraseToAnyPublisher()
     }
     
+    /// This method retrieves the watch providers for a given media type and id.
+    /// - Parameters:
+    ///   - mediaType: The type of media (movie or tv show).
+    ///   - id: The id of the media.
+    /// - Returns: A publisher that emits the results of the API call or an error if the call fails.
     static func getWatchProviders(mediaType: MediaType,for id: Int) -> AnyPublisher<Results, Error> {
         guard let url = URL(string: "\(Constants.baseURL)/3/\(mediaType.rawValue)/\(id)/watch/providers?api_key=\(Constants.API_KEY)") else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
         
@@ -76,6 +81,15 @@ class TMDbService {
         return NetworkingManager.download(url: url)
             .decode(type: MediaResponse.self, decoder: JSONDecoder())
             .map(\.results)
+            .eraseToAnyPublisher()
+    }
+    
+    static func getMediaDetails(mediaType: MediaType, for id: Int) -> AnyPublisher<Media, Error> {
+        guard let url = URL(string: "\(Constants.baseURL)/3/\(mediaType)/\(id)?api_key=\(Constants.API_KEY)&language=en-US") else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
+        
+        
+        return NetworkingManager.download(url: url)
+            .decode(type: Media.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
     }
     

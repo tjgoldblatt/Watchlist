@@ -145,7 +145,7 @@ extension FriendWatchlistView {
                     }
             }
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: 500)
         .background(Color.theme.secondaryBackground)
         .cornerRadius(12)
         .dynamicTypeSize(.medium ... .xLarge)

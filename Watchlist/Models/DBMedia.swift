@@ -5,6 +5,8 @@
 //  Created by TJ Goldblatt on 5/3/23.
 //
 
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 import Foundation
 
 struct DBMedia: Codable, Identifiable, Hashable {
@@ -18,14 +20,14 @@ struct DBMedia: Codable, Identifiable, Hashable {
     let voteCount: Int?
     let posterPath: String?
     let backdropPath: String?
-    let genreIDs: [Int]?
+    var genreIDs: [Int]?
     let releaseDate: String?
     let firstAirDate: String?
-	
+    
     // Extra
     var watched: Bool
     var personalRating: Double?
-	
+    
     init(media: Media, mediaType: MediaType = .movie, watched: Bool, personalRating: Double?) {
         self.id = media.id ?? -1
         self.mediaType = media.mediaType ?? mediaType
@@ -44,7 +46,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         self.releaseDate = media.releaseDate
         self.firstAirDate = media.firstAirDate
     }
-	
+    
     enum CodingKeys: String, CodingKey {
         case id
         case mediaType
@@ -58,10 +60,10 @@ struct DBMedia: Codable, Identifiable, Hashable {
         case posterPath
         case backdropPath
         case genreIDs
-		
+        
         case watched
         case personalRating
-		
+        
         case releaseDate
         case firstAirDate
     }

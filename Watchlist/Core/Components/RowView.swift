@@ -18,7 +18,7 @@ struct RowView: View {
     @State var media: DBMedia
     
     @State private var showingSheet = false
-    /// For showing the rating modal on swipe - need to work on still
+
     @State private var showRatingSheet = false
     
     var body: some View {
@@ -61,11 +61,14 @@ struct RowView: View {
                 media = updatedMedia
             }
         }
+        .onDisappear {
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                media = updatedMedia
+            }
+        }
         .onReceive(media.mediaType == .movie ? homeVM.$movieList : homeVM.$tvList) { updatedList in
-            for updatedMedia in updatedList {
-                if media.id == updatedMedia.id {
-                    media = updatedMedia
-                }
+            if let updatedMedia = updatedList.first(where: { $0.id == media.id }) {
+                media = updatedMedia
             }
         }
     }
