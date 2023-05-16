@@ -146,21 +146,27 @@ extension ExploreTabView {
     }
     
     // MARK: - Empty Search
-    
+    @ViewBuilder
     private var emptySearch: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 10) {
-                ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
-                
-                ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
-                
-                ExploreThumbnailView(title: "Popular Movies", mediaArray: vm.popularMovies)
-                
-                ExploreThumbnailView(title: "Popular TV Shows", mediaArray: vm.popularTVShows)
+        if homeVM.searchText.isEmpty {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 10) {
+                    ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
+                    
+                    ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
+                    
+                    ExploreThumbnailView(title: "Popular Movies", mediaArray: vm.popularMovies)
+                    
+                    ExploreThumbnailView(title: "Popular TV Shows", mediaArray: vm.popularTVShows)
+                }
+                .padding()
             }
-            .padding()
+            .scrollDismissesKeyboard(.immediately)
+        } else {
+            Text("No results found")
+                .foregroundColor(Color.theme.text)
+                .padding(.top)
         }
-        .scrollDismissesKeyboard(.immediately)
     }
 }
 

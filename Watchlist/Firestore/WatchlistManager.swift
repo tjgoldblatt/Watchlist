@@ -73,17 +73,17 @@ final class WatchlistManager {
         try await watchlistDocument.setData(data, merge: true)
     }
     
-    // TODO: Eventually delete this once we move from Blackbird
-    /// Sets the isTransferred field of the watchlist document to the current server timestamp.
-    func setTransferred() async throws {
-        let watchlistDocument = try watchlistDocument()
-        
-        let data: [String: Any] = [
-            UserWatchlist.CodingKeys.isTransferred.rawValue: FieldValue.serverTimestamp()
-        ]
-        
-        try await watchlistDocument.setData(data, merge: true)
-    }
+//    // TODO: Eventually delete this once we move from Blackbird
+//    /// Sets the isTransferred field of the watchlist document to the current server timestamp.
+//    func setTransferred() async throws {
+//        let watchlistDocument = try watchlistDocument()
+//
+//        let data: [String: Any] = [
+//            UserWatchlist.CodingKeys.isTransferred.rawValue: FieldValue.serverTimestamp()
+//        ]
+//
+//        try await watchlistDocument.setData(data, merge: true)
+//    }
     
     /// Gets the isTransferred field value of the watchlist document.
     /// - Returns: The timestamp value of the isTransferred field.
@@ -251,21 +251,21 @@ final class WatchlistManager {
     
     // MARK: - Function to Copy from Blackbird to Firebase
     
-    // TODO: Remove this for release
-    /// Copies a media object from Blackbird to Firebase for the current user.
-    /// - Parameter mediaModel: The `MediaModel` object to copy.
-    /// - Throws: A `FirebaseError` if there is an error copying the media object.
-    func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
-        guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media), let mediaId = media.id else {
-            throw FirebaseError.blackbirdTransferError(mediaModel: mediaModel)
-        }
-        
-        if media.mediaType == .movie, media.id == 1 { return }
-        
-        let dbMedia = try DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
-        let document = try userWatchlistCollection().document("\(mediaId)")
-        try document.setData(from: dbMedia, merge: true)
-    }
+//    // TODO: Remove this for release
+//    /// Copies a media object from Blackbird to Firebase for the current user.
+//    /// - Parameter mediaModel: The `MediaModel` object to copy.
+//    /// - Throws: A `FirebaseError` if there is an error copying the media object.
+//    func copyBlackbirdToFBForUser(mediaModel: MediaModel) async throws {
+//        guard let media = try? JSONDecoder().decode(Media.self, from: mediaModel.media), let mediaId = media.id else {
+//            throw FirebaseError.blackbirdTransferError(mediaModel: mediaModel)
+//        }
+//        
+//        if media.mediaType == .movie, media.id == 1 { return }
+//        
+//        let dbMedia = try DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
+//        let document = try userWatchlistCollection().document("\(mediaId)")
+//        try document.setData(from: dbMedia, merge: true)
+//    }
 }
 
 // MARK: - Social
