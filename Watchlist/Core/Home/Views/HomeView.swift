@@ -11,8 +11,9 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
     
-    @Environment(\.blackbirdDatabase) var database
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
+    // TODO: Remove This
+//    @Environment(\.blackbirdDatabase) var database
+//    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
     
     @State var showDebugView = false
     @State private var currentTab: Tab = .movies
@@ -29,16 +30,16 @@ struct HomeView: View {
                         }
                         .tag(Tab.movies)
                     
-                        .onAppear {
-                            Task {
-                                if database != nil {
-                                    // TODO: Delete this after enough people have transferred their databases
-                                    try await homeVM.transferDatabase()
-                                } else {
-                                    try await WatchlistManager.shared.setTransferred()
-                                }
-                            }
-                        }
+//                        .onAppear {
+//                            Task {
+//                                if database != nil {
+//                                    // TODO: Delete this after enough people have transferred their databases
+//                                    try await homeVM.transferDatabase()
+//                                } else {
+//                                    try await WatchlistManager.shared.setTransferred()
+//                                }
+//                            }
+//                        }
                     
                     TVShowTabView()
                         .environmentObject(homeVM)
@@ -77,9 +78,10 @@ struct HomeView: View {
                         homeVM.results = []
                     }
                 }
-                .onAppear {
-                    homeVM.database = database
-                }
+//                .onAppear {
+//                    // TODO: Remove This
+//                    homeVM.database = database
+//                }
                 VStack {
                     Spacer()
                     if homeVM.editMode == .active {
