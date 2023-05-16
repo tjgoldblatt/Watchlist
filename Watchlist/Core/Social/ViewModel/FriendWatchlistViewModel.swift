@@ -34,7 +34,7 @@ final class FriendWatchlistViewModel: ObservableObject {
         self.init(userId: "abcd")
         if ApplicationHelper.isDebug, forPreview {
             self.movieList = [
-                DBMedia(
+                try! DBMedia(
                     media: Media(mediaType: .movie,
                                  id: 5,
                                  originalTitle: "Batman: The Long Halloween, Part Two",
@@ -49,7 +49,7 @@ final class FriendWatchlistViewModel: ObservableObject {
                                  title: "Batman: The Long Halloween, Part Two"),
                     watched: false,
                     personalRating: 7.0),
-                DBMedia(
+                try! DBMedia(
                     media: Media(mediaType: .movie,
                                  id: 5,
                                  originalTitle: "Batman: The Long Halloween, Part Two",
@@ -67,7 +67,7 @@ final class FriendWatchlistViewModel: ObservableObject {
             ]
             
             self.tvList = [
-                DBMedia(
+                try! DBMedia(
                     media: Media(mediaType: .tv,
                                  id: 1,
                                  originalTitle: nil,
@@ -83,7 +83,7 @@ final class FriendWatchlistViewModel: ObservableObject {
                     watched: true,
                     personalRating: 2),
                 
-                DBMedia(
+                try! DBMedia(
                     media: Media(mediaType: .tv,
                                  id: 1,
                                  originalTitle: nil,

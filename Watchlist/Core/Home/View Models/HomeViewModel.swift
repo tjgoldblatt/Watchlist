@@ -240,7 +240,7 @@ extension HomeViewModel {
             // Hard code your mock data for the preview here
             self.isMediaLoaded = true
             self.movieList = [
-                DBMedia(
+               try! DBMedia(
                     media: Media(mediaType: .movie,
                                  id: 5,
                                  originalTitle: "Batman: The Long Halloween, Part Two",
@@ -255,7 +255,7 @@ extension HomeViewModel {
                                  title: "Batman: The Long Halloween, Part Two"),
                     watched: true,
                     personalRating: 7.0),
-                DBMedia(
+                try! DBMedia(
                     media: Media(mediaType: .movie,
                                  id: 5,
                                  originalTitle: "Batman: The Long Halloween, Part Two",
@@ -270,7 +270,7 @@ extension HomeViewModel {
                                  title: "Batman: The Long Halloween, Part Two"),
                     watched: false,
                     personalRating: 7.0),
-                DBMedia(
+                try! DBMedia(
                     media: Media(mediaType: .movie,
                                  id: 5,
                                  originalTitle: "Batman: The Long Halloween, Part Two",
@@ -288,7 +288,7 @@ extension HomeViewModel {
             ]
             
             self.tvList = [
-                DBMedia(
+                try! DBMedia(
                     media: Media(mediaType: .tv,
                                  id: 1,
                                  originalTitle: nil,
@@ -303,7 +303,7 @@ extension HomeViewModel {
                                  name: "Batman: The Brave and the Bold"),
                     watched: false,
                     personalRating: 2),
-                DBMedia(
+                try! DBMedia(
                     media: Media(mediaType: .tv,
                                  id: 1,
                                  originalTitle: nil,
@@ -318,7 +318,7 @@ extension HomeViewModel {
                                  name: "Batman: The Brave and the Bold"),
                     watched: true,
                     personalRating: 2),
-                DBMedia(
+               try! DBMedia(
                     media: Media(mediaType: .tv,
                                  id: 1,
                                  originalTitle: nil,

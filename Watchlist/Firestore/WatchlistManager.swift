@@ -262,7 +262,7 @@ final class WatchlistManager {
         
         if media.mediaType == .movie, media.id == 1 { return }
         
-        let dbMedia = DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
+        let dbMedia = try DBMedia(media: media, watched: mediaModel.watched, personalRating: mediaModel.personalRating)
         let document = try userWatchlistCollection().document("\(mediaId)")
         try document.setData(from: dbMedia, merge: true)
     }

@@ -61,7 +61,7 @@ struct SearchBarView: View {
                         mediaList.insert(tvShow)
                 }
             case .explore:
-                for media in homeVM.results.map({ DBMedia(media: $0, watched: false, personalRating: nil) }) {
+                for media in homeVM.results.compactMap({ try? DBMedia(media: $0, watched: false, personalRating: nil) }) {
                     mediaList.insert(media)
                 }
             case .social:

@@ -40,21 +40,35 @@ final class MediaModalViewModel: ObservableObject {
     }
     
     func updateMediaDetails() {
-        TMDbService.getMediaDetails(mediaType: media.mediaType, for: media.id)
-            .receive(on: RunLoop.main)
-            .sink(receiveCompletion: NetworkingManager.handleCompletition) { [weak self] updatedMedia in
-                guard let self else { return }
-                let genreIds = media.genreIDs
-                let updatedDBMedia = DBMedia(media: updatedMedia, watched: media.watched, personalRating: media.personalRating)
-                
-                media = updatedDBMedia
-                media.genreIDs = genreIds
-                
-                Task {
-                    try await WatchlistManager.shared.updateMediaInWatchlist(media: self.media)
+        if media.mediaType == .movie {
+            TMDbService.getMovieDetails(for: media.id)
+                .receive(on: RunLoop.main)
+                .sink(receiveCompletion: NetworkingManager.handleCompletition) { [weak self] movieDetail in
+                    guard let self,
+                            let updatedDBMedia: DBMedia = movieDetail.convertToMedia(dbMedia: media) else { return }
+                    
+                    media = updatedDBMedia
+
+                    Task {
+                        try await WatchlistManager.shared.updateMediaInWatchlist(media: self.media)
+                    }
                 }
-            }
-            .store(in: &cancellables)
+                .store(in: &cancellables)
+        } else {
+            TMDbService.getTVDetails(for: media.id)
+                .receive(on: RunLoop.main)
+                .sink(receiveCompletion: NetworkingManager.handleCompletition) { [weak self] tvDetail in
+                    guard let self,
+                          let updatedDBMedia: DBMedia = tvDetail.convertToMedia(dbMedia: media) else { return }
+
+                    media = updatedDBMedia
+
+                    Task {
+                        try await WatchlistManager.shared.updateMediaInWatchlist(media: self.media)
+                    }
+                }
+                .store(in: &cancellables)
+        }
     }
     
     func getWatchProviders(mediaType: MediaType, for id: Int) {
@@ -76,7 +90,7 @@ final class MediaModalViewModel: ObservableObject {
 extension MediaModalViewModel {
     convenience init(forPreview: Bool = false) {
         self.init(media:
-            DBMedia(
+            try! DBMedia(
                 media: Media(mediaType: .movie,
                              id: 5,
                              originalTitle: "Batman: The Long Halloween, Part Two",

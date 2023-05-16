@@ -23,7 +23,7 @@ class DeveloperPreview {
     let settingsVM = SettingsViewModel(forPreview: true)
     
     let mediaMock: [DBMedia] = [
-        DBMedia(
+        try! DBMedia(
             media: Media(mediaType: .movie,
                          id: 5,
                          originalTitle: "Batman: The Long Halloween, Part Two",
@@ -39,7 +39,7 @@ class DeveloperPreview {
             watched: false,
             personalRating: 7.0),
         
-        DBMedia(
+        try! DBMedia(
             media: Media(mediaType: .tv,
                          id: 1,
                          originalTitle: nil,
@@ -55,7 +55,7 @@ class DeveloperPreview {
             watched: true,
             personalRating: 2),
         
-        DBMedia(
+        try! DBMedia(
             media: Media(mediaType: .movie,
                          id: 5,
                          originalTitle: "Batman: The Long Halloween, Part Two",
@@ -71,7 +71,7 @@ class DeveloperPreview {
             watched: false,
             personalRating: 7.0),
         
-        DBMedia(
+        try! DBMedia(
             media: Media(mediaType: .tv,
                          id: 1,
                          originalTitle: nil,
