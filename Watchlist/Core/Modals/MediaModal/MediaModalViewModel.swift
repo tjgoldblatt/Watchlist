@@ -39,6 +39,24 @@ final class MediaModalViewModel: ObservableObject {
         getWatchProviders(mediaType: media.mediaType, for: media.id)
     }
     
+    func updateMediaDetails() {
+        TMDbService.getMediaDetails(mediaType: media.mediaType, for: media.id)
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: NetworkingManager.handleCompletition) { [weak self] updatedMedia in
+                guard let self else { return }
+                let genreIds = media.genreIDs
+                let updatedDBMedia = DBMedia(media: updatedMedia, watched: media.watched, personalRating: media.personalRating)
+                
+                media = updatedDBMedia
+                media.genreIDs = genreIds
+                
+                Task {
+                    try await WatchlistManager.shared.updateMediaInWatchlist(media: self.media)
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     func getWatchProviders(mediaType: MediaType, for id: Int) {
         TMDbService.getWatchProviders(mediaType: mediaType, for: id)
             .receive(on: RunLoop.main)

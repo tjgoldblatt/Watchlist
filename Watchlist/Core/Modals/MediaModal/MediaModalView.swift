@@ -86,8 +86,8 @@ struct MediaModalView: View {
             }
             .ignoresSafeArea(edges: .top)
             .onAppear {
-                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                    vm.media = updatedMedia
+                if homeVM.isDBMediaInWatchlist(dbMedia: vm.media) {
+                    vm.updateMediaDetails()
                 }
             }
         }

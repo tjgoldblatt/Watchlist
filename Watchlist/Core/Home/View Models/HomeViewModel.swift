@@ -85,12 +85,11 @@ final class HomeViewModel: ObservableObject {
     }
     
     func getUpdatedMediaFromList(mediaId: Int) -> DBMedia? {
-        for media in tvList + movieList {
-            if media.id == mediaId {
-                return media
-            }
+        if let media = (tvList + movieList).first(where: { $0.id == mediaId }) {
+            return media
+        } else {
+            return nil
         }
-        return nil
     }
     
     // TODO: Remove Blackbird Copy Func
