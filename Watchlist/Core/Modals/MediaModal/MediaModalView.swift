@@ -33,78 +33,76 @@ struct MediaModalView: View {
     }
 
     var body: some View {
-        GeometryReader { geo in
-            ScrollView(showsIndicators: false) {
-                backdropSection(geo: geo)
+        ScrollView(showsIndicators: false) {
+            backdropSection()
 
-                VStack(alignment: .center, spacing: 30) {
-                    titleSection
+            VStack(alignment: .center, spacing: 30) {
+                titleSection
 
-                    ratingSection
+                ratingSection
 
-                    overview
+                overview
 
-                    providers
-                }
-                .padding(.horizontal)
-                .frame(maxWidth: geo.size.width)
+                providers
             }
-            .analyticsScreen(name: "MediaModalView")
-            .overlay(alignment: .topLeading) {
-                Button {
-                    dismiss()
+            .padding(.horizontal)
+        }
+        .analyticsScreen(name: "MediaModalView")
+        .overlay(alignment: .topLeading) {
+            Button {
+                dismiss()
+            } label: {
+                CloseButton()
+                    .padding()
+            }
+        }
+        .overlay(alignment: .topTrailing) {
+            if isInMedia(media: vm.media), vm.media.watched {
+                Menu {
+                    Button(role: .destructive) {
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
+                        Task {
+                            try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
+                            try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                vm.media = updatedMedia
+                            }
+                        }
+                    } label: {
+                        Text("Reset")
+                        Image(systemName: "arrow.counterclockwise.circle")
+                    }
+                    .buttonStyle(.plain)
                 } label: {
-                    CloseButton()
+                    Image(systemName: "ellipsis.circle.fill")
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Color.theme.text, Color.theme.background)
+                        .shadow(color: Color.black.opacity(0.4), radius: 2)
                         .padding()
                 }
             }
-            .overlay(alignment: .topTrailing) {
-                if isInMedia(media: vm.media), vm.media.watched {
-                    Menu {
-                        Button(role: .destructive) {
-                            AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
-                            Task {
-                                try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
-                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
-                                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                                    vm.media = updatedMedia
-                                }
-                            }
-                        } label: {
-                            Text("Reset")
-                            Image(systemName: "arrow.counterclockwise.circle")
-                        }
-                        .buttonStyle(.plain)
-                    } label: {
-                        Image(systemName: "ellipsis.circle.fill")
-                            .resizable()
-                            .frame(width: 25, height: 25)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color.theme.text, Color.theme.background)
-                            .shadow(color: Color.black.opacity(0.4), radius: 2)
-                            .padding()
-                    }
-                }
-            }
-            .ignoresSafeArea(edges: .top)
-            .onAppear {
-                if homeVM.isDBMediaInWatchlist(dbMedia: vm.media) {
-                    vm.updateMediaDetails()
-                }
+        }
+        .ignoresSafeArea(edges: .top)
+        .onAppear {
+            if homeVM.isDBMediaInWatchlist(dbMedia: vm.media) {
+                vm.updateMediaDetails()
             }
         }
         .background(Color.theme.background)
+        .dynamicTypeSize(.medium ... .xLarge)
     }
 }
 
 extension MediaModalView {
-    func backdropSection(geo: GeometryProxy) -> some View {
-        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(vm.imagePath)")) { state in
+    func backdropSection() -> some View {
+        LazyImage(url: URL(string: TMDBConstants.imageURL + vm.imagePath)) { state in
             if let image = state.image {
                 image
                     .resizable()
                     .scaledToFill()
-                    .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : geo.size.width)
+
                     .frame(maxHeight: 300)
                     .clipped()
                     .shadow(color: Color.black.opacity(0.3), radius: 5)
@@ -135,7 +133,7 @@ extension MediaModalView {
                         .fontWeight(.semibold)
                         .foregroundColor(Color.theme.text)
                         .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.leading)
+                        .multilineTextAlignment(.center)
                 }
             }
 
@@ -178,17 +176,13 @@ extension MediaModalView {
     private var ratingSection: some View {
         HStack {
             addButton
-                .padding(.trailing)
-
+                .frame(minWidth: 110)
             Spacer()
-
             if let voteAverage = vm.media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage, size: 18)
-                    .padding(.horizontal)
+                    .frame(minWidth: 110)
             }
-
             Spacer()
-
             Group {
                 if let personalRating = vm.media.personalRating {
                     StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
@@ -198,11 +192,7 @@ extension MediaModalView {
                 }
             }
             .frame(minWidth: 110)
-            .padding(.leading)
-
-            Spacer()
         }
-        .padding(.leading)
     }
 
     @ViewBuilder
@@ -260,27 +250,6 @@ extension MediaModalView {
                         }
                     }
                 }
-
-                // Iteration one
-//                if let stream = countryProvider.flatrate {
-//                    ProviderView(providers: stream, providerType: "stream", link: link)
-//                }
-//
-//                if let free = countryProvider.free {
-//                    ProviderView(providers: free, providerType: "free", link: link)
-//                }
-//
-//                if let ads = countryProvider.ads {
-//                    ProviderView(providers: ads, providerType: "ads", link: link)
-//                }
-//
-//                if let rent = countryProvider.rent {
-//                    ProviderView(providers: rent, providerType: "rent", link: link)
-//                }
-//
-//                if let buy = countryProvider.buy {
-//                    ProviderView(providers: buy, providerType: "buy", link: link)
-//                }
             }
         }
         .padding(.bottom)

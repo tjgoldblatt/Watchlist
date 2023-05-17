@@ -244,7 +244,7 @@ extension HomeViewModel {
                 try! DBMedia(
                     media: Media(
                         mediaType: .movie,
-                        id: 5,
+                        id: 736074,
                         originalTitle: "Batman: The Long Halloween, Part Two",
                         originalName: nil,
                         overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
@@ -260,7 +260,7 @@ extension HomeViewModel {
                 try! DBMedia(
                     media: Media(
                         mediaType: .movie,
-                        id: 5,
+                        id: 736074,
                         originalTitle: "Batman: The Long Halloween, Part Two",
                         originalName: nil,
                         overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
@@ -276,7 +276,7 @@ extension HomeViewModel {
                 try! DBMedia(
                     media: Media(
                         mediaType: .movie,
-                        id: 5,
+                        id: 736074,
                         originalTitle: "Batman: The Long Halloween, Part Two",
                         originalName: nil,
                         overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
@@ -295,7 +295,7 @@ extension HomeViewModel {
                 try! DBMedia(
                     media: Media(
                         mediaType: .tv,
-                        id: 1,
+                        id: 15804,
                         originalTitle: nil,
                         originalName: "Batman: The Brave and the Bold",
                         overview: "The Caped Crusader is teamed up with Blue Beetle, Green Arrow, Aquaman and countless others in his quest to uphold justice.",
@@ -311,7 +311,7 @@ extension HomeViewModel {
                 try! DBMedia(
                     media: Media(
                         mediaType: .tv,
-                        id: 1,
+                        id: 15804,
                         originalTitle: nil,
                         originalName: "Batman: The Brave and the Bold",
                         overview: "The Caped Crusader is teamed up with Blue Beetle, Green Arrow, Aquaman and countless others in his quest to uphold justice.",
@@ -327,7 +327,7 @@ extension HomeViewModel {
                 try! DBMedia(
                     media: Media(
                         mediaType: .tv,
-                        id: 1,
+                        id: 15804,
                         originalTitle: nil,
                         originalName: "Batman: The Brave and the Bold",
                         overview: "The Caped Crusader is teamed up with Blue Beetle, Green Arrow, Aquaman and countless others in his quest to uphold justice.",

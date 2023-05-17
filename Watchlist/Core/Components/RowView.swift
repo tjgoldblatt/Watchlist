@@ -162,7 +162,7 @@ struct ThumbnailView: View {
     }
 
     var body: some View {
-        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(imagePath)")) { state in
+        LazyImage(url: URL(string: TMDBConstants.imageURL + imagePath)) { state in
             if let image = state.image {
                 image
                     .resizable()
