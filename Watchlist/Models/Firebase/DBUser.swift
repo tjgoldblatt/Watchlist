@@ -21,31 +21,32 @@ struct DBUser: Codable, Hashable, Identifiable {
     let friends: [String]?
 
     init(auth: AuthDataResultModel) {
-        self.userId = auth.uid
-        self.isAnonymous = auth.isAnonymous
-        self.email = auth.email
-        self.displayName = auth.displayName
-        self.photoUrl = auth.photoUrl
-        self.dateCreated = Timestamp()
-        self.friendRequests = nil
-        self.friends = nil
+        userId = auth.uid
+        isAnonymous = auth.isAnonymous
+        email = auth.email
+        displayName = auth.displayName
+        photoUrl = auth.photoUrl
+        dateCreated = Timestamp()
+        friendRequests = nil
+        friends = nil
     }
 
-    init(userId: String,
-         isAnonymous: Bool? = nil,
-         email: String? = nil,
-         photoUrl: String? = nil,
-         dateCreated: Date? = nil,
-         displayName: String? = nil,
-         friendRequests: [String]? = nil,
-         friends: [String]? = nil)
+    init(
+        userId: String,
+        isAnonymous: Bool? = nil,
+        email: String? = nil,
+        photoUrl: String? = nil,
+        dateCreated _: Date? = nil,
+        displayName: String? = nil,
+        friendRequests: [String]? = nil,
+        friends: [String]? = nil)
     {
         self.userId = userId
         self.isAnonymous = isAnonymous
         self.email = email
         self.photoUrl = photoUrl
         self.displayName = displayName
-        self.dateCreated = Timestamp()
+        dateCreated = Timestamp()
         self.friends = friends
         self.friendRequests = friendRequests
     }

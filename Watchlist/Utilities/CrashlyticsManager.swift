@@ -10,7 +10,7 @@ import FirebaseCrashlytics
 import Foundation
 
 class CrashlyticsManager {
-    private init() {}
+    private init() { }
 
     static func setUserId(userId: String) {
         Crashlytics.crashlytics().setUserID(userId)

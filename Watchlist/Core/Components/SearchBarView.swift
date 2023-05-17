@@ -5,29 +5,29 @@
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct SearchBarView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    
+
     @StateObject private var textObserver = TextFieldObserver()
-    
+
     @Binding var searchText: String
-    
+
     @FocusState private var isFocused: Bool
-    
+
     @State var showFilterSheet: Bool = false
-    
+
     var textFieldString: String {
         return homeVM.selectedTab.searchTextLabel
     }
-    
+
     var queryToCallWhenTyping: (() -> Void)? = nil
-    
+
     var mediaListWithFilter: [DBMedia] {
         var mediaList: Set<DBMedia> = []
-        
+
         switch homeVM.selectedTab {
             case .movies:
                 let movieListAfterFilter = homeVM.movieList.filter {
@@ -40,11 +40,11 @@ struct SearchBarView: View {
                             return true
                     }
                 }
-                
+
                 for movie in movieListAfterFilter {
                     mediaList.insert(movie)
                 }
-                
+
             case .tvShows:
                 let tvListAfterFilter = homeVM.tvList.filter {
                     switch homeVM.watchSelected {
@@ -56,9 +56,9 @@ struct SearchBarView: View {
                             return true
                     }
                 }
-                
+
                 for tvShow in tvListAfterFilter {
-                        mediaList.insert(tvShow)
+                    mediaList.insert(tvShow)
                 }
             case .explore:
                 for media in homeVM.results.compactMap({ try? DBMedia(media: $0, watched: false, personalRating: nil) }) {
@@ -69,20 +69,20 @@ struct SearchBarView: View {
         }
         return Array(mediaList)
     }
-    
+
     var body: some View {
         HStack {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(!isFocused ? Color.theme.red : Color.theme.text)
                     .imageScale(.medium)
-                
+
                 TextField(textFieldString, text: homeVM.selectedTab == .explore ? $textObserver.searchText : $searchText)
                     .foregroundColor(Color.theme.text)
                     .font(.system(size: 16, design: .default))
                     .focused($isFocused)
                     .overlay(alignment: .trailing) {
-                        if isFocused && !(homeVM.selectedTab == .explore ? textObserver.searchText.isEmpty : searchText.isEmpty) {
+                        if isFocused, !(homeVM.selectedTab == .explore ? textObserver.searchText.isEmpty : searchText.isEmpty) {
                             Image(systemName: "xmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
@@ -114,19 +114,21 @@ struct SearchBarView: View {
                         }
                     }
                     .sheet(isPresented: $showFilterSheet) {
-                        FilterModalView(genresToFilter: homeVM.convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
+                        FilterModalView(
+                            genresToFilter: homeVM
+                                .convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
                             .presentationDetents([.large])
                             .presentationDragIndicator(.visible)
                     }
                     .submitLabel(.search)
                     .onReceive(textObserver.$debouncedText) { val in
                         homeVM.searchText = val
-                        
-                        if homeVM.selectedTab == .explore && val.isEmpty {
+
+                        if homeVM.selectedTab == .explore, val.isEmpty {
                             homeVM.results = []
                         }
-                        
-                        if(!textObserver.searchText.isEmpty) {
+
+                        if !textObserver.searchText.isEmpty {
                             if let queryToCallWhenTyping {
                                 queryToCallWhenTyping()
                             }
@@ -158,7 +160,7 @@ struct SearchBarView: View {
         }
         .padding(.horizontal)
     }
-    
+
     var shouldShowFilterButton: Bool {
         switch homeVM.selectedTab {
             case .tvShows:
@@ -197,12 +199,12 @@ extension View {
     }
 }
 
-class TextFieldObserver : ObservableObject {
+class TextFieldObserver: ObservableObject {
     @Published var debouncedText = ""
     @Published var searchText = ""
-    
+
     private var subscriptions = Set<AnyCancellable>()
-    
+
     init() {
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)

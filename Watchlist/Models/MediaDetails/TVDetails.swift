@@ -34,7 +34,7 @@ struct TVDetails: Codable {
     let status, tagline, type: String?
     let voteAverage: Double?
     let voteCount: Int?
-    
+
     enum CodingKeys: String, CodingKey {
         case backdropPath = "backdrop_path"
         case createdBy = "created_by"
@@ -63,10 +63,24 @@ struct TVDetails: Codable {
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
     }
-    
+
     func convertToMedia(dbMedia: DBMedia) -> DBMedia? {
-        let media = Media(mediaType: .tv, id: id, originalName: originalName, overview: overview, voteAverage: voteAverage, voteCount: voteCount, posterPath: posterPath, backdropPath: backdropPath, genreIDS: genres?.map{ $0.id }, popularity: popularity, firstAirDate: firstAirDate, originCountry: originCountry, originalLanguage: originalLanguage, name: name)
-        
+        let media = Media(
+            mediaType: .tv,
+            id: id,
+            originalName: originalName,
+            overview: overview,
+            voteAverage: voteAverage,
+            voteCount: voteCount,
+            posterPath: posterPath,
+            backdropPath: backdropPath,
+            genreIDS: genres?.map(\.id),
+            popularity: popularity,
+            firstAirDate: firstAirDate,
+            originCountry: originCountry,
+            originalLanguage: originalLanguage,
+            name: name)
+
         do {
             return try DBMedia(media: media, watched: dbMedia.watched, personalRating: dbMedia.personalRating)
         } catch {
@@ -77,12 +91,13 @@ struct TVDetails: Codable {
 }
 
 // MARK: - CreatedBy
+
 struct CreatedBy: Codable {
     let id: Int?
     let creditID, name: String?
     let gender: Int?
     let profilePath: String?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case creditID = "credit_id"
@@ -92,6 +107,7 @@ struct CreatedBy: Codable {
 }
 
 // MARK: - LastEpisodeToAir
+
 struct LastEpisodeToAir: Codable {
     let airDate: String?
     let episodeNumber, id: Int?
@@ -100,7 +116,7 @@ struct LastEpisodeToAir: Codable {
     let stillPath: String?
     let voteAverage: Double?
     let voteCount: Int?
-    
+
     enum CodingKeys: String, CodingKey {
         case airDate = "air_date"
         case episodeNumber = "episode_number"
@@ -114,23 +130,26 @@ struct LastEpisodeToAir: Codable {
 }
 
 // MARK: - Network
+
 struct Network: Codable {
     let name: String?
     let id: Int?
     let logoPath: String?
     let originCountry: String?
-    
+
     enum CodingKeys: String, CodingKey {
-        case name, id
+        case name
+        case id
         case logoPath = "logo_path"
         case originCountry = "origin_country"
     }
 }
 
 // MARK: - ProductionCountry
+
 struct ProductionCountry: Codable {
     let iso3166_1, name: String?
-    
+
     enum CodingKeys: String, CodingKey {
         case iso3166_1 = "iso_3166_1"
         case name
@@ -138,12 +157,13 @@ struct ProductionCountry: Codable {
 }
 
 // MARK: - Season
+
 struct Season: Codable {
     let airDate: String?
     let episodeCount, id: Int?
     let name, overview, posterPath: String?
     let seasonNumber: Int?
-    
+
     enum CodingKeys: String, CodingKey {
         case airDate = "air_date"
         case episodeCount = "episode_count"
@@ -154,9 +174,10 @@ struct Season: Codable {
 }
 
 // MARK: - SpokenLanguage
+
 struct SpokenLanguage: Codable {
     let englishName, iso639_1, name: String?
-    
+
     enum CodingKeys: String, CodingKey {
         case englishName = "english_name"
         case iso639_1 = "iso_639_1"

@@ -13,9 +13,9 @@ import SwiftUI
 /// - genreName: String
 struct GenreView: View {
     @State var genreName: String
-    
+
     @State var size: CGFloat = 10
-    
+
     var body: some View {
         Text(genreName)
             .foregroundColor(Color.theme.red)
@@ -27,7 +27,6 @@ struct GenreView: View {
                 Capsule()
                     .fill(Color.theme.secondary)
             }
-            
     }
 }
 

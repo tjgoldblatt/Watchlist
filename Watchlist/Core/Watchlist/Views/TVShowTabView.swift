@@ -10,31 +10,31 @@ import SwiftUI
 
 struct TVShowTabView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
-    
+
     @StateObject var vm = WatchlistDetailsViewModel()
-    
+
     var watchedSelectedRows: [DBMedia] {
         return vm.getWatchedSelectedRows(mediaList: homeVM.tvList)
     }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 // MARK: - Background
 
                 Color.theme.background.ignoresSafeArea()
-                
+
                 ScrollViewReader { proxy in
                     VStack(spacing: 10) {
                         header
-                        
+
                         searchbar
-                        
+
                         if !homeVM.tvList.isEmpty {
                             watchFilterOptions
                                 .disabled(vm.editMode == .active)
                         }
-                        
+
                         if !sortedSearchResults.isEmpty {
                             watchlist(scrollProxy: proxy)
                         } else {
@@ -45,7 +45,7 @@ struct TVShowTabView: View {
                                 ProgressView()
                             }
                         }
-                        
+
                         Spacer()
                     }
                 }
@@ -73,14 +73,14 @@ extension TVShowTabView {
         }
         .padding(.horizontal)
     }
-    
+
     // MARK: - Search
 
     var searchbar: some View {
         SearchBarView(searchText: $vm.filterText)
             .disabled(vm.editMode == .active)
     }
-    
+
     // MARK: - Watchlist
 
     func watchlist(scrollProxy: ScrollViewProxy) -> some View {
@@ -117,8 +117,8 @@ extension TVShowTabView {
                     .buttonStyle(.plain)
                 }
             }
-            
-            if !watchedSelectedRows.isEmpty && vm.editMode == .active {
+
+            if !watchedSelectedRows.isEmpty, vm.editMode == .active {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Text("Reset")
                         .font(.body)
@@ -142,7 +142,7 @@ extension TVShowTabView {
         .scrollContentBackground(.hidden)
         .environment(\.editMode, $vm.editMode)
         .overlay(alignment: .bottomTrailing) {
-            if !vm.selectedRows.isEmpty && vm.editMode == .active {
+            if !vm.selectedRows.isEmpty, vm.editMode == .active {
                 Image(systemName: "trash.circle.fill")
                     .resizable()
                     .fontWeight(.bold)
@@ -155,7 +155,10 @@ extension TVShowTabView {
                     }
             }
         }
-        .confirmationDialog("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.deleteConfirmationShowing) {
+        .confirmationDialog(
+            "Are you sure you'd like to delete from your Watchlist?",
+            isPresented: $vm.deleteConfirmationShowing)
+        {
             Button("Delete", role: .destructive) {
                 Task {
                     for id in vm.selectedRows {
@@ -186,7 +189,10 @@ extension TVShowTabView {
                     .contentShape(Capsule())
                     .background {
                         Capsule()
-                            .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.red : Color.theme.secondary.opacity(0.6))
+                            .foregroundColor(
+                                homeVM.watchSelected == watchOption
+                                    ? Color.theme.red
+                                    : Color.theme.secondary.opacity(0.6))
                     }
                     .onTapGesture {
                         if homeVM.watchSelected != watchOption {
@@ -200,22 +206,24 @@ extension TVShowTabView {
         .dynamicTypeSize(.medium ... .xLarge)
         .padding(.horizontal)
     }
-    
+
     var searchResults: [DBMedia] {
         let groupedMedia = homeVM.tvList.filter { !$0.watched }
         if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched })
-            
-            /// Watched Filter
+
+            // MARK: - Watched Filter
+
             if homeVM.watchSelected == .watched {
-                filteredMedia = filteredMedia.filter { $0.watched }
+                filteredMedia = filteredMedia.filter(\.watched)
             } else if homeVM.watchSelected == .any {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
             } else {
                 filteredMedia = groupedMedia
             }
-            
-            /// Genre Filter
+
+            // MARK: - Genre Filter
+
             if !homeVM.genresSelected.isEmpty {
                 filteredMedia = filteredMedia.filter { media in
                     guard let genreIDs = media.genreIDs else { return false }
@@ -228,28 +236,29 @@ extension TVShowTabView {
                     return genreFound
                 }
             }
-            
-            /// Rating Filter
+
+            // MARK: - Rating Filter
+
             filteredMedia = filteredMedia.filter { media in
                 if let voteAverage = media.voteAverage {
                     return voteAverage >= Double(homeVM.ratingSelected)
                 }
                 return false
             }
-            
+
             if !vm.filterText.isEmpty {
                 filteredMedia = filteredMedia.filter { $0.name?.lowercased().contains(vm.filterText.lowercased()) ?? false }
             }
-            
+
             return filteredMedia
-            
+
         } else if vm.filterText.isEmpty {
             return groupedMedia
         } else {
             return groupedMedia.filter { $0.name?.lowercased().contains(vm.filterText.lowercased()) ?? false }
         }
     }
-    
+
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
             switch homeVM.sortingSelected {
@@ -266,7 +275,8 @@ extension TVShowTabView {
                         return voteAverage1 > voteAverage2
                     }
                 case .personalRating:
-                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) > (media2.personalRating ?? 0, media2.voteAverage ?? 0)
+                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) >
+                        (media2.personalRating ?? 0, media2.voteAverage ?? 0)
             }
             return false
         }
@@ -275,7 +285,7 @@ extension TVShowTabView {
 
 struct EmptyListView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
-    
+
     var body: some View {
         VStack {
             Spacer()

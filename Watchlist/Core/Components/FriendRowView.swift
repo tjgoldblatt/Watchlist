@@ -10,17 +10,17 @@ import SwiftUI
 
 struct FriendRowView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    
+
     @State var personalRating: Double?
-    
+
     @State var isWatched: Bool = false
-    
+
     @State var media: DBMedia
-    
+
     @State private var showingSheet = false
-    
+
     var friendName: String
-    
+
     var body: some View {
         HStack(alignment: .center) {
             if let posterPath = media.posterPath {
@@ -36,9 +36,9 @@ struct FriendRowView: View {
                         }
                     }
             }
-            
+
             centerColumn
-            
+
             rightColumn
         }
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
@@ -79,7 +79,7 @@ extension FriendRowView {
                 .fontWeight(.light)
                 .foregroundColor(Color.theme.text)
                 .lineLimit(3)
-            
+
             if let genres = getGenres(genreIDs: media.genreIDs) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
@@ -94,19 +94,19 @@ extension FriendRowView {
         }
         .frame(minWidth: 50)
     }
-    
+
     var rightColumn: some View {
         VStack(spacing: 20) {
             if let voteAverage = media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage)
             }
-            
+
             if let rating = media.personalRating {
                 StarRatingView(text: "\(friendName.uppercased())'S RATING", rating: rating)
             }
         }
     }
-    
+
     private var swipeActionToAddToWatchlist: some View {
         Button {
             Task {
@@ -116,29 +116,28 @@ extension FriendRowView {
                 try await WatchlistManager.shared.createNewMediaInWatchlist(media: newMedia)
             }
             AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Add")
-            
+
         } label: {
             Image(systemName: "plus.circle.fill")
         }
         .tint(Color.theme.secondaryBackground)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")
     }
-    
+
     private var swipeActionToRemoveFromWatchlist: some View {
         Button {
             Task {
                 try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
             }
             AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Delete")
-            
+
         } label: {
             Image(systemName: "xmark")
         }
         .tint(Color.theme.red)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")
-
     }
-    
+
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
         guard let genreIDs else { return nil }
         return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)

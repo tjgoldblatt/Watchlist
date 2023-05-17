@@ -8,15 +8,14 @@
 import SwiftUI
 
 struct StarRatingView: View {
-    
     var text: String
     var rating: Double
     var size: CGFloat = 14
-    
+
     var ratingAsString: String {
         return "\(round(rating * 10) / 10.0)"
     }
-    
+
     var body: some View {
         if rating > 0 {
             VStack(alignment: .center) {
@@ -24,20 +23,20 @@ struct StarRatingView: View {
                     .font(.caption)
                     .fontWeight(.light)
                     .fixedSize(horizontal: true, vertical: false)
-                
+
                 HStack(spacing: 2) {
                     Image(systemName: "star.fill")
                         .foregroundColor(Color.theme.red)
                         .imageScale(.small)
-                    
+
                     Text(ratingAsString)
                         .font(.system(size: size, design: .default))
                         .fontWeight(.medium)
                     Text("/")
-                        .font(.system(size: size-2, design: .default))
+                        .font(.system(size: size - 2, design: .default))
                         .fontWeight(.light)
                     Text("10")
-                        .font(.system(size: size-2, design: .default))
+                        .font(.system(size: size - 2, design: .default))
                         .fontWeight(.light)
                 }
                 .fixedSize(horizontal: true, vertical: false)

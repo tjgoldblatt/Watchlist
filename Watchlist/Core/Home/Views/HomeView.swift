@@ -10,14 +10,14 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
-    
+
     // TODO: Remove This
 //    @Environment(\.blackbirdDatabase) var database
 //    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
-    
+
     @State var showDebugView = false
     @State private var currentTab: Tab = .movies
-    
+
     var body: some View {
         if homeVM.isGenresLoaded {
             ZStack {
@@ -29,7 +29,7 @@ struct HomeView: View {
                                 .accessibilityIdentifier("MovieTab")
                         }
                         .tag(Tab.movies)
-                    
+
 //                        .onAppear {
 //                            Task {
 //                                if database != nil {
@@ -40,7 +40,7 @@ struct HomeView: View {
 //                                }
 //                            }
 //                        }
-                    
+
                     TVShowTabView()
                         .environmentObject(homeVM)
                         .tabItem {
@@ -48,7 +48,7 @@ struct HomeView: View {
                                 .accessibilityIdentifier("TVShowTab")
                         }
                         .tag(Tab.tvShows)
-                    
+
                     ExploreTabView(homeVM: homeVM)
                         .environmentObject(homeVM)
                         .tabItem {
@@ -56,7 +56,7 @@ struct HomeView: View {
                                 .accessibilityIdentifier("ExploreTab")
                         }
                         .tag(Tab.explore)
-                    
+
                     SocialTabView()
                         .environmentObject(homeVM)
                         .tabItem {

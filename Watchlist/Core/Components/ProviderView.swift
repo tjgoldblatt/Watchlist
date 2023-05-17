@@ -6,17 +6,17 @@
 //
 
 import NukeUI
-import SwiftUI
 import SafariServices
+import SwiftUI
 
 struct ProviderView: View {
     @State var provider: Provider
 //    @State var providers: [Provider]
     @State var providerType: String
     @State var link: String
-    
+
     @State private var showSafari: Bool = false
-    
+
 //    var body: some View {
 //        VStack {
 //            HStack {
@@ -63,7 +63,7 @@ struct ProviderView: View {
 //            }
 //        }
 //    }
-    
+
     var body: some View {
         HStack {
             if let path = provider.logoPath {
@@ -111,7 +111,7 @@ struct ProviderView: View {
             }
         }
     }
-    
+
 //    var body: some View {
 //        VStack(spacing: 0) {
 //            ZStack {
@@ -162,37 +162,48 @@ struct ProviderView: View {
 
 struct SFSafariViewWrapper: UIViewControllerRepresentable {
     let url: URL
-    func makeUIViewController(context: UIViewControllerRepresentableContext<Self>) -> SFSafariViewController {
+    func makeUIViewController(context _: UIViewControllerRepresentableContext<Self>) -> SFSafariViewController {
         return SFSafariViewController(url: url)
     }
-    
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SFSafariViewWrapper>) {}
+
+    func updateUIViewController(
+        _: SFSafariViewController,
+        context _: UIViewControllerRepresentableContext<SFSafariViewWrapper>) { }
 }
 
 extension String {
     func truncated(length: Int, trailing: String = "…") -> String {
         let maxLength = length - trailing.count
-        guard maxLength > 0, !self.isEmpty, self.count > length else {
+        guard maxLength > 0, !isEmpty, count > length else {
             return self
         }
-        return self.prefix(maxLength) + trailing
+        return prefix(maxLength) + trailing
     }
 }
 
 struct ProviderView_Previews: PreviewProvider {
-    static var provider = Provider(logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg", providerID: 8, providerName: "Cinemax Amazon Channel", displayPriority: 0)
-    
+    static var provider = Provider(
+        logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
+        providerID: 8,
+        providerName: "Cinemax Amazon Channel",
+        displayPriority: 0)
+
     static var providers: [Provider] = {
         var arr: [Provider] = []
         for i in 0 ... 10 {
-            arr.append(Provider(logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg", providerID: 8, providerName: "Netflix", displayPriority: 0))
+            arr
+                .append(Provider(
+                    logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
+                    providerID: 8,
+                    providerName: "Netflix",
+                    displayPriority: 0))
         }
         return arr
     }()
-    
+
     static var previews: some View {
         ProviderView(provider: provider, providerType: "Stream", link: "")
 //        ProviderView(providers: providers, providerType: "stream", link: "")
-            .previewLayout(.sizeThatFits)
+                .previewLayout(.sizeThatFits)
     }
 }

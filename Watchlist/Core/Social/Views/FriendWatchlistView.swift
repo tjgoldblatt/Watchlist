@@ -19,7 +19,7 @@ struct FriendWatchlistView: View {
 
     init(userId: String, forPreview: Bool = false) {
         let vm = forPreview ? FriendWatchlistViewModel(forPreview: true) : FriendWatchlistViewModel(userId: userId)
-        self._vm = StateObject(wrappedValue: vm)
+        _vm = StateObject(wrappedValue: vm)
     }
 
     var body: some View {
@@ -92,7 +92,8 @@ struct FriendWatchlistView: View {
                         return voteAverage1 > voteAverage2
                     }
                 case .personalRating:
-                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) > (media2.personalRating ?? 0, media2.voteAverage ?? 0)
+                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) >
+                        (media2.personalRating ?? 0, media2.voteAverage ?? 0)
             }
             return false
         }
