@@ -17,27 +17,27 @@ enum Tab: String {
 
     var searchTextLabel: String {
         switch self {
-        case .explore:
-            return "Search for Movies or TV Shows..."
-        case .tvShows:
-            return "Search your saved TV Shows..."
-        case .movies:
-            return "Search your saved Movies..."
-        case .social:
-            return ""
+            case .explore:
+                return "Search for Movies or TV Shows..."
+            case .tvShows:
+                return "Search your saved TV Shows..."
+            case .movies:
+                return "Search your saved Movies..."
+            case .social:
+                return ""
         }
     }
 
     var icon: String {
         switch self {
-        case .tvShows:
-            return "tv"
-        case .movies:
-            return "popcorn.fill"
-        case .explore:
-            return "magnifyingglass"
-        case .social:
-            return "person.2.fill"
+            case .tvShows:
+                return "tv"
+            case .movies:
+                return "popcorn.fill"
+            case .explore:
+                return "magnifyingglass"
+            case .social:
+                return "person.2.fill"
         }
     }
 }

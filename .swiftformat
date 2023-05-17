@@ -32,7 +32,7 @@
 --ifdef indent
 --importgrouping alpha
 --indent 4
---indentcase false
+--indentcase true
 --indentstrings false
 --lifecycle 
 --lineaftermarks true

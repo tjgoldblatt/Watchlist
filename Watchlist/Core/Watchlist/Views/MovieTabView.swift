@@ -262,21 +262,21 @@ extension MovieTabView {
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
             switch homeVM.sortingSelected {
-            case .alphabetical:
-                if let title1 = media1.title, let title2 = media2.title {
-                    return title1 < title2
-                } else if let name1 = media1.name, let name2 = media2.name {
-                    return name1 < name2
-                } else {
-                    return false
-                }
-            case .imdbRating:
-                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                    return voteAverage1 > voteAverage2
-                }
-            case .personalRating:
-                return (media1.personalRating ?? 0, media1.voteAverage ?? 0) >
-                    (media2.personalRating ?? 0, media2.voteAverage ?? 0)
+                case .alphabetical:
+                    if let title1 = media1.title, let title2 = media2.title {
+                        return title1 < title2
+                    } else if let name1 = media1.name, let name2 = media2.name {
+                        return name1 < name2
+                    } else {
+                        return false
+                    }
+                case .imdbRating:
+                    if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                        return voteAverage1 > voteAverage2
+                    }
+                case .personalRating:
+                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) >
+                        (media2.personalRating ?? 0, media2.voteAverage ?? 0)
             }
             return false
         }

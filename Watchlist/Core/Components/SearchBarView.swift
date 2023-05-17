@@ -29,43 +29,43 @@ struct SearchBarView: View {
         var mediaList: Set<DBMedia> = []
 
         switch homeVM.selectedTab {
-        case .movies:
-            let movieListAfterFilter = homeVM.movieList.filter {
-                switch homeVM.watchSelected {
-                case .unwatched:
-                    return !$0.watched
-                case .watched:
-                    return $0.watched
-                case .any:
-                    return true
+            case .movies:
+                let movieListAfterFilter = homeVM.movieList.filter {
+                    switch homeVM.watchSelected {
+                        case .unwatched:
+                            return !$0.watched
+                        case .watched:
+                            return $0.watched
+                        case .any:
+                            return true
+                    }
                 }
-            }
 
-            for movie in movieListAfterFilter {
-                mediaList.insert(movie)
-            }
-
-        case .tvShows:
-            let tvListAfterFilter = homeVM.tvList.filter {
-                switch homeVM.watchSelected {
-                case .unwatched:
-                    return !$0.watched
-                case .watched:
-                    return $0.watched
-                case .any:
-                    return true
+                for movie in movieListAfterFilter {
+                    mediaList.insert(movie)
                 }
-            }
 
-            for tvShow in tvListAfterFilter {
-                mediaList.insert(tvShow)
-            }
-        case .explore:
-            for media in homeVM.results.compactMap({ try? DBMedia(media: $0, watched: false, personalRating: nil) }) {
-                mediaList.insert(media)
-            }
-        case .social:
-            break
+            case .tvShows:
+                let tvListAfterFilter = homeVM.tvList.filter {
+                    switch homeVM.watchSelected {
+                        case .unwatched:
+                            return !$0.watched
+                        case .watched:
+                            return $0.watched
+                        case .any:
+                            return true
+                    }
+                }
+
+                for tvShow in tvListAfterFilter {
+                    mediaList.insert(tvShow)
+                }
+            case .explore:
+                for media in homeVM.results.compactMap({ try? DBMedia(media: $0, watched: false, personalRating: nil) }) {
+                    mediaList.insert(media)
+                }
+            case .social:
+                break
         }
         return Array(mediaList)
     }
@@ -163,14 +163,14 @@ struct SearchBarView: View {
 
     var shouldShowFilterButton: Bool {
         switch homeVM.selectedTab {
-        case .tvShows:
-            return !homeVM.tvList.isEmpty
-        case .movies:
-            return !homeVM.movieList.isEmpty
-        case .explore:
-            return !homeVM.results.isEmpty
-        case .social:
-            return false
+            case .tvShows:
+                return !homeVM.tvList.isEmpty
+            case .movies:
+                return !homeVM.movieList.isEmpty
+            case .explore:
+                return !homeVM.results.isEmpty
+            case .social:
+                return false
         }
     }
 }

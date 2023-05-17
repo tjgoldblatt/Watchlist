@@ -16,8 +16,8 @@ class NetworkingManager {
 
         var errorDescription: String? {
             switch self {
-            case let .badURLResponse(url: url): return "[🔥] Bad response from URL: \(url)"
-            case .unknown: return "[⚠️] Unknown error occured"
+                case let .badURLResponse(url: url): return "[🔥] Bad response from URL: \(url)"
+                case .unknown: return "[⚠️] Unknown error occured"
             }
         }
     }
@@ -42,10 +42,10 @@ class NetworkingManager {
 
     static func handleCompletition(completition: Subscribers.Completion<Error>) {
         switch completition {
-        case .finished:
-            break
-        case let .failure(error):
-            Crashlytics.crashlytics().record(error: error)
+            case .finished:
+                break
+            case let .failure(error):
+                Crashlytics.crashlytics().record(error: error)
         }
     }
 }

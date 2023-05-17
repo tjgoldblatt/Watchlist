@@ -84,43 +84,43 @@ struct SignInWithAppleButtonSwiftUI: View {
 
             onCompletion: { result in
                 switch result {
-                case let .success(authResults):
-                    switch authResults.credential {
-                    case let appleIDCredential as ASAuthorizationAppleIDCredential:
-                        guard let nonce = currentNonce else {
-                            fatalError("Invalid state: A login callback was received, but no login request was sent.")
-                        }
-                        guard let appleIDToken = appleIDCredential.identityToken else {
-                            fatalError("Invalid state: A login callback was received, but no login request was sent.")
-                        }
-                        guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-                            CrashlyticsManager
-                                .handleError(
-                                    error: FirebaseError
-                                        .signInWithApple(debugDescription: appleIDToken.debugDescription))
-                            return
-                        }
-
-                        let tokens = SignInWithAppleResult(token: idTokenString, nonce: nonce)
-
-                        Task {
-                            let authDataResult = try await AuthenticationManager.shared.signInWithApple(tokens: tokens)
-                            let user = DBUser(auth: authDataResult)
-                            try await UserManager.shared.createNewUser(user: user)
-                            if let fullName = appleIDCredential.fullName {
-                                if let givenName = fullName.givenName, let familyName = fullName.familyName {
-                                    try await UserManager.shared
-                                        .updateDisplayNameForUser(displayName: "\(givenName) \(familyName)")
+                    case let .success(authResults):
+                        switch authResults.credential {
+                            case let appleIDCredential as ASAuthorizationAppleIDCredential:
+                                guard let nonce = currentNonce else {
+                                    fatalError("Invalid state: A login callback was received, but no login request was sent.")
                                 }
-                            }
-                            showSignInView = false
-                        }
+                                guard let appleIDToken = appleIDCredential.identityToken else {
+                                    fatalError("Invalid state: A login callback was received, but no login request was sent.")
+                                }
+                                guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                                    CrashlyticsManager
+                                        .handleError(
+                                            error: FirebaseError
+                                                .signInWithApple(debugDescription: appleIDToken.debugDescription))
+                                    return
+                                }
 
+                                let tokens = SignInWithAppleResult(token: idTokenString, nonce: nonce)
+
+                                Task {
+                                    let authDataResult = try await AuthenticationManager.shared.signInWithApple(tokens: tokens)
+                                    let user = DBUser(auth: authDataResult)
+                                    try await UserManager.shared.createNewUser(user: user)
+                                    if let fullName = appleIDCredential.fullName {
+                                        if let givenName = fullName.givenName, let familyName = fullName.familyName {
+                                            try await UserManager.shared
+                                                .updateDisplayNameForUser(displayName: "\(givenName) \(familyName)")
+                                        }
+                                    }
+                                    showSignInView = false
+                                }
+
+                            default:
+                                break
+                        }
                     default:
                         break
-                    }
-                default:
-                    break
                 }
             })
             .frame(height: 55, alignment: .center)

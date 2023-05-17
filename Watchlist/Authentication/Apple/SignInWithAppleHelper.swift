@@ -30,12 +30,12 @@ final class SignInWithAppleHelper: NSObject {
         try await withCheckedThrowingContinuation { continuation in
             self.startSignInWithAppleFlow { result in
                 switch result {
-                case let .success(signInAppleResult):
-                    continuation.resume(returning: signInAppleResult)
-                    return
-                case let .failure(failure):
-                    continuation.resume(throwing: failure)
-                    return
+                    case let .success(signInAppleResult):
+                        continuation.resume(returning: signInAppleResult)
+                        return
+                    case let .failure(failure):
+                        continuation.resume(throwing: failure)
+                        return
                 }
             }
         }

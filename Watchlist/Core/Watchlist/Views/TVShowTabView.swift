@@ -213,6 +213,7 @@ extension TVShowTabView {
             var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched })
 
             // MARK: - Watched Filter
+
             if homeVM.watchSelected == .watched {
                 filteredMedia = filteredMedia.filter(\.watched)
             } else if homeVM.watchSelected == .any {
@@ -222,6 +223,7 @@ extension TVShowTabView {
             }
 
             // MARK: - Genre Filter
+
             if !homeVM.genresSelected.isEmpty {
                 filteredMedia = filteredMedia.filter { media in
                     guard let genreIDs = media.genreIDs else { return false }
@@ -236,6 +238,7 @@ extension TVShowTabView {
             }
 
             // MARK: - Rating Filter
+
             filteredMedia = filteredMedia.filter { media in
                 if let voteAverage = media.voteAverage {
                     return voteAverage >= Double(homeVM.ratingSelected)
@@ -259,21 +262,21 @@ extension TVShowTabView {
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
             switch homeVM.sortingSelected {
-            case .alphabetical:
-                if let title1 = media1.title, let title2 = media2.title {
-                    return title1 < title2
-                } else if let name1 = media1.name, let name2 = media2.name {
-                    return name1 < name2
-                } else {
-                    return false
-                }
-            case .imdbRating:
-                if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
-                    return voteAverage1 > voteAverage2
-                }
-            case .personalRating:
-                return (media1.personalRating ?? 0, media1.voteAverage ?? 0) >
-                    (media2.personalRating ?? 0, media2.voteAverage ?? 0)
+                case .alphabetical:
+                    if let title1 = media1.title, let title2 = media2.title {
+                        return title1 < title2
+                    } else if let name1 = media1.name, let name2 = media2.name {
+                        return name1 < name2
+                    } else {
+                        return false
+                    }
+                case .imdbRating:
+                    if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
+                        return voteAverage1 > voteAverage2
+                    }
+                case .personalRating:
+                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) >
+                        (media2.personalRating ?? 0, media2.voteAverage ?? 0)
             }
             return false
         }

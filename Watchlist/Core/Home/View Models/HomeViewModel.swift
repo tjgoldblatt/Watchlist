@@ -155,20 +155,20 @@ extension HomeViewModel {
     func getGenresForMediaType(for type: MediaType, genreIDs: [Int]) -> [Genre] {
         var genreNames: [Genre] = []
         switch type {
-        case .movie:
-            if !movieGenreList.isEmpty {
-                genreNames = movieGenreList.filter { genreIDs.contains($0.id) }
-            } else {
-                CrashlyticsManager.handleWarning(warning: "Movie Genre List Empty")
-            }
-        case .tv:
-            if !tvGenreList.isEmpty {
-                genreNames = tvGenreList.filter { genreIDs.contains($0.id) }
-            } else {
-                CrashlyticsManager.handleWarning(warning: "TV Genre List Empty")
-            }
-        case .person:
-            break
+            case .movie:
+                if !movieGenreList.isEmpty {
+                    genreNames = movieGenreList.filter { genreIDs.contains($0.id) }
+                } else {
+                    CrashlyticsManager.handleWarning(warning: "Movie Genre List Empty")
+                }
+            case .tv:
+                if !tvGenreList.isEmpty {
+                    genreNames = tvGenreList.filter { genreIDs.contains($0.id) }
+                } else {
+                    CrashlyticsManager.handleWarning(warning: "TV Genre List Empty")
+                }
+            case .person:
+                break
         }
         return genreNames
     }
