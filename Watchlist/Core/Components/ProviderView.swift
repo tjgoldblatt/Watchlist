@@ -11,63 +11,15 @@ import SwiftUI
 
 struct ProviderView: View {
     @State var provider: Provider
-//    @State var providers: [Provider]
     @State var providerType: String
     @State var link: String
 
     @State private var showSafari: Bool = false
 
-//    var body: some View {
-//        VStack {
-//            HStack {
-//                Text(providerType.capitalized)
-//                    .font(.headline)
-//                    .fontWeight(.medium)
-//
-//                Capsule()
-//                    .frame(height: 2)
-//                    .foregroundColor(Color.theme.secondary)
-//            }
-//            .frame(maxWidth: .infinity, alignment: .leading)
-//
-//            ScrollView(.horizontal, showsIndicators: false) {
-//                HStack {
-//                    ForEach(providers, id: \.self) { provider in
-//                        if let path = provider.logoPath {
-//                            LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(path)")) { state in
-//                                if let image = state.image {
-//                                    image
-//                                        .resizable()
-//                                        .scaledToFit()
-//                                        .frame(width: 40, height: 40)
-//                                        .cornerRadius(10)
-//                                        .shadow(color: Color.black.opacity(0.3), radius: 5)
-//                                        .frame(maxWidth: .infinity, alignment: .leading)
-//                                        .padding(.trailing)
-//                                        .onTapGesture {
-//                                            showSafari.toggle()
-//                                        }
-//                                        .sheet(isPresented: $showSafari) {
-//                                            if let url = URL(string: link) {
-//                                                SFSafariViewWrapper(url: url).ignoresSafeArea(edges: .bottom)
-//                                            }
-//                                        }
-//                                } else {
-//                                    ProgressView()
-//                                        .frame(width: 40, height: 40)
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     var body: some View {
         HStack {
             if let path = provider.logoPath {
-                LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(path)")) { state in
+                LazyImage(url: URL(string: TMDBConstants.imageURL + path)) { state in
                     if let image = state.image {
                         image
                             .resizable()
@@ -111,53 +63,6 @@ struct ProviderView: View {
             }
         }
     }
-
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            ZStack {
-//                Rectangle()
-//                    .foregroundColor(Color.theme.secondary)
-//                    .frame(height: 100)
-//                if let path = provider.logoPath {
-//                    LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(path)")) { state in
-//                        if let image = state.image {
-//                            image
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(height: 50)
-//                                .cornerRadius(10)
-//                                .shadow(color: Color.black.opacity(0.3), radius: 5)
-//                        } else {
-//                            ProgressView()
-//                                .frame(height: 50)
-//                        }
-//                    }
-//                }
-//            }
-//
-//            ZStack {
-//                Rectangle()
-//                    .foregroundColor(Color.theme.secondaryBackground)
-//                .frame(height: 50)
-//
-//                VStack {
-//                    if let name = provider.providerName {
-//                        Text(name)
-//                            .font(.headline)
-//                            .foregroundColor(Color.theme.text)
-//                            .fontWeight(.semibold)
-//                    }
-//
-//                    Text(providerType.uppercased())
-//                        .font(.subheadline)
-//                        .foregroundColor(Color.theme.text)
-//                        .fontWeight(.light)
-//                }
-//            }
-//        }
-//        .frame(width: 100)
-//        .cornerRadius(10)
-//    }
 }
 
 struct SFSafariViewWrapper: UIViewControllerRepresentable {

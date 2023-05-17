@@ -91,6 +91,7 @@ struct HomeView: View {
                     }
                 }
             }
+            .dynamicTypeSize(.medium ... .xLarge)
             .onShake {
                 if ApplicationHelper.isDebug {
                     showDebugView.toggle()

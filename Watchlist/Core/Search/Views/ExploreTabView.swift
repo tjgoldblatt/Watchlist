@@ -185,6 +185,7 @@ struct ExploreThumbnailView: View {
                 Text(title)
                     .foregroundColor(Color.theme.text)
                     .fontWeight(.medium)
+                    .fixedSize(horizontal: true, vertical: false)
                     .padding(.trailing, 5)
                 Capsule()
                     .frame(height: 2)
