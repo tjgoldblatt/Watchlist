@@ -48,7 +48,7 @@ struct FriendRowView: View {
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet) {
-            MediaModalView(media: media)
+            MediaModalView(media: media, friendName: friendName)
         }
         .swipeActions(edge: .trailing) {
             if !homeVM.isDBMediaInWatchlist(dbMedia: media) {

@@ -37,7 +37,7 @@ final class FriendWatchlistViewModel: ObservableObject {
                 try! DBMedia(
                     media: Media(
                         mediaType: .movie,
-                        id: 736074,
+                        id: 736_074,
                         originalTitle: "Batman: The Long Halloween, Part Two",
                         originalName: nil,
                         overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
@@ -53,7 +53,7 @@ final class FriendWatchlistViewModel: ObservableObject {
                 try! DBMedia(
                     media: Media(
                         mediaType: .movie,
-                        id: 736074,
+                        id: 736_074,
                         originalTitle: "Batman: The Long Halloween, Part Two",
                         originalName: nil,
                         overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",

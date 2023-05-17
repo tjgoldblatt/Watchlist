@@ -12,6 +12,16 @@ import SwiftUI
 struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
 
+    var friendName: String?
+
+    var formattedFriendName: String? {
+        if let friendName {
+            return "\(friendName.uppercased())'s"
+        } else {
+            return nil
+        }
+    }
+
     @State private var showSafari: Bool = false
 
     @EnvironmentObject var homeVM: HomeViewModel
@@ -26,7 +36,8 @@ struct MediaModalView: View {
         return ""
     }
 
-    init(media: DBMedia, forPreview: Bool = false) {
+    init(media: DBMedia, forPreview: Bool = false, friendName: String? = nil) {
+        self.friendName = friendName
         _vm = forPreview
             ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true))
             : StateObject(wrappedValue: MediaModalViewModel(media: media))
@@ -185,7 +196,7 @@ extension MediaModalView {
             Spacer()
             Group {
                 if let personalRating = vm.media.personalRating {
-                    StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
+                    StarRatingView(text: "\(formattedFriendName ?? "PERSONAL") RATING", rating: personalRating, size: 18)
                 } else {
                     rateThisButton
                         .disabled(isInMedia(media: vm.media) ? false : true)
