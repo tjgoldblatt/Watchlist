@@ -22,8 +22,6 @@ struct MediaModalView: View {
         }
     }
 
-    @State private var showSafari: Bool = false
-
     @EnvironmentObject var homeVM: HomeViewModel
     @StateObject var vm: MediaModalViewModel
 
@@ -68,7 +66,7 @@ struct MediaModalView: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            if isInMedia(media: vm.media), vm.media.watched {
+            if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
                 Menu {
                     Button(role: .destructive) {
                         AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
@@ -165,13 +163,35 @@ extension MediaModalView {
                         .fontWeight(.medium)
                 }
 
-                if vm.media.watched {
-                    Color.theme.secondary.frame(width: 1, height: 20)
+                Color.theme.secondary.frame(width: 1, height: 20)
 
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(Color.theme.red)
-                        .imageScale(.large)
+                Button {
+                    if friendName == nil {
+                        if vm.media.watched {
+                            Task {
+                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                            }
+                            vm.media.watched = false
+                        } else {
+                            Task {
+                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: true)
+                            }
+                            vm.media.watched = true
+                        }
+                    }
+                } label: {
+                    if vm.media.watched {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Color.theme.red)
+                            .imageScale(.large)
+                    } else {
+                        Image(systemName: "checkmark.circle")
+                            .foregroundColor(Color.theme.red)
+                            .imageScale(.large)
+                    }
                 }
+                .disabled(friendName != nil)
+                .animation(.spring(), value: vm.media.watched)
             }
         }
     }
@@ -188,21 +208,40 @@ extension MediaModalView {
         HStack {
             addButton
                 .frame(minWidth: 110)
+
             Spacer()
+
             if let voteAverage = vm.media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage, size: 18)
                     .frame(minWidth: 110)
             }
+
             Spacer()
+
             Group {
                 if let personalRating = vm.media.personalRating {
                     StarRatingView(text: "\(formattedFriendName ?? "PERSONAL") RATING", rating: personalRating, size: 18)
+                        .onTapGesture {
+                            if friendName == nil {
+                                vm.showingRating.toggle()
+                                AnalyticsManager.shared.logEvent(name: "MediaModalView_PersonalRatingButton_Tapped")
+                            }
+                        }
+                        .disabled(friendName != nil)
                 } else {
                     rateThisButton
                         .disabled(isInMedia(media: vm.media) ? false : true)
                 }
             }
+            .animation(.spring(), value: vm.media.personalRating)
             .frame(minWidth: 110)
+            .sheet(isPresented: $vm.showingRating, onDismiss: {
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                    vm.media = updatedMedia
+                }
+            }) {
+                RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
+            }
         }
     }
 
@@ -282,23 +321,25 @@ extension MediaModalView {
                     .foregroundColor(isInMedia(media: vm.media) ? Color.theme.red : Color.theme.secondary)
             }
         }
-        .sheet(isPresented: $vm.showingRating, onDismiss: {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                vm.media = updatedMedia
-            }
-        }) {
-            RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
-        }
     }
 
     private var addButton: some View {
         Button {
             if !isInMedia(media: vm.media) {
                 Task {
-                    try await WatchlistManager.shared.createNewMediaInWatchlist(media: vm.media)
-                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                    var mediaToAdd = vm.media
+                    if friendName != nil {
+                        mediaToAdd.watched = false
+                        mediaToAdd.personalRating = nil
+                    }
+
+                    try await WatchlistManager.shared.createNewMediaInWatchlist(media: mediaToAdd)
+                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id),
+                       friendName == nil
+                    {
                         vm.media = updatedMedia
                     }
+
                     AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
                 }
             } else {
@@ -313,6 +354,7 @@ extension MediaModalView {
                 .background(!isInMedia(media: vm.media) ? Color.theme.secondary : Color.theme.red)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .fixedSize(horizontal: true, vertical: false)
+                .animation(.spring(), value: !isInMedia(media: vm.media))
         }
         .confirmationDialog(
             "Are you sure you'd like to delete from your Watchlist?",

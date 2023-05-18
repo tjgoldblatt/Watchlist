@@ -5,7 +5,6 @@
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
-// import Blackbird
 import Combine
 import FirebaseFirestore
 import Foundation
@@ -48,9 +47,6 @@ final class HomeViewModel: ObservableObject {
 
     var hapticFeedback = UIImpactFeedbackGenerator(style: .soft)
 
-//    // TODO: remove this
-//    var database: Blackbird.Database?
-
     /// To track filtering
     @Published var genresSelected: Set<Genre> = []
     @Published var ratingSelected: Int = 0
@@ -92,30 +88,6 @@ final class HomeViewModel: ObservableObject {
             return nil
         }
     }
-
-//    // TODO: Remove Blackbird Copy Func
-//    func transferDatabase() async throws {
-//        let transferredFlag = try? await WatchlistManager.shared.getTransferred()
-//
-//        if transferredFlag == nil {
-//            let fbMediaList = movieList + tvList
-//
-//            guard let database else { return }
-//            let mediaModels = try await MediaModel.read(from: database)
-//
-//            for mediaModel in mediaModels {
-//                if !fbMediaList.map({ $0.id }).contains(mediaModel.id) && mediaModel.id != 1 {
-//                    do {
-//                        try await WatchlistManager.shared.copyBlackbirdToFBForUser(mediaModel: mediaModel)
-//                    } catch {
-//                        CrashlyticsManager.handleError(error: error)
-//                    }
-//                }
-//            }
-//
-//            try await WatchlistManager.shared.setTransferred()
-//        }
-//    }
 }
 
 // MARK: - Media Listener

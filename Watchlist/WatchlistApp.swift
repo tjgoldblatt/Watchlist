@@ -5,7 +5,6 @@
 //  Created by TJ Goldblatt on 3/8/23.
 //
 
-// import Blackbird
 import Firebase
 import SwiftUI
 
@@ -17,16 +16,11 @@ struct WatchlistApp: App {
     @StateObject private var vm = HomeViewModel()
     @StateObject private var authVM = AuthenticationViewModel()
 
-//    // TODO: Remove this
-//    var database: Blackbird.Database = try! Blackbird.Database(path:
-//    "\(FileManager.default.temporaryDirectory.path)/watchlist-testapp.sqlite")
-
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(vm)
                 .environmentObject(authVM)
-//                .environment(\.blackbirdDatabase, database)
                 .environmentObject(csManager)
                 .onAppear {
                     csManager.applyColorScheme()

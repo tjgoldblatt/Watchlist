@@ -15,7 +15,6 @@
 		32246F4029D9ECBD002EDFC9 /* FilterOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */; };
 		3224E7D02A0D7913002B9428 /* WatchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3224E7CF2A0D7913002B9428 /* WatchProvider.swift */; };
 		3224E7D22A0D97B9002B9428 /* ProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3224E7D12A0D97B8002B9428 /* ProviderView.swift */; };
-		322BB68529D32A4D007CD536 /* Blackbird in Frameworks */ = {isa = PBXBuildFile; productRef = 322BB68429D32A4D007CD536 /* Blackbird */; };
 		322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322BF19929DC4CD000161820 /* MediaModalViewModel.swift */; };
 		324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */; };
 		324BAE6229B8D3D9002FBB6F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE6129B8D3D9002FBB6F /* ContentView.swift */; };
@@ -45,7 +44,6 @@
 		32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */; };
 		32952D9A29BB885E002B3596 /* View+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9929BB885E002B3596 /* View+EXT.swift */; };
 		32952D9C29BB9548002B3596 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9B29BB9548002B3596 /* Errors.swift */; };
-		3298920129C01A0C009989AA /* MediaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298920029C01A0C009989AA /* MediaModel.swift */; };
 		329A768729BA78200074A4F9 /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768629BA78200074A4F9 /* RowView.swift */; };
 		329A768929BA846F0074A4F9 /* PreviewProvider+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768829BA846F0074A4F9 /* PreviewProvider+EXT.swift */; };
 		329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A768A29BAA8340074A4F9 /* MovieTabView.swift */; };
@@ -74,7 +72,6 @@
 		32B3E1DD29E6154C00314B4F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1DB29E6154C00314B4F /* SettingsView.swift */; };
 		32B3E1DE29E6154C00314B4F /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1DC29E6154C00314B4F /* SettingsViewModel.swift */; };
 		32B3E1E029E61F7100314B4F /* WatchlistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E1DF29E61F7100314B4F /* WatchlistManager.swift */; };
-		32B5128529CB96FF00879AF6 /* Database+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5128429CB96FF00879AF6 /* Database+EXT.swift */; };
 		32B5128929CBABC800879AF6 /* StarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5128829CBABC800879AF6 /* StarsView.swift */; };
 		32B5128C29CBB00000879AF6 /* RatingModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5128B29CBB00000879AF6 /* RatingModalView.swift */; };
 		32B891C62A1317E600B92806 /* TVDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B891C52A1317E600B92806 /* TVDetails.swift */; };
@@ -91,9 +88,9 @@
 		32D04A042A02B03400A8A5A0 /* UserWatchlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D04A032A02B03400A8A5A0 /* UserWatchlist.swift */; };
 		32D04A062A02B52D00A8A5A0 /* FriendWatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D04A052A02B52D00A8A5A0 /* FriendWatchlistView.swift */; };
 		32D04A082A02B57300A8A5A0 /* DBUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D04A072A02B57300A8A5A0 /* DBUser.swift */; };
-		32E1EF6C29F75CAA00D3CDA7 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6B29F75CAA00D3CDA7 /* Nuke */; };
-		32E1EF6E29F75CAA00D3CDA7 /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6D29F75CAA00D3CDA7 /* NukeExtensions */; };
-		32E1EF7029F75CAA00D3CDA7 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 32E1EF6F29F75CAA00D3CDA7 /* NukeUI */; };
+		32E09F542A16641400B91022 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 32E09F532A16641400B91022 /* Nuke */; };
+		32E09F562A16641400B91022 /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 32E09F552A16641400B91022 /* NukeExtensions */; };
+		32E09F582A16641400B91022 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 32E09F572A16641400B91022 /* NukeUI */; };
 		32E1EF7229F8C1BE00D3CDA7 /* ColorSchemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E1EF7129F8C1BE00D3CDA7 /* ColorSchemeManager.swift */; };
 		32E8462329EE082C00C1815A /* Query+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E8462229EE082C00C1815A /* Query+EXT.swift */; };
 /* End PBXBuildFile section */
@@ -155,7 +152,6 @@
 		32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowTabView.swift; sourceTree = "<group>"; };
 		32952D9929BB885E002B3596 /* View+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+EXT.swift"; sourceTree = "<group>"; };
 		32952D9B29BB9548002B3596 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
-		3298920029C01A0C009989AA /* MediaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModel.swift; sourceTree = "<group>"; };
 		3298920929C10C4D009989AA /* Watchlist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Watchlist.entitlements; sourceTree = "<group>"; };
 		329A768629BA78200074A4F9 /* RowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowView.swift; sourceTree = "<group>"; };
 		329A768829BA846F0074A4F9 /* PreviewProvider+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreviewProvider+EXT.swift"; sourceTree = "<group>"; };
@@ -180,7 +176,6 @@
 		32B3E1DB29E6154C00314B4F /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		32B3E1DC29E6154C00314B4F /* SettingsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		32B3E1DF29E61F7100314B4F /* WatchlistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistManager.swift; sourceTree = "<group>"; };
-		32B5128429CB96FF00879AF6 /* Database+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Database+EXT.swift"; sourceTree = "<group>"; };
 		32B5128829CBABC800879AF6 /* StarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarsView.swift; sourceTree = "<group>"; };
 		32B5128B29CBB00000879AF6 /* RatingModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingModalView.swift; sourceTree = "<group>"; };
 		32B891C52A1317E600B92806 /* TVDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVDetails.swift; sourceTree = "<group>"; };
@@ -204,15 +199,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32E1EF7029F75CAA00D3CDA7 /* NukeUI in Frameworks */,
 				32B3E1BD29E60A7600314B4F /* FirebaseAnalyticsSwift in Frameworks */,
-				322BB68529D32A4D007CD536 /* Blackbird in Frameworks */,
+				32E09F582A16641400B91022 /* NukeUI in Frameworks */,
 				32C89CC529E843330094D8E2 /* FirebasePerformance in Frameworks */,
 				32B3E1B229E6098000314B4F /* FirebaseAuth in Frameworks */,
-				32E1EF6C29F75CAA00D3CDA7 /* Nuke in Frameworks */,
-				32E1EF6E29F75CAA00D3CDA7 /* NukeExtensions in Frameworks */,
+				32E09F542A16641400B91022 /* Nuke in Frameworks */,
 				32B3E1C229E60AE800314B4F /* GoogleSignInSwift in Frameworks */,
 				32B3E1B429E6098000314B4F /* FirebaseFirestore in Frameworks */,
+				32E09F562A16641400B91022 /* NukeExtensions in Frameworks */,
 				32B3E1BB29E60A7600314B4F /* FirebaseAnalytics in Frameworks */,
 				32C45AB929F02D6D0025BEE0 /* FirebaseCrashlytics in Frameworks */,
 				32B3E1B629E6098000314B4F /* FirebaseFirestoreSwift in Frameworks */,
@@ -301,7 +295,6 @@
 		324BAE6D29B8D721002FBB6F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				3298920029C01A0C009989AA /* MediaModel.swift */,
 				324BAE7D29B91560002FBB6F /* TMDBConstants.swift */,
 				32B891CA2A13193800B92806 /* Firebase */,
 				32B891C92A13192400B92806 /* MediaDetails */,
@@ -417,7 +410,6 @@
 				324BAE8329BA55BC002FBB6F /* Color+EXT.swift */,
 				32A2F1AB2A092F3E00578535 /* ShapeStyle+EXT.swift */,
 				329A768829BA846F0074A4F9 /* PreviewProvider+EXT.swift */,
-				32B5128429CB96FF00879AF6 /* Database+EXT.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -624,7 +616,6 @@
 			);
 			name = Watchlist;
 			packageProductDependencies = (
-				322BB68429D32A4D007CD536 /* Blackbird */,
 				32B3E1B129E6098000314B4F /* FirebaseAuth */,
 				32B3E1B329E6098000314B4F /* FirebaseFirestore */,
 				32B3E1B529E6098000314B4F /* FirebaseFirestoreSwift */,
@@ -634,9 +625,9 @@
 				32B3E1C129E60AE800314B4F /* GoogleSignInSwift */,
 				32C89CC429E843330094D8E2 /* FirebasePerformance */,
 				32C45AB829F02D6D0025BEE0 /* FirebaseCrashlytics */,
-				32E1EF6B29F75CAA00D3CDA7 /* Nuke */,
-				32E1EF6D29F75CAA00D3CDA7 /* NukeExtensions */,
-				32E1EF6F29F75CAA00D3CDA7 /* NukeUI */,
+				32E09F532A16641400B91022 /* Nuke */,
+				32E09F552A16641400B91022 /* NukeExtensions */,
+				32E09F572A16641400B91022 /* NukeUI */,
 			);
 			productName = Watchlist;
 			productReference = 324BAE5C29B8D3D9002FBB6F /* Watchlist.app */;
@@ -797,7 +788,6 @@
 				322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */,
 				32D04A082A02B57300A8A5A0 /* DBUser.swift in Sources */,
 				32E8462329EE082C00C1815A /* Query+EXT.swift in Sources */,
-				3298920129C01A0C009989AA /* MediaModel.swift in Sources */,
 				324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */,
 				320FB73F29FAF2D600CA9310 /* DocumentReference+EXT.swift in Sources */,
 				32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */,
@@ -843,7 +833,6 @@
 				32C89CC929EAFA4B0094D8E2 /* DeleteAccountView.swift in Sources */,
 				32B3E1D229E60CA800314B4F /* SignInView.swift in Sources */,
 				324BAE8429BA55BC002FBB6F /* Color+EXT.swift in Sources */,
-				32B5128529CB96FF00879AF6 /* Database+EXT.swift in Sources */,
 				3258730D29BCF939005E1394 /* StarRatingView.swift in Sources */,
 				329A768D29BACF070074A4F9 /* HeaderView.swift in Sources */,
 				326AF6122A03E821004971F5 /* NetworkingManager.swift in Sources */,
@@ -1226,11 +1215,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		322BB68429D32A4D007CD536 /* Blackbird */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 322BB68329D32A4D007CD536 /* XCRemoteSwiftPackageReference "Blackbird" */;
-			productName = Blackbird;
-		};
 		32B3E1B129E6098000314B4F /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -1276,17 +1260,17 @@
 			package = 32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebasePerformance;
 		};
-		32E1EF6B29F75CAA00D3CDA7 /* Nuke */ = {
+		32E09F532A16641400B91022 /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = Nuke;
 		};
-		32E1EF6D29F75CAA00D3CDA7 /* NukeExtensions */ = {
+		32E09F552A16641400B91022 /* NukeExtensions */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = NukeExtensions;
 		};
-		32E1EF6F29F75CAA00D3CDA7 /* NukeUI */ = {
+		32E09F572A16641400B91022 /* NukeUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = NukeUI;
