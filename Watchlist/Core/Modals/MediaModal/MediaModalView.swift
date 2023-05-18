@@ -22,8 +22,6 @@ struct MediaModalView: View {
         }
     }
 
-    @State private var showSafari: Bool = false
-
     @EnvironmentObject var homeVM: HomeViewModel
     @StateObject var vm: MediaModalViewModel
 
@@ -295,10 +293,19 @@ extension MediaModalView {
         Button {
             if !isInMedia(media: vm.media) {
                 Task {
-                    try await WatchlistManager.shared.createNewMediaInWatchlist(media: vm.media)
-                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                    var mediaToAdd = vm.media
+                    if friendName != nil {
+                        mediaToAdd.watched = false
+                        mediaToAdd.personalRating = nil
+                    }
+
+                    try await WatchlistManager.shared.createNewMediaInWatchlist(media: mediaToAdd)
+                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id),
+                       friendName == nil
+                    {
                         vm.media = updatedMedia
                     }
+
                     AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
                 }
             } else {
