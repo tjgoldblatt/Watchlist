@@ -16,9 +16,6 @@ enum FirebaseError: LocalizedError {
     case signInWithGoogle
     case signInWithApple(debugDescription: String = "")
 
-//    // TODO: Remove this
-//    case blackbirdTransferError(mediaModel: MediaModel)
-
     var errorDescription: String? {
         switch self {
             case .getAuthenticatedUser:
@@ -33,8 +30,6 @@ enum FirebaseError: LocalizedError {
                 return "[🔥] Failed to sign in with Google"
             case let .signInWithApple(debugDescription):
                 return "[🔥] Failed to sign in with Apple. \(debugDescription)"
-//            case .blackbirdTransferError(let mediaModel):
-//                return "[🔥] Failed to transfer id: \(mediaModel.id), title: \(mediaModel.title)"
         }
     }
 }

@@ -5,15 +5,10 @@
 //  Created by TJ Goldblatt on 3/8/23.
 //
 
-import Blackbird
 import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
-
-    // TODO: Remove This
-//    @Environment(\.blackbirdDatabase) var database
-//    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
 
     @State var showDebugView = false
     @State private var currentTab: Tab = .movies
@@ -29,17 +24,6 @@ struct HomeView: View {
                                 .accessibilityIdentifier("MovieTab")
                         }
                         .tag(Tab.movies)
-
-//                        .onAppear {
-//                            Task {
-//                                if database != nil {
-//                                    // TODO: Delete this after enough people have transferred their databases
-//                                    try await homeVM.transferDatabase()
-//                                } else {
-//                                    try await WatchlistManager.shared.setTransferred()
-//                                }
-//                            }
-//                        }
 
                     TVShowTabView()
                         .environmentObject(homeVM)
@@ -78,10 +62,7 @@ struct HomeView: View {
                         homeVM.results = []
                     }
                 }
-//                .onAppear {
-//                    // TODO: Remove This
-//                    homeVM.database = database
-//                }
+
                 VStack {
                     Spacer()
                     if homeVM.editMode == .active {
