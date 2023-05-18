@@ -70,7 +70,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         case releaseDate
         case firstAirDate
     }
-    
+
     static var sampleMovie: DBMedia {
         try! DBMedia(
             media: Media(
@@ -89,7 +89,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
             watched: false,
             personalRating: 7.0)
     }
-    
+
     static var sampleTV: DBMedia {
         try! DBMedia(
             media: Media(

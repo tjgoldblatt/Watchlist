@@ -42,65 +42,70 @@ struct MediaModalView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            backdropSection()
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                backdropSection()
+                
+                VStack(alignment: .center, spacing: 30) {
+                    titleSection
 
-            VStack(alignment: .center, spacing: 30) {
-                titleSection
+                    ratingSection
 
-                ratingSection
+                    overview
 
-                overview
-
-                providers
+                    providers
+                }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
-        }
-        .analyticsScreen(name: "MediaModalView")
-        .overlay(alignment: .topLeading) {
-            Button {
-                dismiss()
-            } label: {
-                CloseButton()
-                    .padding()
-            }
-        }
-        .overlay(alignment: .topTrailing) {
-            if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
-                Menu {
-                    Button(role: .destructive) {
-                        AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
-                        Task {
-                            try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
-                            try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
-                            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                                vm.media = updatedMedia
-                            }
-                        }
+            .analyticsScreen(name: "MediaModalView")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
                     } label: {
-                        Text("Reset")
-                        Image(systemName: "arrow.counterclockwise.circle")
+                        CloseButton()
                     }
-                    .buttonStyle(.plain)
-                } label: {
-                    Image(systemName: "ellipsis.circle.fill")
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(Color.theme.text, Color.theme.background)
-                        .shadow(color: Color.black.opacity(0.4), radius: 2)
-                        .padding()
+                }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
+                        Menu {
+                            Button(role: .destructive) {
+                                AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
+                                Task {
+                                    try await WatchlistManager.shared.setPersonalRatingForMedia(
+                                        media: vm.media,
+                                        personalRating: nil)
+                                    try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                        vm.media = updatedMedia
+                                    }
+                                }
+                            } label: {
+                                Text("Reset")
+                                Image(systemName: "arrow.counterclockwise.circle")
+                            }
+                            .buttonStyle(.plain)
+                        } label: {
+                            Image(systemName: "ellipsis.circle.fill")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.theme.text, Color.theme.background)
+                                .shadow(color: Color.black.opacity(0.4), radius: 2)
+                        }
+                    }
                 }
             }
-        }
-        .ignoresSafeArea(edges: .top)
-        .onAppear {
-            if homeVM.isDBMediaInWatchlist(dbMedia: vm.media) {
-                vm.updateMediaDetails()
+            .ignoresSafeArea(edges: .top)
+            .onAppear {
+                if homeVM.isDBMediaInWatchlist(dbMedia: vm.media) {
+                    vm.updateMediaDetails()
+                }
             }
+            .background(Color.theme.background)
+            .dynamicTypeSize(.medium ... .xLarge)
         }
-        .background(Color.theme.background)
-        .dynamicTypeSize(.medium ... .xLarge)
     }
 }
 
@@ -473,7 +478,9 @@ struct ExpandableText: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaModalView(media: dev.mediaMock[0], forPreview: true)
-            .environmentObject(dev.homeVM)
+        NavigationStack {
+            MediaModalView(media: dev.mediaMock[0], forPreview: true)
+                .environmentObject(dev.homeVM)
+        }
     }
 }
