@@ -178,6 +178,7 @@ extension MediaModalView {
                             }
                             vm.media.watched = true
                         }
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_ToggleMediaWatched_\(vm.media.watched)")
                     }
                 } label: {
                     if vm.media.watched {
@@ -190,6 +191,7 @@ extension MediaModalView {
                             .imageScale(.large)
                     }
                 }
+                .disabled(!isInMedia(media: vm.media))
                 .disabled(friendName != nil)
                 .animation(.spring(), value: vm.media.watched)
             }
@@ -339,8 +341,11 @@ extension MediaModalView {
                     {
                         vm.media = updatedMedia
                     }
-
-                    AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
+                    if friendName == nil {
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
+                    } else {
+                        AnalyticsManager.shared.logEvent(name: "FriendMediaModalView_AddMedia")
+                    }
                 }
             } else {
                 vm.showDeleteConfirmation.toggle()
