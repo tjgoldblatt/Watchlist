@@ -53,6 +53,9 @@ final class HomeViewModel: ObservableObject {
     @Published var watchSelected: WatchOptions = .unwatched
     @Published var sortingSelected: SortingOptions = .alphabetical
 
+    /// Deep linking
+    @Published var deepLinkURL: URL?
+
     /// Watchlist Listener
     private var userWatchlistListener: ListenerRegistration? = nil
 
@@ -63,18 +66,9 @@ final class HomeViewModel: ObservableObject {
         fetchGenreLists()
     }
 
-    func isDBMediaInWatchlist(dbMedia: DBMedia) -> Bool {
+    func isMediaIDInWatchlist(for id: Int) -> Bool {
         for watchlistMedia in tvList + movieList {
-            if watchlistMedia.id == dbMedia.id {
-                return true
-            }
-        }
-        return false
-    }
-
-    func isMediaInWatchlist(media: Media) -> Bool {
-        for watchlistMedia in tvList + movieList {
-            if watchlistMedia.id == media.id {
+            if watchlistMedia.id == id {
                 return true
             }
         }

@@ -71,6 +71,31 @@ struct DBMedia: Codable, Identifiable, Hashable {
         case firstAirDate
     }
 
+    func convertDBMediaToMedia() -> Media {
+        Media(
+            mediaType: mediaType,
+            id: id,
+            originalTitle: originalTitle,
+            originalName: originalName,
+            overview: overview,
+            voteAverage: voteAverage,
+            voteCount: voteCount,
+            posterPath: posterPath,
+            backdropPath: backdropPath,
+            genreIDS: genreIDs,
+            popularity: nil,
+            firstAirDate: firstAirDate,
+            originCountry: nil,
+            originalLanguage: nil,
+            name: name,
+            adult: nil,
+            releaseDate: releaseDate,
+            title: title,
+            video: nil,
+            profilePath: nil,
+            knownFor: nil)
+    }
+
     static var sampleMovie: DBMedia {
         try! DBMedia(
             media: Media(
@@ -86,7 +111,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
                 genreIDS: [18],
                 releaseDate: "2021-10-1",
                 title: "Batman: The Long Halloween, Part Two"),
-            watched: false,
+            watched: true,
             personalRating: 7.0)
     }
 

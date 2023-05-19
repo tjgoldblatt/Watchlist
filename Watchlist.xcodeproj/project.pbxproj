@@ -16,6 +16,8 @@
 		3224E7D02A0D7913002B9428 /* WatchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3224E7CF2A0D7913002B9428 /* WatchProvider.swift */; };
 		3224E7D22A0D97B9002B9428 /* ProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3224E7D12A0D97B8002B9428 /* ProviderView.swift */; };
 		322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322BF19929DC4CD000161820 /* MediaModalViewModel.swift */; };
+		3244188A2A16DA27004CC2F8 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324418892A16DA27004CC2F8 /* NotificationManager.swift */; };
+		324418972A16FB43004CC2F8 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324418962A16FB43004CC2F8 /* DeepLinkManager.swift */; };
 		324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */; };
 		324BAE6229B8D3D9002FBB6F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE6129B8D3D9002FBB6F /* ContentView.swift */; };
 		324BAE6429B8D3DA002FBB6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 324BAE6329B8D3DA002FBB6F /* Assets.xcassets */; };
@@ -122,6 +124,8 @@
 		3224E7CF2A0D7913002B9428 /* WatchProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchProvider.swift; sourceTree = "<group>"; };
 		3224E7D12A0D97B8002B9428 /* ProviderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderView.swift; sourceTree = "<group>"; };
 		322BF19929DC4CD000161820 /* MediaModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModalViewModel.swift; sourceTree = "<group>"; };
+		324418892A16DA27004CC2F8 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		324418962A16FB43004CC2F8 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		324BAE5C29B8D3D9002FBB6F /* Watchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Watchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistApp.swift; sourceTree = "<group>"; };
 		324BAE6129B8D3D9002FBB6F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -242,6 +246,22 @@
 			path = MediaModal;
 			sourceTree = "<group>";
 		};
+		324418882A16DA12004CC2F8 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				324418892A16DA27004CC2F8 /* NotificationManager.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		324418932A16FAFC004CC2F8 /* Deep Links */ = {
+			isa = PBXGroup;
+			children = (
+				324418962A16FB43004CC2F8 /* DeepLinkManager.swift */,
+			);
+			path = "Deep Links";
+			sourceTree = "<group>";
+		};
 		324BAE5329B8D3D9002FBB6F = {
 			isa = PBXGroup;
 			children = (
@@ -274,6 +294,8 @@
 				324BAE8229BA559E002FBB6F /* Extensions */,
 				324BAE6D29B8D721002FBB6F /* Models */,
 				32B3E1C429E60B9700314B4F /* Authentication */,
+				324418932A16FAFC004CC2F8 /* Deep Links */,
+				324418882A16DA12004CC2F8 /* Notifications */,
 				32B3E1D529E60E7C00314B4F /* Firestore */,
 				324BAE6E29B8D73E002FBB6F /* Core */,
 				324BAE6129B8D3D9002FBB6F /* ContentView.swift */,
@@ -812,9 +834,11 @@
 				320FB74129FAF52000CA9310 /* SocialViewModel.swift in Sources */,
 				3224E7D22A0D97B9002B9428 /* ProviderView.swift in Sources */,
 				3258730929BCD53A005E1394 /* MediaModalView.swift in Sources */,
+				3244188A2A16DA27004CC2F8 /* NotificationManager.swift in Sources */,
 				324BAE7E29B91560002FBB6F /* TMDBConstants.swift in Sources */,
 				32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */,
 				3258731829BE5C46005E1394 /* WatchlistDetailsViewModel.swift in Sources */,
+				324418972A16FB43004CC2F8 /* DeepLinkManager.swift in Sources */,
 				32D04A042A02B03400A8A5A0 /* UserWatchlist.swift in Sources */,
 				32A2F1AC2A092F3E00578535 /* ShapeStyle+EXT.swift in Sources */,
 				327DCF9A29F19AC5003EA412 /* CrashlyticsManager.swift in Sources */,

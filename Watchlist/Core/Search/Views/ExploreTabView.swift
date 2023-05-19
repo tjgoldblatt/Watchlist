@@ -23,6 +23,9 @@ struct ExploreTabView: View {
     @State var isKeyboardShowing: Bool = false
     @State var isSubmitted: Bool = false
 
+    @State private var deepLinkMedia: DBMedia?
+    @State private var showDeepLinkModal = false
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -50,6 +53,19 @@ struct ExploreTabView: View {
             }
             .toolbar {
                 Text("")
+            }
+            .sheet(isPresented: $showDeepLinkModal) {
+                if let deepLinkMedia {
+                    MediaModalView(media: deepLinkMedia)
+                }
+            }
+            .onReceive(homeVM.$deepLinkURL) { url in
+                if let url {
+                    Task {
+                        deepLinkMedia = await DeepLinkManager.parse(from: url, homeVM: homeVM)
+                        showDeepLinkModal.toggle()
+                    }
+                }
             }
         }
         .analyticsScreen(name: "ExploreTabView")
@@ -201,8 +217,8 @@ struct ExploreThumbnailView: View {
                         {
                             ThumbnailView(imagePath: posterPath)
                                 .overlay(alignment: .topTrailing) {
-                                    if homeVM.isDBMediaInWatchlist(dbMedia: media) {
-                                        Image(systemName: "checkmark.circle.fill")
+                                    if homeVM.isMediaIDInWatchlist(for: media.id) {
+                                        Image(systemName: "plus.circle.fill")
                                             .resizable()
                                             .scaledToFit()
                                             .frame(width: 20)

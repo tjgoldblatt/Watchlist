@@ -45,7 +45,7 @@ struct MediaModalView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 backdropSection()
-                
+
                 VStack(alignment: .center, spacing: 30) {
                     titleSection
 
@@ -67,7 +67,7 @@ struct MediaModalView: View {
                     }
                 }
 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .primaryAction) {
                     if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
                         Menu {
                             Button(role: .destructive) {
@@ -89,6 +89,22 @@ struct MediaModalView: View {
                         } label: {
                             Image(systemName: "ellipsis.circle.fill")
                                 .resizable()
+                                .scaledToFit()
+                                .frame(width: 25, height: 25)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.theme.text, Color.theme.background)
+                                .shadow(color: Color.black.opacity(0.4), radius: 2)
+                        }
+                    }
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    if let deepLink = DeepLinkManager.build(from: vm.media) {
+                        ShareLink(item: deepLink) {
+                            Image(systemName: "square.and.arrow.up.circle.fill")
+                                .resizable()
+                                .scaledToFit()
                                 .frame(width: 25, height: 25)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(Color.theme.text, Color.theme.background)
@@ -99,7 +115,7 @@ struct MediaModalView: View {
             }
             .ignoresSafeArea(edges: .top)
             .onAppear {
-                if homeVM.isDBMediaInWatchlist(dbMedia: vm.media) {
+                if homeVM.isMediaIDInWatchlist(for: vm.media.id) {
                     vm.updateMediaDetails()
                 }
             }

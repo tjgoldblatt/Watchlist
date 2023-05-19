@@ -25,6 +25,10 @@ struct WatchlistApp: App {
                 .onAppear {
                     csManager.applyColorScheme()
                 }
+                .onOpenURL { url in
+                    vm.deepLinkURL = url
+                    vm.selectedTab = .explore
+                }
         }
     }
 }
