@@ -49,7 +49,8 @@ class TMDbService {
     /// Fetches trending movies from the TMDb API.
     /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getTrendingMovies() -> AnyPublisher<[Media], Error> {
-        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/trending/movie/week?api_key=\(TMDBConstants.API_KEY)")
+        guard let url =
+            URL(string: "\(TMDBConstants.baseURL)/3/trending/movie/week?api_key=\(TMDBConstants.API_KEY)&language=en-US")
         else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
 
         return NetworkingManager.download(url: url)
@@ -61,7 +62,7 @@ class TMDbService {
     /// Fetches trending TV shows from the TMDb API.
     /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getTrendingTVShows() -> AnyPublisher<[Media], Error> {
-        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/trending/tv/week?api_key=\(TMDBConstants.API_KEY)")
+        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/trending/tv/week?api_key=\(TMDBConstants.API_KEY)&language=en-US")
         else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
 
         return NetworkingManager.download(url: url)
@@ -73,7 +74,7 @@ class TMDbService {
     /// Fetches popular movies from the TMDb API.
     /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getPopularMovies() -> AnyPublisher<[Media], Error> {
-        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/movie/popular?api_key=\(TMDBConstants.API_KEY)")
+        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/movie/popular?api_key=\(TMDBConstants.API_KEY)&language=en-US")
         else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
 
         return NetworkingManager.download(url: url)
@@ -85,7 +86,27 @@ class TMDbService {
     /// Fetches popular TV shows from the TMDb API.
     /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getPopularTVShows() -> AnyPublisher<[Media], Error> {
-        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/tv/popular?api_key=\(TMDBConstants.API_KEY)")
+        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/tv/popular?api_key=\(TMDBConstants.API_KEY)&language=en-US")
+        else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
+
+        return NetworkingManager.download(url: url)
+            .decode(type: MediaResponse.self, decoder: JSONDecoder())
+            .map(\.results)
+            .eraseToAnyPublisher()
+    }
+
+    static func getTopRatedMovies() -> AnyPublisher<[Media], Error> {
+        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/movie/top_rated?api_key=\(TMDBConstants.API_KEY)&language=en-US")
+        else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
+
+        return NetworkingManager.download(url: url)
+            .decode(type: MediaResponse.self, decoder: JSONDecoder())
+            .map(\.results)
+            .eraseToAnyPublisher()
+    }
+
+    static func getTopRatedTVShows() -> AnyPublisher<[Media], Error> {
+        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/tv/top_rated?api_key=\(TMDBConstants.API_KEY)&language=en-US")
         else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
 
         return NetworkingManager.download(url: url)

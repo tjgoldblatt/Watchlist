@@ -27,7 +27,7 @@ struct FriendRowView: View {
                 ThumbnailView(imagePath: posterPath)
                     .overlay(alignment: .topTrailing) {
                         if homeVM.isMediaIDInWatchlist(for: media.id) {
-                            Image(systemName: "plus.circle.fill")
+                            Image(systemName: "checkmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 20)
@@ -118,7 +118,7 @@ extension FriendRowView {
             AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Add")
 
         } label: {
-            Image(systemName: "plus.circle.fill")
+            Image(systemName: "checkmark.circle.fill")
         }
         .tint(Color.theme.secondaryBackground)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")

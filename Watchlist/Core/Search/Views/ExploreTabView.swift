@@ -69,6 +69,9 @@ struct ExploreTabView: View {
             }
         }
         .analyticsScreen(name: "ExploreTabView")
+        .onAppear {
+            vm.loadMedia()
+        }
     }
 }
 
@@ -167,6 +170,10 @@ extension ExploreTabView {
         if homeVM.searchText.isEmpty {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 10) {
+                    ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
+
+                    ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
+
                     ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
 
                     ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
@@ -218,7 +225,7 @@ struct ExploreThumbnailView: View {
                             ThumbnailView(imagePath: posterPath)
                                 .overlay(alignment: .topTrailing) {
                                     if homeVM.isMediaIDInWatchlist(for: media.id) {
-                                        Image(systemName: "plus.circle.fill")
+                                        Image(systemName: "checkmark.circle.fill")
                                             .resizable()
                                             .scaledToFit()
                                             .frame(width: 20)

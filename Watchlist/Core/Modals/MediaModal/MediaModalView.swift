@@ -98,21 +98,6 @@ struct MediaModalView: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    if let deepLink = DeepLinkManager.build(from: vm.media) {
-                        ShareLink(item: deepLink) {
-                            Image(systemName: "square.and.arrow.up.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color.theme.text, Color.theme.background)
-                                .shadow(color: Color.black.opacity(0.4), radius: 2)
-                        }
-                    }
-                }
-            }
             .ignoresSafeArea(edges: .top)
             .onAppear {
                 if homeVM.isMediaIDInWatchlist(for: vm.media.id) {
@@ -392,6 +377,8 @@ extension MediaModalView {
                 Button("Delete", role: .destructive) {
                     Task {
                         try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
+                        vm.media.watched = false
+                        vm.media.personalRating = nil
                         AnalyticsManager.shared.logEvent(name: "MediaModalView_DeleteMedia")
                     }
                 }
