@@ -16,6 +16,16 @@
 				<string>com.googleusercontent.apps.956317464014-7g2nsgkdmhmgt52nng925ipf1hvn4lpn</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.tgoldblatt.watchlist</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>watchlist</string>
+			</array>
+		</dict>
 	</array>
 	<key>GIDClientID</key>
 	<string>956317464014-7g2nsgkdmhmgt52nng925ipf1hvn4lpn.apps.googleusercontent.com</string>

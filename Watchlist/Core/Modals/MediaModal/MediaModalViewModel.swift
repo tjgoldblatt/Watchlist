@@ -89,24 +89,8 @@ final class MediaModalViewModel: ObservableObject {
 
 extension MediaModalViewModel {
     convenience init(forPreview: Bool = false) {
-        self.init(
-            media:
-            try! DBMedia(
-                media: Media(
-                    mediaType: .movie,
-                    id: 736_074,
-                    originalTitle: "Batman: The Long Halloween, Part Two",
-                    originalName: nil,
-                    overview: "As Gotham City\'s young vigilante, the Batman, struggles to pursue a brutal serial killer, district attorney Harvey Dent gets caught in a feud involving the criminal family of the Falcones.",
-                    voteAverage: 7.532,
-                    voteCount: 13,
-                    posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg",
-                    backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg",
-                    genreIDS: [18],
-                    releaseDate: "2021-10-1",
-                    title: "Batman: The Long Halloween, Part Two"),
-                watched: false,
-                personalRating: 7.0))
+        self.init(media: DBMedia.sampleMovie)
+
         if ApplicationHelper.isDebug, forPreview {
             countryProvider = Country(
                 link: "https://www.themoviedb.org/movie/109410-42/watch?locale=US",

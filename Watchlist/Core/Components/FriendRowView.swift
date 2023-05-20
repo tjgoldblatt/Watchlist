@@ -26,7 +26,7 @@ struct FriendRowView: View {
             if let posterPath = media.posterPath {
                 ThumbnailView(imagePath: posterPath)
                     .overlay(alignment: .topTrailing) {
-                        if homeVM.isDBMediaInWatchlist(dbMedia: media) {
+                        if homeVM.isMediaIDInWatchlist(for: media.id) {
                             Image(systemName: "checkmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
@@ -51,7 +51,7 @@ struct FriendRowView: View {
             MediaModalView(media: media, friendName: friendName)
         }
         .swipeActions(edge: .trailing) {
-            if !homeVM.isDBMediaInWatchlist(dbMedia: media) {
+            if !homeVM.isMediaIDInWatchlist(for: media.id) {
                 swipeActionToAddToWatchlist
             } else {
                 swipeActionToRemoveFromWatchlist
@@ -118,7 +118,7 @@ extension FriendRowView {
             AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Add")
 
         } label: {
-            Image(systemName: "plus.circle.fill")
+            Image(systemName: "checkmark.circle.fill")
         }
         .tint(Color.theme.secondaryBackground)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")

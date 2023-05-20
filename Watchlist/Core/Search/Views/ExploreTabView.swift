@@ -23,6 +23,9 @@ struct ExploreTabView: View {
     @State var isKeyboardShowing: Bool = false
     @State var isSubmitted: Bool = false
 
+    @State private var deepLinkMedia: DBMedia?
+    @State private var showDeepLinkModal = false
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -51,8 +54,24 @@ struct ExploreTabView: View {
             .toolbar {
                 Text("")
             }
+            .sheet(isPresented: $showDeepLinkModal) {
+                if let deepLinkMedia {
+                    MediaModalView(media: deepLinkMedia)
+                }
+            }
+            .onReceive(homeVM.$deepLinkURL) { url in
+                if let url {
+                    Task {
+                        deepLinkMedia = await DeepLinkManager.parse(from: url, homeVM: homeVM)
+                        showDeepLinkModal.toggle()
+                    }
+                }
+            }
         }
         .analyticsScreen(name: "ExploreTabView")
+        .onAppear {
+            vm.loadMedia()
+        }
     }
 }
 
@@ -151,6 +170,10 @@ extension ExploreTabView {
         if homeVM.searchText.isEmpty {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 10) {
+                    ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
+
+                    ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
+
                     ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
 
                     ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
@@ -201,7 +224,7 @@ struct ExploreThumbnailView: View {
                         {
                             ThumbnailView(imagePath: posterPath)
                                 .overlay(alignment: .topTrailing) {
-                                    if homeVM.isDBMediaInWatchlist(dbMedia: media) {
+                                    if homeVM.isMediaIDInWatchlist(for: media.id) {
                                         Image(systemName: "checkmark.circle.fill")
                                             .resizable()
                                             .scaledToFit()
