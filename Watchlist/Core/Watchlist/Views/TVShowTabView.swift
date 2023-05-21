@@ -195,10 +195,12 @@ extension TVShowTabView {
                                     : Color.theme.secondary.opacity(0.6))
                     }
                     .onTapGesture {
-                        if homeVM.watchSelected != watchOption {
-                            AnalyticsManager.shared.logEvent(name: "TVTabView_\(watchOption.rawValue)_Tapped")
-                            homeVM.watchSelected = watchOption
-                            vm.filterText = ""
+                        withAnimation(.easeIn) {
+                            if homeVM.watchSelected != watchOption {
+                                AnalyticsManager.shared.logEvent(name: "TVTabView_\(watchOption.rawValue)_Tapped")
+                                homeVM.watchSelected = watchOption
+                                vm.filterText = ""
+                            }
                         }
                     }
             }

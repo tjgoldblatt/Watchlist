@@ -169,7 +169,7 @@ extension ExploreTabView {
     private var emptySearch: some View {
         if homeVM.searchText.isEmpty {
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 10) {
+                LazyVStack(spacing: 10) {
                     ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
 
                     ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
@@ -217,7 +217,7 @@ struct ExploreThumbnailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
+                LazyHStack {
                     ForEach(mediaArray) { media in
                         if let posterPath = media.posterPath,
                            let overview = media.overview, !overview.isEmpty

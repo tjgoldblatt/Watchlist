@@ -52,9 +52,11 @@ struct HomeView: View {
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
                 .onChange(of: homeVM.selectedTab) { updatedTab in
-                    currentTab = updatedTab
-                    homeVM.genresSelected = []
-                    homeVM.ratingSelected = 0
+                    withAnimation(.easeIn) {
+                        currentTab = updatedTab
+                        homeVM.genresSelected = []
+                        homeVM.ratingSelected = 0
+                    }
                 }
                 .onReceive(homeVM.$selectedTab) { selectedTab in
                     if currentTab == .explore, selectedTab == .explore {

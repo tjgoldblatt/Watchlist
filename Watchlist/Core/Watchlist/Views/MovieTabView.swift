@@ -199,9 +199,11 @@ extension MovieTabView {
                     }
                     .onTapGesture {
                         if homeVM.watchSelected != watchOption {
-                            AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
-                            homeVM.watchSelected = watchOption
-                            vm.filterText = ""
+                            withAnimation(.easeIn) {
+                                AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
+                                homeVM.watchSelected = watchOption
+                                vm.filterText = ""
+                            }
                         }
                     }
             }

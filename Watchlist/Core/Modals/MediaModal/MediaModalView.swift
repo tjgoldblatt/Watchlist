@@ -106,6 +106,7 @@ struct MediaModalView: View {
             }
             .background(Color.theme.background)
             .dynamicTypeSize(.medium ... .xLarge)
+            .toolbarBackground(.hidden, for: .navigationBar)
         }
     }
 }
