@@ -11,98 +11,114 @@ import SwiftUI
 
 struct MediaModalView: View {
     @Environment(\.dismiss) var dismiss
-    
-    @State private var showSafari: Bool = false
-    
+
+    var friendName: String?
+
+    var formattedFriendName: String? {
+        if let friendName {
+            return "\(friendName.uppercased())'s"
+        } else {
+            return nil
+        }
+    }
+
     @EnvironmentObject var homeVM: HomeViewModel
     @StateObject var vm: MediaModalViewModel
-    
+
     var dateConvertedToYear: String {
         if let title = vm.media.mediaType == .tv ? vm.media.firstAirDate : vm.media.releaseDate {
             let date = title.components(separatedBy: "-")
             return date[0]
         }
-        
+
         return ""
     }
-    
-    init(media: DBMedia, forPreview: Bool = false) {
-        _vm = forPreview ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true)) : StateObject(wrappedValue: MediaModalViewModel(media: media))
+
+    init(media: DBMedia, forPreview: Bool = false, friendName: String? = nil) {
+        self.friendName = friendName
+        _vm = forPreview
+            ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true))
+            : StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
-    
+
     var body: some View {
-        GeometryReader { geo in
+        NavigationStack {
             ScrollView(showsIndicators: false) {
-                backdropSection(geo: geo)
-                
+                backdropSection()
+
                 VStack(alignment: .center, spacing: 30) {
                     titleSection
-                    
+
                     ratingSection
-                    
+
                     overview
-                    
+
                     providers
                 }
                 .padding(.horizontal)
-                .frame(maxWidth: geo.size.width)
             }
             .analyticsScreen(name: "MediaModalView")
-            .overlay(alignment: .topLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    CloseButton()
-                        .padding()
-                }
-            }
-            .overlay(alignment: .topTrailing) {
-                if isInMedia(media: vm.media) && vm.media.watched {
-                    Menu {
-                        Button(role: .destructive) {
-                            AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
-                            Task {
-                                try await WatchlistManager.shared.setPersonalRatingForMedia(media: vm.media, personalRating: nil)
-                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
-                                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                                    vm.media = updatedMedia
-                                }
-                            }
-                        } label: {
-                            Text("Reset")
-                            Image(systemName: "arrow.counterclockwise.circle")
-                        }
-                        .buttonStyle(.plain)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
                     } label: {
-                        Image(systemName: "ellipsis.circle.fill")
-                            .resizable()
-                            .frame(width: 25, height: 25)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color.theme.text, Color.theme.background)
-                            .shadow(color: Color.black.opacity(0.4), radius: 2)
-                            .padding()
+                        CloseButton()
+                    }
+                }
+
+                ToolbarItem(placement: .primaryAction) {
+                    if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
+                        Menu {
+                            Button(role: .destructive) {
+                                AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
+                                Task {
+                                    try await WatchlistManager.shared.setPersonalRatingForMedia(
+                                        media: vm.media,
+                                        personalRating: nil)
+                                    try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                        vm.media = updatedMedia
+                                    }
+                                }
+                            } label: {
+                                Text("Reset")
+                                Image(systemName: "arrow.counterclockwise.circle")
+                            }
+                            .buttonStyle(.plain)
+                        } label: {
+                            Image(systemName: "ellipsis.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 25, height: 25)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.theme.text, Color.theme.background)
+                                .shadow(color: Color.black.opacity(0.4), radius: 2)
+                        }
                     }
                 }
             }
             .ignoresSafeArea(edges: .top)
             .onAppear {
-                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                    vm.media = updatedMedia
+                if homeVM.isMediaIDInWatchlist(for: vm.media.id) {
+                    vm.updateMediaDetails()
                 }
             }
+            .background(Color.theme.background)
+            .dynamicTypeSize(.medium ... .xLarge)
+            .toolbarBackground(.hidden, for: .navigationBar)
         }
-        .background(Color.theme.background)
     }
 }
 
 extension MediaModalView {
-    func backdropSection(geo: GeometryProxy) -> some View {
-        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(vm.imagePath)")) { state in
+    func backdropSection() -> some View {
+        LazyImage(url: URL(string: TMDBConstants.imageURL + vm.imagePath)) { state in
             if let image = state.image {
                 image
                     .resizable()
                     .scaledToFill()
-                    .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : geo.size.width)
+
                     .frame(maxHeight: 300)
                     .clipped()
                     .shadow(color: Color.black.opacity(0.3), radius: 5)
@@ -112,7 +128,7 @@ extension MediaModalView {
             }
         }
     }
-    
+
     private var genreSection: some View {
         VStack(alignment: .leading) {
             if let genreIds = vm.media.genreIDs {
@@ -120,48 +136,75 @@ extension MediaModalView {
             }
         }
     }
-    
+
     private var titleSection: some View {
         VStack(alignment: .center, spacing: 15) {
             HStack {
-                if let title = vm.media.mediaType == .movie ? vm.media.title : vm.media.name {
+                if let title = vm.media.mediaType == .movie
+                    ? vm.media.title ?? vm.media.originalTitle
+                    : vm.media.name ?? vm.media.originalName
+                {
                     Text(title)
                         .font(.largeTitle)
                         .fontWeight(.semibold)
                         .foregroundColor(Color.theme.text)
                         .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.leading)
+                        .multilineTextAlignment(.center)
                 }
             }
-            
+
             HStack(spacing: 15) {
                 if (vm.media.releaseDate != nil) || (vm.media.firstAirDate != nil) {
                     Text(dateConvertedToYear)
                         .font(.headline)
                         .foregroundColor(Color.theme.text.opacity(0.6))
                         .fontWeight(.medium)
-                    
+
                     Color.theme.secondary.frame(width: 1, height: 20)
                 }
-                
+
                 if let genreIds = vm.media.genreIDs, let genre = getGenres(genreIDs: genreIds).first {
                     Text(genre.name)
                         .font(.headline)
                         .foregroundColor(Color.theme.text.opacity(0.6))
                         .fontWeight(.medium)
                 }
-                
-                if vm.media.watched {
-                    Color.theme.secondary.frame(width: 1, height: 20)
 
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(Color.theme.red)
-                        .imageScale(.large)
+                Color.theme.secondary.frame(width: 1, height: 20)
+
+                Button {
+                    if friendName == nil {
+                        if vm.media.watched {
+                            Task {
+                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                            }
+                            vm.media.watched = false
+                        } else {
+                            Task {
+                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: true)
+                            }
+                            vm.media.watched = true
+                        }
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_ToggleMediaWatched_\(vm.media.watched)")
+                    }
+                } label: {
+                    if vm.media.watched {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Color.theme.red)
+                            .imageScale(.large)
+                    } else {
+                        Image(systemName: "checkmark.circle")
+                            .foregroundColor(Color.theme.red)
+                            .imageScale(.large)
+                    }
                 }
+                .disabled(!isInMedia(media: vm.media))
+                .disabled(friendName != nil)
+                .animation(.spring(), value: vm.media.watched)
             }
         }
     }
-    
+
     private var overview: some View {
         if let overview = vm.media.overview {
             return AnyView(ExpandableText(text: overview, lineLimit: 3))
@@ -169,37 +212,48 @@ extension MediaModalView {
             return AnyView(EmptyView())
         }
     }
-    
+
     private var ratingSection: some View {
         HStack {
             addButton
-                .padding(.trailing)
-            
+                .frame(minWidth: 110)
+
             Spacer()
-            
+
             if let voteAverage = vm.media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage, size: 18)
-                    .padding(.horizontal)
+                    .frame(minWidth: 110)
             }
-            
+
             Spacer()
-            
+
             Group {
                 if let personalRating = vm.media.personalRating {
-                    StarRatingView(text: "PERSONAL RATING", rating: personalRating, size: 18)
+                    StarRatingView(text: "\(formattedFriendName ?? "PERSONAL") RATING", rating: personalRating, size: 18)
+                        .onTapGesture {
+                            if friendName == nil {
+                                vm.showingRating.toggle()
+                                AnalyticsManager.shared.logEvent(name: "MediaModalView_PersonalRatingButton_Tapped")
+                            }
+                        }
+                        .disabled(friendName != nil)
                 } else {
                     rateThisButton
                         .disabled(isInMedia(media: vm.media) ? false : true)
                 }
             }
+            .animation(.spring(), value: vm.media.personalRating)
             .frame(minWidth: 110)
-            .padding(.leading)
-            
-            Spacer()
+            .sheet(isPresented: $vm.showingRating, onDismiss: {
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                    vm.media = updatedMedia
+                }
+            }) {
+                RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
+            }
         }
-        .padding(.leading)
     }
-    
+
     @ViewBuilder
     private var providers: some View {
         VStack(spacing: 10) {
@@ -212,12 +266,12 @@ extension MediaModalView {
                         .font(.title2)
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     HStack {
                         Text("Brought to you by".uppercased())
                             .fontWeight(.light)
                             .font(.caption2)
-                        
+
                         Image("JustWatch")
                             .resizable()
                             .scaledToFit()
@@ -225,8 +279,7 @@ extension MediaModalView {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
-                
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         if let stream = countryProvider.flatrate {
@@ -256,32 +309,11 @@ extension MediaModalView {
                         }
                     }
                 }
-                
-                // Iteration one
-//                if let stream = countryProvider.flatrate {
-//                    ProviderView(providers: stream, providerType: "stream", link: link)
-//                }
-//
-//                if let free = countryProvider.free {
-//                    ProviderView(providers: free, providerType: "free", link: link)
-//                }
-//
-//                if let ads = countryProvider.ads {
-//                    ProviderView(providers: ads, providerType: "ads", link: link)
-//                }
-//
-//                if let rent = countryProvider.rent {
-//                    ProviderView(providers: rent, providerType: "rent", link: link)
-//                }
-//
-//                if let buy = countryProvider.buy {
-//                    ProviderView(providers: buy, providerType: "buy", link: link)
-//                }
             }
         }
         .padding(.bottom)
     }
-    
+
     private var rateThisButton: some View {
         Button {
             vm.showingRating.toggle()
@@ -298,24 +330,29 @@ extension MediaModalView {
                     .foregroundColor(isInMedia(media: vm.media) ? Color.theme.red : Color.theme.secondary)
             }
         }
-        .sheet(isPresented: $vm.showingRating, onDismiss: {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                vm.media = updatedMedia
-            }
-        }) {
-            RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
-        }
     }
-    
+
     private var addButton: some View {
         Button {
             if !isInMedia(media: vm.media) {
                 Task {
-                    try await WatchlistManager.shared.createNewMediaInWatchlist(media: vm.media)
-                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                    var mediaToAdd = vm.media
+                    if friendName != nil {
+                        mediaToAdd.watched = false
+                        mediaToAdd.personalRating = nil
+                    }
+
+                    try await WatchlistManager.shared.createNewMediaInWatchlist(media: mediaToAdd)
+                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id),
+                       friendName == nil
+                    {
                         vm.media = updatedMedia
                     }
-                    AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
+                    if friendName == nil {
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
+                    } else {
+                        AnalyticsManager.shared.logEvent(name: "FriendMediaModalView_AddMedia")
+                    }
                 }
             } else {
                 vm.showDeleteConfirmation.toggle()
@@ -329,22 +366,28 @@ extension MediaModalView {
                 .background(!isInMedia(media: vm.media) ? Color.theme.secondary : Color.theme.red)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .fixedSize(horizontal: true, vertical: false)
+                .animation(.spring(), value: !isInMedia(media: vm.media))
         }
-        .confirmationDialog("Are you sure you'd like to delete from your Watchlist?", isPresented: $vm.showDeleteConfirmation, actions: {
-            Button("Cancel", role: .cancel) {}
-                .buttonStyle(.plain)
-            
-            Button("Delete", role: .destructive) {
-                Task {
-                    try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
-                    AnalyticsManager.shared.logEvent(name: "MediaModalView_DeleteMedia")
+        .confirmationDialog(
+            "Are you sure you'd like to delete from your Watchlist?",
+            isPresented: $vm.showDeleteConfirmation,
+            actions: {
+                Button("Cancel", role: .cancel) { }
+                    .buttonStyle(.plain)
+
+                Button("Delete", role: .destructive) {
+                    Task {
+                        try await WatchlistManager.shared.deleteMediaInWatchlist(media: vm.media)
+                        vm.media.watched = false
+                        vm.media.personalRating = nil
+                        AnalyticsManager.shared.logEvent(name: "MediaModalView_DeleteMedia")
+                    }
                 }
-            }
-            .buttonStyle(.plain)
-        })
+                .buttonStyle(.plain)
+            })
         .frame(width: 100, alignment: .center)
     }
-    
+
     func isInMedia(media: DBMedia) -> Bool {
         let mediaList = homeVM.movieList + homeVM.tvList
         for homeMedia in mediaList {
@@ -354,7 +397,7 @@ extension MediaModalView {
         }
         return false
     }
-    
+
     func getGenres(genreIDs: [Int]) -> [Genre] {
         return homeVM.getGenresForMediaType(for: vm.media.mediaType, genreIDs: genreIDs)
     }
@@ -362,7 +405,7 @@ extension MediaModalView {
 
 struct GenreSection: View {
     @State var genres: [Genre]
-    
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
@@ -379,10 +422,10 @@ struct GenreSection: View {
 struct ExpandableText: View {
     let text: String
     let lineLimit: Int
-    
+
     @State private var isExpanded: Bool = false
     @State private var isTruncated: Bool? = nil
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(text)
@@ -393,7 +436,7 @@ struct ExpandableText: View {
                         isExpanded = true
                     }
                 }
-            
+
             if isTruncated == true {
                 button
             }
@@ -402,7 +445,7 @@ struct ExpandableText: View {
         // Re-calculate isTruncated for the new text
         .onChange(of: text, perform: { _ in isTruncated = nil })
     }
-    
+
     func calculateTruncation(text: String) -> some View {
         // Select the view that fits in the background of the line-limited text.
         ViewThatFits(in: .vertical) {
@@ -423,7 +466,7 @@ struct ExpandableText: View {
                 }
         }
     }
-    
+
     var button: some View {
         Button(isExpanded ? "Less" : "More") {
             withAnimation(.interactiveSpring()) {
@@ -439,7 +482,9 @@ struct ExpandableText: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaModalView(media: dev.mediaMock[0], forPreview: true)
-            .environmentObject(dev.homeVM)
+        NavigationStack {
+            MediaModalView(media: dev.mediaMock[0], forPreview: true)
+                .environmentObject(dev.homeVM)
+        }
     }
 }

@@ -12,12 +12,10 @@ enum FirebaseError: LocalizedError {
     case getProviders
     case deleteUser
     case linkCredential
-    
+
     case signInWithGoogle
     case signInWithApple(debugDescription: String = "")
-    
-    case blackbirdTransferError(mediaModel: MediaModel)
-    
+
     var errorDescription: String? {
         switch self {
             case .getAuthenticatedUser:
@@ -30,10 +28,8 @@ enum FirebaseError: LocalizedError {
                 return "[🔥] Failed to link user credential"
             case .signInWithGoogle:
                 return "[🔥] Failed to sign in with Google"
-            case .signInWithApple(let debugDescription):
+            case let .signInWithApple(debugDescription):
                 return "[🔥] Failed to sign in with Apple. \(debugDescription)"
-            case .blackbirdTransferError(let mediaModel):
-                return "[🔥] Failed to transfer id: \(mediaModel.id), title: \(mediaModel.title)"
         }
     }
 }
@@ -41,12 +37,12 @@ enum FirebaseError: LocalizedError {
 enum NetworkError: LocalizedError {
     case decode(error: Error)
     case encode(error: Error)
-    
+
     var errorDescription: String? {
         switch self {
-            case .decode(let error):
+            case let .decode(error):
                 return "[💣] Failed to decode. \(error)"
-            case .encode(let error):
+            case let .encode(error):
                 return "[💣] Failed to encode. \(error)"
         }
     }
@@ -55,7 +51,7 @@ enum NetworkError: LocalizedError {
 enum TMDbError: LocalizedError {
     case failedToGetData
     case failedToEncodeData
-    
+
     var errorDescription: String {
         switch self {
             case .failedToGetData:
@@ -65,4 +61,3 @@ enum TMDbError: LocalizedError {
         }
     }
 }
-

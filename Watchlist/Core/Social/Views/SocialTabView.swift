@@ -11,29 +11,29 @@ import SwiftUI
 
 struct SocialTabView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    
+
     @StateObject var vm: SocialViewModel
     @StateObject private var settingsVM: SettingsViewModel
-    
+
     init(forPreview: Bool = false) {
         _vm = StateObject(wrappedValue: SocialViewModel(forPreview: forPreview))
         _settingsVM = StateObject(wrappedValue: SettingsViewModel(forPreview: forPreview))
     }
-    
+
     @State var showSettingsView: Bool = false
     @State var showAddFriendsView: Bool = false
-    
+
     @GestureState var press = false
     @State var showMenu = false
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.theme.background.ignoresSafeArea()
-                
+
                 VStack(spacing: 10) {
                     header
-                    
+
                     if settingsVM.authUser?.isAnonymous == false {
                         if vm.friends.isEmpty, vm.friendRequests.isEmpty {
                             SocialEmptyListView()
@@ -43,7 +43,7 @@ struct SocialTabView: View {
                                 if !vm.friendRequests.isEmpty {
                                     friendRequests
                                 }
-                                
+
                                 if !vm.friends.isEmpty {
                                     friends
                                 }
@@ -87,7 +87,7 @@ struct SocialTabView: View {
                             showSettingsView.toggle()
                         }
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Image(systemName: "plus")
                         .font(.headline)
@@ -122,7 +122,7 @@ extension SocialTabView {
         HeaderView(currentTab: .constant(.social), showIcon: true)
             .padding(.horizontal)
     }
-    
+
     private var friendRequests: some View {
         VStack {
             HStack {
@@ -131,7 +131,7 @@ extension SocialTabView {
                     .fontWeight(.medium)
                 Spacer()
             }
-                
+
             VStack {
                 ForEach(vm.friendRequests) { friendRequest in
                     HStack {
@@ -151,12 +151,12 @@ extension SocialTabView {
                         .clipShape(Circle())
                         .frame(width: 60, height: 60)
                         .padding(.trailing)
-                            
+
                         VStack(alignment: .leading) {
                             Text(friendRequest.displayName ?? "None")
                                 .font(.title3)
                                 .fontWeight(.semibold)
-                                
+
                             HStack {
                                 Button("Accept") {
                                     vm.acceptFriendRequest(userId: friendRequest.userId)
@@ -170,7 +170,7 @@ extension SocialTabView {
                                 .background(Color.theme.red)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .fixedSize(horizontal: true, vertical: false)
-                                    
+
                                 Button("Decline") {
                                     vm.declineFriendRequest(userId: friendRequest.userId)
                                 }
@@ -194,7 +194,7 @@ extension SocialTabView {
         }
         .padding()
     }
-    
+
     private var friends: some View {
         VStack {
             HStack {
@@ -203,7 +203,7 @@ extension SocialTabView {
                     .fontWeight(.medium)
                 Spacer()
             }
-                
+
             ForEach(vm.friends) { friend in
                 NavigationLink {
                     FriendWatchlistView(userId: friend.userId)
@@ -225,14 +225,14 @@ extension SocialTabView {
                         .clipShape(Circle())
                         .frame(width: 60, height: 60)
                         .padding(.trailing)
-                            
+
                         HStack {
                             Text(friend.displayName ?? "None")
                                 .font(.title3)
                                 .fontWeight(.semibold)
                         }
                         Spacer()
-                        
+
                         Image(systemName: "chevron.right")
                             .foregroundColor(Color.theme.text)
                             .padding(.trailing)
@@ -287,11 +287,11 @@ extension SocialTabView {
 
 struct SocialEmptyListView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
-    
+
     var body: some View {
         VStack {
             Spacer()
-            
+
             Image(systemName: Tab.social.icon)
                 .resizable()
                 .foregroundColor(Color.theme.secondary)
@@ -301,7 +301,7 @@ struct SocialEmptyListView: View {
                 .font(.headline)
                 .foregroundColor(Color.theme.secondary)
                 .padding()
-            
+
             Spacer()
         }
     }

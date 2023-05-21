@@ -5,17 +5,14 @@
 //  Created by TJ Goldblatt on 3/8/23.
 //
 
-import Blackbird
 import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
-    
-    @Environment(\.blackbirdDatabase) var database
-    @BlackbirdLiveModels({ try await MediaModel.read(from: $0) }) var mediaList
-    
+
     @State var showDebugView = false
-    
+    @State private var currentTab: Tab = .movies
+
     var body: some View {
         if homeVM.isGenresLoaded {
             ZStack {
@@ -27,18 +24,7 @@ struct HomeView: View {
                                 .accessibilityIdentifier("MovieTab")
                         }
                         .tag(Tab.movies)
-                    
-                        .onAppear {
-                            Task {
-                                if database != nil {
-                                    // TODO: Delete this after enough people have transferred their databases
-                                    try await homeVM.transferDatabase()
-                                } else {
-                                    try await WatchlistManager.shared.setTransferred()
-                                }
-                            }
-                        }
-                    
+
                     TVShowTabView()
                         .environmentObject(homeVM)
                         .tabItem {
@@ -46,7 +32,7 @@ struct HomeView: View {
                                 .accessibilityIdentifier("TVShowTab")
                         }
                         .tag(Tab.tvShows)
-                    
+
                     ExploreTabView(homeVM: homeVM)
                         .environmentObject(homeVM)
                         .tabItem {
@@ -54,7 +40,7 @@ struct HomeView: View {
                                 .accessibilityIdentifier("ExploreTab")
                         }
                         .tag(Tab.explore)
-                    
+
                     SocialTabView()
                         .environmentObject(homeVM)
                         .tabItem {
@@ -65,13 +51,20 @@ struct HomeView: View {
                 }
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
-                .onChange(of: homeVM.selectedTab) { _ in
-                    homeVM.genresSelected = []
-                    homeVM.ratingSelected = 0
+                .onChange(of: homeVM.selectedTab) { updatedTab in
+                    withAnimation(.easeIn) {
+                        currentTab = updatedTab
+                        homeVM.genresSelected = []
+                        homeVM.ratingSelected = 0
+                    }
                 }
-                .onAppear {
-                    homeVM.database = database
+                .onReceive(homeVM.$selectedTab) { selectedTab in
+                    if currentTab == .explore, selectedTab == .explore {
+                        homeVM.searchText = ""
+                        homeVM.results = []
+                    }
                 }
+
                 VStack {
                     Spacer()
                     if homeVM.editMode == .active {
@@ -81,6 +74,7 @@ struct HomeView: View {
                     }
                 }
             }
+            .dynamicTypeSize(.medium ... .xLarge)
             .onShake {
                 if ApplicationHelper.isDebug {
                     showDebugView.toggle()

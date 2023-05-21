@@ -12,20 +12,20 @@ struct AddFriendsView: View {
     @EnvironmentObject var socialVM: SocialViewModel
     @EnvironmentObject var settingsVM: SettingsViewModel
     @EnvironmentObject var homeVM: HomeViewModel
-    
+
     @Environment(\.dismiss) private var dismiss
-    
+
     @State var filterText: String = ""
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.theme.background.ignoresSafeArea()
-                
+
                 VStack {
                     AddFriendsFilterView(filterText: $filterText)
                         .padding(.bottom)
-                    
+
                     ScrollView(showsIndicators: false) {
                         VStack {
                             ForEach(users, id: \.userId) { user in
@@ -47,33 +47,39 @@ struct AddFriendsView: View {
                                         .clipShape(Circle())
                                         .frame(width: 50, height: 50)
                                         .padding(.trailing)
-                                        
+
                                         VStack(alignment: .leading) {
                                             Text(user.displayName ?? "No Display Name")
                                                 .font(.title3)
                                                 .fontWeight(.semibold)
-                                            
+
                                             Text(user.email ?? "No email")
                                                 .font(.caption)
                                         }
                                         Spacer()
-                                        
+
                                         Button(doesUserHavingPendingRequestFromCurrentUser(user: user) ? "Cancel" : "Add") {
                                             if doesUserHavingPendingRequestFromCurrentUser(user: user) {
                                                 socialVM.cancelFriendRequest(userId: user.userId)
                                             } else {
                                                 socialVM.sendFriendRequest(userId: user.userId)
                                             }
-                                            
+
                                             socialVM.getUsersWithFriendRequestFor(userId: currentUser.uid)
                                         }
-                                        .foregroundColor(!doesUserHavingPendingRequestFromCurrentUser(user: user) ? Color.theme.red : Color.theme.genreText)
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .frame(width: 80, height: 30)
-                                        .background(!doesUserHavingPendingRequestFromCurrentUser(user: user) ? Color.theme.secondary : Color.theme.red)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .fixedSize(horizontal: true, vertical: false)
+                                        .foregroundColor(
+                                            !doesUserHavingPendingRequestFromCurrentUser(user: user)
+                                                ? Color.theme.red
+                                                : Color.theme.genreText)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .frame(width: 80, height: 30)
+                                            .background(
+                                                !doesUserHavingPendingRequestFromCurrentUser(user: user)
+                                                    ? Color.theme.secondary
+                                                    : Color.theme.red)
+                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                .fixedSize(horizontal: true, vertical: false)
                                     }
                                     .padding(.vertical)
                                 }
@@ -99,17 +105,16 @@ struct AddFriendsView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-    
+
     var users: [DBUser] {
-        let firstFilter = filterText.isEmpty ?
-            socialVM.allUsers
-            :
-            socialVM.allUsers.filter { $0.displayName?.lowercased().contains(filterText.lowercased()) ?? false }
-        
+        let firstFilter = filterText.isEmpty
+            ? socialVM.allUsers
+            : socialVM.allUsers.filter { $0.displayName?.lowercased().contains(filterText.lowercased()) ?? false }
+
         return firstFilter
             .filter { !(socialVM.currentUser?.friends?.contains($0.userId) ?? false) }
     }
-    
+
     /// Returns a bool on whether or not the passed in user has a pending request from the currnet user
     func doesUserHavingPendingRequestFromCurrentUser(user: DBUser) -> Bool {
         let usersWithFriendRequest = socialVM.usersWithFriendRequest
@@ -136,13 +141,13 @@ struct AddFriendsView_Previews: PreviewProvider {
 struct AddFriendsFilterView: View {
     @FocusState private var isFocused: Bool
     @Binding var filterText: String
-    
+
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(!isFocused ? Color.theme.red : Color.theme.text)
                 .imageScale(.medium)
-            
+
             TextField("Search...", text: $filterText)
                 .foregroundColor(Color.theme.text)
                 .font(.system(size: 16, design: .default))

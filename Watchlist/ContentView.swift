@@ -12,14 +12,14 @@ struct ContentView: View {
         ZStack {
             Color.theme.background
                 .ignoresSafeArea()
-            
+
             VStack(spacing: 40) {
                 Text("Text color")
                     .foregroundColor(Color.theme.text)
-                
+
                 Text("Secondary color")
                     .foregroundColor(Color.theme.secondary)
-                
+
                 Text("Red color")
                     .foregroundColor(Color.theme.red)
             }

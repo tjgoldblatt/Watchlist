@@ -12,45 +12,46 @@ import SwiftUI
 struct RatingModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @Environment(\.dismiss) var dismiss
-    
+
     @State var media: DBMedia
     @State var rating: Int = 0
-    
+
     @Binding var shouldShowRatingModal: Bool
-    
+
     var posterPath: String? {
         return media.posterPath
     }
-    
+
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .center) {
                 if let posterPath {
                     ZStack {
                         Color.black.ignoresSafeArea()
-                        
-                        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { state in
+
+                        LazyImage(url: URL(string: TMDBConstants.imageURL + posterPath)) { state in
                             if let image = state.image {
                                 image
                                     .resizable()
-                                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                                    .frame(width: geo.size.width)
                                     .scaledToFit()
                                     .blur(radius: 20)
                             } else {
                                 Color.black
                             }
                         }
-                            
+
                         LinearGradient(colors: [.black, .clear], startPoint: .bottom, endPoint: .top)
                     }
-                    .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height)
+                    .frame(maxWidth: geo.size.width)
+                    .ignoresSafeArea()
                 } else {
                     Color.theme.background
                 }
-                
+
                 VStack(alignment: .center) {
                     if let posterPath {
-                        LazyImage(url: URL(string: "https://image.tmdb.org/t/p/original\(posterPath)")) { state in
+                        LazyImage(url: URL(string: TMDBConstants.imageURL + posterPath)) { state in
                             if let image = state.image {
                                 image
                                     .resizable()
@@ -62,13 +63,13 @@ struct RatingModalView: View {
                             }
                         }
                         .overlay {
-                            rating > 0 ?
-                                ZStack {
-                                    Color.black.opacity(0.9)
-                                
-                                    Text("\(rating)")
-                                        .font(.system(size: 90))
-                                        .fontWeight(.light)
+                            rating > 0
+                                ? ZStack {
+                                    Color.black.opacity(0.8)
+
+                                    Text(rating.description)
+                                        .font(.system(size: 100))
+                                        .fontWeight(.medium)
                                         .foregroundColor(Color.theme.genreText)
                                 }
                                 : nil
@@ -80,39 +81,45 @@ struct RatingModalView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
                         .foregroundColor(Color.theme.genreText)
+                        .multilineTextAlignment(.center)
                         .padding()
-                    
+
                     StarsView(rating: $rating)
                         .padding()
                         .accessibilityIdentifier("StarRatingInModal")
-                    
-                    Text("Rate")
-                        .foregroundColor(Color.theme.red)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .frame(height: 55)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.theme.secondary)
-                        .cornerRadius(10)
-                        .disabled(rating == 0)
-                        .opacity(rating != 0 ? 1 : 0.7)
-                        .onTapGesture {
+                        .dynamicTypeSize(.medium)
+
+                    Button {
+                        if rating > 0 {
                             Task {
-                                try await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: Double(rating))
-                                    
+                                try await WatchlistManager.shared.setPersonalRatingForMedia(
+                                    media: media,
+                                    personalRating: Double(rating))
+
                                 try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
-                                    
+
                                 shouldShowRatingModal = false
                             }
                             AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")
                         }
-                        .accessibilityIdentifier("RateButton")
-                        .padding()
+                    } label: {
+                        Text("Rate")
+                            .foregroundColor(rating == 0 ? Color.theme.red : Color.theme.genreText)
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .frame(height: 55)
+                            .frame(maxWidth: .infinity)
+                            .background(rating == 0 ? Color.theme.secondary : Color.theme.red)
+                            .cornerRadius(10)
+                    }
+                    .disabled(rating == 0)
+                    .accessibilityIdentifier("RateButton")
+                    .padding()
                 }
                 .frame(maxWidth: geo.size.width - 50)
                 .padding(.bottom)
             }
-            .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
+            .frame(maxWidth: geo.size.width, maxHeight: .infinity)
             .overlay(alignment: .topLeading) {
                 CloseButton()
                     .padding(10)
@@ -121,7 +128,9 @@ struct RatingModalView: View {
             .ignoresSafeArea(edges: .vertical)
             .accessibilityIdentifier("RatingModalView")
         }
+        .animation(.spring(), value: rating == 0)
         .analyticsScreen(name: "RatingModalView")
+        .dynamicTypeSize(.medium ... .xLarge)
     }
 }
 

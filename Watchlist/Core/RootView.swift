@@ -10,9 +10,9 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var vm: HomeViewModel
     @EnvironmentObject var authVM: AuthenticationViewModel
-    
+
     @State var showDisplayNameView: Bool = false
-    
+
     var body: some View {
         ZStack {
             if !vm.showSignInView {
@@ -30,7 +30,7 @@ struct RootView: View {
             vm.selectedTab = .movies
             Task {
                 let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
-                
+
                 if authUser?.isAnonymous == false {
                     if try await UserManager.shared.getUser().displayName == nil {
                         showDisplayNameView.toggle()

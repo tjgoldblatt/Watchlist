@@ -11,16 +11,16 @@ import SwiftUI
 struct FilterModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @Environment(\.dismiss) var dismiss
-    
+
     @StateObject var vm = FilterModalViewModel()
-    
+
     @State var genresToFilter: [Genre]
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.theme.background.ignoresSafeArea()
-                
+
                 VStack(alignment: .center) {
                     VStack {
                         Text("FILTERS")
@@ -28,24 +28,24 @@ struct FilterModalView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(Color.theme.text.opacity(0.6))
                             .padding(.vertical)
-                        
+
                         VStack(spacing: 20) {
                             if !genresToFilter.isEmpty {
                                 genreFilter
                             }
-                            
+
                             ratingFilter
                         }
                     }
                     .padding()
-                    
+
                     VStack {
                         Text("SORTING")
                             .font(.footnote)
                             .fontWeight(.semibold)
                             .foregroundColor(Color.theme.text.opacity(0.6))
                             .padding(.bottom)
-                        
+
                         VStack(spacing: 20) {
                             ForEach(SortingOptions.allCases, id: \.rawValue) { option in
                                 Text(option.rawValue)
@@ -59,9 +59,9 @@ struct FilterModalView: View {
                         }
                     }
                     .padding()
-                    
+
                     Spacer()
-                    
+
                     confirmationButtons
                 }
             }
@@ -75,8 +75,14 @@ struct FilterModalView: View {
 
 struct FilterModalView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterModalView(genresToFilter: [Genre(id: 1, name: "Adventure"), Genre(id: 2, name: "Action"), Genre(id: 3, name: "Science Fiction"), Genre(id: 4, name: "Fantasy"), Genre(id: 5, name: "Thriller")])
-            .environmentObject(dev.homeVM)
+        FilterModalView(genresToFilter: [
+            Genre(id: 1, name: "Adventure"),
+            Genre(id: 2, name: "Action"),
+            Genre(id: 3, name: "Science Fiction"),
+            Genre(id: 4, name: "Fantasy"),
+            Genre(id: 5, name: "Thriller"),
+        ])
+        .environmentObject(dev.homeVM)
     }
 }
 
@@ -87,27 +93,38 @@ extension FilterModalView {
                 .font(.title3)
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
-            
-            FlexibleView(availableWidth: vm.screenWidth, data: sortedGenreList(genresToFilter: genresToFilter), spacing: 10, alignment: .center) { genreOption in
+
+            FlexibleView(
+                availableWidth: vm.screenWidth,
+                data: sortedGenreList(genresToFilter: genresToFilter),
+                spacing: 10,
+                alignment: .center)
+            { genreOption in
                 Text(genreOption.name)
-                    .foregroundColor(vm.genresSelected.contains(genreOption) ? Color.theme.genreText : Color.theme.red.opacity(0.8))
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .fixedSize(horizontal: true, vertical: true)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal)
-                    .background {
-                        Capsule()
-                            .foregroundColor(vm.genresSelected.contains(genreOption) || vm.genresSelected.contains(genreOption) ? Color.theme.red : Color.theme.secondary.opacity(0.6))
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        if !vm.genresSelected.contains(genreOption) {
-                            vm.genresSelected.insert(genreOption)
-                        } else {
-                            vm.genresSelected.remove(genreOption)
+                    .foregroundColor(
+                        vm.genresSelected.contains(genreOption)
+                            ? Color.theme.genreText
+                            : Color.theme.red.opacity(0.8))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .fixedSize(horizontal: true, vertical: true)
+                        .padding(.vertical, 5)
+                        .padding(.horizontal)
+                        .background {
+                            Capsule()
+                                .foregroundColor(
+                                    vm.genresSelected.contains(genreOption) || vm.genresSelected.contains(genreOption)
+                                        ? Color.theme.red
+                                        : Color.theme.secondary.opacity(0.6))
                         }
-                    }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if !vm.genresSelected.contains(genreOption) {
+                                vm.genresSelected.insert(genreOption)
+                            } else {
+                                vm.genresSelected.remove(genreOption)
+                            }
+                        }
             }
             .readSize { newSize in
                 DispatchQueue.main.async {
@@ -116,7 +133,7 @@ extension FilterModalView {
             }
         }
     }
-    
+
     private var ratingFilter: some View {
         VStack {
             Text("Rating")
@@ -124,11 +141,11 @@ extension FilterModalView {
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
                 .padding(.bottom)
-            
+
             StarsView(rating: $homeVM.ratingSelected)
         }
     }
-    
+
     private var confirmationButtons: some View {
         HStack {
             Button("Clear") {
@@ -144,7 +161,7 @@ extension FilterModalView {
             .cornerRadius(10)
             .buttonStyle(.plain)
             .padding()
-            
+
             Button("Done") {
                 homeVM.genresSelected = vm.genresSelected
                 dismiss()
@@ -161,7 +178,7 @@ extension FilterModalView {
         .padding(.horizontal)
         .padding(.bottom)
     }
-    
+
     func sortedGenreList(genresToFilter: [Genre]) -> [Genre] {
         return genresToFilter
             .sorted(by: { genre1, genre2 in
@@ -179,7 +196,7 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
     let alignment: HorizontalAlignment
     let content: (Data.Element) -> Content
     @State var elementsSize: [Data.Element: CGSize] = [:]
-    
+
     var body: some View {
         VStack(alignment: alignment, spacing: spacing) {
             ForEach(computeRows(), id: \.self) { rowElements in
@@ -197,15 +214,15 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
             }
         }
     }
-    
+
     func computeRows() -> [[Data.Element]] {
         var rows: [[Data.Element]] = [[]]
         var currentRow = 0
         var remainingWidth = availableWidth
-        
+
         for element in data {
             let elementSize = elementsSize[element, default: CGSize(width: availableWidth, height: 1)]
-            
+
             if remainingWidth - (elementSize.width + spacing) >= 0 {
                 rows[currentRow].append(element)
             } else {
@@ -213,10 +230,10 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
                 rows.append([element])
                 remainingWidth = availableWidth
             }
-            
+
             remainingWidth = remainingWidth - (elementSize.width + spacing)
         }
-        
+
         return rows
     }
 }
@@ -227,13 +244,12 @@ extension View {
             GeometryReader { geometryProxy in
                 Color.clear
                     .preference(key: SizePreferenceKey.self, value: geometryProxy.size)
-            }
-        )
-        .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+            })
+            .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
     }
 }
 
 private struct SizePreferenceKey: PreferenceKey {
     static var defaultValue: CGSize = .zero
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+    static func reduce(value _: inout CGSize, nextValue _: () -> CGSize) { }
 }

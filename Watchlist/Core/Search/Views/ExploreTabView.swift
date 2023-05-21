@@ -11,36 +11,39 @@ import SwiftUI
 
 struct ExploreTabView: View {
     @Environment(\.dismiss) var dismiss
-    
+
     @EnvironmentObject var homeVM: HomeViewModel
-    
+
     @StateObject private var vm: ExploreViewModel
-    
+
     init(homeVM: HomeViewModel) {
         _vm = StateObject(wrappedValue: ExploreViewModel(homeVM: homeVM))
     }
-    
+
     @State var isKeyboardShowing: Bool = false
     @State var isSubmitted: Bool = false
-    
+
+    @State private var deepLinkMedia: DBMedia?
+    @State private var showDeepLinkModal = false
+
     var body: some View {
         NavigationStack {
             ZStack {
                 // MARK: - Background
 
                 Color.theme.background.ignoresSafeArea()
-                
+
                 VStack(spacing: 10) {
                     header
-                    
+
                     searchBar
-                    
+
                     if sortedSearchResults.isEmpty {
                         emptySearch
                     } else {
                         searchResultsView
                     }
-                    
+
                     Spacer()
                 }
                 .onReceive(keyboardPublisher) { value in
@@ -51,8 +54,24 @@ struct ExploreTabView: View {
             .toolbar {
                 Text("")
             }
+            .sheet(isPresented: $showDeepLinkModal) {
+                if let deepLinkMedia {
+                    MediaModalView(media: deepLinkMedia)
+                }
+            }
+            .onReceive(homeVM.$deepLinkURL) { url in
+                if let url {
+                    Task {
+                        deepLinkMedia = await DeepLinkManager.parse(from: url, homeVM: homeVM)
+                        showDeepLinkModal.toggle()
+                    }
+                }
+            }
         }
         .analyticsScreen(name: "ExploreTabView")
+        .onAppear {
+            vm.loadMedia()
+        }
     }
 }
 
@@ -65,7 +84,7 @@ extension ExploreTabView {
                 .padding(.horizontal)
         }
     }
-    
+
     // MARK: - Search
 
     var searchBar: some View {
@@ -73,11 +92,11 @@ extension ExploreTabView {
             vm.search()
         }
     }
-    
+
     // MARK: - Search Results
 
     var searchResultsView: some View {
-        if !vm.isSearching && homeVM.selectedTab == .explore {
+        if !vm.isSearching, homeVM.selectedTab == .explore {
             return AnyView(
                 List {
                     ForEach(sortedSearchResults, id: \.id) { media in
@@ -92,18 +111,17 @@ extension ExploreTabView {
                 .scrollContentBackground(.hidden)
                 .scrollIndicators(.hidden)
                 .listStyle(.plain)
-                .scrollDismissesKeyboard(.immediately)
-            )
+                .scrollDismissesKeyboard(.immediately))
         } else {
             return AnyView(ProgressView())
         }
     }
-    
+
     var searchResults: [DBMedia] {
-        let groupedMedia = homeVM.results.map { DBMedia(media: $0, watched: false, personalRating: nil) }
+        let groupedMedia = homeVM.results.compactMap { try? DBMedia(media: $0, watched: false, personalRating: nil) }
         if !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = groupedMedia
-            
+
             /// Genre Filter
             if !homeVM.genresSelected.isEmpty {
                 filteredMedia = filteredMedia.filter { media in
@@ -114,7 +132,7 @@ extension ExploreTabView {
                     return false
                 }
             }
-            
+
             /// Rating Filter
             filteredMedia = filteredMedia.filter { media in
                 if let voteAverage = media.voteAverage {
@@ -122,14 +140,14 @@ extension ExploreTabView {
                 }
                 return false
             }
-            
+
             return filteredMedia
-            
+
         } else {
             return groupedMedia
         }
     }
-    
+
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
             if homeVM.sortingSelected == .imdbRating {
@@ -144,21 +162,33 @@ extension ExploreTabView {
             return false
         }
     }
-    
+
     // MARK: - Empty Search
-    
+
+    @ViewBuilder
     private var emptySearch: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 10) {
-                ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
-                
-                ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
-                
-                ExploreThumbnailView(title: "Popular Movies", mediaArray: vm.popularMovies)
-                
-                ExploreThumbnailView(title: "Popular TV Shows", mediaArray: vm.popularTVShows)
+        if homeVM.searchText.isEmpty {
+            ScrollView(showsIndicators: false) {
+                LazyVStack(spacing: 10) {
+                    ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
+
+                    ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
+
+                    ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
+
+                    ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
+
+                    ExploreThumbnailView(title: "Popular Movies", mediaArray: vm.popularMovies)
+
+                    ExploreThumbnailView(title: "Popular TV Shows", mediaArray: vm.popularTVShows)
+                }
+                .padding()
             }
-            .padding()
+            .scrollDismissesKeyboard(.immediately)
+        } else {
+            Text("No results found")
+                .foregroundColor(Color.theme.text)
+                .padding(.top)
         }
     }
 }
@@ -166,32 +196,35 @@ extension ExploreTabView {
 struct ExploreThumbnailView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @State var showingSheet = false
-    
+
     var title: String
     var mediaArray: [DBMedia]
-    
+
     @State var selectedMedia: DBMedia? = nil
-    
+
     var body: some View {
         VStack {
             HStack {
                 Text(title)
                     .foregroundColor(Color.theme.text)
                     .fontWeight(.medium)
+                    .fixedSize(horizontal: true, vertical: false)
                     .padding(.trailing, 5)
                 Capsule()
                     .frame(height: 2)
                     .foregroundColor(Color.theme.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
+                LazyHStack {
                     ForEach(mediaArray) { media in
-                        if let posterPath = media.posterPath {
+                        if let posterPath = media.posterPath,
+                           let overview = media.overview, !overview.isEmpty
+                        {
                             ThumbnailView(imagePath: posterPath)
                                 .overlay(alignment: .topTrailing) {
-                                    if homeVM.isDBMediaInWatchlist(dbMedia: media) {
+                                    if homeVM.isMediaIDInWatchlist(for: media.id) {
                                         Image(systemName: "checkmark.circle.fill")
                                             .resizable()
                                             .scaledToFit()
@@ -204,13 +237,14 @@ struct ExploreThumbnailView: View {
                                     selectedMedia = media
                                     showingSheet.toggle()
                                 }
-                                .sheet(item: $selectedMedia, content: { media in
+                                .sheet(item: $selectedMedia) { media in
                                     MediaModalView(media: media)
-                                })
+                                }
                         }
                     }
                 }
             }
+            .scrollDismissesKeyboard(.immediately)
         }
     }
 }

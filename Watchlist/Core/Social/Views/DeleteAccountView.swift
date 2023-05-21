@@ -5,25 +5,25 @@
 //  Created by TJ Goldblatt on 4/15/23.
 //
 
-import SwiftUI
 import GoogleSignInSwift
+import SwiftUI
 
 struct DeleteAccountView: View {
     @EnvironmentObject private var homeVM: HomeViewModel
     @EnvironmentObject private var authVM: AuthenticationViewModel
     @EnvironmentObject private var viewModel: SettingsViewModel
-    
+
     var body: some View {
         ZStack {
             Color.theme.background.ignoresSafeArea()
-            
+
             VStack(spacing: 20) {
                 Text("Please reauthenticate to delete your account")
                     .font(.title)
                     .fontWeight(.semibold)
                     .foregroundColor(Color.theme.text)
                     .padding(.horizontal)
-                
+
                 if viewModel.authProviders.contains(.google) {
                     CustomButton(isGoogle: true)
                         .onTapGesture {
@@ -54,7 +54,7 @@ struct DeleteAccountView: View {
                 .padding()
         }
     }
-    
+
     @ViewBuilder
     func CustomButton(isGoogle: Bool = false) -> some View {
         HStack(spacing: 3) {
@@ -72,7 +72,7 @@ struct DeleteAccountView: View {
             .frame(width: 17, height: 17)
             .frame(height: 45)
             .foregroundColor(.white)
-            
+
             Text("Continue with \(isGoogle ? "Google" : "Apple")")
                 .font(.system(size: 21))
                 .fontWeight(.medium)

@@ -19,7 +19,7 @@ struct FriendWatchlistView: View {
 
     init(userId: String, forPreview: Bool = false) {
         let vm = forPreview ? FriendWatchlistViewModel(forPreview: true) : FriendWatchlistViewModel(userId: userId)
-        self._vm = StateObject(wrappedValue: vm)
+        _vm = StateObject(wrappedValue: vm)
     }
 
     var body: some View {
@@ -92,7 +92,8 @@ struct FriendWatchlistView: View {
                         return voteAverage1 > voteAverage2
                     }
                 case .personalRating:
-                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) > (media2.personalRating ?? 0, media2.voteAverage ?? 0)
+                    return (media1.personalRating ?? 0, media1.voteAverage ?? 0) >
+                        (media2.personalRating ?? 0, media2.voteAverage ?? 0)
             }
             return false
         }
@@ -125,7 +126,7 @@ extension FriendWatchlistView {
         HStack {
             ForEach(options, id: \.self) { option in
                 Text(option.rawValue)
-                    .foregroundColor(selectedOption == option ? .watchlistGenreText : .watchlistText.opacity(0.6))
+                    .foregroundColor(selectedOption == option ? .watchlistGenreText : .watchlistText.opacity(0.8))
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .frame(width: 110, height: 35)
@@ -145,7 +146,7 @@ extension FriendWatchlistView {
                     }
             }
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: 500)
         .background(Color.theme.secondaryBackground)
         .cornerRadius(12)
         .dynamicTypeSize(.medium ... .xLarge)

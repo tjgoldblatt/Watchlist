@@ -13,7 +13,7 @@ enum WatchOptions: String, CaseIterable {
     case any = "All"
 }
 
-enum SortingOptions: String, CaseIterable{
+enum SortingOptions: String, CaseIterable {
     case alphabetical = "Alphabetical"
     case imdbRating = "IMDb Rating"
     case personalRating = "Personal Rating"

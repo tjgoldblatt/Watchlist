@@ -9,36 +9,36 @@ import SwiftUI
 
 struct ExploreRowView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    
+
     @State var personalRating: Double?
-    
+
     @State var isWatched: Bool = false
-    
+
     @State var media: DBMedia
-    
+
     @State var currentTab: Tab
-    
+
     @State private var showingSheet = false
-    
+
     var dateConvertedToYear: String {
         if let title = media.mediaType == .tv ? media.firstAirDate : media.releaseDate {
             let date = title.components(separatedBy: "-")
             return date[0]
         }
-        
+
         return ""
     }
-    
+
     var body: some View {
         HStack(alignment: .center) {
             if let posterPath = media.posterPath {
                 ThumbnailView(imagePath: posterPath, frameHeight: 80)
             }
-            
+
             centerColumn
-            
+
             Spacer()
-            
+
             rightColumn
         }
         .contentShape(Rectangle())
@@ -84,13 +84,13 @@ extension ExploreRowView {
                     .foregroundColor(Color.theme.text)
                     .lineLimit(2)
             }
-            
+
             if media.mediaType == .tv {
                 Text("TV Series")
                     .font(.caption)
                     .foregroundColor(Color.theme.text.opacity(0.6))
             }
-            
+
             Text(dateConvertedToYear)
                 .font(.subheadline)
                 .foregroundColor(Color.theme.text.opacity(0.6))
@@ -98,7 +98,7 @@ extension ExploreRowView {
         }
         .frame(maxHeight: 75)
     }
-    
+
     var rightColumn: some View {
         Text(!isInMedia(media: media) ? "Add" : "Added")
             .foregroundColor(!isInMedia(media: media) ? Color.theme.red : Color.theme.genreText)
@@ -117,7 +117,7 @@ extension ExploreRowView {
                         try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
                         AnalyticsManager.shared.logEvent(name: "ExploreTabView_DeleteMedia")
                     }
-                    
+
                     if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                         media = updatedMedia
                     }
@@ -125,7 +125,7 @@ extension ExploreRowView {
             }
             .padding(.leading)
     }
-    
+
     func isInMedia(media: DBMedia) -> Bool {
         let mediaList = homeVM.movieList + homeVM.tvList
         for homeMedia in mediaList {
@@ -135,7 +135,7 @@ extension ExploreRowView {
         }
         return false
     }
-    
+
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
         guard let genreIDs else { return nil }
         return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)

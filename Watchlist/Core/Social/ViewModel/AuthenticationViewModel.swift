@@ -9,7 +9,6 @@ import Foundation
 
 @MainActor
 final class AuthenticationViewModel: ObservableObject {
-    
     func signInGoogle() async throws {
         let helper = SignInWithGoogleHelper()
         let tokens = try await helper.signIn()
@@ -17,7 +16,7 @@ final class AuthenticationViewModel: ObservableObject {
         let user = DBUser(auth: authDataResult)
         try await UserManager.shared.createNewUser(user: user)
     }
-    
+
     func signInApple() async throws {
         let helper = SignInWithAppleHelper()
         let tokens = try await helper.signIn()
@@ -25,7 +24,7 @@ final class AuthenticationViewModel: ObservableObject {
         let user = DBUser(auth: authDataResult)
         try await UserManager.shared.createNewUser(user: user)
     }
-    
+
     func signInAnonymous() async throws {
         let authDataResult = try await AuthenticationManager.shared.signInAnonymously()
         let user = DBUser(auth: authDataResult)
