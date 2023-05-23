@@ -126,7 +126,7 @@ extension RowView {
             if let rating = media.personalRating {
                 StarRatingView(text: "YOUR RATING", rating: rating)
             }
-            
+
 //            if media.watched {
 //                Image(systemName: "checkmark.circle.fill")
 //                    .foregroundColor(Color.theme.red)

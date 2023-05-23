@@ -436,7 +436,7 @@ struct ExpandableText: View {
                 .lineLimit(isExpanded ? nil : lineLimit)
                 .background(calculateTruncation(text: text))
                 .onTapGesture {
-                    withAnimation(.easeIn) {
+                    withAnimation(.easeOut) {
                         isExpanded = true
                     }
                 }
@@ -474,7 +474,7 @@ struct ExpandableText: View {
 
     var button: some View {
         Button(isExpanded ? "Less" : "More") {
-            withAnimation(.interactiveSpring()) {
+            withAnimation(.easeInOut) {
                 isExpanded.toggle()
             }
         }

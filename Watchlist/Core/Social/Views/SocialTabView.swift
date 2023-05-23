@@ -124,14 +124,14 @@ extension SocialTabView {
         HeaderView(currentTab: .constant(.social), showIcon: true)
             .padding(.horizontal)
     }
-    
+
     @ViewBuilder
     func SocialList() -> some View {
         ScrollView {
             if !vm.friendRequests.isEmpty {
                 friendRequests
             }
-            
+
             if !vm.friends.isEmpty {
                 friends
             }

@@ -93,7 +93,7 @@ extension TVShowTabView {
                     .listRowBackground(Color.theme.background)
             }
             .id(vm.emptyViewID)
-            .onChange(of: homeVM.watchSelected) { _ in
+            .onChange(of: homeVM.selectedWatchOption) { _ in
                 if sortedSearchResults.count > 3 {
                     scrollProxy.scrollTo(vm.emptyViewID, anchor: .top)
                 }
@@ -191,7 +191,7 @@ extension TVShowTabView {
                     .fontWeight(.semibold)
                     .frame(width: 110, height: 30)
                     .background {
-                        if homeVM.watchSelected == watchOption {
+                        if homeVM.selectedWatchOption == watchOption {
                             Capsule()
                                 .fill(Color.theme.red)
                                 .matchedGeometryEffect(id: "ACTIVE_OPTION", in: animation)
@@ -200,16 +200,19 @@ extension TVShowTabView {
                                 .fill(Color.theme.secondary.opacity(0.6))
                         }
                     }
-                    .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.genreText : Color.theme.red.opacity(0.6))
-                    .onTapGesture {
-                        if homeVM.watchSelected != watchOption {
-                            withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.75)) {
-                                AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
-                                homeVM.watchSelected = watchOption
-                                vm.filterText = ""
+                    .foregroundColor(
+                        homeVM.selectedWatchOption == watchOption
+                            ? Color.theme.genreText
+                            : Color.theme.red.opacity(0.6))
+                        .onTapGesture {
+                            if homeVM.selectedWatchOption != watchOption {
+                                withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.75)) {
+                                    AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
+                                    homeVM.selectedWatchOption = watchOption
+                                    vm.filterText = ""
+                                }
                             }
                         }
-                    }
             }
         }
         .dynamicTypeSize(.medium ... .xLarge)
@@ -218,14 +221,14 @@ extension TVShowTabView {
 
     var searchResults: [DBMedia] {
         let groupedMedia = homeVM.tvList.filter { !$0.watched }
-        if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+        if homeVM.selectedWatchOption != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched })
 
             // MARK: - Watched Filter
 
-            if homeVM.watchSelected == .watched {
+            if homeVM.selectedWatchOption == .watched {
                 filteredMedia = filteredMedia.filter(\.watched)
-            } else if homeVM.watchSelected == .any {
+            } else if homeVM.selectedWatchOption == .any {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
             } else {
                 filteredMedia = groupedMedia
@@ -270,7 +273,7 @@ extension TVShowTabView {
 
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
-            switch homeVM.sortingSelected {
+            switch homeVM.selectedSortingOption {
                 case .alphabetical:
                     if let title1 = media1.title, let title2 = media2.title {
                         return title1 < title2
