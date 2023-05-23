@@ -10,6 +10,7 @@ import SwiftUI
 struct FriendWatchlistView: View {
     @StateObject private var vm: FriendWatchlistViewModel
     @FocusState private var isFocused: Bool
+    @Namespace private var animation
 
     var options: [Tab] = [.movies, .tvShows]
     @State private var selectedOption: Tab = .movies
@@ -50,7 +51,9 @@ struct FriendWatchlistView: View {
                     Menu {
                         ForEach(SortingOptions.allCases, id: \.self) { options in
                             Button {
-                                selectedSorting = options
+                                withAnimation(.easeInOut) {
+                                    selectedSorting = options
+                                }
                             } label: {
                                 Text(options.rawValue)
                             }
@@ -133,15 +136,20 @@ extension FriendWatchlistView {
                     .contentShape(Capsule())
                     .frame(maxWidth: .infinity)
                     .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(selectedOption == option ? .watchlistRed : .clear)
+                        if selectedOption == option {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.theme.red)
+                                .matchedGeometryEffect(id: "ACTIVE_OPTION", in: animation)
+                        }
                     }
                     .padding(3)
                     .onTapGesture {
                         if selectedOption != option {
-                            AnalyticsManager.shared.logEvent(name: "FriendWatchlistView_\(option.rawValue)_Tapped")
-                            selectedOption = option
-                            vm.filterText = ""
+                            withAnimation(.interactiveSpring()) {
+                                AnalyticsManager.shared.logEvent(name: "FriendWatchlistView_\(option.rawValue)_Tapped")
+                                selectedOption = option
+                                vm.filterText = ""
+                            }
                         }
                     }
             }

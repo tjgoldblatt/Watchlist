@@ -14,6 +14,8 @@ struct FilterModalView: View {
 
     @StateObject var vm = FilterModalViewModel()
 
+    @Namespace private var animation
+
     @State var genresToFilter: [Genre]
 
     var body: some View {
@@ -29,7 +31,7 @@ struct FilterModalView: View {
                             .foregroundColor(Color.theme.text.opacity(0.6))
                             .padding(.vertical)
 
-                        VStack(spacing: 20) {
+                        VStack(spacing: 50) {
                             if !genresToFilter.isEmpty {
                                 genreFilter
                             }
@@ -52,8 +54,10 @@ struct FilterModalView: View {
                                     .fontWeight(homeVM.sortingSelected == option ? .semibold : .medium)
                                     .foregroundColor(homeVM.sortingSelected == option ? Color.theme.red : Color.theme.text)
                                     .onTapGesture {
-                                        homeVM.sortingSelected = option
-                                        dismiss()
+                                        withAnimation(.spring()) {
+                                            homeVM.sortingSelected = option
+                                            dismiss()
+                                        }
                                     }
                             }
                         }
@@ -104,25 +108,29 @@ extension FilterModalView {
                     .foregroundColor(
                         vm.genresSelected.contains(genreOption)
                             ? Color.theme.genreText
-                            : Color.theme.red.opacity(0.8))
+                            : Color.theme.red.opacity(0.6))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .fixedSize(horizontal: true, vertical: true)
                         .padding(.vertical, 5)
                         .padding(.horizontal)
                         .background {
-                            Capsule()
-                                .foregroundColor(
-                                    vm.genresSelected.contains(genreOption) || vm.genresSelected.contains(genreOption)
-                                        ? Color.theme.red
-                                        : Color.theme.secondary.opacity(0.6))
+                            if vm.genresSelected.contains(genreOption) {
+                                Capsule()
+                                    .fill(Color.theme.red)
+                            } else {
+                                Capsule()
+                                    .fill(Color.theme.secondary.opacity(0.6))
+                            }
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            if !vm.genresSelected.contains(genreOption) {
-                                vm.genresSelected.insert(genreOption)
-                            } else {
-                                vm.genresSelected.remove(genreOption)
+                            withAnimation(.spring()) {
+                                if !vm.genresSelected.contains(genreOption) {
+                                    vm.genresSelected.insert(genreOption)
+                                } else {
+                                    vm.genresSelected.remove(genreOption)
+                                }
                             }
                         }
             }
@@ -140,9 +148,9 @@ extension FilterModalView {
                 .font(.title3)
                 .fontWeight(.medium)
                 .foregroundColor(Color.theme.text)
-                .padding(.bottom)
 
-            StarsView(rating: $homeVM.ratingSelected)
+            StarsView(rating: $homeVM.ratingSelected.animation(.spring()))
+                .matchedGeometryEffect(id: "star", in: animation)
         }
     }
 
@@ -155,7 +163,7 @@ extension FilterModalView {
             }
             .foregroundColor(Color.theme.red)
             .fontWeight(.medium)
-            .frame(height: 55)
+            .frame(height: 40)
             .frame(minWidth: 150)
             .background(Color.theme.secondary)
             .cornerRadius(10)
@@ -168,7 +176,7 @@ extension FilterModalView {
             }
             .foregroundColor(Color.theme.genreText)
             .fontWeight(.medium)
-            .frame(height: 55)
+            .frame(height: 40)
             .frame(minWidth: 150)
             .background(Color.theme.red)
             .cornerRadius(10)
