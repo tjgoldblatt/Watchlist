@@ -51,11 +51,11 @@ struct FilterModalView: View {
                         VStack(spacing: 20) {
                             ForEach(SortingOptions.allCases, id: \.rawValue) { option in
                                 Text(option.rawValue)
-                                    .fontWeight(homeVM.sortingSelected == option ? .semibold : .medium)
-                                    .foregroundColor(homeVM.sortingSelected == option ? Color.theme.red : Color.theme.text)
+                                    .fontWeight(homeVM.selectedSortingOption == option ? .semibold : .medium)
+                                    .foregroundColor(homeVM.selectedSortingOption == option ? Color.theme.red : Color.theme.text)
                                     .onTapGesture {
                                         withAnimation(.spring()) {
-                                            homeVM.sortingSelected = option
+                                            homeVM.selectedSortingOption = option
                                             dismiss()
                                         }
                                     }

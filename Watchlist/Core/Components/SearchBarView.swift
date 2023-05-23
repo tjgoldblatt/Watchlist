@@ -31,7 +31,7 @@ struct SearchBarView: View {
         switch homeVM.selectedTab {
             case .movies:
                 let movieListAfterFilter = homeVM.movieList.filter {
-                    switch homeVM.watchSelected {
+                    switch homeVM.selectedWatchOption {
                         case .unwatched:
                             return !$0.watched
                         case .watched:
@@ -47,7 +47,7 @@ struct SearchBarView: View {
 
             case .tvShows:
                 let tvListAfterFilter = homeVM.tvList.filter {
-                    switch homeVM.watchSelected {
+                    switch homeVM.selectedWatchOption {
                         case .unwatched:
                             return !$0.watched
                         case .watched:
@@ -99,21 +99,13 @@ struct SearchBarView: View {
                                     }
                                 }
                         } else if shouldShowFilterButton {
-                            Image(systemName: "slider.horizontal.3")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .padding()
-                                .offset(x: 15)
-                                .foregroundColor(Color.theme.red)
-                                .opacity(!isFocused ? 1.0 : 0.0)
+                            FilterMenu()
                                 .onTapGesture {
-                                    showFilterSheet.toggle()
-                                    AnalyticsManager.shared.logEvent(name: "FilterButton_Tapped")
+                                    isFocused = false
                                 }
                         }
                     }
-                    .sheet(isPresented: $showFilterSheet) {
+                    .popover(isPresented: $showFilterSheet) {
                         FilterModalView(
                             genresToFilter: homeVM
                                 .convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
@@ -155,7 +147,7 @@ struct SearchBarView: View {
             }
         }
         .dynamicTypeSize(.medium ... .xLarge)
-        .onChange(of: homeVM.watchSelected) { _ in
+        .onChange(of: homeVM.selectedWatchOption) { _ in
             isFocused = false
         }
         .padding(.horizontal)
@@ -173,12 +165,53 @@ struct SearchBarView: View {
                 return false
         }
     }
-}
 
-struct SearchBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchBarView(searchText: .constant(""))
-            .environmentObject(dev.homeVM)
+    @ViewBuilder
+    func FilterMenu() -> some View {
+        Menu {
+            ForEach(SortingOptions.allCases, id: \.self) { option in
+                Button {
+                    withAnimation(.easeInOut) {
+                        homeVM.selectedSortingOption = option
+                    }
+                    AnalyticsManager.shared.logEvent(name: "\(option.rawValue)_Tapped")
+                } label: {
+                    if homeVM.selectedSortingOption == option {
+                        Label(option.rawValue, systemImage: "checkmark")
+                    } else {
+                        Text(option.rawValue)
+                    }
+                }
+            }
+
+            let genres = homeVM.convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter)
+                .sorted { $0.name < $1.name }
+
+            Menu("Genres") {
+                ForEach(genres, id: \.self) { genre in
+                    Button {
+                        homeVM.genresSelected = []
+                        homeVM.genresSelected.insert(genre)
+                        AnalyticsManager.shared.logEvent(name: "\(genre.name)_Tapped")
+                    } label: {
+                        if homeVM.genresSelected.contains(genre) {
+                            Label(genre.name, systemImage: "checkmark")
+                        } else {
+                            Text(genre.name)
+                        }
+                    }
+                }
+            }
+        } label: {
+            Image(systemName: "slider.horizontal.3")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 25, height: 25)
+                .padding()
+                .offset(x: 15)
+                .foregroundColor(Color.theme.red)
+                .opacity(!isFocused ? 1.0 : 0.0)
+        }
     }
 }
 
@@ -212,5 +245,12 @@ class TextFieldObserver: ObservableObject {
                 self?.debouncedText = t
             }
             .store(in: &subscriptions)
+    }
+}
+
+struct SearchBarView_Previews: PreviewProvider {
+    static var previews: some View {
+        SearchBarView(searchText: .constant(""))
+            .environmentObject(dev.homeVM)
     }
 }

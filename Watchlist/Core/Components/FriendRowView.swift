@@ -81,10 +81,18 @@ extension FriendRowView {
                 .lineLimit(3)
 
             if let genres = getGenres(genreIDs: media.genreIDs) {
-                ScrollView(.horizontal, showsIndicators: false) {
+                ViewThatFits {
                     HStack {
                         ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
                             if idx < 2 {
+                                GenreView(genreName: genre.name)
+                            }
+                        }
+                    }
+
+                    HStack {
+                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
+                            if idx < 1 {
                                 GenreView(genreName: genre.name)
                             }
                         }

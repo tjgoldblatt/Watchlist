@@ -108,7 +108,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
                 voteCount: 13,
                 posterPath: "/f46QMSo2wAVY1ywrNc9yZv0rkNy.jpg",
                 backdropPath: "/ymX3MnaxAO3jJ6EQnuNBRWJYiPC.jpg",
-                genreIDS: [18],
+                genreIDS: [18, 878, 99, 35],
                 releaseDate: "2021-10-1",
                 title: "Batman: The Long Halloween, Part Two"),
             watched: true,
