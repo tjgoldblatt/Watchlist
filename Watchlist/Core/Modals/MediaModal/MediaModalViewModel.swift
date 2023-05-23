@@ -50,7 +50,11 @@ final class MediaModalViewModel: ObservableObject {
                     media = updatedDBMedia
 
                     Task {
-                        try await WatchlistManager.shared.updateMediaInWatchlist(media: self.media)
+                        do {
+                            try await WatchlistManager.shared.updateMediaInWatchlist(media: self.media)
+                        } catch {
+                            CrashlyticsManager.handleError(error: error)
+                        }
                     }
                 }
                 .store(in: &cancellables)

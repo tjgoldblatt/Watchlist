@@ -36,19 +36,11 @@ struct SocialTabView: View {
 
                     if settingsVM.authUser?.isAnonymous == false {
                         if vm.isLoaded {
-                            if vm.friends.isEmpty, vm.friendRequests.isEmpty {
+                            if !vm.friends.isEmpty || !vm.friendRequests.isEmpty {
+                                SocialList()
+                            } else {
                                 SocialEmptyListView()
                                     .environmentObject(homeVM)
-                            } else {
-                                ScrollView {
-                                    if !vm.friendRequests.isEmpty {
-                                        friendRequests
-                                    }
-
-                                    if !vm.friends.isEmpty {
-                                        friends
-                                    }
-                                }
                             }
                         } else {
                             Spacer()
@@ -131,6 +123,19 @@ extension SocialTabView {
     private var header: some View {
         HeaderView(currentTab: .constant(.social), showIcon: true)
             .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    func SocialList() -> some View {
+        ScrollView {
+            if !vm.friendRequests.isEmpty {
+                friendRequests
+            }
+            
+            if !vm.friends.isEmpty {
+                friends
+            }
+        }
     }
 
     private var friendRequests: some View {

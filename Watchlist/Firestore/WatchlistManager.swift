@@ -70,7 +70,7 @@ final class WatchlistManager {
         }
 
         let data: [String: Any] = [
-            UserWatchlist.CodingKeys.displayName.rawValue: displayName,
+            UserWatchlist.CodingKeys.displayName.rawValue: displayName.capitalized,
         ]
 
         try await watchlistDocument.setData(data, merge: true)

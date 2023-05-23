@@ -51,7 +51,7 @@ final class HomeViewModel: ObservableObject {
     @Published var genresSelected: Set<Genre> = []
     @Published var ratingSelected: Int = 0
     @Published var watchSelected: WatchOptions = .unwatched
-    @Published var sortingSelected: SortingOptions = .alphabetical
+    @Published var sortingSelected: SortingOptions = .personalRating
 
     /// Deep linking
     @Published var deepLinkURL: URL?
