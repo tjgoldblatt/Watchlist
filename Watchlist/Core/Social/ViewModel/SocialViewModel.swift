@@ -11,6 +11,8 @@ import Foundation
 
 @MainActor
 final class SocialViewModel: ObservableObject {
+    @Published var isLoaded: Bool = false
+
     @Published var currentUser: DBUser?
     @Published var allUsers: [DBUser] = []
 
@@ -47,6 +49,7 @@ final class SocialViewModel: ObservableObject {
                 allUsers = allUsers
                     .filter { $0.userId != "82rN4294VtT3gyXV8O0bV1I40mN2" && $0.userId != "nPxpb3vGMOTV1kZd9gVYYd8WDbB2" }
             }
+            isLoaded = true
         }
     }
 
