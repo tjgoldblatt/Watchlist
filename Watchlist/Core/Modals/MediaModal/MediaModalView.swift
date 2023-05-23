@@ -77,8 +77,11 @@ struct MediaModalView: View {
                                         media: vm.media,
                                         personalRating: nil)
                                     try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
-                                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                                        vm.media = updatedMedia
+
+                                    withAnimation(.easeInOut) {
+                                        if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                            vm.media = updatedMedia
+                                        }
                                     }
                                 }
                             } label: {
@@ -249,7 +252,7 @@ extension MediaModalView {
                     vm.media = updatedMedia
                 }
             }) {
-                RatingModalView(media: vm.media, shouldShowRatingModal: $vm.showingRating)
+                RatingModalView(media: vm.media)
             }
         }
     }
@@ -425,6 +428,7 @@ struct ExpandableText: View {
 
     @State private var isExpanded: Bool = false
     @State private var isTruncated: Bool? = nil
+    @Namespace private var animation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -432,10 +436,11 @@ struct ExpandableText: View {
                 .lineLimit(isExpanded ? nil : lineLimit)
                 .background(calculateTruncation(text: text))
                 .onTapGesture {
-                    withAnimation(.interactiveSpring()) {
+                    withAnimation(.easeIn) {
                         isExpanded = true
                     }
                 }
+                .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "text", in: animation))
 
             if isTruncated == true {
                 button

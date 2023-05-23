@@ -39,7 +39,7 @@ struct RowView: View {
                 media = updatedMedia
             }
         }) {
-            RatingModalView(media: media, shouldShowRatingModal: $showRatingSheet)
+            RatingModalView(media: media)
         }
         .onTapGesture {
             showingSheet = true

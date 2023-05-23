@@ -16,7 +16,7 @@ struct RatingModalView: View {
     @State var media: DBMedia
     @State var rating: Int = 0
 
-    @Binding var shouldShowRatingModal: Bool
+    @Namespace private var animation
 
     var posterPath: String? {
         return media.posterPath
@@ -84,7 +84,7 @@ struct RatingModalView: View {
                         .multilineTextAlignment(.center)
                         .padding()
 
-                    StarsView(rating: $rating)
+                    StarsView(rating: $rating.animation(.easeInOut))
                         .padding()
                         .accessibilityIdentifier("StarRatingInModal")
                         .dynamicTypeSize(.medium)
@@ -98,7 +98,7 @@ struct RatingModalView: View {
 
                                 try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
 
-                                shouldShowRatingModal = false
+                                dismiss()
                             }
                             AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")
                         }
@@ -136,7 +136,7 @@ struct RatingModalView: View {
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingModalView(media: dev.mediaMock.first!, shouldShowRatingModal: .constant(true))
+        RatingModalView(media: dev.mediaMock.first!)
     }
 }
 

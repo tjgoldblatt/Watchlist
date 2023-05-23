@@ -13,6 +13,8 @@ struct MovieTabView: View {
 
     @StateObject var vm = WatchlistDetailsViewModel()
 
+    @Namespace private var animation
+
     var watchedSelectedRows: [DBMedia] {
         return vm.getWatchedSelectedRows(mediaList: homeVM.movieList)
     }
@@ -97,18 +99,21 @@ extension MovieTabView {
                 }
             }
             .listRowBackground(Color.theme.background)
-            .transition(.slide)
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !sortedSearchResults.isEmpty {
                     Button(vm.editMode == .active ? "Done" : "Edit") {
                         if vm.editMode == .active {
-                            vm.editMode = .inactive
-                            homeVM.editMode = .inactive
+                            withAnimation(.spring()) {
+                                vm.editMode = .inactive
+                                homeVM.editMode = .inactive
+                            }
                         } else {
-                            vm.editMode = .active
-                            homeVM.editMode = .active
+                            withAnimation(.spring()) {
+                                vm.editMode = .active
+                                homeVM.editMode = .active
+                            }
                         }
                     }
                     .foregroundColor(Color.theme.red)
@@ -185,21 +190,23 @@ extension MovieTabView {
         HStack {
             ForEach(WatchOptions.allCases, id: \.rawValue) { watchOption in
                 Text(watchOption.rawValue)
-                    .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.genreText : Color.theme.red.opacity(0.6))
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .frame(width: 110, height: 30)
-                    .contentShape(Capsule())
                     .background {
-                        Capsule()
-                            .foregroundColor(
-                                homeVM.watchSelected == watchOption
-                                    ? Color.theme.red
-                                    : Color.theme.secondary.opacity(0.6))
+                        if homeVM.watchSelected == watchOption {
+                            Capsule()
+                                .fill(Color.theme.red)
+                                .matchedGeometryEffect(id: "ACTIVE_OPTION", in: animation)
+                        } else {
+                            Capsule()
+                                .fill(Color.theme.secondary.opacity(0.6))
+                        }
                     }
+                    .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.genreText : Color.theme.red.opacity(0.6))
                     .onTapGesture {
                         if homeVM.watchSelected != watchOption {
-                            withAnimation(.easeIn) {
+                            withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.75)) {
                                 AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
                                 homeVM.watchSelected = watchOption
                                 vm.filterText = ""

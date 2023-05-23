@@ -35,19 +35,25 @@ struct SocialTabView: View {
                     header
 
                     if settingsVM.authUser?.isAnonymous == false {
-                        if vm.friends.isEmpty, vm.friendRequests.isEmpty {
-                            SocialEmptyListView()
-                                .environmentObject(homeVM)
-                        } else {
-                            ScrollView {
-                                if !vm.friendRequests.isEmpty {
-                                    friendRequests
-                                }
+                        if vm.isLoaded {
+                            if vm.friends.isEmpty, vm.friendRequests.isEmpty {
+                                SocialEmptyListView()
+                                    .environmentObject(homeVM)
+                            } else {
+                                ScrollView {
+                                    if !vm.friendRequests.isEmpty {
+                                        friendRequests
+                                    }
 
-                                if !vm.friends.isEmpty {
-                                    friends
+                                    if !vm.friends.isEmpty {
+                                        friends
+                                    }
                                 }
                             }
+                        } else {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
                         }
                     } else {
                         linkButtons
@@ -84,7 +90,9 @@ struct SocialTabView: View {
                         .font(.headline)
                         .foregroundColor(Color.theme.red)
                         .onTapGesture {
-                            showSettingsView.toggle()
+                            withAnimation(.easeInOut) {
+                                showSettingsView.toggle()
+                            }
                         }
                 }
 
@@ -93,7 +101,9 @@ struct SocialTabView: View {
                         .font(.headline)
                         .foregroundColor(Color.theme.red)
                         .onTapGesture {
-                            showAddFriendsView.toggle()
+                            withAnimation(.easeInOut) {
+                                showAddFriendsView.toggle()
+                            }
                         }
                 }
             }
