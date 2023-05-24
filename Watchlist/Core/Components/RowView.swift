@@ -49,7 +49,10 @@ struct RowView: View {
                 media = updatedMedia
             }
         }) {
-            MediaModalView(media: media)
+            GeometryReader { proxy in
+                MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
         }
         .swipeActions(edge: .trailing) {
             if !isWatched {
