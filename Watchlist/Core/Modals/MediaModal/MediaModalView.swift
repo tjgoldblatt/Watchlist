@@ -10,9 +10,11 @@ import NukeUI
 import SwiftUI
 
 struct MediaModalView: View {
+    @EnvironmentObject var homeVM: HomeViewModel
+    @StateObject var vm: MediaModalViewModel
     @Environment(\.dismiss) var dismiss
 
-    var friendName: String?
+    // MARK: - Computed Vars
 
     var formattedFriendName: String? {
         if let friendName {
@@ -21,9 +23,6 @@ struct MediaModalView: View {
             return nil
         }
     }
-
-    @EnvironmentObject var homeVM: HomeViewModel
-    @StateObject var vm: MediaModalViewModel
 
     var dateConvertedToYear: String {
         if let title = vm.media.mediaType == .tv ? vm.media.firstAirDate : vm.media.releaseDate {
@@ -34,19 +33,29 @@ struct MediaModalView: View {
         return ""
     }
 
-    init(media: DBMedia, forPreview: Bool = false, friendName: String? = nil) {
+    // MARK: - Init
+
+    var friendName: String?
+    var safeArea: EdgeInsets
+    var size: CGSize
+
+    init(media: DBMedia, forPreview: Bool = false, friendName: String? = nil, size: CGSize, safeArea: EdgeInsets) {
+        self.size = size
+        self.safeArea = safeArea
         self.friendName = friendName
-        _vm = forPreview
-            ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true))
-            : StateObject(wrappedValue: MediaModalViewModel(media: media))
+        _vm = forPreview ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true)) : StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
 
-    var body: some View {
-        NavigationStack {
-            ScrollView(showsIndicators: false) {
-                backdropSection()
+    // MARK: - Body
 
-                VStack(alignment: .center, spacing: 30) {
+    var body: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack {
+                // MARK: - Backdrop
+
+                BackdropView(size: size, safeArea: safeArea)
+
+                VStack(spacing: 30) {
                     titleSection
 
                     ratingSection
@@ -57,60 +66,138 @@ struct MediaModalView: View {
                 }
                 .padding(.horizontal)
             }
-            .analyticsScreen(name: "MediaModalView")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        CloseButton()
-                    }
+            .overlay(alignment: .top) {
+                Header(size: size, safeArea: safeArea)
+            }
+        }
+        .background(Color.theme.background)
+        .coordinateSpace(name: "SCROLL")
+        .onAppear {
+            if homeVM.isMediaIDInWatchlist(for: vm.media.id) {
+                vm.updateMediaDetails()
+            }
+        }
+        .dynamicTypeSize(.medium ... .xLarge)
+    }
+
+    @ViewBuilder
+    func BackdropView(size: CGSize, safeArea: EdgeInsets) -> some View {
+        let height = size.height * 0.40
+        GeometryReader { proxy in
+            let size = proxy.size
+            let minY = proxy.frame(in: .named("SCROLL")).minY
+            let progress = minY / (height * (minY > 0 ? 0.5 : 0.8))
+
+            LazyImage(url: URL(string: TMDBConstants.imageURL + vm.imagePath)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0), alignment: .center)
+                        .clipped()
+                        .overlay {
+                            ZStack(alignment: .bottom) {
+                                // MARK: - Gradient Overlay
+
+                                Rectangle()
+                                    .fill(
+                                        .linearGradient(colors: [
+                                            Color.theme.background.opacity(0 - progress),
+                                            Color.theme.background.opacity(0.1 - progress),
+                                            Color.theme.background.opacity(0.3 - progress),
+                                            Color.theme.background.opacity(0.5 - progress),
+                                            Color.theme.background.opacity(0.8 - progress),
+                                            Color.theme.background.opacity(1),
+                                        ], startPoint: .top, endPoint: .bottom)
+                                    )
+                                    .animation(.easeInOut, value: size.height)
+                            }
+                        }
+                        .offset(y: -minY)
+                        .animation(.easeInOut, value: size.height)
+                } else {
+                    ProgressView()
+                        .scaledToFill()
+                        .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0), alignment: .center)
+                        .clipped()
+                }
+            }
+        }
+        .frame(height: height + safeArea.top)
+    }
+
+    @ViewBuilder
+    func Header(size: CGSize, safeArea: EdgeInsets) -> some View {
+        GeometryReader { proxy in
+            let minY = proxy.frame(in: .named("SCROLL")).minY
+            let height = size.height * 0.35
+            let progress = minY / (height * (minY > 0 ? 0.5 : 0.8))
+            let titleProgress = minY / height
+
+            HStack {
+                Button {
+                    dismiss()
+                } label: {
+                    CloseButton()
                 }
 
-                ToolbarItem(placement: .primaryAction) {
-                    if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
-                        Menu {
-                            Button(role: .destructive) {
-                                AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
-                                Task {
-                                    try await WatchlistManager.shared.setPersonalRatingForMedia(
-                                        media: vm.media,
-                                        personalRating: nil)
-                                    try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                Spacer(minLength: 0)
 
-                                    withAnimation(.easeInOut) {
-                                        if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                                            vm.media = updatedMedia
-                                        }
+                if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
+                    Menu {
+                        Button(role: .destructive) {
+                            AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
+                            Task {
+                                try await WatchlistManager.shared.setPersonalRatingForMedia(
+                                    media: vm.media,
+                                    personalRating: nil)
+                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+
+                                withAnimation(.easeInOut) {
+                                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                        vm.media = updatedMedia
                                     }
                                 }
-                            } label: {
-                                Text("Reset")
-                                Image(systemName: "arrow.counterclockwise.circle")
                             }
-                            .buttonStyle(.plain)
                         } label: {
-                            Image(systemName: "ellipsis.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 25, height: 25)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color.theme.text, Color.theme.background)
-                                .shadow(color: Color.black.opacity(0.4), radius: 2)
+                            Text("Reset")
+                            Image(systemName: "arrow.counterclockwise.circle")
                         }
+                        .buttonStyle(.plain)
+                    } label: {
+                        Image(systemName: "ellipsis.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 25, height: 25)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.theme.text, Color.theme.background)
+                            .shadow(color: Color.black.opacity(0.4), radius: 2)
                     }
                 }
             }
-            .ignoresSafeArea(edges: .top)
-            .onAppear {
-                if homeVM.isMediaIDInWatchlist(for: vm.media.id) {
-                    vm.updateMediaDetails()
+            .overlay {
+                if let title = vm.media.mediaType == .movie
+                    ? vm.media.title ?? vm.media.originalTitle
+                    : vm.media.name ?? vm.media.originalName
+                {
+                    Text(title)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .offset(y: -titleProgress > 0.85 ? 0 : 45)
+                        .foregroundColor(Color.theme.text)
+                        .clipped()
+                        .animation(.easeInOut(duration: 0.25), value: -titleProgress > 0.85)
                 }
             }
-            .background(Color.theme.background)
-            .dynamicTypeSize(.medium ... .xLarge)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .padding(.top, safeArea.top + 20)
+            .padding([.horizontal, .bottom], 20)
+            .background {
+                Color.theme.background.opacity(-progress > 1 ? 1 : 0)
+                    .animation(.easeInOut(duration: 0.25), value: -progress > 1)
+            }
+            .offset(y: -minY)
         }
+        .frame(height: 35)
     }
 }
 
@@ -149,10 +236,11 @@ extension MediaModalView {
                 {
                     Text(title)
                         .font(.largeTitle)
-                        .fontWeight(.semibold)
+                        .fontWeight(.bold)
                         .foregroundColor(Color.theme.text)
                         .fixedSize(horizontal: false, vertical: true)
                         .multilineTextAlignment(.center)
+                        .padding(.horizontal)
                 }
             }
 
@@ -432,18 +520,33 @@ struct ExpandableText: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(text)
-                .lineLimit(isExpanded ? nil : lineLimit)
-                .background(calculateTruncation(text: text))
-                .onTapGesture {
-                    withAnimation(.easeOut) {
-                        isExpanded = true
+            if !isExpanded {
+                Text(text)
+                    .lineLimit(lineLimit)
+                    .background(calculateTruncation(text: text))
+                    .onTapGesture {
+                        withAnimation(.interactiveSpring(response: 0.3)) {
+                            isExpanded = true
+                        }
                     }
-                }
-                .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "text", in: animation))
+                    .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "text", in: animation))
 
-            if isTruncated == true {
-                button
+                if isTruncated == true {
+                    button
+                }
+            } else {
+                Text(text)
+                    .background(calculateTruncation(text: text))
+                    .onTapGesture {
+                        withAnimation(.interactiveSpring(response: 0.3)) {
+                            isExpanded = true
+                        }
+                    }
+                    .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "text", in: animation))
+
+                if isTruncated == true {
+                    button
+                }
             }
         }
         .multilineTextAlignment(.leading)
@@ -474,7 +577,7 @@ struct ExpandableText: View {
 
     var button: some View {
         Button(isExpanded ? "Less" : "More") {
-            withAnimation(.easeInOut) {
+            withAnimation(.interactiveSpring()) {
                 isExpanded.toggle()
             }
         }
@@ -488,8 +591,11 @@ struct ExpandableText: View {
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            MediaModalView(media: dev.mediaMock[0], forPreview: true)
-                .environmentObject(dev.homeVM)
+            GeometryReader {
+                MediaModalView(media: dev.mediaMock[0], forPreview: true, size: $0.size, safeArea: $0.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+                    .environmentObject(dev.homeVM)
+            }
         }
     }
 }

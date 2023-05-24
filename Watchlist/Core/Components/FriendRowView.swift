@@ -48,7 +48,10 @@ struct FriendRowView: View {
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet) {
-            MediaModalView(media: media, friendName: friendName)
+            GeometryReader { proxy in
+                MediaModalView(media: media, friendName: friendName, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
         }
         .swipeActions(edge: .trailing) {
             if !homeVM.isMediaIDInWatchlist(for: media.id) {

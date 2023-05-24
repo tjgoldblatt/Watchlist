@@ -56,7 +56,10 @@ struct ExploreTabView: View {
             }
             .sheet(isPresented: $showDeepLinkModal) {
                 if let deepLinkMedia {
-                    MediaModalView(media: deepLinkMedia)
+                    GeometryReader { proxy in
+                        MediaModalView(media: deepLinkMedia, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                            .ignoresSafeArea(.container, edges: .top)
+                    }
                 }
             }
             .onReceive(homeVM.$deepLinkURL) { url in
@@ -238,7 +241,10 @@ struct ExploreThumbnailView: View {
                                     showingSheet.toggle()
                                 }
                                 .sheet(item: $selectedMedia) { media in
-                                    MediaModalView(media: media)
+                                    GeometryReader { proxy in
+                                        MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                                            .ignoresSafeArea(.container, edges: .top)
+                                    }
                                 }
                         }
                     }

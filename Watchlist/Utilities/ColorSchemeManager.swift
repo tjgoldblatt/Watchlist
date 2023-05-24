@@ -14,7 +14,7 @@ enum ColorScheme: Int {
 }
 
 class ColorSchemeManager: ObservableObject {
-    @AppStorage("colorScheme") var colorScheme: ColorScheme = .unspecified {
+    @AppStorage("colorScheme") var colorScheme: ColorScheme = .dark {
         didSet {
             applyColorScheme()
         }
