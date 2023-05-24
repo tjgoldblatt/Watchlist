@@ -82,7 +82,7 @@ struct MediaModalView: View {
 
     @ViewBuilder
     func BackdropView(size: CGSize, safeArea: EdgeInsets) -> some View {
-        let height = size.height * 0.35
+        let height = size.height * 0.40
         GeometryReader { proxy in
             let size = proxy.size
             let minY = proxy.frame(in: .named("SCROLL")).minY
@@ -110,9 +110,11 @@ struct MediaModalView: View {
                                             Color.theme.background.opacity(1),
                                         ], startPoint: .top, endPoint: .bottom)
                                     )
+                                    .animation(.easeInOut, value: size.height)
                             }
                         }
                         .offset(y: -minY)
+                        .animation(.easeInOut, value: size.height)
                 } else {
                     ProgressView()
                         .scaledToFill()
@@ -523,7 +525,7 @@ struct ExpandableText: View {
                     .lineLimit(lineLimit)
                     .background(calculateTruncation(text: text))
                     .onTapGesture {
-                        withAnimation(.interactiveSpring()) {
+                        withAnimation(.interactiveSpring(response: 0.3)) {
                             isExpanded = true
                         }
                     }
@@ -536,7 +538,7 @@ struct ExpandableText: View {
                 Text(text)
                     .background(calculateTruncation(text: text))
                     .onTapGesture {
-                        withAnimation(.interactiveSpring()) {
+                        withAnimation(.interactiveSpring(response: 0.3)) {
                             isExpanded = true
                         }
                     }

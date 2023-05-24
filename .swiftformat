@@ -40,7 +40,7 @@
 --markcategories true
 --markextensions always
 --marktypes always
---maxwidth 130
+--maxwidth none
 --modifierorder 
 --nevertrailing 
 --nospaceoperators 
@@ -69,15 +69,15 @@
 --typemark "MARK: - %t"
 --varattributes preserve
 --voidtype void
---wraparguments before-first
---wrapcollections before-first
---wrapconditions after-first
+--wraparguments default
+--wrapcollections default
+--wrapconditions default
 --wrapeffects if-multiline
 --wrapenumcases always
---wrapparameters before-first
+--wrapparameters default
 --wrapreturntype if-multiline
 --wrapternary before-operators
---wraptypealiases before-first
+--wraptypealiases default
 --xcodeindentation enabled
 --yodaswap always
 --disable hoistAwait,initCoderUnavailable,linebreakAtEndOfFile,redundantReturn
