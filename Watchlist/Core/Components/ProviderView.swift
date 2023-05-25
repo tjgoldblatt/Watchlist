@@ -40,13 +40,13 @@ struct ProviderView: View {
                 VStack(alignment: .leading) {
                     if let name = provider.providerName {
                         Text(name.truncated(length: 10))
-                            .font(.subheadline)
+                            .font(.caption)
                             .foregroundColor(Color.theme.text)
                             .fontWeight(.medium)
                     }
 
                     Text(providerType.uppercased())
-                        .font(.caption2)
+                        .font(.system(size: 10))
                         .foregroundColor(Color.theme.text)
                         .fontWeight(.light)
                 }

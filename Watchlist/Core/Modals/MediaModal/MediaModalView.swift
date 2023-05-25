@@ -43,7 +43,7 @@ struct MediaModalView: View {
         self.size = size
         self.safeArea = safeArea
         self.friendName = friendName
-        _vm = forPreview ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true)) : StateObject(wrappedValue: MediaModalViewModel(media: media))
+        _vm = forPreview ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true, media: media)) : StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
 
     // MARK: - Body
@@ -202,23 +202,6 @@ struct MediaModalView: View {
 }
 
 extension MediaModalView {
-    func backdropSection() -> some View {
-        LazyImage(url: URL(string: TMDBConstants.imageURL + vm.imagePath)) { state in
-            if let image = state.image {
-                image
-                    .resizable()
-                    .scaledToFill()
-
-                    .frame(maxHeight: 300)
-                    .clipped()
-                    .shadow(color: Color.black.opacity(0.3), radius: 5)
-            } else {
-                ProgressView()
-                    .frame(height: 200)
-            }
-        }
-    }
-
     private var genreSection: some View {
         VStack(alignment: .leading) {
             if let genreIds = vm.media.genreIDs {
@@ -285,7 +268,7 @@ extension MediaModalView {
                             .imageScale(.large)
                     } else {
                         Image(systemName: "checkmark.circle")
-                            .foregroundColor(Color.theme.red)
+                            .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
                             .imageScale(.large)
                     }
                 }
@@ -296,27 +279,23 @@ extension MediaModalView {
         }
     }
 
+    @ViewBuilder
     private var overview: some View {
         if let overview = vm.media.overview {
-            return AnyView(ExpandableText(text: overview, lineLimit: 3))
-        } else {
-            return AnyView(EmptyView())
+            ExpandableText(text: overview, lineLimit: 3)
+                .foregroundColor(Color.theme.text)
         }
     }
 
     private var ratingSection: some View {
         HStack {
             addButton
-                .frame(minWidth: 110)
-
-            Spacer()
+                .frame(minWidth: 110, maxWidth: .infinity)
 
             if let voteAverage = vm.media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage, size: 18)
-                    .frame(minWidth: 110)
+                    .frame(minWidth: 110, maxWidth: .infinity)
             }
-
-            Spacer()
 
             Group {
                 if let personalRating = vm.media.personalRating {
@@ -330,11 +309,10 @@ extension MediaModalView {
                         .disabled(friendName != nil)
                 } else {
                     rateThisButton
-                        .disabled(isInMedia(media: vm.media) ? false : true)
                 }
             }
             .animation(.spring(), value: vm.media.personalRating)
-            .frame(minWidth: 110)
+            .frame(minWidth: 110, maxWidth: .infinity)
             .sheet(isPresented: $vm.showingRating, onDismiss: {
                 if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
                     vm.media = updatedMedia
@@ -414,13 +392,15 @@ extension MediaModalView {
                 Image(systemName: "star")
                     .font(.system(size: 18))
                     .fontWeight(.bold)
-                    .foregroundColor(isInMedia(media: vm.media) ? Color.theme.red : Color.theme.secondary)
+                    .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
                 Text("Rate This")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(isInMedia(media: vm.media) ? Color.theme.red : Color.theme.secondary)
+                    .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
             }
         }
+        .disabled(friendName != nil)
+        .disabled(isInMedia(media: vm.media) ? false : true)
     }
 
     private var addButton: some View {
@@ -590,12 +570,11 @@ struct ExpandableText: View {
 
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack {
-            GeometryReader {
-                MediaModalView(media: dev.mediaMock[0], forPreview: true, size: $0.size, safeArea: $0.safeAreaInsets)
-                    .ignoresSafeArea(.container, edges: .top)
-                    .environmentObject(dev.homeVM)
-            }
+        GeometryReader {
+            MediaModalView(media: dev.mediaMock[1], forPreview: true, size: $0.size, safeArea: $0.safeAreaInsets)
+                .ignoresSafeArea(.container, edges: .top)
+                .environmentObject(dev.homeVM)
+                .preferredColorScheme(.dark)
         }
     }
 }
