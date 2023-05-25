@@ -206,8 +206,8 @@ extension HomeViewModel {
         if ApplicationHelper.isDebug, forPreview {
             // Hard code your mock data for the preview here
             isMediaLoaded = true
-            movieList = [DBMedia.sampleMovie, DBMedia.sampleMovie, DBMedia.sampleMovie, DBMedia.sampleMovie]
-            tvList = [DBMedia.sampleTV, DBMedia.sampleTV, DBMedia.sampleTV, DBMedia.sampleTV]
+            movieList = MockService.mockMovieList
+            tvList = MockService.mockTVList
         }
     }
 }

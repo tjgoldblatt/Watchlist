@@ -92,8 +92,8 @@ final class MediaModalViewModel: ObservableObject {
 }
 
 extension MediaModalViewModel {
-    convenience init(forPreview: Bool = false) {
-        self.init(media: DBMedia.sampleMovie)
+    convenience init(forPreview: Bool = false, media: DBMedia) {
+        self.init(media: media)
 
         if ApplicationHelper.isDebug, forPreview {
             countryProvider = Country(

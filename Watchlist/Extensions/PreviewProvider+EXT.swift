@@ -22,7 +22,5 @@ class DeveloperPreview {
     let socialVM = SocialViewModel(forPreview: true)
     let settingsVM = SettingsViewModel(forPreview: true)
 
-    let mediaMock: [DBMedia] = [
-        DBMedia.sampleMovie, DBMedia.sampleTV, DBMedia.sampleMovie, DBMedia.sampleTV,
-    ]
+    let mediaMock: [DBMedia] = MockService.mockMovieList + MockService.mockTVList
 }

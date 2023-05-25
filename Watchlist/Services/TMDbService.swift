@@ -95,6 +95,8 @@ class TMDbService {
             .eraseToAnyPublisher()
     }
 
+    /// Fetches top rated movies from TMDb API.
+    /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getTopRatedMovies() -> AnyPublisher<[Media], Error> {
         guard let url = URL(string: "\(TMDBConstants.baseURL)/3/movie/top_rated?api_key=\(TMDBConstants.API_KEY)&language=en-US")
         else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
@@ -105,6 +107,8 @@ class TMDbService {
             .eraseToAnyPublisher()
     }
 
+    /// Fetches top rated TV shows from TMDb API.
+    /// - Returns: A publisher that emits an array of `Media` objects or an error.
     static func getTopRatedTVShows() -> AnyPublisher<[Media], Error> {
         guard let url = URL(string: "\(TMDBConstants.baseURL)/3/tv/top_rated?api_key=\(TMDBConstants.API_KEY)&language=en-US")
         else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
