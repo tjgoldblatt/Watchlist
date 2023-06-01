@@ -77,14 +77,6 @@ struct RowView: View {
     }
 }
 
-struct RowView_Previews: PreviewProvider {
-    static var previews: some View {
-        RowView(media: dev.mediaMock.first!)
-            .previewLayout(.sizeThatFits)
-            .environmentObject(dev.homeVM)
-    }
-}
-
 extension RowView {
     var centerColumn: some View {
         VStack(alignment: .leading) {
@@ -123,8 +115,10 @@ extension RowView {
                         }
                     }
                 }
+                .frame(maxHeight: .infinity, alignment: .bottom)
             }
         }
+        .frame(maxHeight: 120, alignment: .top)
         .frame(minWidth: 50)
     }
 
@@ -187,7 +181,15 @@ struct ThumbnailView: View {
             }
         }
         .frame(width: frameWidth, height: frameHeight)
-        .shadow(color: Color.black.opacity(0.2), radius: 5)
         .padding(.trailing, 5)
+    }
+}
+
+struct RowView_Previews: PreviewProvider {
+    static var previews: some View {
+        RowView(media: dev.mediaMock.first!)
+            .previewLayout(.sizeThatFits)
+            .environmentObject(dev.homeVM)
+            .padding()
     }
 }

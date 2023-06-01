@@ -63,7 +63,7 @@
 --tabwidth unspecified
 --throwcapturing 
 --trailingclosures 
---trimwhitespace always
+--trimwhitespace nonblank-lines
 --typeattributes prev-line
 --typeblanklines remove
 --typemark "MARK: - %t"

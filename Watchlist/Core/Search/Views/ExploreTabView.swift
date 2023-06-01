@@ -228,12 +228,18 @@ struct ExploreThumbnailView: View {
                             ThumbnailView(imagePath: posterPath)
                                 .overlay(alignment: .topTrailing) {
                                     if homeVM.isMediaIDInWatchlist(for: media.id) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 20)
-                                            .foregroundStyle(Color.theme.genreText, Color.theme.red)
-                                            .offset(x: -15, y: 10)
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color.theme.background)
+                                                .frame(width: 27, height: 27)
+                                            
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 20)
+                                                .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                        }
+                                        .offset(y: -5)
                                     }
                                 }
                                 .onTapGesture {
@@ -249,6 +255,7 @@ struct ExploreThumbnailView: View {
                         }
                     }
                 }
+                .padding(.top, 5)
             }
             .scrollDismissesKeyboard(.immediately)
         }
@@ -259,5 +266,9 @@ struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
         ExploreTabView(homeVM: dev.homeVM)
             .environmentObject(dev.homeVM)
+        
+        ExploreThumbnailView(title: "", mediaArray: dev.mediaMock)
+            .previewLayout(.sizeThatFits)
+            .padding()
     }
 }

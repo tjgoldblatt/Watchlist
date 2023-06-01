@@ -136,9 +136,8 @@ struct SearchBarView: View {
             .font(.headline)
             .padding()
             .frame(height: 50)
-            .contentShape(RoundedRectangle(cornerRadius: 20))
-            .background(Color.theme.secondary)
-            .cornerRadius(20)
+            .contentShape(Capsule())
+            .background(Capsule().fill(Color.theme.secondary))
             .onTapGesture {
                 withAnimation(.spring()) {
                     AnalyticsManager.shared.logEvent(name: "SearchBar_Tapped")
