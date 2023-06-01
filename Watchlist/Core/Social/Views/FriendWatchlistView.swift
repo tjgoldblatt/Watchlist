@@ -55,7 +55,11 @@ struct FriendWatchlistView: View {
                                     selectedSorting = options
                                 }
                             } label: {
-                                Text(options.rawValue)
+                                if selectedSorting == options {
+                                    Label(options.rawValue, systemImage: "checkmark")
+                                } else {
+                                    Text(options.rawValue)
+                                }
                             }
                         }
                     } label: {

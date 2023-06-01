@@ -78,25 +78,28 @@ struct SocialTabView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Image(systemName: "gear")
-                        .font(.headline)
-                        .foregroundColor(Color.theme.red)
-                        .onTapGesture {
-                            withAnimation(.easeInOut) {
-                                showSettingsView.toggle()
-                            }
+                    Button {
+                        withAnimation(.easeInOut) {
+                            showSettingsView.toggle()
                         }
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .font(.headline)
+                            .foregroundColor(Color.theme.red)
+                    }
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Image(systemName: "plus")
-                        .font(.headline)
-                        .foregroundColor(Color.theme.red)
-                        .onTapGesture {
-                            withAnimation(.easeInOut) {
-                                showAddFriendsView.toggle()
-                            }
+                    Button {
+                        withAnimation(.easeInOut) {
+                            showAddFriendsView.toggle()
                         }
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.headline)
+                            .foregroundColor(Color.theme.red)
+                            .padding(.trailing)
+                    }
                 }
             }
             .sheet(isPresented: $showSettingsView) {
