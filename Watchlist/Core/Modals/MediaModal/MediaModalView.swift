@@ -162,10 +162,9 @@ struct MediaModalView: View {
                         Image(systemName: "ellipsis.circle.fill")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 25, height: 25)
+                            .frame(width: 30, height: 30)
                             .fontWeight(.semibold)
                             .foregroundStyle(Color.theme.text, Color.theme.background)
-                            .shadow(color: Color.black.opacity(0.4), radius: 2)
                     }
                 }
 
@@ -174,7 +173,6 @@ struct MediaModalView: View {
                 } label: {
                     CloseButton()
                 }
-                .padding(.leading)
             }
             .overlay {
                 if let title = vm.media.mediaType == .movie
