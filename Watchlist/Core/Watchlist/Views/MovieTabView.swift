@@ -103,43 +103,54 @@ extension MovieTabView {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !sortedSearchResults.isEmpty {
-                    Button(vm.editMode == .active ? "Done" : "Edit") {
+                    Button {
                         if vm.editMode == .active {
-                            withAnimation(.spring()) {
+                            withAnimation(.default) {
                                 vm.editMode = .inactive
                                 homeVM.editMode = .inactive
                             }
                         } else {
-                            withAnimation(.spring()) {
+                            withAnimation(.default) {
                                 vm.editMode = .active
                                 homeVM.editMode = .active
                             }
                         }
+                    } label: {
+                        if vm.editMode == .active {
+                            Image(systemName: "checkmark.circle.fill")
+                                .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "edit", in: animation))
+                                .font(.headline)
+                                .foregroundColor(Color.theme.red)
+
+                        } else {
+                            Image(systemName: "checklist")
+                                .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "edit", in: animation))
+                                .font(.headline)
+                                .foregroundColor(Color.theme.red)
+                        }
                     }
-                    .foregroundColor(Color.theme.red)
-                    .padding()
-                    .contentShape(Rectangle())
-                    .buttonStyle(.plain)
                 }
             }
 
             if !watchedSelectedRows.isEmpty, vm.editMode == .active {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Reset")
-                        .font(.body)
-                        .foregroundColor(Color.theme.red)
-                        .padding()
-                        .onTapGesture {
-                            AnalyticsManager.shared.logEvent(name: "MovieTabView_ResetMedia")
-                            Task {
-                                for watchedSelectedRow in watchedSelectedRows {
-                                    try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
-                                }
+                    Button {
+                        AnalyticsManager.shared.logEvent(name: "MovieTabView_ResetMedia")
+                        Task {
+                            for watchedSelectedRow in watchedSelectedRows {
+                                try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
+                            }
+                            withAnimation(.default) {
                                 vm.selectedRows = []
                                 vm.editMode = .inactive
                                 homeVM.editMode = .inactive
                             }
                         }
+                    } label: {
+                        Image(systemName: "arrow.counterclockwise.circle")
+                            .font(.headline)
+                            .foregroundColor(Color.theme.red)
+                    }
                 }
             }
         }

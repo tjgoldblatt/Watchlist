@@ -188,15 +188,21 @@ struct SearchBarView: View {
                 .sorted { $0.name < $1.name }
 
             Menu("Genres") {
+                Button {
+                    homeVM.genresSelected = []
+                } label: {
+                    if homeVM.genresSelected.isEmpty {
+                        Label("All", systemImage: "checkmark")
+                    } else {
+                        Text("All")
+                    }
+                }
+
                 ForEach(genres, id: \.self) { genre in
                     Button {
-                        if homeVM.genresSelected.contains(genre) {
-                            homeVM.genresSelected = []
-                        } else {
-                            homeVM.genresSelected = []
-                            homeVM.genresSelected.insert(genre)
-                            AnalyticsManager.shared.logEvent(name: "\(genre.name)_Tapped")
-                        }
+                        homeVM.genresSelected = []
+                        homeVM.genresSelected.insert(genre)
+                        AnalyticsManager.shared.logEvent(name: "\(genre.name)_Tapped")
                     } label: {
                         if homeVM.genresSelected.contains(genre) {
                             Label(genre.name, systemImage: "checkmark")

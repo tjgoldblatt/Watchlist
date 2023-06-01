@@ -135,12 +135,6 @@ struct MediaModalView: View {
             let titleProgress = minY / height
 
             HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    CloseButton()
-                }
-
                 Spacer(minLength: 0)
 
                 if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
@@ -174,6 +168,13 @@ struct MediaModalView: View {
                             .shadow(color: Color.black.opacity(0.4), radius: 2)
                     }
                 }
+
+                Button {
+                    dismiss()
+                } label: {
+                    CloseButton()
+                }
+                .padding(.leading)
             }
             .overlay {
                 if let title = vm.media.mediaType == .movie
@@ -571,7 +572,7 @@ struct ExpandableText: View {
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
-            MediaModalView(media: dev.mediaMock[1], forPreview: true, size: $0.size, safeArea: $0.safeAreaInsets)
+            MediaModalView(media: dev.mediaMock[0], forPreview: true, size: $0.size, safeArea: $0.safeAreaInsets)
                 .ignoresSafeArea(.container, edges: .top)
                 .environmentObject(dev.homeVM)
                 .preferredColorScheme(.dark)

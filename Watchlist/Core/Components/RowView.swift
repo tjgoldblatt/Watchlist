@@ -129,7 +129,7 @@ extension RowView {
     }
 
     var rightColumn: some View {
-        VStack(spacing: 10) {
+        VStack(alignment: .center, spacing: 20) {
             if let voteAverage = media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage)
             }
@@ -137,12 +137,6 @@ extension RowView {
             if let rating = media.personalRating {
                 StarRatingView(text: "YOUR RATING", rating: rating)
             }
-
-//            if media.watched {
-//                Image(systemName: "checkmark.circle.fill")
-//                    .foregroundColor(Color.theme.red)
-//                    .imageScale(.large)
-//            }
         }
     }
 

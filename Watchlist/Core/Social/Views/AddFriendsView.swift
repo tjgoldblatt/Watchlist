@@ -88,10 +88,14 @@ struct AddFriendsView: View {
                     }
                 }
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Image(systemName: "chevron.down")
-                            .foregroundColor(Color.theme.red)
-                            .fontWeight(.semibold)
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(Color.theme.red)
+                                .fontWeight(.semibold)
+                        }
                     }
                 }
                 .onAppear {
