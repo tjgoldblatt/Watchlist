@@ -22,27 +22,30 @@ struct RowView: View {
     @State private var showRatingSheet = false
 
     var body: some View {
-        HStack(alignment: .center) {
-            if let posterPath = media.posterPath {
-                ThumbnailView(imagePath: posterPath)
+        Button {
+            withAnimation {
+                showingSheet = true
             }
+        } label: {
+            HStack(alignment: .center) {
+                if let posterPath = media.posterPath {
+                    ThumbnailView(imagePath: posterPath)
+                }
 
-            centerColumn
+                centerColumn
 
-            rightColumn
+                rightColumn
+            }
+            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
+            .accessibilityIdentifier("RowView")
+            .contentShape(Rectangle())
         }
-        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
-        .accessibilityIdentifier("RowView")
-        .contentShape(Rectangle())
         .sheet(isPresented: $showRatingSheet) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia
             }
         } content: {
             RatingModalView(media: media)
-        }
-        .onTapGesture {
-            showingSheet = true
         }
         .sheet(isPresented: $showingSheet) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {

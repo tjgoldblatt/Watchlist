@@ -224,34 +224,37 @@ struct ExploreThumbnailView: View {
                 LazyHStack {
                     ForEach(mediaArray) { media in
                         if let posterPath = media.posterPath,
-                           let overview = media.overview, !overview.isEmpty {
-                            ThumbnailView(imagePath: posterPath)
-                                .overlay(alignment: .topTrailing) {
-                                    if homeVM.isMediaIDInWatchlist(for: media.id) {
-                                        ZStack {
-                                            Circle()
-                                                .fill(Color.theme.background)
-                                                .frame(width: 27, height: 27)
+                           let overview = media.overview, !overview.isEmpty
+                        {
+                            Button {
+                                selectedMedia = media
+                                showingSheet.toggle()
+                            } label: {
+                                ThumbnailView(imagePath: posterPath)
+                                    .overlay(alignment: .topTrailing) {
+                                        if homeVM.isMediaIDInWatchlist(for: media.id) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.theme.background)
+                                                    .frame(width: 27, height: 27)
 
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 20)
-                                                .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 20)
+                                                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                            }
+                                            .offset(y: -5)
                                         }
-                                        .offset(y: -5)
                                     }
+                            }
+
+                            .sheet(item: $selectedMedia) { media in
+                                GeometryReader { proxy in
+                                    MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                                        .ignoresSafeArea(.container, edges: .top)
                                 }
-                                .onTapGesture {
-                                    selectedMedia = media
-                                    showingSheet.toggle()
-                                }
-                                .sheet(item: $selectedMedia) { media in
-                                    GeometryReader { proxy in
-                                        MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
-                                            .ignoresSafeArea(.container, edges: .top)
-                                    }
-                                }
+                            }
                         }
                     }
                 }
