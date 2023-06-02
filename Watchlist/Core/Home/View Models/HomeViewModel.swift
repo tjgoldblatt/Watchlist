@@ -67,10 +67,8 @@ final class HomeViewModel: ObservableObject {
     }
 
     func isMediaIDInWatchlist(for id: Int) -> Bool {
-        for watchlistMedia in tvList + movieList {
-            if watchlistMedia.id == id {
-                return true
-            }
+        for watchlistMedia in tvList + movieList where watchlistMedia.id == id {
+            return true
         }
         return false
     }

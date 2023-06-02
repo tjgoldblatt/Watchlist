@@ -34,21 +34,21 @@ struct RowView: View {
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("RowView")
         .contentShape(Rectangle())
-        .sheet(isPresented: $showRatingSheet, onDismiss: {
+        .sheet(isPresented: $showRatingSheet) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia
             }
-        }) {
+        } content: {
             RatingModalView(media: media)
         }
         .onTapGesture {
             showingSheet = true
         }
-        .sheet(isPresented: $showingSheet, onDismiss: {
+        .sheet(isPresented: $showingSheet) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia
             }
-        }) {
+        } content: {
             GeometryReader { proxy in
                 MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
                     .ignoresSafeArea(.container, edges: .top)

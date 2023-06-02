@@ -32,10 +32,8 @@ final class WatchlistDetailsViewModel: ObservableObject {
         var watchedSelectedRows: [DBMedia] = []
 
         for id in selectedRows {
-            for media in mediaList.filter({ $0.id == id }) {
-                if media.watched == true {
-                    watchedSelectedRows.append(media)
-                }
+            for media in mediaList.filter({ $0.id == id }) where media.watched == true {
+                watchedSelectedRows.append(media)
             }
         }
 

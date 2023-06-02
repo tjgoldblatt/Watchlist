@@ -124,10 +124,8 @@ struct AddFriendsView: View {
     /// Returns a bool on whether or not the passed in user has a pending request from the currnet user
     func doesUserHavingPendingRequestFromCurrentUser(user: DBUser) -> Bool {
         let usersWithFriendRequest = socialVM.usersWithFriendRequest
-        for otherUser in usersWithFriendRequest {
-            if otherUser.userId == user.userId {
-                return true
-            }
+        for otherUser in usersWithFriendRequest where otherUser.userId == user.userId {
+            return true
         }
         return false
     }

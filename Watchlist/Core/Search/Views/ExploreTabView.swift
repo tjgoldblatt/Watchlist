@@ -103,7 +103,7 @@ extension ExploreTabView {
             return AnyView(
                 List {
                     ForEach(sortedSearchResults, id: \.id) { media in
-                        if let _ = media.posterPath, let genreIds = media.genreIDs, !genreIds.isEmpty {
+                        if media.posterPath != nil, let genreIds = media.genreIDs, !genreIds.isEmpty {
                             ExploreRowView(media: media, currentTab: .explore)
                                 .listRowBackground(Color.theme.background)
                         }
@@ -224,8 +224,7 @@ struct ExploreThumbnailView: View {
                 LazyHStack {
                     ForEach(mediaArray) { media in
                         if let posterPath = media.posterPath,
-                           let overview = media.overview, !overview.isEmpty
-                        {
+                           let overview = media.overview, !overview.isEmpty {
                             ThumbnailView(imagePath: posterPath)
                                 .overlay(alignment: .topTrailing) {
                                     if homeVM.isMediaIDInWatchlist(for: media.id) {

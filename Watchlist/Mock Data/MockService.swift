@@ -16,6 +16,7 @@ enum MockService {
         [mockMovie_1, mockMovie_2]
     }
 
+    // swiftlint: disable all
     static var mockMovie_1: DBMedia {
         try! DBMedia(
             media: Media(
@@ -100,4 +101,5 @@ enum MockService {
             personalRating: 9
         )
     }
+    //swiftlint: enable all
 }

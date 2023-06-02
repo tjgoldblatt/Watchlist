@@ -18,8 +18,7 @@ enum DeepLinkManager {
         from url: URL,
         homeVM: HomeViewModel
     )
-        async -> DBMedia?
-    {
+    async -> DBMedia? {
         guard let host = url.host() else { return nil }
 
         switch DeepLinkURLs(rawValue: host) {

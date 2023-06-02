@@ -62,7 +62,7 @@ struct SettingsView: View {
                             .buttonStyle(.plain)
                     }
                 )
-                .fullScreenCover(isPresented: $showReAuthView, onDismiss: {
+                .fullScreenCover(isPresented: $showReAuthView) {
                     Task {
                         do {
                             viewModel.loadAuthUser()
@@ -73,7 +73,7 @@ struct SettingsView: View {
                             CrashlyticsManager.handleError(error: error)
                         }
                     }
-                }) {
+                } content: {
                     DeleteAccountView()
                 }
             }

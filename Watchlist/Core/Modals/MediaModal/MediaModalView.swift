@@ -319,11 +319,11 @@ extension MediaModalView {
             }
             .animation(.spring(), value: vm.media.personalRating)
             .frame(minWidth: 110, maxWidth: .infinity)
-            .sheet(isPresented: $vm.showingRating, onDismiss: {
+            .sheet(isPresented: $vm.showingRating) {
                 if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
                     vm.media = updatedMedia
                 }
-            }) {
+            } content: {
                 RatingModalView(media: vm.media)
             }
         }
@@ -468,10 +468,8 @@ extension MediaModalView {
 
     func isInMedia(media: DBMedia) -> Bool {
         let mediaList = homeVM.movieList + homeVM.tvList
-        for homeMedia in mediaList {
-            if homeMedia.id == media.id {
-                return true
-            }
+        for homeMedia in mediaList where homeMedia.id == media.id {
+            return true
         }
         return false
     }
