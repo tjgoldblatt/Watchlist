@@ -70,16 +70,18 @@ struct AddFriendsView: View {
                                         .foregroundColor(
                                             !doesUserHavingPendingRequestFromCurrentUser(user: user)
                                                 ? Color.theme.red
-                                                : Color.theme.genreText)
-                                            .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                            .frame(width: 80, height: 30)
-                                            .background(
-                                                !doesUserHavingPendingRequestFromCurrentUser(user: user)
-                                                    ? Color.theme.secondary
-                                                    : Color.theme.red)
-                                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                                .fixedSize(horizontal: true, vertical: false)
+                                                : Color.theme.genreText
+                                        )
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .frame(width: 80, height: 30)
+                                        .background(
+                                            !doesUserHavingPendingRequestFromCurrentUser(user: user)
+                                                ? Color.theme.secondary
+                                                : Color.theme.red
+                                        )
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .fixedSize(horizontal: true, vertical: false)
                                     }
                                     .padding(.vertical)
                                 }

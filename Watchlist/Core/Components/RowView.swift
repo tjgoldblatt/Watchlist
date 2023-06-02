@@ -167,7 +167,8 @@ struct ThumbnailView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .clipShape(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    )
             } else {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundColor(Color.theme.secondary)

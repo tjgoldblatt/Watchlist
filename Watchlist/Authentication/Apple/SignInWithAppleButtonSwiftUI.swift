@@ -97,7 +97,8 @@ struct SignInWithAppleButtonSwiftUI: View {
                                     CrashlyticsManager
                                         .handleError(
                                             error: FirebaseError
-                                                .signInWithApple(debugDescription: appleIDToken.debugDescription))
+                                                .signInWithApple(debugDescription: appleIDToken.debugDescription)
+                                        )
                                     return
                                 }
 
@@ -122,9 +123,10 @@ struct SignInWithAppleButtonSwiftUI: View {
                     default:
                         break
                 }
-            })
-            .frame(height: 55, alignment: .center)
-            .clipShape(Capsule())
+            }
+        )
+        .frame(height: 55, alignment: .center)
+        .clipShape(Capsule())
     }
 
     struct SignInWithAppleButtonSwiftUI_Previews: PreviewProvider {

@@ -120,7 +120,8 @@ extension SocialViewModel {
                 email: "foo@gmail.com",
                 displayName: "Steve",
                 friendRequests: ["1a2HaoZWplUcDp7hxS1Ln6mkWmy1", "82rN4294VtT3gyXV8O0bV1I40mN2"],
-                friends: [])
+                friends: []
+            )
             friendRequests = [
                 DBUser(userId: "aaa123", displayName: "John Smith"),
                 DBUser(userId: "bbb456", displayName: "Maggie Jones"),

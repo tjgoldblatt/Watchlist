@@ -60,7 +60,8 @@ struct SettingsView: View {
                         .buttonStyle(.plain)
                         Button("Cancel", role: .cancel) { }
                             .buttonStyle(.plain)
-                    })
+                    }
+                )
                 .fullScreenCover(isPresented: $showReAuthView, onDismiss: {
                     Task {
                         do {

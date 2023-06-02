@@ -108,9 +108,10 @@ struct SearchBarView: View {
                     .popover(isPresented: $showFilterSheet) {
                         FilterModalView(
                             genresToFilter: homeVM
-                                .convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
-                            .presentationDetents([.large])
-                            .presentationDragIndicator(.visible)
+                                .convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter)
+                        )
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
                     }
                     .submitLabel(.search)
                     .onReceive(textObserver.$debouncedText) { val in
@@ -235,7 +236,8 @@ extension View {
                 NotificationCenter
                     .default
                     .publisher(for: UIResponder.keyboardWillHideNotification)
-                    .map { _ in false })
+                    .map { _ in false }
+            )
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
     }

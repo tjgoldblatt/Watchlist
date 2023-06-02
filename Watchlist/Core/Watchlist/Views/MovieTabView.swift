@@ -118,13 +118,21 @@ extension MovieTabView {
                     } label: {
                         if vm.editMode == .active {
                             Image(systemName: "checkmark.circle.fill")
-                                .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "edit", in: animation))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.clear)
+                                        .matchedGeometryEffect(id: "edit", in: animation)
+                                )
                                 .font(.headline)
                                 .foregroundColor(Color.theme.red)
 
                         } else {
                             Image(systemName: "checklist")
-                                .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "edit", in: animation))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.clear)
+                                        .matchedGeometryEffect(id: "edit", in: animation)
+                                )
                                 .font(.headline)
                                 .foregroundColor(Color.theme.red)
                         }
@@ -173,8 +181,8 @@ extension MovieTabView {
         }
         .confirmationDialog(
             "Are you sure you'd like to delete from your Watchlist?",
-            isPresented: $vm.deleteConfirmationShowing)
-        {
+            isPresented: $vm.deleteConfirmationShowing
+        ) {
             Button("Cancel", role: .cancel) { }
                 .buttonStyle(.plain)
 
@@ -217,16 +225,17 @@ extension MovieTabView {
                     .foregroundColor(
                         homeVM.selectedWatchOption == watchOption
                             ? Color.theme.genreText
-                            : Color.theme.red.opacity(0.6))
-                        .onTapGesture {
-                            if homeVM.selectedWatchOption != watchOption {
-                                withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.75)) {
-                                    AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
-                                    homeVM.selectedWatchOption = watchOption
-                                    vm.filterText = ""
-                                }
+                            : Color.theme.red.opacity(0.6)
+                    )
+                    .onTapGesture {
+                        if homeVM.selectedWatchOption != watchOption {
+                            withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.75)) {
+                                AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
+                                homeVM.selectedWatchOption = watchOption
+                                vm.filterText = ""
                             }
                         }
+                    }
             }
         }
         .dynamicTypeSize(.medium ... .xLarge)

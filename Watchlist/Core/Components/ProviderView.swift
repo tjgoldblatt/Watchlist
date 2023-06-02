@@ -74,7 +74,8 @@ struct SFSafariViewWrapper: UIViewControllerRepresentable {
 
     func updateUIViewController(
         _: SFSafariViewController,
-        context _: UIViewControllerRepresentableContext<SFSafariViewWrapper>) { }
+        context _: UIViewControllerRepresentableContext<SFSafariViewWrapper>
+    ) { }
 }
 
 extension String {
@@ -92,7 +93,8 @@ struct ProviderView_Previews: PreviewProvider {
         logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
         providerID: 8,
         providerName: "Cinemax Amazon Channel",
-        displayPriority: 0)
+        displayPriority: 0
+    )
 
     static var providers: [Provider] = {
         var arr: [Provider] = []
@@ -102,7 +104,8 @@ struct ProviderView_Previews: PreviewProvider {
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0))
+                    displayPriority: 0
+                ))
         }
         return arr
     }()

@@ -43,7 +43,9 @@ struct MediaModalView: View {
         self.size = size
         self.safeArea = safeArea
         self.friendName = friendName
-        _vm = forPreview ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true, media: media)) : StateObject(wrappedValue: MediaModalViewModel(media: media))
+        _vm = forPreview
+            ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true, media: media))
+            : StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
 
     // MARK: - Body
@@ -144,7 +146,8 @@ struct MediaModalView: View {
                             Task {
                                 try await WatchlistManager.shared.setPersonalRatingForMedia(
                                     media: vm.media,
-                                    personalRating: nil)
+                                    personalRating: nil
+                                )
                                 try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
 
                                 withAnimation(.easeInOut) {
@@ -267,7 +270,11 @@ extension MediaModalView {
                             .imageScale(.large)
                     } else {
                         Image(systemName: "checkmark.circle")
-                            .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
+                            .foregroundColor(
+                                isInMedia(media: vm.media) && friendName == nil
+                                    ? Color.theme.red
+                                    : Color.theme.secondary
+                            )
                             .imageScale(.large)
                     }
                 }
@@ -454,7 +461,8 @@ extension MediaModalView {
                     }
                 }
                 .buttonStyle(.plain)
-            })
+            }
+        )
         .frame(width: 100, alignment: .center)
     }
 

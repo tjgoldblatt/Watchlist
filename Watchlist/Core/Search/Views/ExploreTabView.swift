@@ -114,7 +114,8 @@ extension ExploreTabView {
                 .scrollContentBackground(.hidden)
                 .scrollIndicators(.hidden)
                 .listStyle(.plain)
-                .scrollDismissesKeyboard(.immediately))
+                .scrollDismissesKeyboard(.immediately)
+            )
         } else {
             return AnyView(ProgressView())
         }

@@ -31,9 +31,11 @@ enum MockService {
                 genreIDS: [18],
                 firstAirDate: "2010-09-24",
                 name: nil,
-                title: "The Social Network"),
+                title: "The Social Network"
+            ),
             watched: true,
-            personalRating: 9)
+            personalRating: 9
+        )
     }
 
     static var mockMovie_2: DBMedia {
@@ -50,9 +52,11 @@ enum MockService {
                 backdropPath: "/hg0MTIFs49ef179C9Y1HRtzqbbK.jpg",
                 genreIDS: [18, 53, 10752],
                 releaseDate: "2009-08-19",
-                title: "Inglourious Basterds"),
+                title: "Inglourious Basterds"
+            ),
             watched: false,
-            personalRating: nil)
+            personalRating: nil
+        )
     }
 
     static var mockTV_1: DBMedia {
@@ -69,9 +73,11 @@ enum MockService {
                 backdropPath: "/6LWy0jvMpmjoS9fojNgHIKoWL05.jpg",
                 genreIDS: [10765, 18, 10759],
                 firstAirDate: "2011-04-17",
-                name: "Game of Thrones"),
+                name: "Game of Thrones"
+            ),
             watched: false,
-            personalRating: nil)
+            personalRating: nil
+        )
     }
 
     static var mockTV_2: DBMedia {
@@ -88,8 +94,10 @@ enum MockService {
                 backdropPath: "/oggnxmvofLtGQvXsO9bAFyCj3p6.jpg",
                 genreIDS: [80, 18],
                 firstAirDate: "2002-06-02",
-                name: "The Wire"),
+                name: "The Wire"
+            ),
             watched: true,
-            personalRating: 9)
+            personalRating: 9
+        )
     }
 }

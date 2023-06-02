@@ -104,8 +104,8 @@ final class SignInWithAppleHelper: NSObject {
 extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
     func authorizationController(
         controller _: ASAuthorizationController,
-        didCompleteWithAuthorization authorization: ASAuthorization)
-    {
+        didCompleteWithAuthorization authorization: ASAuthorization
+    ) {
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
               let nonce = currentNonce,
               let appleIDToken = appleIDCredential.identityToken,
@@ -129,9 +129,12 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
     }
 
     func authorizationController(controller _: ASAuthorizationController, didCompleteWithError error: Error) {
-        completitionHandler?(.failure(
-            FirebaseError
-                .signInWithApple(debugDescription: error.localizedDescription.debugDescription)))
+        completitionHandler?(
+            .failure(
+                FirebaseError
+                    .signInWithApple(debugDescription: error.localizedDescription.debugDescription)
+            )
+        )
     }
 }
 

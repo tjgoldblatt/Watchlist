@@ -28,8 +28,8 @@ struct AuthDataResultModel {
         email: String? = nil,
         photoUrl: String? = nil,
         displayName: String? = nil,
-        isAnonymous: Bool = false)
-    {
+        isAnonymous: Bool = false
+    ) {
         self.uid = uid
         self.email = email
         self.photoUrl = photoUrl
@@ -114,7 +114,8 @@ extension AuthenticationManager {
         let credential = OAuthProvider.credential(
             withProviderID: AuthProviderOption.apple.rawValue,
             idToken: tokens.token,
-            rawNonce: tokens.nonce)
+            rawNonce: tokens.nonce
+        )
         return try await signIn(authCredential: credential)
     }
 
@@ -137,7 +138,8 @@ extension AuthenticationManager {
         let credential = OAuthProvider.credential(
             withProviderID: AuthProviderOption.apple.rawValue,
             idToken: tokens.token,
-            rawNonce: tokens.nonce)
+            rawNonce: tokens.nonce
+        )
         AnalyticsManager.shared.logEvent(name: "LinkAppleAccount")
         return try await linkCredential(credential: credential)
     }
