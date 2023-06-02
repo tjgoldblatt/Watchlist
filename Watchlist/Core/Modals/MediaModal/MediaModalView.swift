@@ -494,7 +494,7 @@ struct ExpandableText: View {
     let lineLimit: Int
 
     @State private var isExpanded: Bool = false
-    @State private var isTruncated: Bool? = nil
+    @State private var isTruncated: Bool?
     @Namespace private var animation
 
     var body: some View {

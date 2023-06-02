@@ -23,7 +23,7 @@ struct SearchBarView: View {
         return homeVM.selectedTab.searchTextLabel
     }
 
-    var queryToCallWhenTyping: (() -> Void)? = nil
+    var queryToCallWhenTyping: (() -> Void)?
 
     var mediaListWithFilter: [DBMedia] {
         var mediaList: Set<DBMedia> = []

@@ -203,7 +203,7 @@ struct ExploreThumbnailView: View {
     var title: String
     var mediaArray: [DBMedia]
 
-    @State var selectedMedia: DBMedia? = nil
+    @State var selectedMedia: DBMedia?
 
     var body: some View {
         VStack {
@@ -232,7 +232,7 @@ struct ExploreThumbnailView: View {
                                             Circle()
                                                 .fill(Color.theme.background)
                                                 .frame(width: 27, height: 27)
-                                            
+
                                             Image(systemName: "checkmark.circle.fill")
                                                 .resizable()
                                                 .scaledToFit()
@@ -266,7 +266,7 @@ struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
         ExploreTabView(homeVM: dev.homeVM)
             .environmentObject(dev.homeVM)
-        
+
         ExploreThumbnailView(title: "", mediaArray: dev.mediaMock)
             .previewLayout(.sizeThatFits)
             .padding()

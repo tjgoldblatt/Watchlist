@@ -25,7 +25,7 @@ final class SocialViewModel: ObservableObject {
     @Published var usersWithFriendRequest: [DBUser] = []
 
     /// Watchlist Listener
-    private var userListener: ListenerRegistration? = nil
+    private var userListener: ListenerRegistration?
 
     /// Cancellables
     private var cancellables = Set<AnyCancellable>()

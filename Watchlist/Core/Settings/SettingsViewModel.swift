@@ -11,7 +11,7 @@ import Foundation
 @MainActor
 final class SettingsViewModel: ObservableObject {
     @Published var authProviders: [AuthProviderOption] = []
-    @Published var authUser: AuthDataResultModel? = nil
+    @Published var authUser: AuthDataResultModel?
 
     init() {
         loadAuthUser()

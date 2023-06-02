@@ -57,7 +57,7 @@ final class HomeViewModel: ObservableObject {
     @Published var deepLinkURL: URL?
 
     /// Watchlist Listener
-    private var userWatchlistListener: ListenerRegistration? = nil
+    private var userWatchlistListener: ListenerRegistration?
 
     /// Cancellables
     private var cancellables = Set<AnyCancellable>()
