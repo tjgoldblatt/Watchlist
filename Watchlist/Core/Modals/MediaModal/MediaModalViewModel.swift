@@ -50,7 +50,11 @@ final class MediaModalViewModel: ObservableObject {
                     media = updatedDBMedia
 
                     Task {
-                        try await WatchlistManager.shared.updateMediaInWatchlist(media: self.media)
+                        do {
+                            try await WatchlistManager.shared.updateMediaInWatchlist(media: self.media)
+                        } catch {
+                            CrashlyticsManager.handleError(error: error)
+                        }
                     }
                 }
                 .store(in: &cancellables)
@@ -88,8 +92,8 @@ final class MediaModalViewModel: ObservableObject {
 }
 
 extension MediaModalViewModel {
-    convenience init(forPreview: Bool = false) {
-        self.init(media: DBMedia.sampleMovie)
+    convenience init(forPreview: Bool = false, media: DBMedia) {
+        self.init(media: media)
 
         if ApplicationHelper.isDebug, forPreview {
             countryProvider = Country(
@@ -98,27 +102,33 @@ extension MediaModalViewModel {
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)],
+                    displayPriority: 0
+                )],
                 rent: [Provider(
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)],
+                    displayPriority: 0
+                )],
                 ads: [Provider(
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)],
+                    displayPriority: 0
+                )],
                 flatrate: [Provider(
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)],
+                    displayPriority: 0
+                )],
                 free: [Provider(
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)])
+                    displayPriority: 0
+                )]
+            )
         }
     }
 }

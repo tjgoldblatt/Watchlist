@@ -23,21 +23,25 @@ struct StarRatingView: View {
                     .font(.caption)
                     .fontWeight(.light)
                     .fixedSize(horizontal: true, vertical: false)
+                    .foregroundColor(Color.theme.text)
 
                 HStack(spacing: 2) {
                     Image(systemName: "star.fill")
                         .foregroundColor(Color.theme.red)
                         .imageScale(.small)
 
-                    Text(ratingAsString)
-                        .font(.system(size: size, design: .default))
-                        .fontWeight(.medium)
-                    Text("/")
-                        .font(.system(size: size - 2, design: .default))
-                        .fontWeight(.light)
-                    Text("10")
-                        .font(.system(size: size - 2, design: .default))
-                        .fontWeight(.light)
+                    Group {
+                        Text(ratingAsString)
+                            .font(.system(size: size, design: .default))
+                            .fontWeight(.medium)
+                        Text("/")
+                            .font(.system(size: size - 2, design: .default))
+                            .fontWeight(.light)
+                        Text("10")
+                            .font(.system(size: size - 2, design: .default))
+                            .fontWeight(.light)
+                    }
+                    .foregroundColor(Color.theme.text)
                 }
                 .fixedSize(horizontal: true, vertical: false)
             }
@@ -54,6 +58,6 @@ struct StarRatingView: View {
 
 struct StarRatingView_Previews: PreviewProvider {
     static var previews: some View {
-        StarRatingView(text: "YOUR RATING", rating: 0)
+        StarRatingView(text: "YOUR RATING", rating: 2)
     }
 }

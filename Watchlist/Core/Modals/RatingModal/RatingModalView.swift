@@ -94,7 +94,8 @@ struct RatingModalView: View {
                             Task {
                                 try await WatchlistManager.shared.setPersonalRatingForMedia(
                                     media: media,
-                                    personalRating: Double(rating))
+                                    personalRating: Double(rating)
+                                )
 
                                 try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
 
@@ -120,7 +121,7 @@ struct RatingModalView: View {
                 .padding(.bottom)
             }
             .frame(maxWidth: geo.size.width, maxHeight: .infinity)
-            .overlay(alignment: .topLeading) {
+            .overlay(alignment: .topTrailing) {
                 CloseButton()
                     .padding(10)
                     .padding()
@@ -148,10 +149,9 @@ struct CloseButton: View {
         Image(systemName: "xmark.circle.fill")
             .resizable()
             .scaledToFit()
-            .frame(width: 25, height: 25)
+            .frame(width: 30, height: 30)
             .foregroundStyle(Color.theme.text, Color.theme.background)
             .fontWeight(.semibold)
-            .shadow(color: Color.black.opacity(0.4), radius: 2)
             .accessibility(label: Text("Close"))
             .accessibility(hint: Text("Tap to close the screen"))
             .accessibility(addTraits: .isButton)

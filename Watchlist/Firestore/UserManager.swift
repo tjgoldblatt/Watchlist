@@ -57,7 +57,7 @@ final class UserManager {
     /// - Parameter displayName: The new display name.
     func updateDisplayNameForUser(displayName: String) async throws {
         let data: [String: Any] = [
-            DBUser.CodingKeys.displayName.rawValue: displayName,
+            DBUser.CodingKeys.displayName.rawValue: displayName.capitalized,
         ]
 
         try await userDocument().updateData(data)

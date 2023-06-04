@@ -33,8 +33,8 @@ final class FriendWatchlistViewModel: ObservableObject {
     convenience init(forPreview: Bool = false) {
         self.init(userId: "abcd")
         if ApplicationHelper.isDebug, forPreview {
-            movieList = [DBMedia.sampleMovie, DBMedia.sampleMovie, DBMedia.sampleMovie, DBMedia.sampleMovie]
-            tvList = [DBMedia.sampleTV, DBMedia.sampleTV, DBMedia.sampleTV, DBMedia.sampleTV]
+            movieList = MockService.mockMovieList
+            tvList = MockService.mockTVList
         }
     }
 }

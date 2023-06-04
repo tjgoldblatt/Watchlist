@@ -6,7 +6,7 @@
 --binarygrouping 4,8
 --categorymark "MARK: %c"
 --classthreshold 0
---closingparen same-line
+--closingparen balanced
 --closurevoid remove
 --commas always
 --conflictmarkers reject
@@ -71,13 +71,13 @@
 --voidtype void
 --wraparguments before-first
 --wrapcollections before-first
---wrapconditions after-first
+--wrapconditions default
 --wrapeffects if-multiline
 --wrapenumcases always
 --wrapparameters before-first
 --wrapreturntype if-multiline
 --wrapternary before-operators
---wraptypealiases before-first
+--wraptypealiases default
 --xcodeindentation enabled
 --yodaswap always
 --disable hoistAwait,initCoderUnavailable,linebreakAtEndOfFile,redundantReturn

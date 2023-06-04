@@ -50,7 +50,10 @@ struct ExploreRowView: View {
                 media = updatedMedia
             }
         }, content: {
-            MediaModalView(media: media)
+            GeometryReader { proxy in
+                MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
         })
         .onAppear {
             Task {
@@ -128,10 +131,8 @@ extension ExploreRowView {
 
     func isInMedia(media: DBMedia) -> Bool {
         let mediaList = homeVM.movieList + homeVM.tvList
-        for homeMedia in mediaList {
-            if homeMedia.id == media.id {
-                return true
-            }
+        for homeMedia in mediaList where homeMedia.id == media.id {
+            return true
         }
         return false
     }

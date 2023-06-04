@@ -26,7 +26,7 @@ struct RootView: View {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
             vm.showSignInView = authUser == nil
         }
-        .fullScreenCover(isPresented: $vm.showSignInView, onDismiss: {
+        .fullScreenCover(isPresented: $vm.showSignInView) {
             vm.selectedTab = .movies
             Task {
                 let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
@@ -37,7 +37,7 @@ struct RootView: View {
                     }
                 }
             }
-        }) {
+        } content: {
             NavigationStack {
                 SignInView(showSignInView: $vm.showSignInView)
                     .environmentObject(authVM)

@@ -79,7 +79,8 @@ struct TVDetails: Codable {
             firstAirDate: firstAirDate,
             originCountry: originCountry,
             originalLanguage: originalLanguage,
-            name: name)
+            name: name
+        )
 
         do {
             return try DBMedia(media: media, watched: dbMedia.watched, personalRating: dbMedia.personalRating)

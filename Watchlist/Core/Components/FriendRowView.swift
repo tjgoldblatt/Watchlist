@@ -27,12 +27,18 @@ struct FriendRowView: View {
                 ThumbnailView(imagePath: posterPath)
                     .overlay(alignment: .topTrailing) {
                         if homeVM.isMediaIDInWatchlist(for: media.id) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 20)
-                                .foregroundStyle(Color.theme.genreText, Color.theme.red)
-                                .offset(x: -10, y: 5)
+                            ZStack {
+                                Circle()
+                                    .fill(Color.theme.background)
+                                    .frame(width: 27, height: 27)
+
+                                Image(systemName: "checkmark.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 20)
+                                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                            }
+                            .offset(y: -5)
                         }
                     }
             }
@@ -48,7 +54,10 @@ struct FriendRowView: View {
             showingSheet = true
         }
         .sheet(isPresented: $showingSheet) {
-            MediaModalView(media: media, friendName: friendName)
+            GeometryReader { proxy in
+                MediaModalView(media: media, friendName: friendName, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
         }
         .swipeActions(edge: .trailing) {
             if !homeVM.isMediaIDInWatchlist(for: media.id) {
@@ -81,10 +90,18 @@ extension FriendRowView {
                 .lineLimit(3)
 
             if let genres = getGenres(genreIDs: media.genreIDs) {
-                ScrollView(.horizontal, showsIndicators: false) {
+                ViewThatFits {
                     HStack {
                         ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
                             if idx < 2 {
+                                GenreView(genreName: genre.name)
+                            }
+                        }
+                    }
+
+                    HStack {
+                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
+                            if idx < 1 {
                                 GenreView(genreName: genre.name)
                             }
                         }

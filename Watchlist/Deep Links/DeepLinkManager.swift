@@ -16,9 +16,9 @@ enum DeepLinkURLs: String {
 enum DeepLinkManager {
     static func parse(
         from url: URL,
-        homeVM: HomeViewModel)
-        async -> DBMedia?
-    {
+        homeVM: HomeViewModel
+    )
+    async -> DBMedia? {
         guard let host = url.host() else { return nil }
 
         switch DeepLinkURLs(rawValue: host) {
@@ -108,7 +108,8 @@ extension DeepLinkManager {
             firstAirDate: queryParams["firstAirDate"],
             name: queryParams["name"],
             releaseDate: queryParams["releaseDate"],
-            title: queryParams["title"])
+            title: queryParams["title"]
+        )
     }
 }
 

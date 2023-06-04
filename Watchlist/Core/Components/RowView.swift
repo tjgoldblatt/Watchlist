@@ -22,34 +22,40 @@ struct RowView: View {
     @State private var showRatingSheet = false
 
     var body: some View {
-        HStack(alignment: .center) {
-            if let posterPath = media.posterPath {
-                ThumbnailView(imagePath: posterPath)
+        Button {
+            withAnimation {
+                showingSheet = true
             }
+        } label: {
+            HStack(alignment: .center) {
+                if let posterPath = media.posterPath {
+                    ThumbnailView(imagePath: posterPath)
+                }
 
-            centerColumn
+                centerColumn
 
-            rightColumn
+                rightColumn
+            }
+            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
+            .accessibilityIdentifier("RowView")
+            .contentShape(Rectangle())
         }
-        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
-        .accessibilityIdentifier("RowView")
-        .contentShape(Rectangle())
-        .sheet(isPresented: $showRatingSheet, onDismiss: {
+        .sheet(isPresented: $showRatingSheet) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia
             }
-        }) {
+        } content: {
             RatingModalView(media: media)
         }
-        .onTapGesture {
-            showingSheet = true
-        }
-        .sheet(isPresented: $showingSheet, onDismiss: {
+        .sheet(isPresented: $showingSheet) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia
             }
-        }) {
-            MediaModalView(media: media)
+        } content: {
+            GeometryReader { proxy in
+                MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
         }
         .swipeActions(edge: .trailing) {
             if !isWatched {
@@ -74,14 +80,6 @@ struct RowView: View {
     }
 }
 
-struct RowView_Previews: PreviewProvider {
-    static var previews: some View {
-        RowView(media: dev.mediaMock.first!)
-            .previewLayout(.sizeThatFits)
-            .environmentObject(dev.homeVM)
-    }
-}
-
 extension RowView {
     var centerColumn: some View {
         VStack(alignment: .leading) {
@@ -91,10 +89,11 @@ extension RowView {
                     .fontWeight(.bold)
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color.theme.text)
-                    .lineLimit(2)
+                    .lineLimit(1)
                     .frame(alignment: .top)
                     .padding(.bottom, 1)
             }
+
             Text(media.overview ?? "")
                 .font(.system(.caption, design: .default))
                 .fixedSize(horizontal: false, vertical: true)
@@ -103,7 +102,7 @@ extension RowView {
                 .lineLimit(3)
 
             if let genres = getGenres(genreIDs: media.genreIDs) {
-                ScrollView(.horizontal, showsIndicators: false) {
+                ViewThatFits {
                     HStack {
                         ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
                             if idx < 2 {
@@ -111,26 +110,31 @@ extension RowView {
                             }
                         }
                     }
+
+                    HStack {
+                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
+                            if idx < 1 {
+                                GenreView(genreName: genre.name)
+                            }
+                        }
+                    }
                 }
+                .frame(maxHeight: .infinity, alignment: .bottom)
             }
         }
+        .multilineTextAlignment(.leading)
+        .frame(maxHeight: 110, alignment: .top)
         .frame(minWidth: 50)
     }
 
     var rightColumn: some View {
-        VStack(spacing: 10) {
+        VStack(alignment: .center, spacing: 20) {
             if let voteAverage = media.voteAverage {
                 StarRatingView(text: "IMDb RATING", rating: voteAverage)
             }
 
             if let rating = media.personalRating {
                 StarRatingView(text: "YOUR RATING", rating: rating)
-            }
-
-            if media.watched {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(Color.theme.red)
-                    .imageScale(.large)
             }
         }
     }
@@ -168,7 +172,8 @@ struct ThumbnailView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .clipShape(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    )
             } else {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundColor(Color.theme.secondary)
@@ -182,7 +187,15 @@ struct ThumbnailView: View {
             }
         }
         .frame(width: frameWidth, height: frameHeight)
-        .shadow(color: Color.black.opacity(0.2), radius: 5)
         .padding(.trailing, 5)
+    }
+}
+
+struct RowView_Previews: PreviewProvider {
+    static var previews: some View {
+        RowView(media: dev.mediaMock[1])
+            .previewLayout(.sizeThatFits)
+            .environmentObject(dev.homeVM)
+            .padding()
     }
 }

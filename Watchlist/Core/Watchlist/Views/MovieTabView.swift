@@ -93,7 +93,7 @@ extension MovieTabView {
                     .listRowBackground(Color.theme.background)
             }
             .id(vm.emptyViewID)
-            .onChange(of: homeVM.watchSelected) { _ in
+            .onChange(of: homeVM.selectedWatchOption) { _ in
                 if sortedSearchResults.count > 3 {
                     scrollProxy.scrollTo(vm.emptyViewID, anchor: .top)
                 }
@@ -103,43 +103,62 @@ extension MovieTabView {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !sortedSearchResults.isEmpty {
-                    Button(vm.editMode == .active ? "Done" : "Edit") {
+                    Button {
                         if vm.editMode == .active {
-                            withAnimation(.spring()) {
+                            withAnimation(.default) {
                                 vm.editMode = .inactive
                                 homeVM.editMode = .inactive
                             }
                         } else {
-                            withAnimation(.spring()) {
+                            withAnimation(.default) {
                                 vm.editMode = .active
                                 homeVM.editMode = .active
                             }
                         }
+                    } label: {
+                        if vm.editMode == .active {
+                            Image(systemName: "checkmark.circle.fill")
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.clear)
+                                        .matchedGeometryEffect(id: "edit", in: animation)
+                                )
+                                .font(.headline)
+                                .foregroundColor(Color.theme.red)
+
+                        } else {
+                            Image(systemName: "checklist")
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.clear)
+                                        .matchedGeometryEffect(id: "edit", in: animation)
+                                )
+                                .font(.headline)
+                                .foregroundColor(Color.theme.red)
+                        }
                     }
-                    .foregroundColor(Color.theme.red)
-                    .padding()
-                    .contentShape(Rectangle())
-                    .buttonStyle(.plain)
                 }
             }
 
             if !watchedSelectedRows.isEmpty, vm.editMode == .active {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Reset")
-                        .font(.body)
-                        .foregroundColor(Color.theme.red)
-                        .padding()
-                        .onTapGesture {
-                            AnalyticsManager.shared.logEvent(name: "MovieTabView_ResetMedia")
-                            Task {
-                                for watchedSelectedRow in watchedSelectedRows {
-                                    try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
-                                }
+                    Button {
+                        AnalyticsManager.shared.logEvent(name: "MovieTabView_ResetMedia")
+                        Task {
+                            for watchedSelectedRow in watchedSelectedRows {
+                                try await WatchlistManager.shared.resetMedia(media: watchedSelectedRow)
+                            }
+                            withAnimation(.default) {
                                 vm.selectedRows = []
                                 vm.editMode = .inactive
                                 homeVM.editMode = .inactive
                             }
                         }
+                    } label: {
+                        Image(systemName: "arrow.counterclockwise.circle")
+                            .font(.headline)
+                            .foregroundColor(Color.theme.red)
+                    }
                 }
             }
         }
@@ -162,8 +181,8 @@ extension MovieTabView {
         }
         .confirmationDialog(
             "Are you sure you'd like to delete from your Watchlist?",
-            isPresented: $vm.deleteConfirmationShowing)
-        {
+            isPresented: $vm.deleteConfirmationShowing
+        ) {
             Button("Cancel", role: .cancel) { }
                 .buttonStyle(.plain)
 
@@ -194,7 +213,7 @@ extension MovieTabView {
                     .fontWeight(.semibold)
                     .frame(width: 110, height: 30)
                     .background {
-                        if homeVM.watchSelected == watchOption {
+                        if homeVM.selectedWatchOption == watchOption {
                             Capsule()
                                 .fill(Color.theme.red)
                                 .matchedGeometryEffect(id: "ACTIVE_OPTION", in: animation)
@@ -203,12 +222,16 @@ extension MovieTabView {
                                 .fill(Color.theme.secondary.opacity(0.6))
                         }
                     }
-                    .foregroundColor(homeVM.watchSelected == watchOption ? Color.theme.genreText : Color.theme.red.opacity(0.6))
+                    .foregroundColor(
+                        homeVM.selectedWatchOption == watchOption
+                            ? Color.theme.genreText
+                            : Color.theme.red.opacity(0.6)
+                    )
                     .onTapGesture {
-                        if homeVM.watchSelected != watchOption {
+                        if homeVM.selectedWatchOption != watchOption {
                             withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.75)) {
                                 AnalyticsManager.shared.logEvent(name: "MovieTabView_\(watchOption.rawValue)_Tapped")
-                                homeVM.watchSelected = watchOption
+                                homeVM.selectedWatchOption = watchOption
                                 vm.filterText = ""
                             }
                         }
@@ -221,13 +244,13 @@ extension MovieTabView {
 
     var searchResults: [DBMedia] {
         let groupedMedia = homeVM.movieList.filter { !$0.watched }
-        if homeVM.watchSelected != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+        if homeVM.selectedWatchOption != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = homeVM.movieList.sorted(by: { !$0.watched && $1.watched })
 
             /// Watched Filter
-            if homeVM.watchSelected == .watched {
+            if homeVM.selectedWatchOption == .watched {
                 filteredMedia = filteredMedia.filter(\.watched)
-            } else if homeVM.watchSelected == .any {
+            } else if homeVM.selectedWatchOption == .any {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
             } else {
                 filteredMedia = groupedMedia
@@ -270,7 +293,7 @@ extension MovieTabView {
 
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
-            switch homeVM.sortingSelected {
+            switch homeVM.selectedSortingOption {
                 case .alphabetical:
                     if let title1 = media1.title, let title2 = media2.title {
                         return title1 < title2

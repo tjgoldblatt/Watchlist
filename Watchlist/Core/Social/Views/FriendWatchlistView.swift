@@ -14,7 +14,7 @@ struct FriendWatchlistView: View {
 
     var options: [Tab] = [.movies, .tvShows]
     @State private var selectedOption: Tab = .movies
-    @State private var selectedSorting: SortingOptions = .alphabetical
+    @State private var selectedSorting: SortingOptions = .personalRating
 
     @State private var filterText: String = ""
 
@@ -55,7 +55,11 @@ struct FriendWatchlistView: View {
                                     selectedSorting = options
                                 }
                             } label: {
-                                Text(options.rawValue)
+                                if selectedSorting == options {
+                                    Label(options.rawValue, systemImage: "checkmark")
+                                } else {
+                                    Text(options.rawValue)
+                                }
                             }
                         }
                     } label: {

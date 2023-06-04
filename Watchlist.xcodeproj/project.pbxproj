@@ -12,6 +12,7 @@
 		320FB74729FB568600CA9310 /* AddFriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320FB74629FB568600CA9310 /* AddFriendsView.swift */; };
 		320FB74929FBF10100CA9310 /* SocialTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320FB74829FBF10100CA9310 /* SocialTabView.swift */; };
 		322411FB2A14406D0056A907 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322411FA2A14406D0056A907 /* StoreKit.framework */; };
+		32245BCD2A1F8E36000BCE6E /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32245BCC2A1F8E36000BCE6E /* MockService.swift */; };
 		32246F4029D9ECBD002EDFC9 /* FilterOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */; };
 		3224E7D02A0D7913002B9428 /* WatchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3224E7CF2A0D7913002B9428 /* WatchProvider.swift */; };
 		3224E7D22A0D97B9002B9428 /* ProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3224E7D12A0D97B8002B9428 /* ProviderView.swift */; };
@@ -120,6 +121,7 @@
 		320FB74629FB568600CA9310 /* AddFriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendsView.swift; sourceTree = "<group>"; };
 		320FB74829FBF10100CA9310 /* SocialTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialTabView.swift; sourceTree = "<group>"; };
 		322411FA2A14406D0056A907 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		32245BCC2A1F8E36000BCE6E /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
 		32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptions.swift; sourceTree = "<group>"; };
 		3224E7CF2A0D7913002B9428 /* WatchProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchProvider.swift; sourceTree = "<group>"; };
 		3224E7D12A0D97B8002B9428 /* ProviderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderView.swift; sourceTree = "<group>"; };
@@ -237,6 +239,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		32245BCB2A1F8E21000BCE6E /* Mock Data */ = {
+			isa = PBXGroup;
+			children = (
+				32245BCC2A1F8E36000BCE6E /* MockService.swift */,
+			);
+			path = "Mock Data";
+			sourceTree = "<group>";
+		};
 		322BF19829DC4CC300161820 /* MediaModal */ = {
 			isa = PBXGroup;
 			children = (
@@ -290,6 +300,7 @@
 				324BAE7429B8D86F002FBB6F /* Info.plist */,
 				324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */,
 				3258730E29BD24D3005E1394 /* Services */,
+				32245BCB2A1F8E21000BCE6E /* Mock Data */,
 				324BAE7F29B92057002FBB6F /* Utilities */,
 				324BAE8229BA559E002FBB6F /* Extensions */,
 				324BAE6D29B8D721002FBB6F /* Models */,
@@ -635,6 +646,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				324880492A298CDA0016AA1F /* PBXTargetDependency */,
 			);
 			name = Watchlist;
 			packageProductDependencies = (
@@ -728,6 +740,7 @@
 				32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				32B3E1BE29E60AE800314B4F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				32E1EF6A29F75CA900D3CDA7 /* XCRemoteSwiftPackageReference "Nuke" */,
+				324880472A298CC90016AA1F /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = 324BAE5D29B8D3D9002FBB6F /* Products */;
 			projectDirPath = "";
@@ -806,6 +819,7 @@
 				32952D9A29BB885E002B3596 /* View+EXT.swift in Sources */,
 				3283E40529D255CB0002490F /* ExploreRowView.swift in Sources */,
 				32B3E1CB29E60BF300314B4F /* SignInWithGoogleHelper.swift in Sources */,
+				32245BCD2A1F8E36000BCE6E /* MockService.swift in Sources */,
 				3258730B29BCF8DD005E1394 /* GenreView.swift in Sources */,
 				322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */,
 				32D04A082A02B57300A8A5A0 /* DBUser.swift in Sources */,
@@ -886,6 +900,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		324880492A298CDA0016AA1F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 324880482A298CDA0016AA1F /* SwiftLintPlugin */;
+		};
 		32A6995F29D4BCEE0026AC63 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 324BAE5B29B8D3D9002FBB6F /* Watchlist */;
@@ -1212,6 +1230,14 @@
 				kind = branch;
 			};
 		};
+		324880472A298CC90016AA1F /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.52.2;
+			};
+		};
 		32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -1239,6 +1265,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		324880482A298CDA0016AA1F /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 324880472A298CC90016AA1F /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintPlugin";
+		};
 		32B3E1B129E6098000314B4F /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

@@ -65,7 +65,8 @@ struct MovieDetails: Codable {
             adult: adult,
             releaseDate: releaseDate,
             title: title,
-            video: video)
+            video: video
+        )
 
         do {
             return try DBMedia(media: media, watched: dbMedia.watched, personalRating: dbMedia.personalRating)

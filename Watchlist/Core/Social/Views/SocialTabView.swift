@@ -36,19 +36,11 @@ struct SocialTabView: View {
 
                     if settingsVM.authUser?.isAnonymous == false {
                         if vm.isLoaded {
-                            if vm.friends.isEmpty, vm.friendRequests.isEmpty {
+                            if !vm.friends.isEmpty || !vm.friendRequests.isEmpty {
+                                SocialList()
+                            } else {
                                 SocialEmptyListView()
                                     .environmentObject(homeVM)
-                            } else {
-                                ScrollView {
-                                    if !vm.friendRequests.isEmpty {
-                                        friendRequests
-                                    }
-
-                                    if !vm.friends.isEmpty {
-                                        friends
-                                    }
-                                }
                             }
                         } else {
                             Spacer()
@@ -86,25 +78,28 @@ struct SocialTabView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Image(systemName: "gear")
-                        .font(.headline)
-                        .foregroundColor(Color.theme.red)
-                        .onTapGesture {
-                            withAnimation(.easeInOut) {
-                                showSettingsView.toggle()
-                            }
+                    Button {
+                        withAnimation(.easeInOut) {
+                            showSettingsView.toggle()
                         }
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .font(.headline)
+                            .foregroundColor(Color.theme.red)
+                    }
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Image(systemName: "plus")
-                        .font(.headline)
-                        .foregroundColor(Color.theme.red)
-                        .onTapGesture {
-                            withAnimation(.easeInOut) {
-                                showAddFriendsView.toggle()
-                            }
+                    Button {
+                        withAnimation(.easeInOut) {
+                            showAddFriendsView.toggle()
                         }
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.headline)
+                            .foregroundColor(Color.theme.red)
+                            .padding(.trailing)
+                    }
                 }
             }
             .sheet(isPresented: $showSettingsView) {
@@ -131,6 +126,19 @@ extension SocialTabView {
     private var header: some View {
         HeaderView(currentTab: .constant(.social), showIcon: true)
             .padding(.horizontal)
+    }
+
+    @ViewBuilder
+    func SocialList() -> some View {
+        ScrollView {
+            if !vm.friendRequests.isEmpty {
+                friendRequests
+            }
+
+            if !vm.friends.isEmpty {
+                friends
+            }
+        }
     }
 
     private var friendRequests: some View {

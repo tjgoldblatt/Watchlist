@@ -50,14 +50,14 @@ final class HomeViewModel: ObservableObject {
     /// To track filtering
     @Published var genresSelected: Set<Genre> = []
     @Published var ratingSelected: Int = 0
-    @Published var watchSelected: WatchOptions = .unwatched
-    @Published var sortingSelected: SortingOptions = .alphabetical
+    @Published var selectedWatchOption: WatchOptions = .unwatched
+    @Published var selectedSortingOption: SortingOptions = .personalRating
 
     /// Deep linking
     @Published var deepLinkURL: URL?
 
     /// Watchlist Listener
-    private var userWatchlistListener: ListenerRegistration? = nil
+    private var userWatchlistListener: ListenerRegistration?
 
     /// Cancellables
     private var cancellables = Set<AnyCancellable>()
@@ -67,10 +67,8 @@ final class HomeViewModel: ObservableObject {
     }
 
     func isMediaIDInWatchlist(for id: Int) -> Bool {
-        for watchlistMedia in tvList + movieList {
-            if watchlistMedia.id == id {
-                return true
-            }
+        for watchlistMedia in tvList + movieList where watchlistMedia.id == id {
+            return true
         }
         return false
     }
@@ -206,8 +204,8 @@ extension HomeViewModel {
         if ApplicationHelper.isDebug, forPreview {
             // Hard code your mock data for the preview here
             isMediaLoaded = true
-            movieList = [DBMedia.sampleMovie, DBMedia.sampleMovie, DBMedia.sampleMovie, DBMedia.sampleMovie]
-            tvList = [DBMedia.sampleTV, DBMedia.sampleTV, DBMedia.sampleTV, DBMedia.sampleTV]
+            movieList = MockService.mockMovieList
+            tvList = MockService.mockTVList
         }
     }
 }

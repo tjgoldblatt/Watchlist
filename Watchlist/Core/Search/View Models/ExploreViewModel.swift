@@ -131,7 +131,8 @@ final class ExploreViewModel: ObservableObject {
                 media: media,
                 mediaType: mediaType,
                 watched: false,
-                personalRating: nil)
+                personalRating: nil
+            )
         }
     }
 }

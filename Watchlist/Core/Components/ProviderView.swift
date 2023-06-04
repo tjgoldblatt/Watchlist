@@ -40,13 +40,13 @@ struct ProviderView: View {
                 VStack(alignment: .leading) {
                     if let name = provider.providerName {
                         Text(name.truncated(length: 10))
-                            .font(.subheadline)
+                            .font(.caption)
                             .foregroundColor(Color.theme.text)
                             .fontWeight(.medium)
                     }
 
                     Text(providerType.uppercased())
-                        .font(.caption2)
+                        .font(.system(size: 10))
                         .foregroundColor(Color.theme.text)
                         .fontWeight(.light)
                 }
@@ -74,7 +74,8 @@ struct SFSafariViewWrapper: UIViewControllerRepresentable {
 
     func updateUIViewController(
         _: SFSafariViewController,
-        context _: UIViewControllerRepresentableContext<SFSafariViewWrapper>) { }
+        context _: UIViewControllerRepresentableContext<SFSafariViewWrapper>
+    ) { }
 }
 
 extension String {
@@ -92,7 +93,8 @@ struct ProviderView_Previews: PreviewProvider {
         logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
         providerID: 8,
         providerName: "Cinemax Amazon Channel",
-        displayPriority: 0)
+        displayPriority: 0
+    )
 
     static var providers: [Provider] = {
         var arr: [Provider] = []
@@ -102,7 +104,8 @@ struct ProviderView_Previews: PreviewProvider {
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0))
+                    displayPriority: 0
+                ))
         }
         return arr
     }()

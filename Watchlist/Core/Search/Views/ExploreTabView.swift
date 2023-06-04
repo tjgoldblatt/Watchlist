@@ -56,7 +56,10 @@ struct ExploreTabView: View {
             }
             .sheet(isPresented: $showDeepLinkModal) {
                 if let deepLinkMedia {
-                    MediaModalView(media: deepLinkMedia)
+                    GeometryReader { proxy in
+                        MediaModalView(media: deepLinkMedia, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                            .ignoresSafeArea(.container, edges: .top)
+                    }
                 }
             }
             .onReceive(homeVM.$deepLinkURL) { url in
@@ -100,7 +103,7 @@ extension ExploreTabView {
             return AnyView(
                 List {
                     ForEach(sortedSearchResults, id: \.id) { media in
-                        if let _ = media.posterPath, let genreIds = media.genreIDs, !genreIds.isEmpty {
+                        if media.posterPath != nil, let genreIds = media.genreIDs, !genreIds.isEmpty {
                             ExploreRowView(media: media, currentTab: .explore)
                                 .listRowBackground(Color.theme.background)
                         }
@@ -111,7 +114,8 @@ extension ExploreTabView {
                 .scrollContentBackground(.hidden)
                 .scrollIndicators(.hidden)
                 .listStyle(.plain)
-                .scrollDismissesKeyboard(.immediately))
+                .scrollDismissesKeyboard(.immediately)
+            )
         } else {
             return AnyView(ProgressView())
         }
@@ -150,11 +154,11 @@ extension ExploreTabView {
 
     var sortedSearchResults: [DBMedia] {
         return searchResults.sorted { media1, media2 in
-            if homeVM.sortingSelected == .imdbRating {
+            if homeVM.selectedSortingOption == .imdbRating {
                 if let voteAverage1 = media1.voteAverage, let voteAverage2 = media2.voteAverage {
                     return voteAverage1 > voteAverage2
                 }
-            } else if homeVM.sortingSelected == .personalRating {
+            } else if homeVM.selectedSortingOption == .personalRating {
                 if let personalRating1 = media1.personalRating, let personalRating2 = media2.personalRating {
                     return personalRating1 > personalRating2
                 }
@@ -200,7 +204,7 @@ struct ExploreThumbnailView: View {
     var title: String
     var mediaArray: [DBMedia]
 
-    @State var selectedMedia: DBMedia? = nil
+    @State var selectedMedia: DBMedia?
 
     var body: some View {
         VStack {
@@ -222,27 +226,39 @@ struct ExploreThumbnailView: View {
                         if let posterPath = media.posterPath,
                            let overview = media.overview, !overview.isEmpty
                         {
-                            ThumbnailView(imagePath: posterPath)
-                                .overlay(alignment: .topTrailing) {
-                                    if homeVM.isMediaIDInWatchlist(for: media.id) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 20)
-                                            .foregroundStyle(Color.theme.genreText, Color.theme.red)
-                                            .offset(x: -15, y: 10)
+                            Button {
+                                selectedMedia = media
+                                showingSheet.toggle()
+                            } label: {
+                                ThumbnailView(imagePath: posterPath)
+                                    .overlay(alignment: .topTrailing) {
+                                        if homeVM.isMediaIDInWatchlist(for: media.id) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.theme.background)
+                                                    .frame(width: 27, height: 27)
+
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 20)
+                                                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                            }
+                                            .offset(y: -5)
+                                        }
                                     }
+                            }
+
+                            .sheet(item: $selectedMedia) { media in
+                                GeometryReader { proxy in
+                                    MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                                        .ignoresSafeArea(.container, edges: .top)
                                 }
-                                .onTapGesture {
-                                    selectedMedia = media
-                                    showingSheet.toggle()
-                                }
-                                .sheet(item: $selectedMedia) { media in
-                                    MediaModalView(media: media)
-                                }
+                            }
                         }
                     }
                 }
+                .padding(.top, 5)
             }
             .scrollDismissesKeyboard(.immediately)
         }
@@ -253,5 +269,9 @@ struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
         ExploreTabView(homeVM: dev.homeVM)
             .environmentObject(dev.homeVM)
+
+        ExploreThumbnailView(title: "", mediaArray: dev.mediaMock)
+            .previewLayout(.sizeThatFits)
+            .padding()
     }
 }
