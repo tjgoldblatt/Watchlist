@@ -43,7 +43,9 @@ struct MediaModalView: View {
         self.size = size
         self.safeArea = safeArea
         self.friendName = friendName
-        _vm = forPreview ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true, media: media)) : StateObject(wrappedValue: MediaModalViewModel(media: media))
+        _vm = forPreview
+            ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true, media: media))
+            : StateObject(wrappedValue: MediaModalViewModel(media: media))
     }
 
     // MARK: - Body
@@ -144,7 +146,8 @@ struct MediaModalView: View {
                             Task {
                                 try await WatchlistManager.shared.setPersonalRatingForMedia(
                                     media: vm.media,
-                                    personalRating: nil)
+                                    personalRating: nil
+                                )
                                 try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
 
                                 withAnimation(.easeInOut) {
@@ -267,7 +270,11 @@ extension MediaModalView {
                             .imageScale(.large)
                     } else {
                         Image(systemName: "checkmark.circle")
-                            .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
+                            .foregroundColor(
+                                isInMedia(media: vm.media) && friendName == nil
+                                    ? Color.theme.red
+                                    : Color.theme.secondary
+                            )
                             .imageScale(.large)
                     }
                 }
@@ -312,11 +319,11 @@ extension MediaModalView {
             }
             .animation(.spring(), value: vm.media.personalRating)
             .frame(minWidth: 110, maxWidth: .infinity)
-            .sheet(isPresented: $vm.showingRating, onDismiss: {
+            .sheet(isPresented: $vm.showingRating) {
                 if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
                     vm.media = updatedMedia
                 }
-            }) {
+            } content: {
                 RatingModalView(media: vm.media)
             }
         }
@@ -454,16 +461,15 @@ extension MediaModalView {
                     }
                 }
                 .buttonStyle(.plain)
-            })
+            }
+        )
         .frame(width: 100, alignment: .center)
     }
 
     func isInMedia(media: DBMedia) -> Bool {
         let mediaList = homeVM.movieList + homeVM.tvList
-        for homeMedia in mediaList {
-            if homeMedia.id == media.id {
-                return true
-            }
+        for homeMedia in mediaList where homeMedia.id == media.id {
+            return true
         }
         return false
     }
@@ -494,7 +500,7 @@ struct ExpandableText: View {
     let lineLimit: Int
 
     @State private var isExpanded: Bool = false
-    @State private var isTruncated: Bool? = nil
+    @State private var isTruncated: Bool?
     @Namespace private var animation
 
     var body: some View {

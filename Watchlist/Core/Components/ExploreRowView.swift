@@ -131,10 +131,8 @@ extension ExploreRowView {
 
     func isInMedia(media: DBMedia) -> Bool {
         let mediaList = homeVM.movieList + homeVM.tvList
-        for homeMedia in mediaList {
-            if homeMedia.id == media.id {
-                return true
-            }
+        for homeMedia in mediaList where homeMedia.id == media.id {
+            return true
         }
         return false
     }

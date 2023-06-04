@@ -39,8 +39,8 @@ struct DBUser: Codable, Hashable, Identifiable {
         dateCreated _: Date? = nil,
         displayName: String? = nil,
         friendRequests: [String]? = nil,
-        friends: [String]? = nil)
-    {
+        friends: [String]? = nil
+    ) {
         self.userId = userId
         self.isAnonymous = isAnonymous
         self.email = email

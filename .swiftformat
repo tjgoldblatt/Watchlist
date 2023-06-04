@@ -6,7 +6,7 @@
 --binarygrouping 4,8
 --categorymark "MARK: %c"
 --classthreshold 0
---closingparen same-line
+--closingparen balanced
 --closurevoid remove
 --commas always
 --conflictmarkers reject
@@ -40,7 +40,7 @@
 --markcategories true
 --markextensions always
 --marktypes always
---maxwidth none
+--maxwidth 130
 --modifierorder 
 --nevertrailing 
 --nospaceoperators 
@@ -69,12 +69,12 @@
 --typemark "MARK: - %t"
 --varattributes preserve
 --voidtype void
---wraparguments default
---wrapcollections default
+--wraparguments before-first
+--wrapcollections before-first
 --wrapconditions default
 --wrapeffects if-multiline
 --wrapenumcases always
---wrapparameters default
+--wrapparameters before-first
 --wrapreturntype if-multiline
 --wrapternary before-operators
 --wraptypealiases default

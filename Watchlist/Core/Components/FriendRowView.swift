@@ -27,12 +27,18 @@ struct FriendRowView: View {
                 ThumbnailView(imagePath: posterPath)
                     .overlay(alignment: .topTrailing) {
                         if homeVM.isMediaIDInWatchlist(for: media.id) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 20)
-                                .foregroundStyle(Color.theme.genreText, Color.theme.red)
-                                .offset(x: -10, y: 5)
+                            ZStack {
+                                Circle()
+                                    .fill(Color.theme.background)
+                                    .frame(width: 27, height: 27)
+
+                                Image(systemName: "checkmark.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 20)
+                                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                            }
+                            .offset(y: -5)
                         }
                     }
             }

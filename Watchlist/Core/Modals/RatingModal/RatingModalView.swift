@@ -94,7 +94,8 @@ struct RatingModalView: View {
                             Task {
                                 try await WatchlistManager.shared.setPersonalRatingForMedia(
                                     media: media,
-                                    personalRating: Double(rating))
+                                    personalRating: Double(rating)
+                                )
 
                                 try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
 

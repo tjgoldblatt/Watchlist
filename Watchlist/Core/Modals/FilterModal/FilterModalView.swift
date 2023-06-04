@@ -102,37 +102,38 @@ extension FilterModalView {
                 availableWidth: vm.screenWidth,
                 data: sortedGenreList(genresToFilter: genresToFilter),
                 spacing: 10,
-                alignment: .center)
-            { genreOption in
+                alignment: .center
+            ) { genreOption in
                 Text(genreOption.name)
                     .foregroundColor(
                         vm.genresSelected.contains(genreOption)
                             ? Color.theme.genreText
-                            : Color.theme.red.opacity(0.6))
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .fixedSize(horizontal: true, vertical: true)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal)
-                        .background {
-                            if vm.genresSelected.contains(genreOption) {
-                                Capsule()
-                                    .fill(Color.theme.red)
+                            : Color.theme.red.opacity(0.6)
+                    )
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .fixedSize(horizontal: true, vertical: true)
+                    .padding(.vertical, 5)
+                    .padding(.horizontal)
+                    .background {
+                        if vm.genresSelected.contains(genreOption) {
+                            Capsule()
+                                .fill(Color.theme.red)
+                        } else {
+                            Capsule()
+                                .fill(Color.theme.secondary.opacity(0.6))
+                        }
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            if !vm.genresSelected.contains(genreOption) {
+                                vm.genresSelected.insert(genreOption)
                             } else {
-                                Capsule()
-                                    .fill(Color.theme.secondary.opacity(0.6))
+                                vm.genresSelected.remove(genreOption)
                             }
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            withAnimation(.spring()) {
-                                if !vm.genresSelected.contains(genreOption) {
-                                    vm.genresSelected.insert(genreOption)
-                                } else {
-                                    vm.genresSelected.remove(genreOption)
-                                }
-                            }
-                        }
+                    }
             }
             .readSize { newSize in
                 DispatchQueue.main.async {
@@ -234,12 +235,12 @@ struct FlexibleView<Data: Collection, Content: View>: View where Data.Element: H
             if remainingWidth - (elementSize.width + spacing) >= 0 {
                 rows[currentRow].append(element)
             } else {
-                currentRow = currentRow + 1
+                currentRow += 1
                 rows.append([element])
                 remainingWidth = availableWidth
             }
 
-            remainingWidth = remainingWidth - (elementSize.width + spacing)
+            remainingWidth -= (elementSize.width + spacing)
         }
 
         return rows
@@ -252,8 +253,9 @@ extension View {
             GeometryReader { geometryProxy in
                 Color.clear
                     .preference(key: SizePreferenceKey.self, value: geometryProxy.size)
-            })
-            .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+            }
+        )
+        .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
     }
 }
 

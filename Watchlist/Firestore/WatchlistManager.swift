@@ -37,7 +37,8 @@ final class WatchlistManager {
         let watchlist = UserWatchlist(
             userId: authDataResult.uid,
             displayName: authDataResult.displayName,
-            lastUpdated: Timestamp())
+            lastUpdated: Timestamp()
+        )
         try watchlistDocument().setData(from: watchlist, merge: true)
     }
 

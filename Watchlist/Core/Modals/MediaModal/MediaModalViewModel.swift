@@ -102,27 +102,33 @@ extension MediaModalViewModel {
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)],
+                    displayPriority: 0
+                )],
                 rent: [Provider(
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)],
+                    displayPriority: 0
+                )],
                 ads: [Provider(
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)],
+                    displayPriority: 0
+                )],
                 flatrate: [Provider(
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)],
+                    displayPriority: 0
+                )],
                 free: [Provider(
                     logoPath: "/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg",
                     providerID: 8,
                     providerName: "Netflix",
-                    displayPriority: 0)])
+                    displayPriority: 0
+                )]
+            )
         }
     }
 }

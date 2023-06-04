@@ -23,7 +23,7 @@ struct SearchBarView: View {
         return homeVM.selectedTab.searchTextLabel
     }
 
-    var queryToCallWhenTyping: (() -> Void)? = nil
+    var queryToCallWhenTyping: (() -> Void)?
 
     var mediaListWithFilter: [DBMedia] {
         var mediaList: Set<DBMedia> = []
@@ -108,9 +108,10 @@ struct SearchBarView: View {
                     .popover(isPresented: $showFilterSheet) {
                         FilterModalView(
                             genresToFilter: homeVM
-                                .convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter))
-                            .presentationDetents([.large])
-                            .presentationDragIndicator(.visible)
+                                .convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter)
+                        )
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
                     }
                     .submitLabel(.search)
                     .onReceive(textObserver.$debouncedText) { val in
@@ -136,9 +137,8 @@ struct SearchBarView: View {
             .font(.headline)
             .padding()
             .frame(height: 50)
-            .contentShape(RoundedRectangle(cornerRadius: 20))
-            .background(Color.theme.secondary)
-            .cornerRadius(20)
+            .contentShape(Capsule())
+            .background(Capsule().fill(Color.theme.secondary))
             .onTapGesture {
                 withAnimation(.spring()) {
                     AnalyticsManager.shared.logEvent(name: "SearchBar_Tapped")
@@ -236,7 +236,8 @@ extension View {
                 NotificationCenter
                     .default
                     .publisher(for: UIResponder.keyboardWillHideNotification)
-                    .map { _ in false })
+                    .map { _ in false }
+            )
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
     }

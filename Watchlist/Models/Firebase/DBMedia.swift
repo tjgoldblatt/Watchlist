@@ -93,6 +93,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
             title: title,
             video: nil,
             profilePath: nil,
-            knownFor: nil)
+            knownFor: nil
+        )
     }
 }

@@ -59,8 +59,8 @@ struct Media: Codable, Identifiable, Hashable {
         title: String? = nil,
         video: Bool? = nil,
         profilePath: String? = nil,
-        knownFor: [Media]? = nil)
-    {
+        knownFor: [Media]? = nil
+    ) {
         self.mediaType = mediaType
         self.id = id
         self.originalTitle = originalTitle

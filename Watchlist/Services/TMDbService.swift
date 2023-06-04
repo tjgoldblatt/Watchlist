@@ -21,7 +21,10 @@ class TMDbService {
         else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
         guard let url =
             URL(
-                string: "\(TMDBConstants.baseURL)/3/search/multi?api_key=\(TMDBConstants.API_KEY)&query=\(query)&language=en-US&page=1&region=US")
+                // swiftlint: disable line_length
+                string: "\(TMDBConstants.baseURL)/3/search/multi?api_key=\(TMDBConstants.API_KEY)&query=\(query)&language=en-US&page=1&region=US"
+                // swiftlint: enable line_length
+            )
         else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
 
         return NetworkingManager.download(url: url)
