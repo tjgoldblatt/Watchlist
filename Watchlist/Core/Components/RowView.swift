@@ -89,10 +89,11 @@ extension RowView {
                     .fontWeight(.bold)
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color.theme.text)
-                    .lineLimit(2)
+                    .lineLimit(1)
                     .frame(alignment: .top)
                     .padding(.bottom, 1)
             }
+
             Text(media.overview ?? "")
                 .font(.system(.caption, design: .default))
                 .fixedSize(horizontal: false, vertical: true)
@@ -121,7 +122,8 @@ extension RowView {
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }
         }
-        .frame(maxHeight: 120, alignment: .top)
+        .multilineTextAlignment(.leading)
+        .frame(maxHeight: 110, alignment: .top)
         .frame(minWidth: 50)
     }
 
@@ -191,7 +193,7 @@ struct ThumbnailView: View {
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
-        RowView(media: dev.mediaMock.first!)
+        RowView(media: dev.mediaMock[1])
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
             .padding()

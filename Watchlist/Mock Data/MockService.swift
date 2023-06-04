@@ -101,5 +101,5 @@ enum MockService {
             personalRating: 9
         )
     }
-    //swiftlint: enable all
+    // swiftlint: enable all
 }

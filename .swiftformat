@@ -74,7 +74,7 @@
 --wrapconditions default
 --wrapeffects if-multiline
 --wrapenumcases always
---wrapparameters default
+--wrapparameters before-first
 --wrapreturntype if-multiline
 --wrapternary before-operators
 --wraptypealiases default
