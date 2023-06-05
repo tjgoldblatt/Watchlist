@@ -44,7 +44,7 @@ type_body_length:
     - 400 # error
 # or they can set both explicitly
 file_length:
-    warning: 600
+    warning: 700
     error: 1200
 
 switch_case_alignment:

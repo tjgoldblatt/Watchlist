@@ -79,8 +79,6 @@
 		32B5128C29CBB00000879AF6 /* RatingModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5128B29CBB00000879AF6 /* RatingModalView.swift */; };
 		32B891C62A1317E600B92806 /* TVDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B891C52A1317E600B92806 /* TVDetails.swift */; };
 		32B891C82A13191F00B92806 /* MovieDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B891C72A13191F00B92806 /* MovieDetails.swift */; };
-		32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */; };
-		32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */; };
 		32C45AB929F02D6D0025BEE0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 32C45AB829F02D6D0025BEE0 /* FirebaseCrashlytics */; };
 		32C89CC529E843330094D8E2 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 32C89CC429E843330094D8E2 /* FirebasePerformance */; };
 		32C89CC729E8BA920094D8E2 /* DisplayNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */; };
@@ -187,8 +185,6 @@
 		32B891C52A1317E600B92806 /* TVDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVDetails.swift; sourceTree = "<group>"; };
 		32B891C72A13191F00B92806 /* MovieDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetails.swift; sourceTree = "<group>"; };
 		32B892EE2A2D4C5000704B32 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
-		32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalView.swift; sourceTree = "<group>"; };
-		32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalViewModel.swift; sourceTree = "<group>"; };
 		32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayNameView.swift; sourceTree = "<group>"; };
 		32C89CC829EAFA4B0094D8E2 /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
 		32D049FD2A01872600A8A5A0 /* ApplicationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationHelper.swift; sourceTree = "<group>"; };
@@ -589,7 +585,6 @@
 			children = (
 				322BF19829DC4CC300161820 /* MediaModal */,
 				32F6A97729DCAB1A00EB4CB3 /* RatingModal */,
-				32B9CE0F29CF2D1400D6B649 /* FilterModal */,
 			);
 			path = Modals;
 			sourceTree = "<group>";
@@ -622,15 +617,6 @@
 				32B892EE2A2D4C5000704B32 /* ci_post_clone.sh */,
 			);
 			path = ci_scripts;
-			sourceTree = "<group>";
-		};
-		32B9CE0F29CF2D1400D6B649 /* FilterModal */ = {
-			isa = PBXGroup;
-			children = (
-				32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */,
-				32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */,
-			);
-			path = FilterModal;
 			sourceTree = "<group>";
 		};
 		32F6A97729DCAB1A00EB4CB3 /* RatingModal */ = {
@@ -845,7 +831,6 @@
 				32D04A062A02B52D00A8A5A0 /* FriendWatchlistView.swift in Sources */,
 				329A768B29BAA8340074A4F9 /* MovieTabView.swift in Sources */,
 				32A2F1B22A0A6FED00578535 /* FriendRowView.swift in Sources */,
-				32B9CE1129CF2D2400D6B649 /* FilterModalViewModel.swift in Sources */,
 				32E1EF7229F8C1BE00D3CDA7 /* ColorSchemeManager.swift in Sources */,
 				3258731029BD252A005E1394 /* TMDbService.swift in Sources */,
 				324BAE9929BA6F66002FBB6F /* ExploreTabView.swift in Sources */,
@@ -861,7 +846,6 @@
 				3258730929BCD53A005E1394 /* MediaModalView.swift in Sources */,
 				3244188A2A16DA27004CC2F8 /* NotificationManager.swift in Sources */,
 				324BAE7E29B91560002FBB6F /* TMDBConstants.swift in Sources */,
-				32B9CE0E29CF2BE000D6B649 /* FilterModalView.swift in Sources */,
 				3258731829BE5C46005E1394 /* WatchlistDetailsViewModel.swift in Sources */,
 				324418972A16FB43004CC2F8 /* DeepLinkManager.swift in Sources */,
 				32D04A042A02B03400A8A5A0 /* UserWatchlist.swift in Sources */,

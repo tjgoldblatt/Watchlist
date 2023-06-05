@@ -239,7 +239,9 @@ extension TVShowTabView {
 
     var searchResults: [DBMedia] {
         let groupedMedia = homeVM.tvList.filter { !$0.watched }
-        if homeVM.selectedWatchOption != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+        if homeVM.selectedWatchOption != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 || homeVM
+            .filterByCurrentlyWatching
+        {
             var filteredMedia = homeVM.tvList.sorted(by: { !$0.watched && $1.watched })
 
             // MARK: - Watched Filter
@@ -250,6 +252,12 @@ extension TVShowTabView {
                 filteredMedia = filteredMedia.sorted(by: { !$0.watched && $1.watched })
             } else {
                 filteredMedia = groupedMedia
+            }
+
+            // MARK: - Currently Watching
+
+            if homeVM.filterByCurrentlyWatching {
+                filteredMedia = filteredMedia.filter(\.currentlyWatching)
             }
 
             // MARK: - Genre Filter

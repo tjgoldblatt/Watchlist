@@ -146,18 +146,19 @@ struct CloseButton: View {
     @EnvironmentObject var homeVM: HomeViewModel
 
     var body: some View {
-        Image(systemName: "xmark.circle.fill")
-            .resizable()
-            .scaledToFit()
-            .frame(width: 30, height: 30)
-            .foregroundStyle(Color.theme.text, Color.theme.background)
-            .fontWeight(.semibold)
-            .accessibility(label: Text("Close"))
-            .accessibility(hint: Text("Tap to close the screen"))
-            .accessibility(addTraits: .isButton)
-            .accessibility(removeTraits: .isImage)
-            .onTapGesture {
-                dismiss()
-            }
+        Button {
+            dismiss()
+        } label: {
+            Image(systemName: "xmark.circle.fill")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30, height: 30)
+                .foregroundStyle(Color.theme.text, Color.theme.background)
+                .fontWeight(.semibold)
+                .accessibility(label: Text("Close"))
+                .accessibility(hint: Text("Tap to close the screen"))
+                .accessibility(addTraits: .isButton)
+                .accessibility(removeTraits: .isImage)
+        }
     }
 }

@@ -69,7 +69,12 @@ struct MovieDetails: Codable {
         )
 
         do {
-            return try DBMedia(media: media, watched: dbMedia.watched, personalRating: dbMedia.personalRating)
+            return try DBMedia(
+                media: media,
+                currentlyWatching: dbMedia.currentlyWatching,
+                watched: dbMedia.watched,
+                personalRating: dbMedia.personalRating
+            )
         } catch {
             CrashlyticsManager.handleError(error: NetworkError.encode(error: error))
             return nil
