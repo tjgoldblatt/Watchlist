@@ -161,7 +161,7 @@ struct SearchBarView: View {
     @ViewBuilder
     func FilterMenu() -> some View {
         Menu {
-            if homeVM.selectedWatchOption == .unwatched {
+            if homeVM.selectedWatchOption != .watched {
                 Button {
                     homeVM.filterByCurrentlyWatching.toggle()
                 } label: {
