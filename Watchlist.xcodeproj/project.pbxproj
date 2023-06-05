@@ -186,6 +186,7 @@
 		32B5128B29CBB00000879AF6 /* RatingModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingModalView.swift; sourceTree = "<group>"; };
 		32B891C52A1317E600B92806 /* TVDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVDetails.swift; sourceTree = "<group>"; };
 		32B891C72A13191F00B92806 /* MovieDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetails.swift; sourceTree = "<group>"; };
+		32B892EE2A2D4C5000704B32 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		32B9CE0D29CF2BE000D6B649 /* FilterModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalView.swift; sourceTree = "<group>"; };
 		32B9CE1029CF2D2400D6B649 /* FilterModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModalViewModel.swift; sourceTree = "<group>"; };
 		32C89CC629E8BA920094D8E2 /* DisplayNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayNameView.swift; sourceTree = "<group>"; };
@@ -275,6 +276,7 @@
 		324BAE5329B8D3D9002FBB6F = {
 			isa = PBXGroup;
 			children = (
+				32B892EC2A2D464B00704B32 /* ci_scripts */,
 				324BAE5E29B8D3D9002FBB6F /* Watchlist */,
 				32A6995B29D4BCEE0026AC63 /* WatchlistTests */,
 				32A6996829D4BCFA0026AC63 /* WatchlistUITests */,
@@ -614,6 +616,14 @@
 			path = Firebase;
 			sourceTree = "<group>";
 		};
+		32B892EC2A2D464B00704B32 /* ci_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				32B892EE2A2D4C5000704B32 /* ci_post_clone.sh */,
+			);
+			path = ci_scripts;
+			sourceTree = "<group>";
+		};
 		32B9CE0F29CF2D1400D6B649 /* FilterModal */ = {
 			isa = PBXGroup;
 			children = (
@@ -641,12 +651,12 @@
 				324BAE5829B8D3D9002FBB6F /* Sources */,
 				324BAE5929B8D3D9002FBB6F /* Frameworks */,
 				324BAE5A29B8D3D9002FBB6F /* Resources */,
-				32C45ABA29F02D9A0025BEE0 /* ShellScript */,
+				32C45ABA29F02D9A0025BEE0 /* Run Script */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				324880492A298CDA0016AA1F /* PBXTargetDependency */,
+				32B892F42A2D59CA00704B32 /* PBXTargetDependency */,
 			);
 			name = Watchlist;
 			packageProductDependencies = (
@@ -781,7 +791,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		32C45ABA29F02D9A0025BEE0 /* ShellScript */ = {
+		32C45ABA29F02D9A0025BEE0 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -793,6 +803,7 @@
 				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
 				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -900,10 +911,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		324880492A298CDA0016AA1F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 324880482A298CDA0016AA1F /* SwiftLintPlugin */;
-		};
 		32A6995F29D4BCEE0026AC63 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 324BAE5B29B8D3D9002FBB6F /* Watchlist */;
@@ -913,6 +920,10 @@
 			isa = PBXTargetDependency;
 			target = 324BAE5B29B8D3D9002FBB6F /* Watchlist */;
 			targetProxy = 32A6996D29D4BCFA0026AC63 /* PBXContainerItemProxy */;
+		};
+		32B892F42A2D59CA00704B32 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 32B892F32A2D59CA00704B32 /* SwiftLintPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1265,11 +1276,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		324880482A298CDA0016AA1F /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 324880472A298CC90016AA1F /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = "plugin:SwiftLintPlugin";
-		};
 		32B3E1B129E6098000314B4F /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 32B3E1B029E6098000314B4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -1304,6 +1310,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 32B3E1BE29E60AE800314B4F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		32B892F32A2D59CA00704B32 /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 324880472A298CC90016AA1F /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintPlugin";
 		};
 		32C45AB829F02D6D0025BEE0 /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
