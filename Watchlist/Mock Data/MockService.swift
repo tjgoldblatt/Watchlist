@@ -34,6 +34,7 @@ enum MockService {
                 name: nil,
                 title: "The Social Network"
             ),
+            currentlyWatching: false,
             watched: true,
             personalRating: 9
         )
@@ -55,6 +56,7 @@ enum MockService {
                 releaseDate: "2009-08-19",
                 title: "Inglourious Basterds"
             ),
+            currentlyWatching: false,
             watched: false,
             personalRating: nil
         )
@@ -76,6 +78,7 @@ enum MockService {
                 firstAirDate: "2011-04-17",
                 name: "Game of Thrones"
             ),
+            currentlyWatching: false,
             watched: false,
             personalRating: nil
         )
@@ -97,9 +100,10 @@ enum MockService {
                 firstAirDate: "2002-06-02",
                 name: "The Wire"
             ),
+            currentlyWatching: false,
             watched: true,
             personalRating: 9
         )
     }
-    // swiftlint: enable all
+//     swiftlint: enable all
 }

@@ -57,6 +57,7 @@ struct HomeView: View {
                         currentTab = updatedTab
                         homeVM.genresSelected = []
                         homeVM.ratingSelected = 0
+                        homeVM.filterByCurrentlyWatching = false
                     }
                 }
                 .onReceive(homeVM.$selectedTab) { selectedTab in

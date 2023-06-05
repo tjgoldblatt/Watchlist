@@ -130,6 +130,7 @@ final class ExploreViewModel: ObservableObject {
             return try? DBMedia(
                 media: media,
                 mediaType: mediaType,
+                currentlyWatching: false,
                 watched: false,
                 personalRating: nil
             )

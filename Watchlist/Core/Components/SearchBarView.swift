@@ -17,8 +17,6 @@ struct SearchBarView: View {
 
     @FocusState private var isFocused: Bool
 
-    @State var showFilterSheet: Bool = false
-
     var textFieldString: String {
         return homeVM.selectedTab.searchTextLabel
     }
@@ -61,7 +59,9 @@ struct SearchBarView: View {
                     mediaList.insert(tvShow)
                 }
             case .explore:
-                for media in homeVM.results.compactMap({ try? DBMedia(media: $0, watched: false, personalRating: nil) }) {
+                for media in homeVM.results.compactMap({
+                    try? DBMedia(media: $0, currentlyWatching: false, watched: false, personalRating: nil)
+                }) {
                     mediaList.insert(media)
                 }
             case .social:
@@ -104,14 +104,6 @@ struct SearchBarView: View {
                                     isFocused = false
                                 }
                         }
-                    }
-                    .popover(isPresented: $showFilterSheet) {
-                        FilterModalView(
-                            genresToFilter: homeVM
-                                .convertGenreIDToGenre(for: homeVM.selectedTab, watchList: mediaListWithFilter)
-                        )
-                        .presentationDetents([.large])
-                        .presentationDragIndicator(.visible)
                     }
                     .submitLabel(.search)
                     .onReceive(textObserver.$debouncedText) { val in
@@ -169,6 +161,18 @@ struct SearchBarView: View {
     @ViewBuilder
     func FilterMenu() -> some View {
         Menu {
+            if homeVM.selectedWatchOption != .watched {
+                Button {
+                    homeVM.filterByCurrentlyWatching.toggle()
+                } label: {
+                    if homeVM.filterByCurrentlyWatching {
+                        Label("Watching", systemImage: "checkmark")
+                    } else {
+                        Text("Watching")
+                    }
+                }
+            }
+
             ForEach(SortingOptions.allCases, id: \.self) { option in
                 Button {
                     withAnimation(.easeInOut) {
