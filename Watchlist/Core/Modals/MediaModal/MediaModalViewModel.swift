@@ -39,6 +39,18 @@ final class MediaModalViewModel: ObservableObject {
         getWatchProviders(mediaType: media.mediaType, for: media.id)
     }
 
+    func setMediaCurrentlyWatching(_ currentlyWatching: Bool) {
+        Task {
+            try await WatchlistManager.shared.setMediaCurrentlyWatching(media: media, currentlyWatching: currentlyWatching)
+        }
+    }
+
+    func setMediaWatched(_ watched: Bool) {
+        Task {
+            try await WatchlistManager.shared.setMediaWatched(media: media, watched: watched)
+        }
+    }
+
     func updateMediaDetails() {
         if media.mediaType == .movie {
             TMDbService.getMovieDetails(for: media.id)

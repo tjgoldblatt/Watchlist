@@ -149,6 +149,16 @@ final class WatchlistManager {
         try await updateLastUpdatedForUser()
     }
 
+    func setMediaCurrentlyWatching(media: DBMedia, currentlyWatching: Bool) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+
+        let data: [String: Any] = [
+            DBMedia.CodingKeys.currentlyWatching.rawValue: currentlyWatching,
+        ]
+        try await updateLastUpdatedForUser()
+        try await userWatchlistDocument.updateData(data)
+    }
+
     /// Sets the watched status of a media.
     /// - Parameters:
     ///   - media: The media to be updated.
@@ -159,6 +169,11 @@ final class WatchlistManager {
         let data: [String: Any] = [
             DBMedia.CodingKeys.watched.rawValue: watched,
         ]
+
+        if media.currentlyWatching {
+            try await setMediaCurrentlyWatching(media: media, currentlyWatching: false)
+        }
+
         try await updateLastUpdatedForUser()
         try await userWatchlistDocument.updateData(data)
     }

@@ -25,10 +25,11 @@ struct DBMedia: Codable, Identifiable, Hashable {
     let firstAirDate: String?
 
     // Extra
+    var currentlyWatching: Bool
     var watched: Bool
     var personalRating: Double?
 
-    init(media: Media, mediaType: MediaType? = nil, watched: Bool, personalRating: Double?) throws {
+    init(media: Media, mediaType: MediaType? = nil, currentlyWatching: Bool, watched: Bool, personalRating: Double?) throws {
         guard let mediaId = media.id,
               let type = media.mediaType ?? mediaType else { throw TMDbError.failedToEncodeData }
 
@@ -44,6 +45,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         posterPath = media.posterPath
         backdropPath = media.backdropPath
         genreIDs = media.genreIDS
+        self.currentlyWatching = currentlyWatching
         self.watched = watched
         self.personalRating = personalRating
         releaseDate = media.releaseDate
@@ -64,11 +66,33 @@ struct DBMedia: Codable, Identifiable, Hashable {
         case backdropPath
         case genreIDs
 
+        case currentlyWatching
         case watched
         case personalRating
 
         case releaseDate
         case firstAirDate
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        mediaType = try container.decode(MediaType.self, forKey: .mediaType)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        originalTitle = try container.decodeIfPresent(String.self, forKey: .originalTitle)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        originalName = try container.decodeIfPresent(String.self, forKey: .originalName)
+        overview = try container.decodeIfPresent(String.self, forKey: .overview)
+        voteAverage = try container.decodeIfPresent(Double.self, forKey: .voteAverage)
+        voteCount = try container.decodeIfPresent(Int.self, forKey: .voteCount)
+        posterPath = try container.decodeIfPresent(String.self, forKey: .posterPath)
+        backdropPath = try container.decodeIfPresent(String.self, forKey: .backdropPath)
+        genreIDs = try container.decodeIfPresent([Int].self, forKey: .genreIDs)
+        currentlyWatching = try container.decodeIfPresent(Bool.self, forKey: .currentlyWatching) ?? false
+        watched = try container.decode(Bool.self, forKey: .watched)
+        personalRating = try container.decodeIfPresent(Double.self, forKey: .personalRating)
+        releaseDate = try container.decodeIfPresent(String.self, forKey: .releaseDate)
+        firstAirDate = try container.decodeIfPresent(String.self, forKey: .firstAirDate)
     }
 
     func convertDBMediaToMedia() -> Media {

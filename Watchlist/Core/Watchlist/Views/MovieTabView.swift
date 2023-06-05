@@ -244,10 +244,13 @@ extension MovieTabView {
 
     var searchResults: [DBMedia] {
         let groupedMedia = homeVM.movieList.filter { !$0.watched }
-        if homeVM.selectedWatchOption != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
+        if homeVM.selectedWatchOption != .unwatched || !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 || homeVM
+            .filterByCurrentlyWatching
+        {
             var filteredMedia = homeVM.movieList.sorted(by: { !$0.watched && $1.watched })
 
-            /// Watched Filter
+            // MARK: - Watched Filter
+
             if homeVM.selectedWatchOption == .watched {
                 filteredMedia = filteredMedia.filter(\.watched)
             } else if homeVM.selectedWatchOption == .any {
@@ -256,7 +259,14 @@ extension MovieTabView {
                 filteredMedia = groupedMedia
             }
 
-            /// Genre Filter
+            // MARK: - Currently Watching
+
+            if homeVM.filterByCurrentlyWatching {
+                filteredMedia = filteredMedia.filter(\.currentlyWatching)
+            }
+
+            // MARK: - Genre Filter
+
             if !homeVM.genresSelected.isEmpty {
                 filteredMedia = filteredMedia.filter { media in
                     guard let genreIDs = media.genreIDs else { return false }
@@ -270,7 +280,8 @@ extension MovieTabView {
                 }
             }
 
-            /// Rating Filter
+            // MARK: - Rating Filter
+
             filteredMedia = filteredMedia.filter { media in
                 if let voteAverage = media.voteAverage {
                     return voteAverage >= Double(homeVM.ratingSelected)

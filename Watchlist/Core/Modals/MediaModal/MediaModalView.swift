@@ -137,30 +137,65 @@ struct MediaModalView: View {
             let titleProgress = minY / height
 
             HStack {
-                Spacer(minLength: 0)
+                if vm.media.currentlyWatching, isInMedia(media: vm.media) {
+                    Text("Watching")
+                        .font(.footnote)
+                        .foregroundColor(Color.theme.genreText)
+                        .fontWeight(.bold)
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 10)
+                        .background {
+                            ZStack {
+                                Capsule()
+                                    .foregroundColor(Color.theme.red)
+                            }
+                        }
+                }
 
-                if isInMedia(media: vm.media), vm.media.watched, vm.media.personalRating != nil, friendName == nil {
+                Spacer()
+
+                if isInMedia(media: vm.media),
+                   friendName == nil,
+                   (vm.media.watched && vm.media.personalRating != nil) || !vm.media.watched
+                {
                     Menu {
-                        Button(role: .destructive) {
-                            AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
-                            Task {
-                                try await WatchlistManager.shared.setPersonalRatingForMedia(
-                                    media: vm.media,
-                                    personalRating: nil
-                                )
-                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
+                        if !vm.media.watched {
+                            Button {
+                                vm.media.currentlyWatching.toggle()
+                                vm.setMediaCurrentlyWatching(vm.media.currentlyWatching)
+                                AnalyticsManager.shared
+                                    .logEvent(
+                                        name: "MediaModalView_ToggleMediaCurrentlyWatching_\(vm.media.currentlyWatching)"
+                                    )
+                            } label: {
+                                Text("Mark as Watching")
+                                Image(systemName: "play.circle")
+                            }
+                        }
 
-                                withAnimation(.easeInOut) {
-                                    if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
-                                        vm.media = updatedMedia
+                        if vm.media.watched, vm.media.personalRating != nil {
+                            Button(role: .destructive) {
+                                AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
+                                Task {
+                                    try await WatchlistManager.shared.setPersonalRatingForMedia(
+                                        media: vm.media,
+                                        personalRating: nil
+                                    )
+
+                                    vm.setMediaWatched(false)
+
+                                    withAnimation(.easeInOut) {
+                                        if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
+                                            vm.media = updatedMedia
+                                        }
                                     }
                                 }
+                            } label: {
+                                Text("Reset")
+                                Image(systemName: "arrow.counterclockwise.circle")
                             }
-                        } label: {
-                            Text("Reset")
-                            Image(systemName: "arrow.counterclockwise.circle")
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     } label: {
                         Image(systemName: "ellipsis.circle.fill")
                             .resizable()
@@ -168,6 +203,7 @@ struct MediaModalView: View {
                             .frame(width: 30, height: 30)
                             .fontWeight(.semibold)
                             .foregroundStyle(Color.theme.text, Color.theme.background)
+                            .padding(.horizontal)
                     }
                 }
 
@@ -250,17 +286,8 @@ extension MediaModalView {
 
                 Button {
                     if friendName == nil {
-                        if vm.media.watched {
-                            Task {
-                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: false)
-                            }
-                            vm.media.watched = false
-                        } else {
-                            Task {
-                                try await WatchlistManager.shared.setMediaWatched(media: vm.media, watched: true)
-                            }
-                            vm.media.watched = true
-                        }
+                        vm.media.watched.toggle()
+                        vm.setMediaWatched(vm.media.watched)
                         AnalyticsManager.shared.logEvent(name: "MediaModalView_ToggleMediaWatched_\(vm.media.watched)")
                     }
                 } label: {

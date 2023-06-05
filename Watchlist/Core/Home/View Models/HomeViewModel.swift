@@ -52,6 +52,7 @@ final class HomeViewModel: ObservableObject {
     @Published var ratingSelected: Int = 0
     @Published var selectedWatchOption: WatchOptions = .unwatched
     @Published var selectedSortingOption: SortingOptions = .personalRating
+    @Published var filterByCurrentlyWatching: Bool = false
 
     /// Deep linking
     @Published var deepLinkURL: URL?

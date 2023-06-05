@@ -122,7 +122,9 @@ extension ExploreTabView {
     }
 
     var searchResults: [DBMedia] {
-        let groupedMedia = homeVM.results.compactMap { try? DBMedia(media: $0, watched: false, personalRating: nil) }
+        let groupedMedia = homeVM.results.compactMap {
+            try? DBMedia(media: $0, currentlyWatching: false, watched: false, personalRating: nil)
+        }
         if !homeVM.genresSelected.isEmpty || homeVM.ratingSelected > 0 {
             var filteredMedia = groupedMedia
 
