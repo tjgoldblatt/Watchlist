@@ -135,6 +135,7 @@ struct MediaModalView: View {
             let height = size.height * 0.35
             let progress = minY / (height * (minY > 0 ? 0.5 : 0.8))
             let titleProgress = minY / height
+            let progressAmount = 0.9
 
             HStack {
                 if vm.media.currentlyWatching, isInMedia(media: vm.media) {
@@ -150,6 +151,8 @@ struct MediaModalView: View {
                                     .foregroundColor(Color.theme.red)
                             }
                         }
+                        .opacity(-titleProgress < progressAmount ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.25), value: -titleProgress < progressAmount)
                 }
 
                 Spacer()
@@ -204,6 +207,8 @@ struct MediaModalView: View {
                             .fontWeight(.semibold)
                             .foregroundStyle(Color.theme.text, Color.theme.background)
                             .padding(.horizontal)
+                            .opacity(-titleProgress < progressAmount ? 1 : 0)
+                            .animation(.easeInOut(duration: 0.25), value: -titleProgress < progressAmount)
                     }
                 }
 
@@ -221,17 +226,16 @@ struct MediaModalView: View {
                     Text(title)
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .offset(y: -titleProgress > 0.85 ? 0 : 45)
+                        .opacity(-titleProgress > progressAmount ? 1 : 0)
                         .foregroundColor(Color.theme.text)
                         .clipped()
-                        .animation(.easeInOut(duration: 0.25), value: -titleProgress > 0.85)
+                        .animation(.easeInOut(duration: 0.25), value: -titleProgress > progressAmount)
                 }
             }
             .padding(.top, safeArea.top + 20)
             .padding([.horizontal, .bottom], 20)
             .background {
                 Color.theme.background.opacity(-progress > 1 ? 1 : 0)
-                    .animation(.easeInOut(duration: 0.25), value: -progress > 1)
             }
             .offset(y: -minY)
         }
@@ -603,7 +607,7 @@ struct ExpandableText: View {
 struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
-            MediaModalView(media: dev.mediaMock[0], forPreview: true, size: $0.size, safeArea: $0.safeAreaInsets)
+            MediaModalView(media: dev.mediaMock[1], forPreview: true, size: $0.size, safeArea: $0.safeAreaInsets)
                 .ignoresSafeArea(.container, edges: .top)
                 .environmentObject(dev.homeVM)
                 .preferredColorScheme(.dark)
