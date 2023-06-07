@@ -17,14 +17,14 @@ struct RowView: View {
 
     @State var media: DBMedia
 
-    @State private var showingSheet = false
+    @State private var mediaToShow: DBMedia?
 
     @State private var showRatingSheet = false
 
     var body: some View {
         Button {
             withAnimation {
-                showingSheet = true
+                mediaToShow = media
             }
         } label: {
             HStack(alignment: .center) {
@@ -47,11 +47,11 @@ struct RowView: View {
         } content: {
             RatingModalView(media: media)
         }
-        .sheet(isPresented: $showingSheet) {
+        .sheet(item: $mediaToShow) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia
             }
-        } content: {
+        } content: { media in
             GeometryReader { proxy in
                 MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
                     .ignoresSafeArea(.container, edges: .top)

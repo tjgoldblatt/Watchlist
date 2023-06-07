@@ -10,7 +10,7 @@ import Foundation
 struct MovieDetails: Codable {
     let adult: Bool?
     let backdropPath: String?
-    let belongsToCollection: Bool?
+    let belongsToCollection: MovieCollection?
     let budget: Int?
     let genres: [Genre]?
     let homepage: String?
@@ -79,6 +79,22 @@ struct MovieDetails: Codable {
             CrashlyticsManager.handleError(error: NetworkError.encode(error: error))
             return nil
         }
+    }
+}
+
+// MARK: - Movie Collection
+
+struct MovieCollection: Codable {
+    let id: Int
+    let name: String?
+    let posterPath: String?
+    let backdropPath: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case posterPath = "poster_path"
+        case backdropPath = "backdrop_path"
     }
 }
 
