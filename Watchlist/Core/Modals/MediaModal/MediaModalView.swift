@@ -14,6 +14,8 @@ struct MediaModalView: View {
     @StateObject var vm: MediaModalViewModel
     @Environment(\.dismiss) var dismiss
 
+    @Namespace private var animation
+
     // MARK: - Computed Vars
 
     var formattedFriendName: String? {
@@ -187,7 +189,7 @@ struct MediaModalView: View {
 
                                     vm.setMediaWatched(false)
 
-                                    withAnimation(.easeInOut) {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
                                         if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
                                             vm.media = updatedMedia
                                         }
@@ -297,10 +299,12 @@ extension MediaModalView {
                 } label: {
                     if vm.media.watched {
                         Image(systemName: "checkmark.circle.fill")
+                            .matchedGeometryEffect(id: "watched", in: animation)
                             .foregroundColor(Color.theme.red)
                             .imageScale(.large)
                     } else {
                         Image(systemName: "checkmark.circle")
+                            .matchedGeometryEffect(id: "watched", in: animation)
                             .foregroundColor(
                                 isInMedia(media: vm.media) && friendName == nil
                                     ? Color.theme.red
@@ -337,13 +341,13 @@ extension MediaModalView {
             Group {
                 if let personalRating = vm.media.personalRating {
                     StarRatingView(text: "\(formattedFriendName ?? "PERSONAL") RATING", rating: personalRating, size: 18)
-                        .onTapGesture {
-                            if friendName == nil {
-                                vm.showingRating.toggle()
-                                AnalyticsManager.shared.logEvent(name: "MediaModalView_PersonalRatingButton_Tapped")
+                            .onTapGesture {
+                                if friendName == nil {
+                                    vm.showingRating.toggle()
+                                    AnalyticsManager.shared.logEvent(name: "MediaModalView_PersonalRatingButton_Tapped")
+                                }
                             }
-                        }
-                        .disabled(friendName != nil)
+                            .disabled(friendName != nil)
                 } else {
                     rateThisButton
                 }
@@ -431,9 +435,14 @@ extension MediaModalView {
                     .fontWeight(.bold)
                     .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
                 Text("Rate This")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(
+                            isInMedia(media: vm.media) && friendName == nil
+                                ? Color.theme.red
+                                : Color.theme
+                                    .secondary
+                        )
             }
         }
         .disabled(friendName != nil)
