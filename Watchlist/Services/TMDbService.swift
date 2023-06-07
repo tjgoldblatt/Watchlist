@@ -131,6 +131,11 @@ class TMDbService {
 
         return NetworkingManager.download(url: url)
             .decode(type: MovieDetails.self, decoder: JSONDecoder())
+            .breakpointOnError()
+            .catch { error -> AnyPublisher<MovieDetails, Error> in
+                CrashlyticsManager.handleError(error: error)
+                return Empty(completeImmediately: true).eraseToAnyPublisher()
+            }
             .eraseToAnyPublisher()
     }
 
@@ -143,6 +148,11 @@ class TMDbService {
 
         return NetworkingManager.download(url: url)
             .decode(type: TVDetails.self, decoder: JSONDecoder())
+            .breakpointOnError()
+            .catch { error -> AnyPublisher<TVDetails, Error> in
+                CrashlyticsManager.handleError(error: error)
+                return Empty(completeImmediately: true).eraseToAnyPublisher()
+            }
             .eraseToAnyPublisher()
     }
 
