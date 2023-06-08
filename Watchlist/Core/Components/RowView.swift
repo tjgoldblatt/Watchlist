@@ -17,29 +17,23 @@ struct RowView: View {
 
     @State var media: DBMedia
 
-    @State private var mediaToShow: DBMedia?
+    @State private var showingSheet = false
 
     @State private var showRatingSheet = false
 
     var body: some View {
-        Button {
-            withAnimation {
-                mediaToShow = media
+        HStack(alignment: .center) {
+            if let posterPath = media.posterPath {
+                ThumbnailView(imagePath: posterPath)
             }
-        } label: {
-            HStack(alignment: .center) {
-                if let posterPath = media.posterPath {
-                    ThumbnailView(imagePath: posterPath)
-                }
 
-                centerColumn
+            centerColumn
 
-                rightColumn
-            }
-            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
-            .accessibilityIdentifier("RowView")
-            .contentShape(Rectangle())
+            rightColumn
         }
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
+        .accessibilityIdentifier("RowView")
+        .contentShape(Rectangle())
         .sheet(isPresented: $showRatingSheet) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia
@@ -47,11 +41,14 @@ struct RowView: View {
         } content: {
             RatingModalView(media: media)
         }
-        .sheet(item: $mediaToShow) {
+        .onTapGesture {
+            showingSheet = true
+        }
+        .sheet(isPresented: $showingSheet) {
             if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                 media = updatedMedia
             }
-        } content: { media in
+        } content: {
             GeometryReader { proxy in
                 MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
                     .ignoresSafeArea(.container, edges: .top)

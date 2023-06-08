@@ -14,6 +14,8 @@ struct MediaModalView: View {
     @StateObject var vm: MediaModalViewModel
     @Environment(\.dismiss) var dismiss
 
+    @Namespace private var animation
+
     // MARK: - Computed Vars
 
     var formattedFriendName: String? {
@@ -187,7 +189,7 @@ struct MediaModalView: View {
 
                                     vm.setMediaWatched(false)
 
-                                    withAnimation(.easeInOut) {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
                                         if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: vm.media.id) {
                                             vm.media = updatedMedia
                                         }
@@ -297,10 +299,12 @@ extension MediaModalView {
                 } label: {
                     if vm.media.watched {
                         Image(systemName: "checkmark.circle.fill")
+                            .matchedGeometryEffect(id: "watched", in: animation)
                             .foregroundColor(Color.theme.red)
                             .imageScale(.large)
                     } else {
                         Image(systemName: "checkmark.circle")
+                            .matchedGeometryEffect(id: "watched", in: animation)
                             .foregroundColor(
                                 isInMedia(media: vm.media) && friendName == nil
                                     ? Color.theme.red
@@ -430,10 +434,16 @@ extension MediaModalView {
                     .font(.system(size: 18))
                     .fontWeight(.bold)
                     .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
+
                 Text("Rate This")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
+                    .foregroundColor(
+                        isInMedia(media: vm.media) && friendName == nil
+                            ? Color.theme.red
+                            : Color.theme
+                                .secondary
+                    )
             }
         }
         .disabled(friendName != nil)
