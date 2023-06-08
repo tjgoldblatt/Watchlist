@@ -341,13 +341,13 @@ extension MediaModalView {
             Group {
                 if let personalRating = vm.media.personalRating {
                     StarRatingView(text: "\(formattedFriendName ?? "PERSONAL") RATING", rating: personalRating, size: 18)
-                            .onTapGesture {
-                                if friendName == nil {
-                                    vm.showingRating.toggle()
-                                    AnalyticsManager.shared.logEvent(name: "MediaModalView_PersonalRatingButton_Tapped")
-                                }
+                        .onTapGesture {
+                            if friendName == nil {
+                                vm.showingRating.toggle()
+                                AnalyticsManager.shared.logEvent(name: "MediaModalView_PersonalRatingButton_Tapped")
                             }
-                            .disabled(friendName != nil)
+                        }
+                        .disabled(friendName != nil)
                 } else {
                     rateThisButton
                 }
@@ -434,15 +434,16 @@ extension MediaModalView {
                     .font(.system(size: 18))
                     .fontWeight(.bold)
                     .foregroundColor(isInMedia(media: vm.media) && friendName == nil ? Color.theme.red : Color.theme.secondary)
+
                 Text("Rate This")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(
-                            isInMedia(media: vm.media) && friendName == nil
-                                ? Color.theme.red
-                                : Color.theme
-                                    .secondary
-                        )
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(
+                        isInMedia(media: vm.media) && friendName == nil
+                            ? Color.theme.red
+                            : Color.theme
+                                .secondary
+                    )
             }
         }
         .disabled(friendName != nil)

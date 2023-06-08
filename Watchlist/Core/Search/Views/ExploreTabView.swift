@@ -201,8 +201,6 @@ extension ExploreTabView {
 
 struct ExploreThumbnailView: View {
     @EnvironmentObject var homeVM: HomeViewModel
-    @State var showingSheet = false
-
     var title: String
     var mediaArray: [DBMedia]
 
@@ -223,14 +221,13 @@ struct ExploreThumbnailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack {
+                HStack {
                     ForEach(mediaArray) { media in
                         if let posterPath = media.posterPath,
                            let overview = media.overview, !overview.isEmpty
                         {
                             Button {
                                 selectedMedia = media
-                                showingSheet.toggle()
                             } label: {
                                 ThumbnailView(imagePath: posterPath)
                                     .overlay(alignment: .topTrailing) {
@@ -271,9 +268,12 @@ struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
         ExploreTabView(homeVM: dev.homeVM)
             .environmentObject(dev.homeVM)
+            .previewDisplayName("Explore Tab View")
 
         ExploreThumbnailView(title: "", mediaArray: dev.mediaMock)
+            .environmentObject(dev.homeVM)
             .previewLayout(.sizeThatFits)
             .padding()
+            .previewDisplayName("Explore Thumbnail View")
     }
 }
