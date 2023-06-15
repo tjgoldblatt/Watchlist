@@ -52,9 +52,6 @@ struct AddFriendsView: View {
                                             Text(user.displayName ?? "No Display Name")
                                                 .font(.title3)
                                                 .fontWeight(.semibold)
-
-                                            Text(user.email ?? "No email")
-                                                .font(.caption)
                                         }
                                         Spacer()
 
