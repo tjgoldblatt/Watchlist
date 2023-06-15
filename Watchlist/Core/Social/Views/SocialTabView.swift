@@ -45,11 +45,11 @@ struct SocialTabView: View {
                         } else {
                             Spacer()
                             ProgressView()
-                            Spacer()
                         }
                     } else {
                         linkButtons
                     }
+                    Spacer()
                 }
             }
             .onChange(of: vm.friendRequestIds) { requestIds in
