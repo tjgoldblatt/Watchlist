@@ -380,6 +380,8 @@ extension MediaModalView {
             .animation(.spring(), value: vm.media.personalRating)
             .frame(minWidth: 110, maxWidth: .infinity)
             .sheet(isPresented: $vm.showingRating) {
+                vm.media.currentlyWatching = false
+            } content: {
                 RatingModalView(media: $vm.media)
             }
         }

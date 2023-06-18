@@ -95,7 +95,7 @@ extension TVShowTabView {
                         .listRowBackground(Color.theme.background)
 
                     NavigationLink(value: tvShow) {
-                        RowView(media: tvShow,)
+                        RowView(media: tvShow)
                             .allowsHitTesting(vm.editMode == .inactive)
                             .listRowBackground(Color.theme.background)
                     }.opacity(0)

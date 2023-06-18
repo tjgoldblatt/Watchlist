@@ -90,7 +90,7 @@ struct RatingModalView: View {
                         .dynamicTypeSize(.medium)
 
                     Button {
-                        if rating > 0 {media.watched = true
+                        if rating > 0 { media.watched = true
                             media.personalRating = Double(rating)
                             dismiss()
                             AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")
