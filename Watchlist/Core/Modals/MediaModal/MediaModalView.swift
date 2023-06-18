@@ -219,10 +219,9 @@ struct MediaModalView: View {
                             Image(systemName: "play.circle")
                         }
 
-                        if vm.media.watched, vm.media.personalRating != nil {
+                        if vm.media.currentlyWatching || vm.media.watched || vm.media.personalRating != nil {
                             Button(role: .destructive) {
-                                // TODO: Reset Button
-                                withAnimation(.easeInOut(duration: 0.2)) {
+                                withAnimation(.interactiveSpring()) {
                                     vm.media.watched = false
                                     vm.media.personalRating = nil
                                     vm.media.currentlyWatching = false
@@ -476,7 +475,6 @@ extension MediaModalView {
     private var addButton: some View {
         Button {
             if !isInMediaList {
-                // TODO: Add/Delete
                 shouldAddOrDeleteMediaList = true
                 isInMediaList = true
             } else {
