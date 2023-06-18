@@ -21,6 +21,8 @@ struct FriendRowView: View {
 
     var friendName: String
 
+    var showSwipeAction = true
+
     var body: some View {
         HStack(alignment: .center) {
             if let posterPath = media.posterPath {
@@ -50,20 +52,13 @@ struct FriendRowView: View {
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("FriendRowView")
         .contentShape(Rectangle())
-        .onTapGesture {
-            showingSheet = true
-        }
-        .sheet(isPresented: $showingSheet) {
-            GeometryReader { proxy in
-                MediaModalView(media: media, friendName: friendName, size: proxy.size, safeArea: proxy.safeAreaInsets)
-                    .ignoresSafeArea(.container, edges: .top)
-            }
-        }
         .swipeActions(edge: .trailing) {
-            if !homeVM.isMediaIDInWatchlist(for: media.id) {
-                swipeActionToAddToWatchlist
-            } else {
-                swipeActionToRemoveFromWatchlist
+            if showSwipeAction {
+                if !homeVM.isMediaIDInWatchlist(for: media.id) {
+                    swipeActionToAddToWatchlist
+                } else {
+                    swipeActionToRemoveFromWatchlist
+                }
             }
         }
     }
@@ -135,7 +130,7 @@ extension FriendRowView {
             AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Add")
 
         } label: {
-            Image(systemName: "checkmark.circle.fill")
+            Image(systemName: "plus.circle.fill")
         }
         .tint(Color.theme.secondaryBackground)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")

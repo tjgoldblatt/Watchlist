@@ -34,8 +34,6 @@ struct ExploreTabView: View {
                 Color.theme.background.ignoresSafeArea()
 
                 VStack(spacing: 10) {
-                    header
-
                     searchBar
 
                     if sortedSearchResults.isEmpty {
@@ -51,8 +49,11 @@ struct ExploreTabView: View {
                     isSubmitted = false
                 }
             }
-            .toolbar {
-                Text("")
+            .navigationDestination(for: DBMedia.self) { media in
+                GeometryReader { proxy in
+                    MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                        .ignoresSafeArea(.container, edges: .top)
+                }
             }
             .sheet(isPresented: $showDeepLinkModal) {
                 if let deepLinkMedia {
@@ -70,6 +71,7 @@ struct ExploreTabView: View {
                     }
                 }
             }
+            .navigationTitle(Tab.explore.rawValue)
         }
         .analyticsScreen(name: "ExploreTabView")
         .onAppear {
@@ -104,8 +106,14 @@ extension ExploreTabView {
                 List {
                     ForEach(sortedSearchResults, id: \.id) { media in
                         if media.posterPath != nil, let genreIds = media.genreIDs, !genreIds.isEmpty {
-                            ExploreRowView(media: media, currentTab: .explore)
-                                .listRowBackground(Color.theme.background)
+                            ZStack {
+                                ExploreRowView(media: media, currentTab: .explore)
+
+                                NavigationLink(value: media) {
+                                    ExploreRowView(media: media, currentTab: .explore)
+                                }.opacity(0)
+                            }
+                            .listRowBackground(Color.theme.background)
                         }
                     }
                     .listRowBackground(Color.clear)
@@ -226,9 +234,7 @@ struct ExploreThumbnailView: View {
                         if let posterPath = media.posterPath,
                            let overview = media.overview, !overview.isEmpty
                         {
-                            Button {
-                                selectedMedia = media
-                            } label: {
+                            NavigationLink(value: media) {
                                 ThumbnailView(imagePath: posterPath)
                                     .overlay(alignment: .topTrailing) {
                                         if homeVM.isMediaIDInWatchlist(for: media.id) {
@@ -247,13 +253,6 @@ struct ExploreThumbnailView: View {
                                         }
                                     }
                             }
-
-                            .sheet(item: $selectedMedia) { media in
-                                GeometryReader { proxy in
-                                    MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
-                                        .ignoresSafeArea(.container, edges: .top)
-                                }
-                            }
                         }
                     }
                 }
@@ -266,9 +265,11 @@ struct ExploreThumbnailView: View {
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreTabView(homeVM: dev.homeVM)
-            .environmentObject(dev.homeVM)
-            .previewDisplayName("Explore Tab View")
+        NavigationStack {
+            ExploreTabView(homeVM: dev.homeVM)
+                .previewDisplayName("Explore Tab View")
+        }
+        .environmentObject(dev.homeVM)
 
         ExploreThumbnailView(title: "", mediaArray: dev.mediaMock)
             .environmentObject(dev.homeVM)

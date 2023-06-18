@@ -21,6 +21,8 @@ struct RowView: View {
 
     @State private var showRatingSheet = false
 
+    var showSwipeAction = true
+
     var body: some View {
         HStack(alignment: .center) {
             if let posterPath = media.posterPath {
@@ -35,33 +37,26 @@ struct RowView: View {
         .accessibilityIdentifier("RowView")
         .contentShape(Rectangle())
         .sheet(isPresented: $showRatingSheet) {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
-                media = updatedMedia
+            Task {
+                try? await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: media.personalRating)
+                try? await WatchlistManager.shared.setMediaWatched(media: media, watched: media.personalRating != nil)
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                    media = updatedMedia
+                }
             }
         } content: {
-            RatingModalView(media: media)
-        }
-        .onTapGesture {
-            showingSheet = true
-        }
-        .sheet(isPresented: $showingSheet) {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
-                media = updatedMedia
-            }
-        } content: {
-            GeometryReader { proxy in
-                MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
-                    .ignoresSafeArea(.container, edges: .top)
-            }
+            RatingModalView(media: $media)
         }
         .swipeActions(edge: .trailing) {
-            if !isWatched {
+            if !isWatched, showSwipeAction {
                 swipeActionToSetWatched
             }
         }
         .onAppear {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
-                media = updatedMedia
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                    media = updatedMedia
+                }
             }
         }
         .onDisappear {
@@ -190,6 +185,9 @@ struct ThumbnailView: View {
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
+        MovieTabView()
+            .environmentObject(dev.homeVM)
+
         RowView(media: dev.mediaMock[1])
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)

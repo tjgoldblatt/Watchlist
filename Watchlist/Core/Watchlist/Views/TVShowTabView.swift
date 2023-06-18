@@ -28,9 +28,9 @@ struct TVShowTabView: View {
 
                 ScrollViewReader { proxy in
                     VStack(spacing: 10) {
-                        header
-
                         searchbar
+
+                        // MARK: - Watchlist
 
                         if !homeVM.tvList.isEmpty {
                             watchFilterOptions
@@ -60,6 +60,7 @@ struct TVShowTabView: View {
                     Text("")
                 }
             }
+            .navigationTitle(Tab.tvShows.rawValue)
         }
         .analyticsScreen(name: "TVTabView")
     }
@@ -88,9 +89,17 @@ extension TVShowTabView {
     func watchlist(scrollProxy: ScrollViewProxy) -> some View {
         List(selection: $vm.selectedRows) {
             ForEach(sortedSearchResults) { tvShow in
-                RowView(media: tvShow)
-                    .allowsHitTesting(vm.editMode == .inactive)
-                    .listRowBackground(Color.theme.background)
+                ZStack {
+                    RowView(media: tvShow)
+                        .allowsHitTesting(vm.editMode == .inactive)
+                        .listRowBackground(Color.theme.background)
+
+                    NavigationLink(value: tvShow) {
+                        RowView(media: tvShow,)
+                            .allowsHitTesting(vm.editMode == .inactive)
+                            .listRowBackground(Color.theme.background)
+                    }.opacity(0)
+                }
             }
             .id(vm.emptyViewID)
             .onChange(of: homeVM.selectedWatchOption) { _ in
@@ -99,6 +108,14 @@ extension TVShowTabView {
                 }
             }
             .listRowBackground(Color.theme.background)
+        }
+        .navigationDestination(for: DBMedia.self) { tvShow in
+            GeometryReader { proxy in
+                MediaModalView(media: tvShow, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+                    .navigationTitle("Hello world")
+                    .navigationBarHidden(true)
+            }
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

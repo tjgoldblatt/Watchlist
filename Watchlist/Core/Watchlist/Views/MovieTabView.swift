@@ -28,8 +28,6 @@ struct MovieTabView: View {
 
                 ScrollViewReader { proxy in
                     VStack(spacing: 10) {
-                        header
-
                         searchbar
 
                         // MARK: - Watchlist
@@ -62,6 +60,7 @@ struct MovieTabView: View {
                     Text("")
                 }
             }
+            .navigationTitle(Tab.movies.rawValue)
         }
         .analyticsScreen(name: "MovieTabView")
     }
@@ -88,9 +87,18 @@ extension MovieTabView {
     func watchlist(scrollProxy: ScrollViewProxy) -> some View {
         List(selection: $vm.selectedRows) {
             ForEach(sortedSearchResults) { movie in
-                RowView(media: movie)
-                    .allowsHitTesting(vm.editMode == .inactive)
-                    .listRowBackground(Color.theme.background)
+                ZStack {
+                    RowView(media: movie)
+                        .allowsHitTesting(vm.editMode == .inactive)
+                        .listRowBackground(Color.theme.background)
+
+                    NavigationLink(value: movie) {
+                        RowView(media: movie, showSwipeAction: false)
+                            .opacity(0)
+                            .allowsHitTesting(false)
+                            .listRowBackground(Color.theme.background)
+                    }.opacity(0)
+                }
             }
             .id(vm.emptyViewID)
             .onChange(of: homeVM.selectedWatchOption) { _ in
@@ -99,6 +107,14 @@ extension MovieTabView {
                 }
             }
             .listRowBackground(Color.theme.background)
+        }
+        .navigationDestination(for: DBMedia.self) { movie in
+            GeometryReader { proxy in
+                MediaModalView(media: movie, size: proxy.size, safeArea: proxy.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+                    .navigationTitle("Hello world")
+                    .navigationBarHidden(true)
+            }
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
