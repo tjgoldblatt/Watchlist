@@ -49,12 +49,6 @@ struct ExploreTabView: View {
                     isSubmitted = false
                 }
             }
-            .navigationDestination(for: DBMedia.self) { media in
-                GeometryReader { proxy in
-                    MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
-                        .ignoresSafeArea(.container, edges: .top)
-                }
-            }
             .sheet(isPresented: $showDeepLinkModal) {
                 if let deepLinkMedia {
                     GeometryReader { proxy in
@@ -100,32 +94,25 @@ extension ExploreTabView {
 
     // MARK: - Search Results
 
+    @ViewBuilder
     var searchResultsView: some View {
         if !vm.isSearching, homeVM.selectedTab == .explore {
-            return AnyView(
-                List {
-                    ForEach(sortedSearchResults, id: \.id) { media in
-                        if media.posterPath != nil, let genreIds = media.genreIDs, !genreIds.isEmpty {
-                            ZStack {
-                                ExploreRowView(media: media, currentTab: .explore)
-
-                                NavigationLink(value: media) {
-                                    ExploreRowView(media: media, currentTab: .explore)
-                                }.opacity(0)
-                            }
-                            .listRowBackground(Color.theme.background)
-                        }
+            List {
+                ForEach(sortedSearchResults, id: \.id) { media in
+                    if media.posterPath != nil, let genreIds = media.genreIDs, !genreIds.isEmpty {
+                        ExploreRowView(media: media, currentTab: .explore)
+                                .listRowBackground(Color.theme.background)
                     }
-                    .listRowBackground(Color.clear)
                 }
-                .background(.clear)
-                .scrollContentBackground(.hidden)
-                .scrollIndicators(.hidden)
-                .listStyle(.plain)
-                .scrollDismissesKeyboard(.immediately)
-            )
+                .listRowBackground(Color.clear)
+            }
+            .background(.clear)
+            .scrollContentBackground(.hidden)
+            .scrollIndicators(.hidden)
+            .listStyle(.plain)
+            .scrollDismissesKeyboard(.immediately)
         } else {
-            return AnyView(ProgressView())
+            ProgressView()
         }
     }
 
@@ -234,7 +221,9 @@ struct ExploreThumbnailView: View {
                         if let posterPath = media.posterPath,
                            let overview = media.overview, !overview.isEmpty
                         {
-                            NavigationLink(value: media) {
+                            Button {
+                                selectedMedia = media
+                            } label: {
                                 ThumbnailView(imagePath: posterPath)
                                     .overlay(alignment: .topTrailing) {
                                         if homeVM.isMediaIDInWatchlist(for: media.id) {
@@ -259,6 +248,12 @@ struct ExploreThumbnailView: View {
                 .padding(.top, 5)
             }
             .scrollDismissesKeyboard(.immediately)
+        }
+        .sheet(item: $selectedMedia) { media in
+            GeometryReader {
+                MediaModalView(media: media, size: $0.size, safeArea: $0.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
         }
     }
 }

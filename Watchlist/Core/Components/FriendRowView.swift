@@ -52,6 +52,17 @@ struct FriendRowView: View {
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("FriendRowView")
         .contentShape(Rectangle())
+        .onTapGesture(perform: {
+            withAnimation {
+                showingSheet.toggle()
+            }
+        })
+        .sheet(isPresented: $showingSheet) {
+            GeometryReader {
+                MediaModalView(media: media, friendName: friendName, size: $0.size, safeArea: $0.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
+        }
         .swipeActions(edge: .trailing) {
             if showSwipeAction {
                 if !homeVM.isMediaIDInWatchlist(for: media.id) {

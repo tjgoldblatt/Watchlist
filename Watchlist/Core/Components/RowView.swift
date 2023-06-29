@@ -33,6 +33,11 @@ struct RowView: View {
 
             rightColumn
         }
+        .onTapGesture {
+            withAnimation {
+                showingSheet.toggle()
+            }
+        }
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("RowView")
         .contentShape(Rectangle())
@@ -47,6 +52,12 @@ struct RowView: View {
         } content: {
             RatingModalView(media: $media)
         }
+        .sheet(isPresented: $showingSheet, content: {
+            GeometryReader {
+                MediaModalView(media: media, size: $0.size, safeArea: $0.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
+        })
         .swipeActions(edge: .trailing) {
             if !isWatched, showSwipeAction {
                 swipeActionToSetWatched

@@ -164,26 +164,8 @@ extension FriendWatchlistView {
     private var list: some View {
         List {
             ForEach(filteredMedia) { media in
-                ZStack {
-                    FriendRowView(media: media, friendName: firstName)
-
-                    NavigationLink {
-                        GeometryReader { proxy in
-                            MediaModalView(
-                                media: media,
-                                friendName: firstName,
-                                size: proxy.size,
-                                safeArea: proxy.safeAreaInsets
-                            )
-                            .ignoresSafeArea(.container, edges: .top)
-                        }
-
-                    } label: {
-                        FriendRowView(media: media, friendName: firstName, showSwipeAction: false)
-
-                    }.opacity(0)
-                }
-                .listRowBackground(Color.theme.background)
+                FriendRowView(media: media, friendName: firstName)
+                    .listRowBackground(Color.theme.background)
             }
         }
         .background(.clear)
