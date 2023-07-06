@@ -24,53 +24,50 @@ struct FriendWatchlistView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.theme.background.ignoresSafeArea()
+        ZStack {
+            Color.theme.background.ignoresSafeArea()
 
-                VStack(spacing: 10) {
-                    AddFriendsFilterView(filterText: $filterText)
-                        .padding(.horizontal)
+            VStack(spacing: 10) {
+                AddFriendsFilterView(filterText: $filterText)
+                    .padding(.horizontal)
 
-                    segmentController
+                segmentController
 
-                    if !filteredMedia.isEmpty {
-                        list
-                    } else {
-                        Color.theme.background
-                    }
-                    Spacer()
+                if !filteredMedia.isEmpty {
+                    list
+                } else {
+                    Color.theme.background
                 }
-                .onChange(of: selectedOption) { _ in
-                    filterText = ""
-                    hideKeyboard()
-                }
-                .padding(.top)
-                .navigationTitle(firstName + "'s Watchlist")
-                .toolbar {
-                    Menu {
-                        ForEach(SortingOptions.allCases, id: \.self) { options in
-                            Button {
-                                withAnimation(.easeInOut) {
-                                    selectedSorting = options
-                                }
-                            } label: {
-                                if selectedSorting == options {
-                                    Label(options.rawValue, systemImage: "checkmark")
-                                } else {
-                                    Text(options.rawValue)
-                                }
+                Spacer()
+            }
+            .onChange(of: selectedOption) { _ in
+                filterText = ""
+                hideKeyboard()
+            }
+            .padding(.top)
+            .navigationTitle(firstName + "'s Watchlist")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                Menu {
+                    ForEach(SortingOptions.allCases, id: \.self) { options in
+                        Button {
+                            withAnimation(.easeInOut) {
+                                selectedSorting = options
+                            }
+                        } label: {
+                            if selectedSorting == options {
+                                Label(options.rawValue, systemImage: "checkmark")
+                            } else {
+                                Text(options.rawValue)
                             }
                         }
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .foregroundColor(Color.theme.red)
                     }
+                } label: {
+                    Image(systemName: "slider.horizontal.3")
+                        .foregroundColor(Color.theme.red)
                 }
             }
         }
-        .ignoresSafeArea(edges: .bottom)
-        .toolbar(.hidden, for: .tabBar)
     }
 
     var filteredMedia: [DBMedia] {
@@ -185,7 +182,7 @@ struct FriendWatchlistView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             FriendWatchlistView(userId: "abc123", forPreview: true)
-                .environmentObject(dev.homeVM)
         }
+        .environmentObject(dev.homeVM)
     }
 }

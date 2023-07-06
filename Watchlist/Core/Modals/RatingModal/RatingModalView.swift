@@ -13,8 +13,8 @@ struct RatingModalView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @Environment(\.dismiss) var dismiss
 
-    @State var media: DBMedia
-    @State var rating: Int = 0
+    @Binding var media: DBMedia
+    @State private var rating: Int = 0
 
     @Namespace private var animation
 
@@ -90,17 +90,9 @@ struct RatingModalView: View {
                         .dynamicTypeSize(.medium)
 
                     Button {
-                        if rating > 0 {
-                            Task {
-                                try await WatchlistManager.shared.setPersonalRatingForMedia(
-                                    media: media,
-                                    personalRating: Double(rating)
-                                )
-
-                                try await WatchlistManager.shared.setMediaWatched(media: media, watched: true)
-
-                                dismiss()
-                            }
+                        if rating > 0 { media.watched = true
+                            media.personalRating = Double(rating)
+                            dismiss()
                             AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")
                         }
                     } label: {
@@ -137,19 +129,21 @@ struct RatingModalView: View {
 
 struct RatingModalView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingModalView(media: dev.mediaMock.first!)
+        RatingModalView(media: .constant(dev.mediaMock.first!))
     }
 }
 
 struct CloseButton: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var homeVM: HomeViewModel
+    @EnvironmentObject private var homeVM: HomeViewModel
+
+    var image = "xmark.circle.fill"
 
     var body: some View {
         Button {
             dismiss()
         } label: {
-            Image(systemName: "xmark.circle.fill")
+            Image(systemName: image)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 30, height: 30)

@@ -32,7 +32,6 @@ struct ProviderView: View {
                                 .shadow(color: Color.black.opacity(0.3), radius: 5)
                         } else {
                             ProgressView()
-                                .frame(height: 20)
                         }
                     }
                 }

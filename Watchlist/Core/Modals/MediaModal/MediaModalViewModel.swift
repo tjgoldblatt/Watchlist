@@ -39,18 +39,62 @@ final class MediaModalViewModel: ObservableObject {
         getWatchProviders(mediaType: media.mediaType, for: media.id)
     }
 
-    func setMediaCurrentlyWatching(_ currentlyWatching: Bool) {
+    func addToMediaList(isFriendView: Bool, _ homeVM: HomeViewModel) {
         Task {
-            try await WatchlistManager.shared.setMediaCurrentlyWatching(media: media, currentlyWatching: currentlyWatching)
-            media.currentlyWatching = currentlyWatching
+            var mediaToAdd = media
+            if isFriendView {
+                mediaToAdd.watched = false
+                mediaToAdd.personalRating = nil
+            }
+
+            try await WatchlistManager.shared.createNewMediaInWatchlist(media: mediaToAdd)
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id),
+               !isFriendView
+            {
+                media = updatedMedia
+            }
+
+            if !isFriendView {
+                AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia")
+            } else {
+                AnalyticsManager.shared.logEvent(name: "FriendMediaModalView_AddMedia")
+            }
         }
     }
 
-    func setMediaWatched(_ watched: Bool) {
+    func resetMedia(_ homeVM: HomeViewModel) {
         Task {
-            try await WatchlistManager.shared.setMediaWatched(media: media, watched: watched)
-            media.watched = watched
+            AnalyticsManager.shared.logEvent(name: "MediaModalView_ResetMedia")
+            try await setPersonalRating(nil)
+            try await setMediaWatched(false)
+            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                media = updatedMedia
+            }
         }
+    }
+
+    func updateMedia() {
+        Task {
+            try await setMediaWatched(media.watched)
+            try await setPersonalRating(media.personalRating)
+        }
+    }
+
+    func setMediaCurrentlyWatching(_ currentlyWatching: Bool) {
+        Task {
+            try await WatchlistManager.shared.setMediaCurrentlyWatching(media: media, currentlyWatching: currentlyWatching)
+        }
+    }
+
+    func setMediaWatched(_ watched: Bool) async throws {
+        try await WatchlistManager.shared.setMediaWatched(media: media, watched: watched)
+    }
+
+    func setPersonalRating(_ personalRating: Double?) async throws {
+        try await WatchlistManager.shared.setPersonalRatingForMedia(
+            media: media,
+            personalRating: personalRating
+        )
     }
 
     func updateMediaDetails() {
