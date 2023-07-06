@@ -286,8 +286,6 @@ struct MediaModalView: View {
                         }
                         .opacity(-titleProgress < progressAmount ? 1 : 0)
                         .animation(.easeInOut(duration: 0.25), value: -titleProgress < progressAmount)
-                        .opacity(showContent ? 1 : 0)
-                        .animation(.easeIn.delay(0.3), value: showContent)
                 }
 
                 Spacer()
