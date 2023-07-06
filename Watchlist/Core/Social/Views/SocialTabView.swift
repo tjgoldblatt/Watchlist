@@ -32,8 +32,6 @@ struct SocialTabView: View {
                 Color.theme.background.ignoresSafeArea()
 
                 VStack(spacing: 10) {
-                    header
-
                     if settingsVM.authUser?.isAnonymous == false {
                         if vm.isLoaded {
                             if !vm.friends.isEmpty || !vm.friendRequests.isEmpty {
@@ -51,6 +49,7 @@ struct SocialTabView: View {
                     }
                     Spacer()
                 }
+                .navigationTitle(Tab.social.rawValue)
             }
             .onChange(of: vm.friendRequestIds) { requestIds in
                 guard let requestIds else { return }

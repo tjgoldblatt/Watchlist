@@ -28,9 +28,9 @@ struct TVShowTabView: View {
 
                 ScrollViewReader { proxy in
                     VStack(spacing: 10) {
-                        header
-
                         searchbar
+
+                        // MARK: - Watchlist
 
                         if !homeVM.tvList.isEmpty {
                             watchFilterOptions
@@ -60,6 +60,7 @@ struct TVShowTabView: View {
                     Text("")
                 }
             }
+            .navigationTitle(Tab.tvShows.rawValue)
         }
         .analyticsScreen(name: "TVTabView")
     }

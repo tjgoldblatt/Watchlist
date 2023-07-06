@@ -26,8 +26,8 @@ struct SettingsView: View {
                 Color.theme.background.ignoresSafeArea()
 
                 List {
-                    appearanceSection
-                        .listRowBackground(Color.gray.opacity(0.1))
+//                    appearanceSection
+//                        .listRowBackground(Color.gray.opacity(0.1))
                     accountSection
                         .listRowBackground(Color.gray.opacity(0.1))
                     userInfoSection
