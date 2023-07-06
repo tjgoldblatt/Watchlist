@@ -21,6 +21,8 @@ struct FriendRowView: View {
 
     var friendName: String
 
+    var showSwipeAction = true
+
     var body: some View {
         HStack(alignment: .center) {
             if let posterPath = media.posterPath {
@@ -44,26 +46,28 @@ struct FriendRowView: View {
             }
 
             centerColumn
-
-            rightColumn
         }
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("FriendRowView")
         .contentShape(Rectangle())
-        .onTapGesture {
-            showingSheet = true
-        }
+        .onTapGesture(perform: {
+            withAnimation {
+                showingSheet.toggle()
+            }
+        })
         .sheet(isPresented: $showingSheet) {
-            GeometryReader { proxy in
-                MediaModalView(media: media, friendName: friendName, size: proxy.size, safeArea: proxy.safeAreaInsets)
+            GeometryReader {
+                MediaModalView(media: media, friendName: friendName, size: $0.size, safeArea: $0.safeAreaInsets)
                     .ignoresSafeArea(.container, edges: .top)
             }
         }
         .swipeActions(edge: .trailing) {
-            if !homeVM.isMediaIDInWatchlist(for: media.id) {
-                swipeActionToAddToWatchlist
-            } else {
-                swipeActionToRemoveFromWatchlist
+            if showSwipeAction {
+                if !homeVM.isMediaIDInWatchlist(for: media.id) {
+                    swipeActionToAddToWatchlist
+                } else {
+                    swipeActionToRemoveFromWatchlist
+                }
             }
         }
     }
@@ -81,47 +85,31 @@ extension FriendRowView {
                     .lineLimit(2)
                     .frame(alignment: .top)
                     .padding(.bottom, 1)
+                    .frame(maxHeight: .infinity)
             }
+
             Text(media.overview ?? "")
                 .font(.system(.caption, design: .default))
                 .fixedSize(horizontal: false, vertical: true)
                 .fontWeight(.light)
                 .foregroundColor(Color.theme.text)
                 .lineLimit(3)
+                .frame(maxHeight: .infinity)
 
-            if let genres = getGenres(genreIDs: media.genreIDs) {
-                ViewThatFits {
-                    HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                            if idx < 2 {
-                                GenreView(genreName: genre.name)
-                            }
-                        }
-                    }
+            HStack {
+                if let voteAverage = media.voteAverage {
+                    StarRatingView(rating: voteAverage, color: .yellow)
+                }
 
-                    HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                            if idx < 1 {
-                                GenreView(genreName: genre.name)
-                            }
-                        }
-                    }
+                if let rating = media.personalRating {
+                    StarRatingView(rating: rating, color: Color.theme.red)
                 }
             }
+            .frame(maxHeight: .infinity)
         }
+        .multilineTextAlignment(.leading)
+        .frame(maxHeight: 110, alignment: .top)
         .frame(minWidth: 50)
-    }
-
-    var rightColumn: some View {
-        VStack(spacing: 20) {
-            if let voteAverage = media.voteAverage {
-                StarRatingView(text: "IMDb RATING", rating: voteAverage)
-            }
-
-            if let rating = media.personalRating {
-                StarRatingView(text: "\(friendName.uppercased())'S RATING", rating: rating)
-            }
-        }
     }
 
     private var swipeActionToAddToWatchlist: some View {
@@ -135,7 +123,7 @@ extension FriendRowView {
             AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Add")
 
         } label: {
-            Image(systemName: "checkmark.circle.fill")
+            Image(systemName: "plus.circle.fill")
         }
         .tint(Color.theme.secondaryBackground)
         .accessibilityIdentifier("AddToWatchlistSwipeAction")

@@ -18,8 +18,6 @@ struct ExploreRowView: View {
 
     @State var currentTab: Tab
 
-    @State private var showingSheet = false
-
     var dateConvertedToYear: String {
         if let title = media.mediaType == .tv ? media.firstAirDate : media.releaseDate {
             let date = title.components(separatedBy: "-")
@@ -42,19 +40,6 @@ struct ExploreRowView: View {
             rightColumn
         }
         .contentShape(Rectangle())
-        .onTapGesture {
-            showingSheet = true
-        }
-        .sheet(isPresented: $showingSheet, onDismiss: {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
-                media = updatedMedia
-            }
-        }, content: {
-            GeometryReader { proxy in
-                MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
-                    .ignoresSafeArea(.container, edges: .top)
-            }
-        })
         .onAppear {
             Task {
                 if try await WatchlistManager.shared.doesMediaExistInCollection(media: media) {

@@ -34,8 +34,6 @@ struct ExploreTabView: View {
                 Color.theme.background.ignoresSafeArea()
 
                 VStack(spacing: 10) {
-                    header
-
                     searchBar
 
                     if sortedSearchResults.isEmpty {
@@ -50,9 +48,6 @@ struct ExploreTabView: View {
                     isKeyboardShowing = value
                     isSubmitted = false
                 }
-            }
-            .toolbar {
-                Text("")
             }
             .sheet(isPresented: $showDeepLinkModal) {
                 if let deepLinkMedia {
@@ -70,6 +65,7 @@ struct ExploreTabView: View {
                     }
                 }
             }
+            .navigationTitle(Tab.explore.rawValue)
         }
         .analyticsScreen(name: "ExploreTabView")
         .onAppear {
@@ -98,26 +94,25 @@ extension ExploreTabView {
 
     // MARK: - Search Results
 
+    @ViewBuilder
     var searchResultsView: some View {
         if !vm.isSearching, homeVM.selectedTab == .explore {
-            return AnyView(
-                List {
-                    ForEach(sortedSearchResults, id: \.id) { media in
-                        if media.posterPath != nil, let genreIds = media.genreIDs, !genreIds.isEmpty {
-                            ExploreRowView(media: media, currentTab: .explore)
-                                .listRowBackground(Color.theme.background)
-                        }
+            List {
+                ForEach(sortedSearchResults, id: \.id) { media in
+                    if media.posterPath != nil, let genreIds = media.genreIDs, !genreIds.isEmpty {
+                        ExploreRowView(media: media, currentTab: .explore)
+                            .listRowBackground(Color.theme.background)
                     }
-                    .listRowBackground(Color.clear)
                 }
-                .background(.clear)
-                .scrollContentBackground(.hidden)
-                .scrollIndicators(.hidden)
-                .listStyle(.plain)
-                .scrollDismissesKeyboard(.immediately)
-            )
+                .listRowBackground(Color.clear)
+            }
+            .background(.clear)
+            .scrollContentBackground(.hidden)
+            .scrollIndicators(.hidden)
+            .listStyle(.plain)
+            .scrollDismissesKeyboard(.immediately)
         } else {
-            return AnyView(ProgressView())
+            ProgressView()
         }
     }
 
@@ -241,18 +236,11 @@ struct ExploreThumbnailView: View {
                                                     .resizable()
                                                     .scaledToFit()
                                                     .frame(width: 20)
-                                                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                                    .foregroundStyle(Color.theme.genreText, Color.theme.red.gradient)
                                             }
                                             .offset(y: -5)
                                         }
                                     }
-                            }
-
-                            .sheet(item: $selectedMedia) { media in
-                                GeometryReader { proxy in
-                                    MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
-                                        .ignoresSafeArea(.container, edges: .top)
-                                }
                             }
                         }
                     }
@@ -261,14 +249,23 @@ struct ExploreThumbnailView: View {
             }
             .scrollDismissesKeyboard(.immediately)
         }
+        .sheet(item: $selectedMedia) { media in
+            GeometryReader {
+                MediaModalView(media: media, size: $0.size, safeArea: $0.safeAreaInsets)
+                    .ignoresSafeArea(.container, edges: .top)
+            }
+        }
     }
 }
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreTabView(homeVM: dev.homeVM)
-            .environmentObject(dev.homeVM)
-            .previewDisplayName("Explore Tab View")
+        NavigationStack {
+            ExploreTabView(homeVM: dev.homeVM)
+                .previewDisplayName("Explore Tab View")
+        }
+        .preferredColorScheme(.dark)
+        .environmentObject(dev.homeVM)
 
         ExploreThumbnailView(title: "", mediaArray: dev.mediaMock)
             .environmentObject(dev.homeVM)

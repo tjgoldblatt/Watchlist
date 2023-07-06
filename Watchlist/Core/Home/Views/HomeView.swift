@@ -49,7 +49,7 @@ struct HomeView: View {
                         .tag(Tab.social)
                         .badge(homeVM.pendingFriendRequests)
                 }
-
+                .preferredColorScheme(.dark)
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
                 .onChange(of: homeVM.selectedTab) { updatedTab in

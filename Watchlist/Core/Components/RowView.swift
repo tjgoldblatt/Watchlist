@@ -21,6 +21,8 @@ struct RowView: View {
 
     @State private var showRatingSheet = false
 
+    var showSwipeAction = true
+
     var body: some View {
         HStack(alignment: .center) {
             if let posterPath = media.posterPath {
@@ -28,40 +30,42 @@ struct RowView: View {
             }
 
             centerColumn
-
-            rightColumn
+        }
+        .onTapGesture {
+            withAnimation {
+                showingSheet.toggle()
+            }
         }
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("RowView")
         .contentShape(Rectangle())
         .sheet(isPresented: $showRatingSheet) {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
-                media = updatedMedia
+            Task {
+                try? await WatchlistManager.shared.setPersonalRatingForMedia(media: media, personalRating: media.personalRating)
+                try? await WatchlistManager.shared.setMediaWatched(media: media, watched: media.personalRating != nil)
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                    media = updatedMedia
+                }
             }
         } content: {
-            RatingModalView(media: media)
+            RatingModalView(media: $media)
         }
-        .onTapGesture {
-            showingSheet = true
-        }
-        .sheet(isPresented: $showingSheet) {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
-                media = updatedMedia
-            }
-        } content: {
-            GeometryReader { proxy in
-                MediaModalView(media: media, size: proxy.size, safeArea: proxy.safeAreaInsets)
+        .sheet(isPresented: $showingSheet, content: {
+            GeometryReader {
+                MediaModalView(media: media, size: $0.size, safeArea: $0.safeAreaInsets)
                     .ignoresSafeArea(.container, edges: .top)
             }
-        }
+        })
         .swipeActions(edge: .trailing) {
-            if !isWatched {
+            if !isWatched, showSwipeAction {
                 swipeActionToSetWatched
             }
         }
         .onAppear {
-            if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
-                media = updatedMedia
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
+                    media = updatedMedia
+                }
             }
         }
         .onDisappear {
@@ -89,51 +93,33 @@ extension RowView {
                     .lineLimit(1)
                     .frame(alignment: .top)
                     .padding(.bottom, 1)
+                    .frame(maxHeight: .infinity)
             }
 
-            Text(media.overview ?? "")
-                .font(.system(.caption, design: .default))
-                .fixedSize(horizontal: false, vertical: true)
-                .fontWeight(.light)
-                .foregroundColor(Color.theme.text)
-                .lineLimit(3)
+            if let overview = media.overview {
+                Text(overview)
+                    .font(.caption)
+                    .fontWeight(.light)
+                    .foregroundColor(Color.theme.text)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(3)
+                    .frame(maxHeight: .infinity)
+            }
 
-            if let genres = getGenres(genreIDs: media.genreIDs) {
-                ViewThatFits {
-                    HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                            if idx < 2 {
-                                GenreView(genreName: genre.name)
-                            }
-                        }
-                    }
-
-                    HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                            if idx < 1 {
-                                GenreView(genreName: genre.name)
-                            }
-                        }
-                    }
+            HStack {
+                if let voteAverage = media.voteAverage {
+                    StarRatingView(rating: voteAverage, color: .yellow)
                 }
-                .frame(maxHeight: .infinity, alignment: .bottom)
+
+                if let rating = media.personalRating {
+                    StarRatingView(rating: rating, color: Color.theme.red)
+                }
             }
+            .frame(maxHeight: .infinity)
         }
         .multilineTextAlignment(.leading)
         .frame(maxHeight: 110, alignment: .top)
         .frame(minWidth: 50)
-    }
-
-    var rightColumn: some View {
-        VStack(alignment: .center, spacing: 20) {
-            if let voteAverage = media.voteAverage {
-                StarRatingView(text: "IMDb RATING", rating: voteAverage)
-            }
-
-            if let rating = media.personalRating {
-                StarRatingView(text: "YOUR RATING", rating: rating)
-            }
-        }
     }
 
     private var swipeActionToSetWatched: some View {
@@ -190,8 +176,13 @@ struct ThumbnailView: View {
 
 struct RowView_Previews: PreviewProvider {
     static var previews: some View {
+        MovieTabView()
+            .environmentObject(dev.homeVM)
+            .preferredColorScheme(.dark)
+
         RowView(media: dev.mediaMock[1])
             .previewLayout(.sizeThatFits)
+            .preferredColorScheme(.dark)
             .environmentObject(dev.homeVM)
             .padding()
     }

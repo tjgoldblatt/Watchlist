@@ -47,11 +47,12 @@ final class SocialViewModel: ObservableObject {
 
             if !ApplicationHelper.isDebug {
                 allUsers = allUsers
-                    // Doing this so users don't see duplicate test TJ accounts
+                    // Doing this so users don't see test accounts
                         .filter {
                             $0.userId != "82rN4294VtT3gyXV8O0bV1I40mN2"
                                 && $0.userId != "nPxpb3vGMOTV1kZd9gVYYd8WDbB2"
                                 && $0.userId != "ZTXz36UseUcFnHyYpFeOAI2uCPi2"
+                                && $0.userId != "u4C9s9X1NcgAngCbgSKoyCryMtU2"
                         }
             }
             isLoaded = true

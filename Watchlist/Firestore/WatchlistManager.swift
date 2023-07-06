@@ -170,7 +170,7 @@ final class WatchlistManager {
             DBMedia.CodingKeys.watched.rawValue: watched,
         ]
 
-        if media.currentlyWatching {
+        if media.currentlyWatching, watched {
             try await setMediaCurrentlyWatching(media: media, currentlyWatching: false)
         }
 

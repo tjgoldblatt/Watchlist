@@ -28,8 +28,6 @@ struct MovieTabView: View {
 
                 ScrollViewReader { proxy in
                     VStack(spacing: 10) {
-                        header
-
                         searchbar
 
                         // MARK: - Watchlist
@@ -62,6 +60,7 @@ struct MovieTabView: View {
                     Text("")
                 }
             }
+            .navigationTitle(Tab.movies.rawValue)
         }
         .analyticsScreen(name: "MovieTabView")
     }
