@@ -101,7 +101,7 @@ extension ExploreTabView {
                 ForEach(sortedSearchResults, id: \.id) { media in
                     if media.posterPath != nil, let genreIds = media.genreIDs, !genreIds.isEmpty {
                         ExploreRowView(media: media, currentTab: .explore)
-                                .listRowBackground(Color.theme.background)
+                            .listRowBackground(Color.theme.background)
                     }
                 }
                 .listRowBackground(Color.clear)
@@ -264,6 +264,7 @@ struct SearchView_Previews: PreviewProvider {
             ExploreTabView(homeVM: dev.homeVM)
                 .previewDisplayName("Explore Tab View")
         }
+        .preferredColorScheme(.dark)
         .environmentObject(dev.homeVM)
 
         ExploreThumbnailView(title: "", mediaArray: dev.mediaMock)

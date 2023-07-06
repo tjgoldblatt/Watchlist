@@ -46,6 +46,7 @@ struct FriendWatchlistView: View {
             }
             .padding(.top)
             .navigationTitle(firstName + "'s Watchlist")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 Menu {
                     ForEach(SortingOptions.allCases, id: \.self) { options in

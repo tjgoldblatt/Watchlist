@@ -46,8 +46,6 @@ struct FriendRowView: View {
             }
 
             centerColumn
-
-            rightColumn
         }
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityIdentifier("FriendRowView")
@@ -87,47 +85,31 @@ extension FriendRowView {
                     .lineLimit(2)
                     .frame(alignment: .top)
                     .padding(.bottom, 1)
+                    .frame(maxHeight: .infinity)
             }
+
             Text(media.overview ?? "")
                 .font(.system(.caption, design: .default))
                 .fixedSize(horizontal: false, vertical: true)
                 .fontWeight(.light)
                 .foregroundColor(Color.theme.text)
                 .lineLimit(3)
+                .frame(maxHeight: .infinity)
 
-            if let genres = getGenres(genreIDs: media.genreIDs) {
-                ViewThatFits {
-                    HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                            if idx < 2 {
-                                GenreView(genreName: genre.name)
-                            }
-                        }
-                    }
+            HStack {
+                if let voteAverage = media.voteAverage {
+                    StarRatingView(rating: voteAverage, color: .yellow)
+                }
 
-                    HStack {
-                        ForEach(Array(zip(genres.indices, genres)), id: \.0) { idx, genre in
-                            if idx < 1 {
-                                GenreView(genreName: genre.name)
-                            }
-                        }
-                    }
+                if let rating = media.personalRating {
+                    StarRatingView(rating: rating, color: Color.theme.red)
                 }
             }
+            .frame(maxHeight: .infinity)
         }
+        .multilineTextAlignment(.leading)
+        .frame(maxHeight: 110, alignment: .top)
         .frame(minWidth: 50)
-    }
-
-    var rightColumn: some View {
-        VStack(spacing: 20) {
-            if let voteAverage = media.voteAverage {
-                StarRatingView(text: "IMDb RATING", rating: voteAverage)
-            }
-
-            if let rating = media.personalRating {
-                StarRatingView(text: "\(friendName.uppercased())'S RATING", rating: rating)
-            }
-        }
     }
 
     private var swipeActionToAddToWatchlist: some View {

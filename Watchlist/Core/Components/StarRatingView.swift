@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct StarRatingView: View {
-    var text: String
     var rating: Double
     var size: CGFloat = 14
+    var color: Color = .yellow
 
     var ratingAsString: String {
         return "\(round(rating * 10) / 10.0)"
@@ -18,33 +18,15 @@ struct StarRatingView: View {
 
     var body: some View {
         if rating > 0 {
-            VStack(alignment: .center) {
-                Text(text)
-                    .font(.caption)
-                    .fontWeight(.light)
-                    .fixedSize(horizontal: true, vertical: false)
-                    .foregroundColor(Color.theme.text)
+            HStack(spacing: 2) {
+                Image(systemName: "star.fill")
+                    .foregroundStyle(color.gradient)
+                    .imageScale(.small)
 
-                HStack(spacing: 2) {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(Color.theme.red)
-                        .imageScale(.small)
-
-                    Group {
-                        Text(ratingAsString)
-                            .font(.system(size: size, design: .default))
-                            .fontWeight(.medium)
-                        Text("/")
-                            .font(.system(size: size - 2, design: .default))
-                            .fontWeight(.light)
-                        Text("10")
-                            .font(.system(size: size - 2, design: .default))
-                            .fontWeight(.light)
-                    }
-                    .foregroundColor(Color.theme.text)
-                }
-                .fixedSize(horizontal: true, vertical: false)
+                Text(ratingAsString)
+                    .foregroundStyle(Color.theme.text)
             }
+            .font(.system(size: size).bold())
         } else {
             VStack {
                 Text("Unrated".uppercased())
@@ -58,6 +40,6 @@ struct StarRatingView: View {
 
 struct StarRatingView_Previews: PreviewProvider {
     static var previews: some View {
-        StarRatingView(text: "YOUR RATING", rating: 2)
+        StarRatingView(rating: 2)
     }
 }
