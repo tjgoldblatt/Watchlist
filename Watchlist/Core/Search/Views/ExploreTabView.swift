@@ -236,7 +236,7 @@ struct ExploreThumbnailView: View {
                                                     .resizable()
                                                     .scaledToFit()
                                                     .frame(width: 20)
-                                                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                                    .foregroundStyle(Color.theme.genreText, Color.theme.red.gradient)
                                             }
                                             .offset(y: -5)
                                         }

@@ -20,6 +20,7 @@ struct MediaModalView: View {
     @State private var shouldAddOrDeleteMediaList: Bool?
     @State var isInMediaList: Bool = false
     @State private var showContent: Bool = false
+    @State private var expandPoster: Bool = false
 
     // MARK: - Computed Vars
 
@@ -91,11 +92,36 @@ struct MediaModalView: View {
                     vm.updateMediaDetails()
                     hasUpdatedDetails = true
                 }
-                withAnimation {
-                    showContent = true
-                }
+
+                showContent = true
             }
             .dynamicTypeSize(.medium ... .xLarge)
+        }
+        .overlay {
+            if expandPoster,
+               let posterPath = vm.media.posterPath
+            {
+                LazyImage(url: URL(string: TMDBConstants.imageURL + posterPath)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .matchedGeometryEffect(id: "poster", in: animation)
+                            .frame(height: 400)
+                            .mask {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .matchedGeometryEffect(id: "poster-corner", in: animation)
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(.ultraThinMaterial)
+                            .onTapGesture {
+                                withAnimation(.interactiveSpring()) {
+                                    expandPoster = false
+                                }
+                            }
+                    }
+                }
+            }
         }
         .navigationBarHidden(true)
         .gesture(
@@ -153,12 +179,6 @@ struct MediaModalView: View {
                                     )
                             }
                         }
-                        .offset(y: -minY)
-                        .animation(.easeIn, value: showContent)
-                        .opacity(showContent ? 1 : 0)
-                } else {
-                    ProgressView()
-                        .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0), alignment: .center)
                 }
             }
         }
@@ -266,6 +286,8 @@ struct MediaModalView: View {
                         }
                         .opacity(-titleProgress < progressAmount ? 1 : 0)
                         .animation(.easeInOut(duration: 0.25), value: -titleProgress < progressAmount)
+                        .opacity(showContent ? 1 : 0)
+                        .animation(.easeIn.delay(0.3), value: showContent)
                 }
 
                 Spacer()
@@ -384,8 +406,8 @@ extension MediaModalView {
                                     .matchedGeometryEffect(id: "watched", in: animation)
                                     .foregroundStyle(
                                         isInMediaList && friendName == nil
-                                            ? Color.theme.red.gradient
-                                            : Color.theme.secondary.gradient
+                                            ? Color.theme.red
+                                            : Color.theme.secondary
                                     )
                             }
                         }
@@ -407,13 +429,22 @@ extension MediaModalView {
                         image
                             .resizable()
                             .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .matchedGeometryEffect(id: "poster", in: animation)
+                            .mask {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .matchedGeometryEffect(id: "poster-corner", in: animation)
+                            }
                             .frame(height: 150)
-                            .animation(.easeIn.delay(0.5), value: showContent)
-                            .opacity(showContent ? 1 : 0)
                             .offset(y: -20)
+                            .onTapGesture {
+                                withAnimation(.interactiveSpring()) {
+                                    expandPoster = true
+                                }
+                            }
                     }
                 }
+                .opacity(showContent ? 1 : 0)
+                .animation(.easeIn.delay(0.3), value: showContent)
             }
         }
     }
@@ -504,11 +535,10 @@ extension MediaModalView {
                     Text("Rate")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(
+                        .foregroundStyle(
                             isInMediaList && friendName == nil
                                 ? Color.theme.red
-                                : Color.theme
-                                    .secondary
+                                : Color.theme.secondary
                         )
                 }
             }
