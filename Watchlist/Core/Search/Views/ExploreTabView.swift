@@ -175,13 +175,13 @@ extension ExploreTabView {
 
                     ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
 
-                    ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
-
-                    ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
-
                     ExploreThumbnailView(title: "Anticipated Movies", mediaArray: vm.anticipatedMovies)
 
                     ExploreThumbnailView(title: "Anticipated TV Shows", mediaArray: vm.anticipatedTVShows)
+
+                    ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
+
+                    ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
                 }
                 .padding()
             }
