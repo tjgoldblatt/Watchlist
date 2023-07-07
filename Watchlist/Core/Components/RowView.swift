@@ -158,15 +158,8 @@ struct ThumbnailView: View {
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
             } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(Color.theme.secondary)
-                    .overlay(alignment: .center) {
-                        ProgressView()
-                            .foregroundColor(Color.theme.text)
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: frameWidth / 2)
-                            .offset(x: -2)
-                    }
+                Color.gray.opacity(0.2)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
         .frame(width: frameWidth, height: frameHeight)

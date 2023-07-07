@@ -423,7 +423,7 @@ extension MediaModalView {
         .overlay(alignment: .trailing) {
             if let posterPath = vm.media.posterPath {
                 LazyImage(url: URL(string: TMDBConstants.imageURL + posterPath)) { state in
-                    if let image = state.image {
+                    if let image = state.image, !expandPoster {
                         image
                             .resizable()
                             .scaledToFit()
@@ -451,7 +451,7 @@ extension MediaModalView {
     private var overview: some View {
         if let overview = vm.media.overview {
             ExpandableText(text: overview, lineLimit: 3)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .foregroundColor(Color.theme.text)
         }
     }
@@ -614,84 +614,6 @@ struct GenreSection: View {
                 }
             }
         }
-    }
-}
-
-struct ExpandableText: View {
-    let text: String
-    let lineLimit: Int
-
-    @State private var isExpanded: Bool = false
-    @State private var isTruncated: Bool?
-    @Namespace private var animation
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if !isExpanded {
-                Text(text)
-                    .lineLimit(lineLimit)
-                    .background(calculateTruncation(text: text))
-                    .onTapGesture {
-                        withAnimation(.interactiveSpring(response: 0.3)) {
-                            isExpanded = true
-                        }
-                    }
-                    .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "text", in: animation))
-
-                if isTruncated == true {
-                    button
-                }
-            } else {
-                Text(text)
-                    .background(calculateTruncation(text: text))
-                    .onTapGesture {
-                        withAnimation(.interactiveSpring(response: 0.3)) {
-                            isExpanded.toggle()
-                        }
-                    }
-                    .background(RoundedRectangle(cornerRadius: 10).fill(.clear).matchedGeometryEffect(id: "text", in: animation))
-
-                if isTruncated == true {
-                    button
-                }
-            }
-        }
-        .multilineTextAlignment(.leading)
-        // Re-calculate isTruncated for the new text
-        .onChange(of: text, perform: { _ in isTruncated = nil })
-    }
-
-    func calculateTruncation(text: String) -> some View {
-        // Select the view that fits in the background of the line-limited text.
-        ViewThatFits(in: .vertical) {
-            Text(text)
-                .hidden()
-                .onAppear {
-                    // If the whole text fits, then isTruncated is set to false and no button is shown.
-                    guard isTruncated == nil else { return }
-                    isTruncated = false
-                }
-            Color.clear
-                .hidden()
-                .onAppear {
-                    // If the whole text does not fit, Color.clear is selected,
-                    // isTruncated is set to true and button is shown.
-                    guard isTruncated == nil else { return }
-                    isTruncated = true
-                }
-        }
-    }
-
-    var button: some View {
-        Button(isExpanded ? "Less" : "More") {
-            withAnimation(.interactiveSpring()) {
-                isExpanded.toggle()
-            }
-        }
-        .foregroundColor(Color.theme.red)
-        .font(.body)
-        .fontWeight(.semibold)
-        .buttonStyle(.plain)
     }
 }
 

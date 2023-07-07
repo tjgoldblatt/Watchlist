@@ -12,14 +12,14 @@ import Foundation
 final class ExploreViewModel: ObservableObject {
     @Published var isSearching = false
 
-    @Published var popularMovies: [DBMedia] = []
-    @Published var popularTVShows: [DBMedia] = []
-
     @Published var trendingMovies: [DBMedia] = []
     @Published var trendingTVShows: [DBMedia] = []
 
     @Published var topRatedMovies: [DBMedia] = []
     @Published var topRatedTVShows: [DBMedia] = []
+
+    @Published var anticipatedTVShows: [DBMedia] = []
+    @Published var anticipatedMovies: [DBMedia] = []
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -32,8 +32,8 @@ final class ExploreViewModel: ObservableObject {
 
     func loadMedia() {
         getTopRatedMedia()
-        getPopularMedia()
         getTrendingMedia()
+        getAnticipatedMedia()
     }
 
     func search() {
@@ -43,30 +43,6 @@ final class ExploreViewModel: ObservableObject {
             .sink(receiveCompletion: NetworkingManager.handleCompletition) { mediaArray in
                 self.homeVM.results = mediaArray
                 self.isSearching = false
-            }
-            .store(in: &cancellables)
-    }
-
-    func getPopularMedia() {
-        TMDbService.getPopularMovies()
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: NetworkingManager.handleCompletition) { popularMovies in
-                self.popularMovies = popularMovies.compactMap { [weak self] in
-                    guard let self else { return nil }
-
-                    return convertDBMedia(media: $0, mediaType: .movie)
-                }
-            }
-            .store(in: &cancellables)
-
-        TMDbService.getPopularTVShows()
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: NetworkingManager.handleCompletition) { popularTVShows in
-                self.popularTVShows = popularTVShows.compactMap { [weak self] in
-                    guard let self else { return nil }
-
-                    return convertDBMedia(media: $0, mediaType: .tv)
-                }
             }
             .store(in: &cancellables)
     }
@@ -117,6 +93,13 @@ final class ExploreViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+    }
+
+    func getAnticipatedMedia() {
+        Task {
+            self.anticipatedMovies = try await TMDbService.convertTraktToTMDB(for: .movie)
+            self.anticipatedTVShows = try await TMDbService.convertTraktToTMDB(for: .tv)
+        }
     }
 
     private func convertDBMedia(media: Media, mediaType: MediaType? = nil) -> DBMedia? {
