@@ -28,6 +28,8 @@ struct TVShowTabView: View {
 
                 ScrollViewReader { proxy in
                     VStack(spacing: 10) {
+                        header
+
                         searchbar
 
                         // MARK: - Watchlist
@@ -60,7 +62,6 @@ struct TVShowTabView: View {
                     Text("")
                 }
             }
-            .navigationTitle(Tab.tvShows.rawValue)
         }
         .analyticsScreen(name: "TVTabView")
     }
@@ -194,7 +195,6 @@ extension TVShowTabView {
             }
             .buttonStyle(.plain)
         }
-        .scrollIndicators(.hidden)
         .listStyle(.plain)
         .scrollDismissesKeyboard(.immediately)
     }

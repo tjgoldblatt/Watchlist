@@ -38,7 +38,7 @@ struct FriendRowView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 20)
-                                    .foregroundStyle(Color.theme.genreText, Color.theme.red)
+                                    .foregroundStyle(Color.theme.genreText, Color.theme.red.gradient)
                             }
                             .offset(y: -5)
                         }
@@ -82,7 +82,7 @@ extension FriendRowView {
                     .fontWeight(.bold)
                     .fixedSize(horizontal: false, vertical: true)
                     .foregroundColor(Color.theme.text)
-                    .lineLimit(2)
+                    .lineLimit(1)
                     .frame(alignment: .top)
                     .padding(.bottom, 1)
                     .frame(maxHeight: .infinity)
