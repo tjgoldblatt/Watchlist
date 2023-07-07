@@ -76,7 +76,7 @@ class TMDbService {
 
     static func getAnticipatedMedia(for media: MediaType) async throws -> [Int] {
         let urlMedia = media == .movie ? "movies" : "shows"
-        guard let url = URL(string: "\(TraktConstants.BASE_URL)/\(urlMedia)/anticipated")
+        guard let url = URL(string: "\(TraktConstants.BASE_URL)/\(urlMedia)/anticipated?limit=20")
         else { throw TMDbError.failedToGetData }
         var request = URLRequest(url: url)
         request.setValue(TraktConstants.API_KEY, forHTTPHeaderField: "trakt-api-key")

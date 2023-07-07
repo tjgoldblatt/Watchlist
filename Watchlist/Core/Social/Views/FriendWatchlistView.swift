@@ -171,7 +171,6 @@ extension FriendWatchlistView {
         }
         .background(.clear)
         .scrollContentBackground(.hidden)
-        .scrollIndicators(.hidden)
         .listStyle(.plain)
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.immediately)

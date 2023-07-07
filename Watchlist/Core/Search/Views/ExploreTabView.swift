@@ -34,6 +34,8 @@ struct ExploreTabView: View {
                 Color.theme.background.ignoresSafeArea()
 
                 VStack(spacing: 10) {
+                    header
+
                     searchBar
 
                     if sortedSearchResults.isEmpty {
@@ -65,7 +67,11 @@ struct ExploreTabView: View {
                     }
                 }
             }
-            .navigationTitle(Tab.explore.rawValue)
+            .toolbar {
+                ToolbarItem {
+                    Text("")
+                }
+            }
         }
         .analyticsScreen(name: "ExploreTabView")
         .onAppear {
@@ -108,7 +114,6 @@ extension ExploreTabView {
             }
             .background(.clear)
             .scrollContentBackground(.hidden)
-            .scrollIndicators(.hidden)
             .listStyle(.plain)
             .scrollDismissesKeyboard(.immediately)
         } else {
