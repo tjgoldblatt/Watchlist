@@ -74,28 +74,56 @@ class TMDbService {
             .eraseToAnyPublisher()
     }
 
-    /// Fetches popular movies from the TMDb API.
-    /// - Returns: A publisher that emits an array of `Media` objects or an error.
-    static func getPopularMovies() -> AnyPublisher<[Media], Error> {
-        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/movie/popular?api_key=\(TMDBConstants.API_KEY)&language=en-US")
-        else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
+    static func getAnticipatedMedia(for media: MediaType) async throws -> [Int] {
+        let urlMedia = media == .movie ? "movies" : "shows"
+        guard let url = URL(string: "\(TraktConstants.BASE_URL)/\(urlMedia)/anticipated?limit=20")
+        else { throw TMDbError.failedToGetData }
+        var request = URLRequest(url: url)
+        request.setValue(TraktConstants.API_KEY, forHTTPHeaderField: "trakt-api-key")
+        request.setValue("2", forHTTPHeaderField: "trakt-api-version")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        return NetworkingManager.download(url: url)
-            .decode(type: MediaResponse.self, decoder: JSONDecoder())
-            .map(\.results)
-            .eraseToAnyPublisher()
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw TMDbError.failedToGetData
+        }
+
+        if media == .tv {
+            return try JSONDecoder().decode([TraktTV].self, from: data).compactMap { $0.show?.ids?.tmdb }
+        } else {
+            return try JSONDecoder().decode([TraktMovie].self, from: data).compactMap { $0.movie?.ids?.tmdb }
+        }
     }
 
-    /// Fetches popular TV shows from the TMDb API.
-    /// - Returns: A publisher that emits an array of `Media` objects or an error.
-    static func getPopularTVShows() -> AnyPublisher<[Media], Error> {
-        guard let url = URL(string: "\(TMDBConstants.baseURL)/3/tv/popular?api_key=\(TMDBConstants.API_KEY)&language=en-US")
-        else { return Fail(error: TMDbError.failedToGetData).eraseToAnyPublisher() }
-
-        return NetworkingManager.download(url: url)
-            .decode(type: MediaResponse.self, decoder: JSONDecoder())
-            .map(\.results)
-            .eraseToAnyPublisher()
+    static func convertTraktToTMDB(for media: MediaType) async throws -> [DBMedia] {
+        do {
+            let ids = try await getAnticipatedMedia(for: media)
+            if media == .tv {
+                var tvDetailArray: [DBMedia] = []
+                for id in ids {
+                    if let tvDetail = try? await getMediaDetails(media: .tv, for: id) as? TVDetails,
+                       let tvShow = tvDetail.convertToMedia()
+                    {
+                        tvDetailArray.append(tvShow)
+                    }
+                }
+                return tvDetailArray
+            } else {
+                var movieDetailArray: [DBMedia] = []
+                for id in ids {
+                    if let movieDetail = try? await getMediaDetails(media: .movie, for: id) as? MovieDetails,
+                       let movie = movieDetail.convertToMedia()
+                    {
+                        movieDetailArray.append(movie)
+                    }
+                }
+                return movieDetailArray
+            }
+        } catch {
+            dump(error)
+            CrashlyticsManager.handleError(error: error)
+            throw error
+        }
     }
 
     /// Fetches top rated movies from TMDb API.
@@ -156,6 +184,20 @@ class TMDbService {
             .eraseToAnyPublisher()
     }
 
+    static func getMediaDetails(media: MediaType, for id: Int) async throws -> MediaDetails {
+        guard let url =
+            URL(string: "\(TMDBConstants.baseURL)/3/\(media.rawValue)/\(id)?api_key=\(TMDBConstants.API_KEY)&language=en-US")
+        else { throw TMDbError.failedToGetData }
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw TMDbError.failedToGetData }
+
+        if media == .tv {
+            return try JSONDecoder().decode(TVDetails.self, from: data)
+        } else {
+            return try JSONDecoder().decode(MovieDetails.self, from: data)
+        }
+    }
+
     /// Fetches the list of all movie genres
     /// - Parameter completion: code for what to do after task is finished
     static func getMovieGenreList() -> AnyPublisher<[Genre], Error> {
@@ -178,5 +220,15 @@ class TMDbService {
             .decode(type: GenreResponse.self, decoder: JSONDecoder())
             .map(\.genres)
             .eraseToAnyPublisher()
+    }
+}
+
+// MARK: - Helper
+
+extension TMDbService {
+    static func addOrSubtractMonth(month: Int) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter.string(from: Calendar.current.date(byAdding: .month, value: month, to: Date()) ?? Date())
     }
 }

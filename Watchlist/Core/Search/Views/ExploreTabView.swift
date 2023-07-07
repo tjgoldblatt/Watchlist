@@ -34,6 +34,8 @@ struct ExploreTabView: View {
                 Color.theme.background.ignoresSafeArea()
 
                 VStack(spacing: 10) {
+                    header
+
                     searchBar
 
                     if sortedSearchResults.isEmpty {
@@ -65,7 +67,11 @@ struct ExploreTabView: View {
                     }
                 }
             }
-            .navigationTitle(Tab.explore.rawValue)
+            .toolbar {
+                ToolbarItem {
+                    Text("")
+                }
+            }
         }
         .analyticsScreen(name: "ExploreTabView")
         .onAppear {
@@ -108,7 +114,6 @@ extension ExploreTabView {
             }
             .background(.clear)
             .scrollContentBackground(.hidden)
-            .scrollIndicators(.hidden)
             .listStyle(.plain)
             .scrollDismissesKeyboard(.immediately)
         } else {
@@ -171,17 +176,17 @@ extension ExploreTabView {
         if homeVM.searchText.isEmpty {
             ScrollView(showsIndicators: false) {
                 LazyVStack(spacing: 10) {
-                    ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
-
-                    ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
-
                     ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
 
                     ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
 
-                    ExploreThumbnailView(title: "Popular Movies", mediaArray: vm.popularMovies)
+                    ExploreThumbnailView(title: "Anticipated Movies", mediaArray: vm.anticipatedMovies)
 
-                    ExploreThumbnailView(title: "Popular TV Shows", mediaArray: vm.popularTVShows)
+                    ExploreThumbnailView(title: "Anticipated TV Shows", mediaArray: vm.anticipatedTVShows)
+
+                    ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
+
+                    ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
                 }
                 .padding()
             }
