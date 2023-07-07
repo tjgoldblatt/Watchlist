@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct TVDetails: Codable {
+protocol MediaDetails {
+    var id: Int? { get }
+}
+
+struct TVDetails: Codable, MediaDetails {
     let backdropPath: String?
     let createdBy: [CreatedBy]?
     let episodeRunTime: [Int]?
@@ -18,9 +22,9 @@ struct TVDetails: Codable {
     let inProduction: Bool?
     let languages: [String]?
     let lastAirDate: String?
-    let lastEpisodeToAir: LastEpisodeToAir?
+    let lastEpisodeToAir: Episode?
     let name: String?
-    let nextEpisodeToAir: String?
+    let nextEpisodeToAir: Episode?
     let networks: [Network]?
     let numberOfEpisodes, numberOfSeasons: Int?
     let originCountry: [String]?
@@ -64,7 +68,7 @@ struct TVDetails: Codable {
         case voteCount = "vote_count"
     }
 
-    func convertToMedia(dbMedia: DBMedia) -> DBMedia? {
+    func convertToMedia(dbMedia: DBMedia? = nil) -> DBMedia? {
         let media = Media(
             mediaType: .tv,
             id: id,
@@ -85,9 +89,9 @@ struct TVDetails: Codable {
         do {
             return try DBMedia(
                 media: media,
-                currentlyWatching: dbMedia.currentlyWatching,
-                watched: dbMedia.watched,
-                personalRating: dbMedia.personalRating
+                currentlyWatching: dbMedia?.currentlyWatching ?? false,
+                watched: dbMedia?.watched ?? false,
+                personalRating: dbMedia?.personalRating ?? nil
             )
         } catch {
             CrashlyticsManager.handleError(error: NetworkError.encode(error: error))
@@ -114,7 +118,7 @@ struct CreatedBy: Codable {
 
 // MARK: - LastEpisodeToAir
 
-struct LastEpisodeToAir: Codable {
+struct Episode: Codable {
     let airDate: String?
     let episodeNumber, id: Int?
     let name, overview, productionCode: String?

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MovieDetails: Codable {
+struct MovieDetails: Codable, MediaDetails {
     let adult: Bool?
     let backdropPath: String?
     let belongsToCollection: MovieCollection?
@@ -18,6 +18,7 @@ struct MovieDetails: Codable {
     let imdbID, originalLanguage, originalTitle, overview: String?
     let popularity: Double?
     let posterPath: String?
+    let firstAirDate: String?
     let productionCompanies: [ProductionCompany]?
     let productionCountries: [ProductionCountry]?
     let releaseDate: String?
@@ -33,6 +34,7 @@ struct MovieDetails: Codable {
         case backdropPath = "backdrop_path"
         case belongsToCollection = "belongs_to_collection"
         case budget, genres, homepage, id
+        case firstAirDate = "first_air_date"
         case imdbID = "imdb_id"
         case originalLanguage = "original_language"
         case originalTitle = "original_title"
@@ -48,7 +50,7 @@ struct MovieDetails: Codable {
         case voteCount = "vote_count"
     }
 
-    func convertToMedia(dbMedia: DBMedia) -> DBMedia? {
+    func convertToMedia(dbMedia: DBMedia? = nil) -> DBMedia? {
         let media = Media(
             mediaType: .movie,
             id: id,
@@ -60,7 +62,7 @@ struct MovieDetails: Codable {
             backdropPath: backdropPath,
             genreIDS: genres?.map(\.id),
             popularity: popularity,
-            firstAirDate: dbMedia.firstAirDate,
+            firstAirDate: firstAirDate,
             originalLanguage: originalLanguage,
             adult: adult,
             releaseDate: releaseDate,
@@ -71,9 +73,9 @@ struct MovieDetails: Codable {
         do {
             return try DBMedia(
                 media: media,
-                currentlyWatching: dbMedia.currentlyWatching,
-                watched: dbMedia.watched,
-                personalRating: dbMedia.personalRating
+                currentlyWatching: dbMedia?.currentlyWatching ?? false,
+                watched: dbMedia?.watched ?? false,
+                personalRating: dbMedia?.personalRating ?? nil
             )
         } catch {
             CrashlyticsManager.handleError(error: NetworkError.encode(error: error))

@@ -56,6 +56,9 @@
 		32A2F1B22A0A6FED00578535 /* FriendRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A2F1B12A0A6FED00578535 /* FriendRowView.swift */; };
 		32A6995D29D4BCEE0026AC63 /* WatchlistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A6995C29D4BCEE0026AC63 /* WatchlistTests.swift */; };
 		32A6997329D4FDEC0026AC63 /* WatchlistMediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A6997229D4FDEC0026AC63 /* WatchlistMediaTests.swift */; };
+		32A6B82A2A570FBA001B4DA9 /* TraktConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A6B8292A570FBA001B4DA9 /* TraktConstants.swift */; };
+		32A6B82C2A57170C001B4DA9 /* TraktResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A6B82B2A57170C001B4DA9 /* TraktResponse.swift */; };
+		32A6B82F2A583EF0001B4DA9 /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A6B82E2A583EF0001B4DA9 /* ExpandableText.swift */; };
 		32ABEB7129F1CB4A0008EA06 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ABEB7029F1CB4A0008EA06 /* RootView.swift */; };
 		32B3E1B229E6098000314B4F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 32B3E1B129E6098000314B4F /* FirebaseAuth */; };
 		32B3E1B429E6098000314B4F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 32B3E1B329E6098000314B4F /* FirebaseFirestore */; };
@@ -168,6 +171,9 @@
 		32A6995C29D4BCEE0026AC63 /* WatchlistTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistTests.swift; sourceTree = "<group>"; };
 		32A6996729D4BCFA0026AC63 /* WatchlistUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WatchlistUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32A6997229D4FDEC0026AC63 /* WatchlistMediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistMediaTests.swift; sourceTree = "<group>"; };
+		32A6B8292A570FBA001B4DA9 /* TraktConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktConstants.swift; sourceTree = "<group>"; };
+		32A6B82B2A57170C001B4DA9 /* TraktResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraktResponse.swift; sourceTree = "<group>"; };
+		32A6B82E2A583EF0001B4DA9 /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableText.swift; sourceTree = "<group>"; };
 		32ABEB7029F1CB4A0008EA06 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		32B3E1B729E60A2200314B4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		32B3E1C529E60BB100314B4F /* SignInWithAppleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleHelper.swift; sourceTree = "<group>"; };
@@ -247,6 +253,7 @@
 		322BF19829DC4CC300161820 /* MediaModal */ = {
 			isa = PBXGroup;
 			children = (
+				32A6B82E2A583EF0001B4DA9 /* ExpandableText.swift */,
 				3258730829BCD53A005E1394 /* MediaModalView.swift */,
 				322BF19929DC4CD000161820 /* MediaModalViewModel.swift */,
 			);
@@ -327,8 +334,10 @@
 			isa = PBXGroup;
 			children = (
 				324BAE7D29B91560002FBB6F /* TMDBConstants.swift */,
+				32A6B8292A570FBA001B4DA9 /* TraktConstants.swift */,
 				32B891CA2A13193800B92806 /* Firebase */,
 				32B891C92A13192400B92806 /* MediaDetails */,
+				32A6B82D2A571769001B4DA9 /* Trakt */,
 				32246F3F29D9ECBD002EDFC9 /* FilterOptions.swift */,
 				324BAE9229BA5F1F002FBB6F /* Tab.swift */,
 			);
@@ -493,6 +502,14 @@
 				327DCF9729F191B9003EA412 /* WatchlistUserAuthTests.swift */,
 			);
 			path = WatchlistUITests;
+			sourceTree = "<group>";
+		};
+		32A6B82D2A571769001B4DA9 /* Trakt */ = {
+			isa = PBXGroup;
+			children = (
+				32A6B82B2A57170C001B4DA9 /* TraktResponse.swift */,
+			);
+			path = Trakt;
 			sourceTree = "<group>";
 		};
 		32B3E1B929E60A7600314B4F /* Frameworks */ = {
@@ -839,10 +856,13 @@
 				32245BCD2A1F8E36000BCE6E /* MockService.swift in Sources */,
 				3258730B29BCF8DD005E1394 /* GenreView.swift in Sources */,
 				322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */,
+				32A6B82C2A57170C001B4DA9 /* TraktResponse.swift in Sources */,
 				32D04A082A02B57300A8A5A0 /* DBUser.swift in Sources */,
+				32A6B82F2A583EF0001B4DA9 /* ExpandableText.swift in Sources */,
 				32E8462329EE082C00C1815A /* Query+EXT.swift in Sources */,
 				324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */,
 				320FB73F29FAF2D600CA9310 /* DocumentReference+EXT.swift in Sources */,
+				32A6B82A2A570FBA001B4DA9 /* TraktConstants.swift in Sources */,
 				32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */,
 				32B5128929CBABC800879AF6 /* StarsView.swift in Sources */,
 				32C89CC729E8BA920094D8E2 /* DisplayNameView.swift in Sources */,
