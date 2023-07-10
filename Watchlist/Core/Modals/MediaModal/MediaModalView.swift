@@ -101,37 +101,10 @@ struct MediaModalView: View {
             if expandPoster,
                let posterPath = vm.media.posterPath
             {
-                LazyImage(url: URL(string: TMDBConstants.imageURL + posterPath)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .matchedGeometryEffect(id: "poster", in: animation)
-                            .frame(height: 400)
-                            .mask {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .matchedGeometryEffect(id: "poster-corner", in: animation)
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(.ultraThinMaterial)
-                            .onTapGesture {
-                                withAnimation(.interactiveSpring()) {
-                                    expandPoster = false
-                                }
-                            }
-                    }
-                }
+                PosterView(posterPath)
             }
         }
         .navigationBarHidden(true)
-        .gesture(
-            DragGesture()
-                .onChanged { value in
-                    if value.translation.width > 30 {
-                        dismiss()
-                    }
-                }
-        )
         .onDisappear {
             if shouldAddOrDeleteMediaList == true {
                 vm.addToMediaList(isFriendView: friendName != nil, homeVM)
@@ -143,6 +116,31 @@ struct MediaModalView: View {
                isInMediaList
             {
                 vm.updateMedia()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func PosterView(_ posterPath: String) -> some View {
+        LazyImage(url: URL(string: TMDBConstants.imageURL + posterPath)) { state in
+            if let image = state.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .matchedGeometryEffect(id: "poster", in: animation)
+                    .frame(height: 400)
+                    .mask {
+                        RoundedRectangle(cornerRadius: 10)
+                            .matchedGeometryEffect(id: "poster-corner", in: animation)
+                    }
+                    .addPinchZoom()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.ultraThinMaterial)
+        .onTapGesture {
+            withAnimation(.interactiveSpring()) {
+                expandPoster = false
             }
         }
     }
