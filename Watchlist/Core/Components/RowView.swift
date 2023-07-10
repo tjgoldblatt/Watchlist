@@ -5,6 +5,7 @@
 //  Created by TJ Goldblatt on 3/9/23.
 //
 
+import Nuke
 import NukeUI
 import SwiftUI
 
@@ -148,6 +149,18 @@ struct ThumbnailView: View {
         return frameHeight * 0.70
     }
 
+    private let pipeline = ImagePipeline {
+        $0.dataLoader = DataLoader(configuration: {
+            // Disable disk caching built into URLSession
+            let conf = DataLoader.defaultConfiguration
+            conf.urlCache = nil
+            return conf
+        }())
+
+        $0.imageCache = ImageCache()
+        $0.dataCache = try? DataCache(name: "com.tgoldblatt.watchlist")
+    }
+
     var body: some View {
         LazyImage(url: URL(string: TMDBConstants.imageURL + imagePath)) { state in
             if let image = state.image {
@@ -162,6 +175,7 @@ struct ThumbnailView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
+        .pipeline(pipeline)
         .frame(width: frameWidth, height: frameHeight)
         .padding(.trailing, 5)
     }

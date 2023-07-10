@@ -38,10 +38,15 @@ struct ExploreTabView: View {
 
                     searchBar
 
-                    if sortedSearchResults.isEmpty {
-                        emptySearch
+                    if vm.isLoaded {
+                        if sortedSearchResults.isEmpty {
+                            emptySearch
+                        } else {
+                            searchResultsView
+                        }
                     } else {
-                        searchResultsView
+                        Spacer()
+                        ProgressView()
                     }
 
                     Spacer()

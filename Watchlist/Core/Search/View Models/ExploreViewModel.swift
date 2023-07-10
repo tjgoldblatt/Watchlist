@@ -11,6 +11,7 @@ import Foundation
 @MainActor
 final class ExploreViewModel: ObservableObject {
     @Published var isSearching = false
+    @Published var isLoaded = false
 
     @Published var trendingMovies: [DBMedia] = []
     @Published var trendingTVShows: [DBMedia] = []
@@ -31,9 +32,9 @@ final class ExploreViewModel: ObservableObject {
     }
 
     func loadMedia() {
+        getAnticipatedMedia()
         getTopRatedMedia()
         getTrendingMedia()
-        getAnticipatedMedia()
     }
 
     func search() {
@@ -99,6 +100,7 @@ final class ExploreViewModel: ObservableObject {
         Task {
             self.anticipatedMovies = try await TMDbService.convertTraktToTMDB(for: .movie)
             self.anticipatedTVShows = try await TMDbService.convertTraktToTMDB(for: .tv)
+            isLoaded = true
         }
     }
 
