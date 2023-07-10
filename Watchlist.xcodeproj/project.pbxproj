@@ -17,6 +17,7 @@
 		3224E7D02A0D7913002B9428 /* WatchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3224E7CF2A0D7913002B9428 /* WatchProvider.swift */; };
 		3224E7D22A0D97B9002B9428 /* ProviderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3224E7D12A0D97B8002B9428 /* ProviderView.swift */; };
 		322BF19A29DC4CD000161820 /* MediaModalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322BF19929DC4CD000161820 /* MediaModalViewModel.swift */; };
+		3239C8892A5C4CE500328A30 /* PinchToZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3239C8882A5C4CE500328A30 /* PinchToZoom.swift */; };
 		3244188A2A16DA27004CC2F8 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324418892A16DA27004CC2F8 /* NotificationManager.swift */; };
 		324418972A16FB43004CC2F8 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324418962A16FB43004CC2F8 /* DeepLinkManager.swift */; };
 		324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */; };
@@ -44,6 +45,7 @@
 		3283E40529D255CB0002490F /* ExploreRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3283E40429D255CB0002490F /* ExploreRowView.swift */; };
 		32850FDC29F99E75009D9260 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32850FDB29F99E75009D9260 /* AdSupport.framework */; };
 		32850FDE29F99E9F009D9260 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32850FDD29F99E9F009D9260 /* AnalyticsManager.swift */; };
+		32859AED2A5AFF59006BEC8F /* MediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32859AEC2A5AFF59006BEC8F /* MediaTests.swift */; };
 		32864EB329C9E32F00EF0B44 /* TVShowTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */; };
 		32952D9A29BB885E002B3596 /* View+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9929BB885E002B3596 /* View+EXT.swift */; };
 		32952D9C29BB9548002B3596 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32952D9B29BB9548002B3596 /* Errors.swift */; };
@@ -127,6 +129,7 @@
 		3224E7CF2A0D7913002B9428 /* WatchProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchProvider.swift; sourceTree = "<group>"; };
 		3224E7D12A0D97B8002B9428 /* ProviderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderView.swift; sourceTree = "<group>"; };
 		322BF19929DC4CD000161820 /* MediaModalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModalViewModel.swift; sourceTree = "<group>"; };
+		3239C8882A5C4CE500328A30 /* PinchToZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchToZoom.swift; sourceTree = "<group>"; };
 		324418892A16DA27004CC2F8 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		324418962A16FB43004CC2F8 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		324BAE5C29B8D3D9002FBB6F /* Watchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Watchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,6 +159,7 @@
 		3283E40429D255CB0002490F /* ExploreRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreRowView.swift; sourceTree = "<group>"; };
 		32850FDB29F99E75009D9260 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		32850FDD29F99E9F009D9260 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
+		32859AEC2A5AFF59006BEC8F /* MediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTests.swift; sourceTree = "<group>"; };
 		32864EB229C9E32F00EF0B44 /* TVShowTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowTabView.swift; sourceTree = "<group>"; };
 		32952D9929BB885E002B3596 /* View+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+EXT.swift"; sourceTree = "<group>"; };
 		32952D9B29BB9548002B3596 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
@@ -447,6 +451,7 @@
 				32E8462229EE082C00C1815A /* Query+EXT.swift */,
 				320FB73E29FAF2D600CA9310 /* DocumentReference+EXT.swift */,
 				32952D9929BB885E002B3596 /* View+EXT.swift */,
+				3239C8882A5C4CE500328A30 /* PinchToZoom.swift */,
 				324BAE8329BA55BC002FBB6F /* Color+EXT.swift */,
 				32A2F1AB2A092F3E00578535 /* ShapeStyle+EXT.swift */,
 				329A768829BA846F0074A4F9 /* PreviewProvider+EXT.swift */,
@@ -491,6 +496,7 @@
 			isa = PBXGroup;
 			children = (
 				32A6995C29D4BCEE0026AC63 /* WatchlistTests.swift */,
+				32859AEC2A5AFF59006BEC8F /* MediaTests.swift */,
 			);
 			path = WatchlistTests;
 			sourceTree = "<group>";
@@ -881,6 +887,7 @@
 				329A768929BA846F0074A4F9 /* PreviewProvider+EXT.swift in Sources */,
 				32B891C82A13191F00B92806 /* MovieDetails.swift in Sources */,
 				32A2F1AA2A088A7C00578535 /* FriendWatchlistViewModel.swift in Sources */,
+				3239C8892A5C4CE500328A30 /* PinchToZoom.swift in Sources */,
 				320FB74129FAF52000CA9310 /* SocialViewModel.swift in Sources */,
 				3224E7D22A0D97B9002B9428 /* ProviderView.swift in Sources */,
 				3258730929BCD53A005E1394 /* MediaModalView.swift in Sources */,
@@ -919,6 +926,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32859AED2A5AFF59006BEC8F /* MediaTests.swift in Sources */,
 				32A6995D29D4BCEE0026AC63 /* WatchlistTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

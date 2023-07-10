@@ -222,7 +222,7 @@ struct SearchBarView: View {
                 .scaledToFit()
                 .frame(width: 25, height: 25)
                 .padding()
-                .offset(x: 15, y: -4)
+                .offset(x: 15)
                 .foregroundColor(Color.theme.red)
                 .opacity(!isFocused ? 1.0 : 0.0)
         }
