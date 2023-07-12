@@ -687,7 +687,6 @@
 				324BAE5A29B8D3D9002FBB6F /* Resources */,
 				32C45ABA29F02D9A0025BEE0 /* Crashlytics */,
 				32CB89E92A2E1C73006F66F7 /* SwiftFormat */,
-				323194EA2A5ED7CD0004FD5C /* Set Build Number */,
 			);
 			buildRules = (
 			);
@@ -829,24 +828,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		323194EA2A5ED7CD0004FD5C /* Set Build Number */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Set Build Number";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$SRCROOT\"/scripts/set_build_number_by_git_commits.sh\n";
-		};
 		32C45ABA29F02D9A0025BEE0 /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
