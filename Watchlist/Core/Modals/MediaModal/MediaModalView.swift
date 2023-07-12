@@ -436,6 +436,7 @@ extension MediaModalView {
                                 withAnimation(.interactiveSpring()) {
                                     expandPoster = true
                                 }
+                                AnalyticsManager.shared.logEvent(name: "MediaModalView_Expand_Poster")
                             }
                     }
                 }
@@ -553,6 +554,7 @@ extension MediaModalView {
             if !isInMediaList {
                 shouldAddOrDeleteMediaList = true
                 isInMediaList = true
+                AnalyticsManager.shared.logEvent(name: "MediaModalView_AddMedia_Menu")
             } else {
                 vm.showDeleteConfirmation.toggle()
             }
