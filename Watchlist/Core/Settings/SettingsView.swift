@@ -26,11 +26,13 @@ struct SettingsView: View {
                 Color.theme.background.ignoresSafeArea()
 
                 List {
-//                    appearanceSection
-//                        .listRowBackground(Color.gray.opacity(0.1))
+                    //                    appearanceSection
+                    //                        .listRowBackground(Color.gray.opacity(0.1))
                     accountSection
                         .listRowBackground(Color.gray.opacity(0.1))
                     userInfoSection
+                        .listRowBackground(Color.gray.opacity(0.1))
+                    aboutSection
                         .listRowBackground(Color.gray.opacity(0.1))
                 }
                 .scrollContentBackground(.hidden)
@@ -128,10 +130,42 @@ extension SettingsView {
     private var userInfoSection: some View {
         Section {
             if let currentUser = viewModel.authUser {
+                if let displayName = currentUser.displayName {
+                    Text(displayName)
+                }
+
                 Text(currentUser.email ?? "No email associated")
             }
         } header: {
             Text("User Info")
+        }
+    }
+
+    private var aboutSection: some View {
+        Section {
+            if let releaseVersion = Bundle.main.releaseVersionNumber,
+               let buildVersion = Bundle.main.buildVersionNumber
+            {
+                Text("Version \(releaseVersion) (\(buildVersion))")
+            }
+
+//            Button("Privacy Policy") {
+//                AnalyticsManager.shared.logEvent(name: "SettingsView_PrivacyPolicy")
+//                if let url = URL(string: "https://www.google.com") {
+//                    UIApplication.shared.open(url)
+//                }
+//            }
+//            .foregroundColor(Color.theme.text)
+//
+//            Button("Terms of Service") {
+//                AnalyticsManager.shared.logEvent(name: "SettingsView_TermsOfService")
+//                if let url = URL(string: "https://www.google.com") {
+//                    UIApplication.shared.open(url)
+//                }
+//            }
+//            .foregroundColor(Color.theme.text)
+        } header: {
+            Text("About")
         }
     }
 }
