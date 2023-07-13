@@ -28,9 +28,9 @@ struct SettingsView: View {
                 List {
                     //                    appearanceSection
                     //                        .listRowBackground(Color.gray.opacity(0.1))
-                    accountSection
-                        .listRowBackground(Color.gray.opacity(0.1))
                     userInfoSection
+                        .listRowBackground(Color.gray.opacity(0.1))
+                    accountSection
                         .listRowBackground(Color.gray.opacity(0.1))
                     aboutSection
                         .listRowBackground(Color.gray.opacity(0.1))
@@ -149,21 +149,30 @@ extension SettingsView {
                 Text("Version \(releaseVersion) (\(buildVersion))")
             }
 
-//            Button("Privacy Policy") {
-//                AnalyticsManager.shared.logEvent(name: "SettingsView_PrivacyPolicy")
-//                if let url = URL(string: "https://www.google.com") {
-//                    UIApplication.shared.open(url)
-//                }
-//            }
-//            .foregroundColor(Color.theme.text)
-//
-//            Button("Terms of Service") {
-//                AnalyticsManager.shared.logEvent(name: "SettingsView_TermsOfService")
-//                if let url = URL(string: "https://www.google.com") {
-//                    UIApplication.shared.open(url)
-//                }
-//            }
-//            .foregroundColor(Color.theme.text)
+            Button("Terms of Service") {
+                AnalyticsManager.shared.logEvent(name: "SettingsView_TermsOfService")
+                if let url =
+                    URL(
+                        string: "https://docs.google.com/document/d/19Exq6_JCh7QipaZVNRPbEBvrVaBAQDjM3lbEZ-tOQKo/edit?usp=sharing"
+                    )
+                {
+                    UIApplication.shared.open(url)
+                }
+            }
+            .foregroundColor(Color.theme.text)
+
+            Button("Privacy Policy") {
+                AnalyticsManager.shared.logEvent(name: "SettingsView_PrivacyPolicy")
+                if let url =
+                    URL(
+                        string: "https://docs.google.com/document/d/1gTVQkP6vcWYhKv4be5wW8m94FVD7vNCHuVIVc4LQ7wk/edit?usp=sharing"
+                    )
+                {
+                    UIApplication.shared.open(url)
+                }
+            }
+            .foregroundColor(Color.theme.text)
+
         } header: {
             Text("About")
         }
