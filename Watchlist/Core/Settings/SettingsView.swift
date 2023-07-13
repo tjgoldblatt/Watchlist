@@ -17,8 +17,11 @@ struct SettingsView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @EnvironmentObject var csManager: ColorSchemeManager
 
-    @State var showReAuthView: Bool = false
-    @State var deleteAccountConfirmation: Bool = false
+    @State private var showReAuthView: Bool = false
+    @State private var deleteAccountConfirmation: Bool = false
+
+    @State private var showPrivacyPolicy = false
+    @State private var showTermsOfService = false
 
     var body: some View {
         NavigationStack {
@@ -79,12 +82,32 @@ struct SettingsView: View {
                     DeleteAccountView()
                 }
             }
+            .sheet(isPresented: $showPrivacyPolicy) {
+                if let url =
+                    URL(
+                        string: "https://docs.google.com/document/d/1gTVQkP6vcWYhKv4be5wW8m94FVD7vNCHuVIVc4LQ7wk/edit?usp=sharing"
+                    )
+                {
+                    SFSafariViewWrapper(url: url).ignoresSafeArea(edges: .bottom)
+                }
+            }
+            .sheet(isPresented: $showTermsOfService) {
+                if let url =
+                    URL(
+                        string: "https://docs.google.com/document/d/19Exq6_JCh7QipaZVNRPbEBvrVaBAQDjM3lbEZ-tOQKo/edit?usp=sharing"
+                    )
+                {
+                    SFSafariViewWrapper(url: url).ignoresSafeArea(edges: .bottom)
+                }
+            }
         }
         .analyticsScreen(name: "SettingsView")
     }
 }
 
 extension SettingsView {
+    // MARK: - Appearance
+
     private var appearanceSection: some View {
         Section {
             Picker("Theme", selection: $csManager.colorScheme) {
@@ -96,6 +119,8 @@ extension SettingsView {
             Text("Appearance")
         }
     }
+
+    // MARK: - Account
 
     private var accountSection: some View {
         Section {
@@ -127,6 +152,8 @@ extension SettingsView {
         }
     }
 
+    // MARK: - User Info
+
     private var userInfoSection: some View {
         Section {
             if let currentUser = viewModel.authUser {
@@ -141,38 +168,27 @@ extension SettingsView {
         }
     }
 
+    // MARK: - About
+
     private var aboutSection: some View {
         Section {
-            if let releaseVersion = Bundle.main.releaseVersionNumber,
-               let buildVersion = Bundle.main.buildVersionNumber
-            {
-                Text("Version \(releaseVersion) (\(buildVersion))")
-            }
-
             Button("Terms of Service") {
                 AnalyticsManager.shared.logEvent(name: "SettingsView_TermsOfService")
-                if let url =
-                    URL(
-                        string: "https://docs.google.com/document/d/19Exq6_JCh7QipaZVNRPbEBvrVaBAQDjM3lbEZ-tOQKo/edit?usp=sharing"
-                    )
-                {
-                    UIApplication.shared.open(url)
-                }
+                showTermsOfService.toggle()
             }
             .foregroundColor(Color.theme.text)
 
             Button("Privacy Policy") {
                 AnalyticsManager.shared.logEvent(name: "SettingsView_PrivacyPolicy")
-                if let url =
-                    URL(
-                        string: "https://docs.google.com/document/d/1gTVQkP6vcWYhKv4be5wW8m94FVD7vNCHuVIVc4LQ7wk/edit?usp=sharing"
-                    )
-                {
-                    UIApplication.shared.open(url)
-                }
+                showPrivacyPolicy.toggle()
             }
             .foregroundColor(Color.theme.text)
 
+            if let releaseVersion = Bundle.main.releaseVersionNumber,
+               let buildVersion = Bundle.main.buildVersionNumber
+            {
+                Text("Version \(releaseVersion) (\(buildVersion))")
+            }
         } header: {
             Text("About")
         }
