@@ -26,6 +26,8 @@ struct ExploreTabView: View {
     @State private var deepLinkMedia: DBMedia?
     @State private var showDeepLinkModal = false
 
+    @State private var selectedThumbnail: DBMedia?
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -181,19 +183,49 @@ extension ExploreTabView {
         if homeVM.searchText.isEmpty {
             ScrollView(showsIndicators: false) {
                 LazyVStack(spacing: 10) {
-                    ExploreThumbnailView(title: "Trending Movies", mediaArray: vm.trendingMovies)
+                    ExploreThumbnailView(
+                        title: "Trending Movies",
+                        mediaArray: vm.trendingMovies,
+                        selectedMedia: $selectedThumbnail
+                    )
 
-                    ExploreThumbnailView(title: "Trending TV Shows", mediaArray: vm.trendingTVShows)
+                    ExploreThumbnailView(
+                        title: "Trending TV Shows",
+                        mediaArray: vm.trendingTVShows,
+                        selectedMedia: $selectedThumbnail
+                    )
 
-                    ExploreThumbnailView(title: "Anticipated Movies", mediaArray: vm.anticipatedMovies)
+                    ExploreThumbnailView(
+                        title: "Anticipated Movies",
+                        mediaArray: vm.anticipatedMovies,
+                        selectedMedia: $selectedThumbnail
+                    )
 
-                    ExploreThumbnailView(title: "Anticipated TV Shows", mediaArray: vm.anticipatedTVShows)
+                    ExploreThumbnailView(
+                        title: "Anticipated TV Shows",
+                        mediaArray: vm.anticipatedTVShows,
+                        selectedMedia: $selectedThumbnail
+                    )
 
-                    ExploreThumbnailView(title: "Top Rated Movies", mediaArray: vm.topRatedMovies)
+                    ExploreThumbnailView(
+                        title: "Top Rated Movies",
+                        mediaArray: vm.topRatedMovies,
+                        selectedMedia: $selectedThumbnail
+                    )
 
-                    ExploreThumbnailView(title: "Top Rated TV Shows", mediaArray: vm.topRatedTVShows)
+                    ExploreThumbnailView(
+                        title: "Top Rated TV Shows",
+                        mediaArray: vm.topRatedTVShows,
+                        selectedMedia: $selectedThumbnail
+                    )
                 }
                 .padding()
+                .sheet(item: $selectedThumbnail) { media in
+                    GeometryReader {
+                        MediaModalView(media: media, size: $0.size, safeArea: $0.safeAreaInsets)
+                            .ignoresSafeArea(.container, edges: .top)
+                    }
+                }
             }
             .scrollDismissesKeyboard(.immediately)
         } else {
@@ -209,7 +241,7 @@ struct ExploreThumbnailView: View {
     var title: String
     var mediaArray: [DBMedia]
 
-    @State var selectedMedia: DBMedia?
+    @Binding var selectedMedia: DBMedia?
 
     var body: some View {
         VStack {
@@ -259,12 +291,6 @@ struct ExploreThumbnailView: View {
             }
             .scrollDismissesKeyboard(.immediately)
         }
-        .sheet(item: $selectedMedia) { media in
-            GeometryReader {
-                MediaModalView(media: media, size: $0.size, safeArea: $0.safeAreaInsets)
-                    .ignoresSafeArea(.container, edges: .top)
-            }
-        }
     }
 }
 
@@ -277,7 +303,7 @@ struct SearchView_Previews: PreviewProvider {
         .preferredColorScheme(.dark)
         .environmentObject(dev.homeVM)
 
-        ExploreThumbnailView(title: "", mediaArray: dev.mediaMock)
+        ExploreThumbnailView(title: "", mediaArray: dev.mediaMock, selectedMedia: .constant(dev.mediaMock[0]))
             .environmentObject(dev.homeVM)
             .previewLayout(.sizeThatFits)
             .padding()

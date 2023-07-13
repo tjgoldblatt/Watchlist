@@ -1,0 +1,1 @@
+Made some changes to the Media Detail View, one of which is now you can tap on the poster to make it larger. Also tried to fix some issues in the explore tab which wouldn't allow you to tap on the thumbnails for some reason 
