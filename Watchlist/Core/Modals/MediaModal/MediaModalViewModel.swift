@@ -86,6 +86,12 @@ final class MediaModalViewModel: ObservableObject {
         }
     }
 
+    func setMediaBookmarked(_ bookmarked: Bool) {
+        Task {
+            try await WatchlistManager.shared.setMediaBookmarked(media: media, bookmarked: bookmarked)
+        }
+    }
+
     func setMediaWatched(_ watched: Bool) async throws {
         try await WatchlistManager.shared.setMediaWatched(media: media, watched: watched)
     }

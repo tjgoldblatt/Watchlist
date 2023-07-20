@@ -74,6 +74,7 @@ struct MovieDetails: Codable, MediaDetails {
             return try DBMedia(
                 media: media,
                 currentlyWatching: dbMedia?.currentlyWatching ?? false,
+                bookmarked: dbMedia?.bookmarked ?? false,
                 watched: dbMedia?.watched ?? false,
                 personalRating: dbMedia?.personalRating ?? nil
             )

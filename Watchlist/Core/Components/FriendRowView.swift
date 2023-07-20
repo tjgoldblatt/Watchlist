@@ -11,11 +11,7 @@ import SwiftUI
 struct FriendRowView: View {
     @EnvironmentObject var homeVM: HomeViewModel
 
-    @State var personalRating: Double?
-
-    @State var isWatched: Bool = false
-
-    @State var media: DBMedia
+    @State var friendMedia: DBMedia
 
     @State private var showingSheet = false
 
@@ -23,12 +19,16 @@ struct FriendRowView: View {
 
     var showSwipeAction = true
 
+    var personalMedia: DBMedia? {
+        homeVM.getUpdatedMediaFromList(mediaId: friendMedia.id)
+    }
+
     var body: some View {
         HStack(alignment: .center) {
-            if let posterPath = media.posterPath {
+            if let posterPath = friendMedia.posterPath {
                 ThumbnailView(imagePath: posterPath)
                     .overlay(alignment: .topTrailing) {
-                        if homeVM.isMediaIDInWatchlist(for: media.id) {
+                        if homeVM.isMediaIDInWatchlist(for: friendMedia.id) {
                             ZStack {
                                 Circle()
                                     .fill(Color.theme.background)
@@ -57,13 +57,13 @@ struct FriendRowView: View {
         })
         .sheet(isPresented: $showingSheet) {
             GeometryReader {
-                MediaModalView(media: media, friendName: friendName, size: $0.size, safeArea: $0.safeAreaInsets)
+                MediaModalView(media: friendMedia, friendName: friendName, size: $0.size, safeArea: $0.safeAreaInsets)
                     .ignoresSafeArea(.container, edges: .top)
             }
         }
         .swipeActions(edge: .trailing) {
             if showSwipeAction {
-                if !homeVM.isMediaIDInWatchlist(for: media.id) {
+                if !homeVM.isMediaIDInWatchlist(for: friendMedia.id) {
                     swipeActionToAddToWatchlist
                 } else {
                     swipeActionToRemoveFromWatchlist
@@ -76,7 +76,7 @@ struct FriendRowView: View {
 extension FriendRowView {
     var centerColumn: some View {
         VStack(alignment: .leading) {
-            if let title = media.mediaType == .movie ? media.title : media.name {
+            if let title = friendMedia.mediaType == .movie ? friendMedia.title : friendMedia.name {
                 Text(title)
                     .font(Font.system(.headline, design: .default))
                     .fontWeight(.bold)
@@ -88,7 +88,7 @@ extension FriendRowView {
                     .frame(maxHeight: .infinity)
             }
 
-            Text(media.overview ?? "")
+            Text(friendMedia.overview ?? "")
                 .font(.system(.caption, design: .default))
                 .fixedSize(horizontal: false, vertical: true)
                 .fontWeight(.light)
@@ -97,12 +97,16 @@ extension FriendRowView {
                 .frame(maxHeight: .infinity)
 
             HStack {
-                if let voteAverage = media.voteAverage {
+                if let voteAverage = friendMedia.voteAverage {
                     StarRatingView(rating: voteAverage, color: .yellow)
                 }
 
-                if let rating = media.personalRating {
-                    StarRatingView(rating: rating, color: Color.theme.red)
+                if let personalRating = personalMedia?.personalRating {
+                    StarRatingView(rating: personalRating, color: Color.theme.red)
+                }
+
+                if let friendRating = friendMedia.personalRating {
+                    StarRatingView(rating: friendRating, color: .blue)
                 }
             }
             .frame(maxHeight: .infinity)
@@ -115,7 +119,7 @@ extension FriendRowView {
     private var swipeActionToAddToWatchlist: some View {
         Button {
             Task {
-                var newMedia = media
+                var newMedia = friendMedia
                 newMedia.watched = false
                 newMedia.personalRating = nil
                 try await WatchlistManager.shared.createNewMediaInWatchlist(media: newMedia)
@@ -132,7 +136,7 @@ extension FriendRowView {
     private var swipeActionToRemoveFromWatchlist: some View {
         Button {
             Task {
-                try await WatchlistManager.shared.deleteMediaInWatchlist(media: media)
+                try await WatchlistManager.shared.deleteMediaInWatchlist(media: friendMedia)
             }
             AnalyticsManager.shared.logEvent(name: "FriendRowView_SwipeAction_Delete")
 
@@ -145,13 +149,13 @@ extension FriendRowView {
 
     func getGenres(genreIDs: [Int]?) -> [Genre]? {
         guard let genreIDs else { return nil }
-        return homeVM.getGenresForMediaType(for: media.mediaType, genreIDs: genreIDs)
+        return homeVM.getGenresForMediaType(for: friendMedia.mediaType, genreIDs: genreIDs)
     }
 }
 
 struct FriendRowView_Previews: PreviewProvider {
     static var previews: some View {
-        FriendRowView(media: dev.mediaMock.first!, friendName: "Steve")
+        FriendRowView(friendMedia: dev.mediaMock.first!, friendName: "Steve")
             .previewLayout(.sizeThatFits)
             .environmentObject(dev.homeVM)
     }

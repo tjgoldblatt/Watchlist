@@ -149,11 +149,31 @@ final class WatchlistManager {
         try await updateLastUpdatedForUser()
     }
 
+    /// Updates the "currentlyWatching" property of a media item in the user's watchlist.
+    /// - Parameters:
+    ///   - media: The media item to update.
+    ///   - currentlyWatching: The new value for the "currentlyWatching" property.
+    /// - Throws: An error if the update operation fails.
     func setMediaCurrentlyWatching(media: DBMedia, currentlyWatching: Bool) async throws {
         let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
 
         let data: [String: Any] = [
             DBMedia.CodingKeys.currentlyWatching.rawValue: currentlyWatching,
+        ]
+        try await updateLastUpdatedForUser()
+        try await userWatchlistDocument.updateData(data)
+    }
+
+    /// Updates the "bookmarked" property of a media item in the user's watchlist.
+    /// - Parameters:
+    ///   - media: The media item to update.
+    ///   - bookmarked: The new value for the "bookmarked" property.
+    /// - Throws: An error if the update operation fails.
+    func setMediaBookmarked(media: DBMedia, bookmarked: Bool) async throws {
+        let userWatchlistDocument = try userWatchlistDocument(mediaId: "\(media.id)")
+
+        let data: [String: Any] = [
+            DBMedia.CodingKeys.bookmarked.rawValue: bookmarked,
         ]
         try await updateLastUpdatedForUser()
         try await userWatchlistDocument.updateData(data)

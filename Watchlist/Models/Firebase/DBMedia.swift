@@ -26,10 +26,20 @@ struct DBMedia: Codable, Identifiable, Hashable {
 
     // Extra
     var currentlyWatching: Bool
+    var bookmarked: Bool
     var watched: Bool
     var personalRating: Double?
 
-    init(media: Media, mediaType: MediaType? = nil, currentlyWatching: Bool, watched: Bool, personalRating: Double?) throws {
+    init(
+        media: Media,
+        mediaType: MediaType? = nil,
+        currentlyWatching: Bool,
+        bookmarked: Bool,
+        watched: Bool,
+        personalRating: Double?
+    )
+        throws
+    {
         guard let mediaId = media.id,
               let type = media.mediaType ?? mediaType else { throw TMDbError.failedToEncodeData }
 
@@ -46,6 +56,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         backdropPath = media.backdropPath
         genreIDs = media.genreIDS
         self.currentlyWatching = currentlyWatching
+        self.bookmarked = bookmarked
         self.watched = watched
         self.personalRating = personalRating
         releaseDate = media.releaseDate
@@ -67,6 +78,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         case genreIDs
 
         case currentlyWatching
+        case bookmarked
         case watched
         case personalRating
 
@@ -89,6 +101,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         backdropPath = try container.decodeIfPresent(String.self, forKey: .backdropPath)
         genreIDs = try container.decodeIfPresent([Int].self, forKey: .genreIDs)
         currentlyWatching = try container.decodeIfPresent(Bool.self, forKey: .currentlyWatching) ?? false
+        bookmarked = try container.decodeIfPresent(Bool.self, forKey: .bookmarked) ?? false
         watched = try container.decode(Bool.self, forKey: .watched)
         personalRating = try container.decodeIfPresent(Double.self, forKey: .personalRating)
         releaseDate = try container.decodeIfPresent(String.self, forKey: .releaseDate)

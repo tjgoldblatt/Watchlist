@@ -26,7 +26,13 @@ enum DeepLinkManager {
                 guard let queryParams = url.queryParameters else { return nil }
 
                 let media = convertQueryParamsToMedia(queryParams: queryParams)
-                var dbMedia = try? DBMedia(media: media, currentlyWatching: false, watched: false, personalRating: nil)
+                var dbMedia = try? DBMedia(
+                    media: media,
+                    currentlyWatching: false,
+                    bookmarked: false,
+                    watched: false,
+                    personalRating: nil
+                )
 
                 if let id = media.id {
                     if homeVM.isMediaIDInWatchlist(for: id) {

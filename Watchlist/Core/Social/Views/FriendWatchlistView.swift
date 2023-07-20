@@ -165,7 +165,7 @@ extension FriendWatchlistView {
     private var list: some View {
         List {
             ForEach(filteredMedia) { media in
-                FriendRowView(media: media, friendName: firstName)
+                FriendRowView(friendMedia: media, friendName: firstName)
                     .listRowBackground(Color.theme.background)
             }
         }
