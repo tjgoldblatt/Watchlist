@@ -60,7 +60,7 @@ struct SearchBarView: View {
                 }
             case .explore:
                 for media in homeVM.results.compactMap({
-                    try? DBMedia(media: $0, currentlyWatching: false, watched: false, personalRating: nil)
+                    try? DBMedia(media: $0, currentlyWatching: false, bookmarked: false, watched: false, personalRating: nil)
                 }) {
                     mediaList.insert(media)
                 }
@@ -161,9 +161,21 @@ struct SearchBarView: View {
     @ViewBuilder
     func FilterMenu() -> some View {
         Menu {
+            Button {
+                homeVM.filterByBookmarked.toggle()
+                homeVM.filterByCurrentlyWatching = false
+            } label: {
+                if homeVM.filterByBookmarked {
+                    Label("Bookmarked", systemImage: "checkmark")
+                } else {
+                    Text("Bookmarked")
+                }
+            }
+
             if homeVM.selectedWatchOption != .watched {
                 Button {
                     homeVM.filterByCurrentlyWatching.toggle()
+                    homeVM.filterByBookmarked = false
                 } label: {
                     if homeVM.filterByCurrentlyWatching {
                         Label("Watching", systemImage: "checkmark")
