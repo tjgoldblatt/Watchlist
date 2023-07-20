@@ -35,6 +35,7 @@ enum MockService {
                 title: "The Social Network"
             ),
             currentlyWatching: false,
+            bookmarked: false,
             watched: true,
             personalRating: 9
         )
@@ -57,6 +58,7 @@ enum MockService {
                 title: "Inglourious Basterds"
             ),
             currentlyWatching: false,
+            bookmarked: true,
             watched: false,
             personalRating: nil
         )
@@ -79,6 +81,7 @@ enum MockService {
                 name: "Game of Thrones"
             ),
             currentlyWatching: false,
+            bookmarked: false,
             watched: false,
             personalRating: nil
         )
@@ -101,6 +104,7 @@ enum MockService {
                 name: "The Wire"
             ),
             currentlyWatching: false,
+            bookmarked: false,
             watched: true,
             personalRating: 9
         )

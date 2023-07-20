@@ -1,1 +1,1 @@
-Made some changes to the Media Detail View, one of which is now you can tap on the poster to make it larger. Also tried to fix some issues in the explore tab which wouldn't allow you to tap on the thumbnails for some reason 
+Now you can see your own rating as well as your friend's rating in the Social Tab. You are also able to bookmark movies and tv shows that you want to prioritize watching.
