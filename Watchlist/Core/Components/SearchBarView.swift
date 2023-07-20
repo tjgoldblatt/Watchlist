@@ -163,6 +163,7 @@ struct SearchBarView: View {
         Menu {
             Button {
                 homeVM.filterByBookmarked.toggle()
+                homeVM.filterByCurrentlyWatching = false
             } label: {
                 if homeVM.filterByBookmarked {
                     Label("Bookmarked", systemImage: "checkmark")
@@ -174,6 +175,7 @@ struct SearchBarView: View {
             if homeVM.selectedWatchOption != .watched {
                 Button {
                     homeVM.filterByCurrentlyWatching.toggle()
+                    homeVM.filterByBookmarked = false
                 } label: {
                     if homeVM.filterByCurrentlyWatching {
                         Label("Watching", systemImage: "checkmark")

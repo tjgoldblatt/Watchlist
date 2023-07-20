@@ -16,13 +16,13 @@ struct RowView: View {
 
     @State var isWatched: Bool = false
 
+    @State private var isBookmarked: Bool = false
+
     @State var media: DBMedia
 
     @State private var showingSheet = false
 
     @State private var showRatingSheet = false
-
-    var showSwipeAction = true
 
     var body: some View {
         HStack(alignment: .center) {
@@ -53,19 +53,23 @@ struct RowView: View {
         }
         .sheet(isPresented: $showingSheet, content: {
             GeometryReader {
-                MediaModalView(media: media, size: $0.size, safeArea: $0.safeAreaInsets)
+                MediaModalView(media: media, isBookmarked: $isBookmarked, size: $0.size, safeArea: $0.safeAreaInsets)
                     .ignoresSafeArea(.container, edges: .top)
             }
         })
         .swipeActions(edge: .trailing) {
-            if !isWatched, showSwipeAction {
+            if !isWatched {
                 swipeActionToSetWatched
             }
+        }
+        .swipeActions(edge: .leading) {
+            swipeActionToSetBookmarked
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 if let updatedMedia = homeVM.getUpdatedMediaFromList(mediaId: media.id) {
                     media = updatedMedia
+                    isBookmarked = media.bookmarked
                 }
             }
         }
@@ -85,16 +89,25 @@ struct RowView: View {
 extension RowView {
     var centerColumn: some View {
         VStack(alignment: .leading) {
-            if let title = media.mediaType == .movie ? media.title : media.name {
-                Text(title)
-                    .font(Font.system(.headline, design: .default))
-                    .fontWeight(.bold)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .foregroundColor(Color.theme.text)
-                    .lineLimit(1)
-                    .frame(alignment: .top)
-                    .padding(.bottom, 1)
-                    .frame(maxHeight: .infinity)
+            HStack {
+                if let title = media.mediaType == .movie ? media.title : media.name {
+                    Text(title)
+                        .font(Font.system(.headline, design: .default))
+                        .fontWeight(.bold)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .foregroundColor(Color.theme.text)
+                        .lineLimit(1)
+                        .frame(alignment: .top)
+                        .padding(.bottom, 1)
+                        .frame(maxHeight: .infinity)
+                }
+
+                Spacer()
+
+                if isBookmarked {
+                    Image(systemName: "bookmark.fill")
+                        .foregroundStyle(Color.theme.red.gradient)
+                }
             }
 
             if let overview = media.overview {
@@ -123,12 +136,28 @@ extension RowView {
         .frame(minWidth: 50)
     }
 
+    private var swipeActionToSetBookmarked: some View {
+        Button {
+            Task {
+                withAnimation(.easeInOut) {
+                    isBookmarked.toggle()
+                }
+                try await WatchlistManager.shared.setMediaBookmarked(media: media, bookmarked: isBookmarked)
+                AnalyticsManager.shared.logEvent(name: "RowView_SwipeAction_Bookmarked")
+            }
+        } label: {
+            Image(systemName: "bookmark")
+        }
+        .tint(.green)
+        .accessibilityIdentifier("MediaSwipeAction")
+    }
+
     private var swipeActionToSetWatched: some View {
         Button {
             if personalRating == nil {
                 showRatingSheet = true
             }
-            AnalyticsManager.shared.logEvent(name: "RowView_SwipeAction")
+            AnalyticsManager.shared.logEvent(name: "RowView_SwipeAction_Watched")
         } label: {
             Image(systemName: "checkmark.circle")
         }

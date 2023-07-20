@@ -50,11 +50,20 @@ struct MediaModalView: View {
     var friendName: String?
     var safeArea: EdgeInsets
     var size: CGSize
+    @Binding var isBookmarked: Bool
 
-    init(media: DBMedia, forPreview: Bool = false, friendName: String? = nil, size: CGSize, safeArea: EdgeInsets) {
+    init(
+        media: DBMedia,
+        forPreview: Bool = false,
+        isBookmarked: Binding<Bool>? = nil,
+        friendName: String? = nil,
+        size: CGSize,
+        safeArea: EdgeInsets
+    ) {
         self.size = size
         self.safeArea = safeArea
         self.friendName = friendName
+        _isBookmarked = isBookmarked ?? .constant(false)
         _vm = forPreview
             ? StateObject(wrappedValue: MediaModalViewModel(forPreview: true, media: media))
             : StateObject(wrappedValue: MediaModalViewModel(media: media))
@@ -66,7 +75,7 @@ struct MediaModalView: View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
-                    // MARK: - Backdrop
+                    // MARK: Backdrop
 
                     BackdropView(size: size, safeArea: safeArea)
 
@@ -166,7 +175,7 @@ struct MediaModalView: View {
                         .clipped()
                         .overlay {
                             ZStack(alignment: .bottom) {
-                                // MARK: - Gradient Overlay
+                                // MARK: Gradient Overlay
 
                                 Rectangle()
                                     .fill(
@@ -202,6 +211,21 @@ struct MediaModalView: View {
                 {
                     Menu {
                         Button {
+                            withAnimation(.spring(response: 0.5, dampingFraction: 0.5)) {
+                                vm.media.bookmarked.toggle()
+                                isBookmarked.toggle()
+                                vm.setMediaBookmarked(vm.media.bookmarked)
+                            }
+                            AnalyticsManager.shared
+                                .logEvent(
+                                    name: "MediaModalView_ToggleMediaBookmark_\(vm.media.bookmarked)"
+                                )
+                        } label: {
+                            Text("Bookmark")
+                            Image(systemName: "bookmark.circle")
+                        }
+
+                        Button {
                             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                                 vm.media.currentlyWatching.toggle()
                                 vm.media.watched = false
@@ -216,26 +240,13 @@ struct MediaModalView: View {
                             Image(systemName: "play.circle")
                         }
 
-                        Button {
-                            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-                                vm.media.bookmarked.toggle()
-                                vm.setMediaBookmarked(vm.media.bookmarked)
-                            }
-                            AnalyticsManager.shared
-                                .logEvent(
-                                    name: "MediaModalView_ToggleMediaBookmark_\(vm.media.bookmarked)"
-                                )
-                        } label: {
-                            Text("Bookmark")
-                            Image(systemName: "bookmark.circle")
-                        }
-
                         if vm.media.currentlyWatching || vm.media.watched || vm.media.personalRating != nil {
                             Button(role: .destructive) {
                                 withAnimation(.interactiveSpring()) {
                                     vm.media.watched = false
                                     vm.media.personalRating = nil
                                     vm.media.currentlyWatching = false
+                                    vm.media.bookmarked = false
                                 }
                             } label: {
                                 Text("Reset")
@@ -324,12 +335,13 @@ struct MediaModalView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 100, height: 100)
-                        .offset(y: -50)
+                        .offset(y: showContent ? -50 : -150)
+                        .animation(Animation.spring(response: 0.5, dampingFraction: 0.5).delay(0.3), value: showContent)
                         .transition(.move(edge: .top))
                         .padding(.trailing, 30)
                         .foregroundStyle(Color.theme.red.gradient)
-                        .opacity(-titleProgress < progressAmount ? 1 : 0)
-                        .animation(.easeInOut(duration: 0.25), value: -titleProgress < progressAmount)
+                        .offset(y: -progress < 0.5 ? 0 : -100)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.5), value: -progress < 0.5)
                 }
             }
             .overlay {
@@ -667,10 +679,16 @@ struct MediaDetailView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             GeometryReader {
-                MediaModalView(media: dev.mediaMock[1], forPreview: true, size: $0.size, safeArea: $0.safeAreaInsets)
-                    .ignoresSafeArea(.container, edges: .top)
-                    .environmentObject(dev.homeVM)
-                    .preferredColorScheme(.dark)
+                MediaModalView(
+                    media: dev.mediaMock[1],
+                    forPreview: true,
+                    isBookmarked: .constant(false),
+                    size: $0.size,
+                    safeArea: $0.safeAreaInsets
+                )
+                .ignoresSafeArea(.container, edges: .top)
+                .environmentObject(dev.homeVM)
+                .preferredColorScheme(.dark)
             }
 
             GeometryReader {
