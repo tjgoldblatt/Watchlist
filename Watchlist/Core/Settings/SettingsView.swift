@@ -22,6 +22,7 @@ struct SettingsView: View {
 
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
+    @State private var showUpdateDisplayName = false
 
     var body: some View {
         NavigationStack {
@@ -31,8 +32,10 @@ struct SettingsView: View {
                 List {
                     //                    appearanceSection
                     //                        .listRowBackground(Color.gray.opacity(0.1))
-                    userInfoSection
-                        .listRowBackground(Color.gray.opacity(0.1))
+                    if viewModel.currentUser != nil {
+                        userInfoSection
+                            .listRowBackground(Color.gray.opacity(0.1))
+                    }
                     accountSection
                         .listRowBackground(Color.gray.opacity(0.1))
                     aboutSection
@@ -100,6 +103,11 @@ struct SettingsView: View {
                     SFSafariViewWrapper(url: url).ignoresSafeArea(edges: .bottom)
                 }
             }
+            .sheet(isPresented: $showUpdateDisplayName) {
+                viewModel.loadAuthUser()
+            } content: {
+                DisplayNameView()
+            }
         }
         .analyticsScreen(name: "SettingsView")
     }
@@ -154,12 +162,14 @@ extension SettingsView {
 
     // MARK: - User Info
 
+    @ViewBuilder
     private var userInfoSection: some View {
         Section {
-            if let currentUser = viewModel.authUser {
-                if let displayName = currentUser.displayName {
-                    Text(displayName)
+            if let currentUser = viewModel.currentUser {
+                Button { showUpdateDisplayName = true } label: {
+                    Text(currentUser.displayName ?? "No display name associated")
                 }
+                .foregroundColor(Color.theme.text)
 
                 Text(currentUser.email ?? "No email associated")
             }

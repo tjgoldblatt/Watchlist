@@ -12,6 +12,7 @@ import Foundation
 final class SettingsViewModel: ObservableObject {
     @Published var authProviders: [AuthProviderOption] = []
     @Published var authUser: AuthDataResultModel?
+    @Published var currentUser: DBUser?
 
     init() {
         loadAuthUser()
@@ -25,7 +26,14 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func loadAuthUser() {
-        authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
+        do {
+            authUser = try AuthenticationManager.shared.getAuthenticatedUser()
+            Task {
+                currentUser = try await UserManager.shared.getUser()
+            }
+        } catch {
+            CrashlyticsManager.handleError(error: error)
+        }
     }
 
     func signOut() throws {
@@ -33,7 +41,6 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func delete() async throws {
-        guard let authUser else { return }
         let currentUser = try await UserManager.shared.getUser()
 
         // Remove all pending friend requests
