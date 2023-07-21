@@ -106,6 +106,9 @@ extension UserManager {
         try await userDocument(userId: anotherUserId).updateData(data)
     }
 
+    /// Cancels a friend request from the current user to another user.
+    /// - Parameter anotherUserId: The ID of the user to cancel the friend request to.
+    /// - Throws: An error if there is an issue canceling the friend request.
     func cancelFriendRequest(to anotherUserId: String) async throws {
         let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
 
@@ -156,14 +159,14 @@ extension UserManager {
     }
 
     func removeFriend(friendUserId: String) async throws {
-        // Add friend id to current user friends list
+        // Remove friend id from current user friends list
         let currentUserData: [String: Any] = [
             DBUser.CodingKeys.friends.rawValue: FieldValue.arrayRemove([friendUserId]),
         ]
 
         try await userDocument().updateData(currentUserData)
 
-        // Add current user id to new friend's list
+        // Remove current user id from old friend's list
         let currentUser = try AuthenticationManager.shared.getAuthenticatedUser()
 
         let friendUserData: [String: Any] = [
