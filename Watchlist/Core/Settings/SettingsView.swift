@@ -22,6 +22,7 @@ struct SettingsView: View {
 
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
+    @State private var showUpdateDisplayName = false
 
     var body: some View {
         NavigationStack {
@@ -31,18 +32,16 @@ struct SettingsView: View {
                 List {
                     //                    appearanceSection
                     //                        .listRowBackground(Color.gray.opacity(0.1))
-                    userInfoSection
-                        .listRowBackground(Color.gray.opacity(0.1))
+                    if viewModel.currentUser != nil, viewModel.authUser?.isAnonymous == false {
+                        userInfoSection
+                            .listRowBackground(Color.gray.opacity(0.1))
+                    }
                     accountSection
                         .listRowBackground(Color.gray.opacity(0.1))
                     aboutSection
                         .listRowBackground(Color.gray.opacity(0.1))
                 }
                 .scrollContentBackground(.hidden)
-                .onAppear {
-                    viewModel.loadAuthProviders()
-                    viewModel.loadAuthUser()
-                }
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.inline)
                 .confirmationDialog(
@@ -50,16 +49,21 @@ struct SettingsView: View {
                     isPresented: $deleteAccountConfirmation,
                     actions: {
                         Button("Delete", role: .destructive) {
-                            AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
-                            Task {
-                                do {
-                                    viewModel.loadAuthUser()
-                                    try await viewModel.delete()
-                                    homeVM.selectedTab = .movies
-                                    homeVM.showSignInView = true
-                                } catch {
-                                    CrashlyticsManager.handleError(error: error)
+                            if viewModel.authUser?.isAnonymous == true {
+                                Task {
+                                    do {
+                                        viewModel.loadAuthUser()
+                                        try await viewModel.delete()
+                                        AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
+                                        homeVM.selectedTab = .movies
+                                        homeVM.showSignInView = true
+                                    } catch {
+                                        dump(error.localizedDescription)
+                                        CrashlyticsManager.handleError(error: error)
+                                    }
                                 }
+                            } else {
+                                showReAuthView = true
                             }
                         }
                         .buttonStyle(.plain)
@@ -67,20 +71,6 @@ struct SettingsView: View {
                             .buttonStyle(.plain)
                     }
                 )
-                .fullScreenCover(isPresented: $showReAuthView) {
-                    Task {
-                        do {
-                            viewModel.loadAuthUser()
-                            try await viewModel.delete()
-                            homeVM.selectedTab = .movies
-                            homeVM.showSignInView = true
-                        } catch {
-                            CrashlyticsManager.handleError(error: error)
-                        }
-                    }
-                } content: {
-                    DeleteAccountView()
-                }
             }
             .sheet(isPresented: $showPrivacyPolicy) {
                 if let url =
@@ -99,6 +89,29 @@ struct SettingsView: View {
                 {
                     SFSafariViewWrapper(url: url).ignoresSafeArea(edges: .bottom)
                 }
+            }
+            .fullScreenCover(isPresented: $showReAuthView) {
+                Task {
+                    do {
+                        viewModel.loadAuthUser()
+                        try await viewModel.delete()
+                        AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
+                        homeVM.selectedTab = .movies
+                        homeVM.showSignInView = true
+                    } catch {
+                        CrashlyticsManager.handleError(error: error)
+                    }
+                }
+            } content: {
+                DeleteAccountView()
+            }
+
+            .sheet(isPresented: $showUpdateDisplayName) {
+                viewModel.loadCurrentUser()
+            } content: {
+                DisplayNameView()
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
             }
         }
         .analyticsScreen(name: "SettingsView")
@@ -154,12 +167,14 @@ extension SettingsView {
 
     // MARK: - User Info
 
+    @ViewBuilder
     private var userInfoSection: some View {
         Section {
-            if let currentUser = viewModel.authUser {
-                if let displayName = currentUser.displayName {
-                    Text(displayName)
+            if let currentUser = viewModel.currentUser {
+                Button { showUpdateDisplayName = true } label: {
+                    Text(currentUser.displayName ?? "No display name associated")
                 }
+                .foregroundColor(Color.theme.text)
 
                 Text(currentUser.email ?? "No email associated")
             }

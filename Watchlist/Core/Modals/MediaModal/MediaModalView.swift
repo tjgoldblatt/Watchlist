@@ -373,6 +373,8 @@ struct MediaModalView: View {
                     Button("Delete", role: .destructive) {
                         vm.media.watched = false
                         vm.media.personalRating = nil
+                        vm.media.currentlyWatching = false
+                        vm.media.bookmarked = false
                         shouldAddOrDeleteMediaList = false
                         isInMediaList = false
                         AnalyticsManager.shared.logEvent(name: "MediaModalView_DeleteMedia")

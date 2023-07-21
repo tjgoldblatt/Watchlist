@@ -12,9 +12,11 @@ import Foundation
 final class SettingsViewModel: ObservableObject {
     @Published var authProviders: [AuthProviderOption] = []
     @Published var authUser: AuthDataResultModel?
+    @Published var currentUser: DBUser?
 
     init() {
         loadAuthUser()
+        loadCurrentUser()
         loadAuthProviders()
     }
 
@@ -25,7 +27,18 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func loadAuthUser() {
-        authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
+        do {
+            authUser = try AuthenticationManager.shared.getAuthenticatedUser()
+        } catch {
+            dump(error.localizedDescription)
+            CrashlyticsManager.handleError(error: error)
+        }
+    }
+
+    func loadCurrentUser() {
+        Task {
+            currentUser = try await UserManager.shared.getUser()
+        }
     }
 
     func signOut() throws {
@@ -33,6 +46,21 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func delete() async throws {
+        let authUser = try await AuthenticationManager.shared.getAuthenticatedUser()
+
+        // Remove all pending friend requests
+        let pendingFriendRequests = try await UserManager.shared.getUsersWithFriendRequestFor(userId: authUser.uid)
+        for pendingFriend in pendingFriendRequests {
+            try await UserManager.shared.cancelFriendRequest(to: pendingFriend.userId)
+        }
+
+        // Remove all friends
+        if let currentFriends = currentUser?.friends {
+            for friendID in currentFriends {
+                try await UserManager.shared.removeFriend(friendUserId: friendID)
+            }
+        }
+
         try await AuthenticationManager.shared.delete()
     }
 
