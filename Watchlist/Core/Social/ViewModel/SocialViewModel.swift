@@ -47,14 +47,14 @@ final class SocialViewModel: ObservableObject {
             allUsers = try await UserManager.shared.getAllUsers().sorted(by: { $0.displayName ?? "" < $1.displayName ?? "" })
 
             if !ApplicationHelper.isDebug {
-            allUsers = allUsers
-                // Doing this so users don't see test accounts
-                    .filter {
-                        $0.email != "tj.goldblatt@wolterskluwer.com"
-                            && $0.email != "tgold49@gmail.com"
-                            && $0.email != "leongraphicsofficial@gmail.com"
-                            && $0.email != "watchlisttest123@gmail.com"
-                    }
+                allUsers = allUsers
+                    // Doing this so users don't see test accounts
+                        .filter {
+                            $0.email != "tj.goldblatt@wolterskluwer.com"
+                                && $0.email != "tgold49@gmail.com"
+                                && $0.email != "leongraphicsofficial@gmail.com"
+                                && $0.email != "watchlisttest123@gmail.com"
+                        }
             }
             isLoaded = true
         }
