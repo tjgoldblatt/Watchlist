@@ -17,7 +17,6 @@ struct SettingsView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @EnvironmentObject var csManager: ColorSchemeManager
 
-    @State private var showReAuthView: Bool = false
     @State private var deleteAccountConfirmation: Bool = false
 
     @State private var showPrivacyPolicy = false
@@ -32,7 +31,7 @@ struct SettingsView: View {
                 List {
                     //                    appearanceSection
                     //                        .listRowBackground(Color.gray.opacity(0.1))
-                    if viewModel.currentUser != nil {
+                    if viewModel.currentUser != nil, viewModel.authUser?.isAnonymous == false {
                         userInfoSection
                             .listRowBackground(Color.gray.opacity(0.1))
                     }
@@ -61,6 +60,7 @@ struct SettingsView: View {
                                     homeVM.selectedTab = .movies
                                     homeVM.showSignInView = true
                                 } catch {
+                                    dump(error)
                                     CrashlyticsManager.handleError(error: error)
                                 }
                             }
@@ -70,20 +70,6 @@ struct SettingsView: View {
                             .buttonStyle(.plain)
                     }
                 )
-                .fullScreenCover(isPresented: $showReAuthView) {
-                    Task {
-                        do {
-                            viewModel.loadAuthUser()
-                            try await viewModel.delete()
-                            homeVM.selectedTab = .movies
-                            homeVM.showSignInView = true
-                        } catch {
-                            CrashlyticsManager.handleError(error: error)
-                        }
-                    }
-                } content: {
-                    DeleteAccountView()
-                }
             }
             .sheet(isPresented: $showPrivacyPolicy) {
                 if let url =
@@ -104,7 +90,7 @@ struct SettingsView: View {
                 }
             }
             .sheet(isPresented: $showUpdateDisplayName) {
-                viewModel.loadAuthUser()
+                viewModel.loadCurrentUser()
             } content: {
                 DisplayNameView()
                     .presentationDetents([.large])

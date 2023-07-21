@@ -16,6 +16,7 @@ final class SettingsViewModel: ObservableObject {
 
     init() {
         loadAuthUser()
+        loadCurrentUser()
         loadAuthProviders()
     }
 
@@ -28,11 +29,14 @@ final class SettingsViewModel: ObservableObject {
     func loadAuthUser() {
         do {
             authUser = try AuthenticationManager.shared.getAuthenticatedUser()
-            Task {
-                currentUser = try await UserManager.shared.getUser()
-            }
         } catch {
             CrashlyticsManager.handleError(error: error)
+        }
+    }
+
+    func loadCurrentUser() {
+        Task {
+            currentUser = try await UserManager.shared.getUser()
         }
     }
 
@@ -41,16 +45,16 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func delete() async throws {
-        let currentUser = try await UserManager.shared.getUser()
+        let authUser = try await AuthenticationManager.shared.getAuthenticatedUser()
 
         // Remove all pending friend requests
-        let pendingFriendRequests = try await UserManager.shared.getUsersWithFriendRequestFor(userId: currentUser.userId)
+        let pendingFriendRequests = try await UserManager.shared.getUsersWithFriendRequestFor(userId: authUser.uid)
         for pendingFriend in pendingFriendRequests {
             try await UserManager.shared.cancelFriendRequest(to: pendingFriend.userId)
         }
 
         // Remove all friends
-        if let currentFriends = currentUser.friends {
+        if let currentFriends = currentUser?.friends {
             for friendID in currentFriends {
                 try await UserManager.shared.removeFriend(friendUserId: friendID)
             }
