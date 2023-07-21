@@ -30,6 +30,7 @@ final class SettingsViewModel: ObservableObject {
         do {
             authUser = try AuthenticationManager.shared.getAuthenticatedUser()
         } catch {
+            dump(error.localizedDescription)
             CrashlyticsManager.handleError(error: error)
         }
     }

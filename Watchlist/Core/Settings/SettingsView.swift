@@ -17,6 +17,7 @@ struct SettingsView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @EnvironmentObject var csManager: ColorSchemeManager
 
+    @State private var showReAuthView: Bool = false
     @State private var deleteAccountConfirmation: Bool = false
 
     @State private var showPrivacyPolicy = false
@@ -41,10 +42,6 @@ struct SettingsView: View {
                         .listRowBackground(Color.gray.opacity(0.1))
                 }
                 .scrollContentBackground(.hidden)
-                .onAppear {
-                    viewModel.loadAuthProviders()
-                    viewModel.loadAuthUser()
-                }
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.inline)
                 .confirmationDialog(
@@ -52,17 +49,21 @@ struct SettingsView: View {
                     isPresented: $deleteAccountConfirmation,
                     actions: {
                         Button("Delete", role: .destructive) {
-                            AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
-                            Task {
-                                do {
-                                    viewModel.loadAuthUser()
-                                    try await viewModel.delete()
-                                    homeVM.selectedTab = .movies
-                                    homeVM.showSignInView = true
-                                } catch {
-                                    dump(error)
-                                    CrashlyticsManager.handleError(error: error)
+                            if viewModel.authUser?.isAnonymous == true {
+                                Task {
+                                    do {
+                                        viewModel.loadAuthUser()
+                                        try await viewModel.delete()
+                                        AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
+                                        homeVM.selectedTab = .movies
+                                        homeVM.showSignInView = true
+                                    } catch {
+                                        dump(error.localizedDescription)
+                                        CrashlyticsManager.handleError(error: error)
+                                    }
                                 }
+                            } else {
+                                showReAuthView = true
                             }
                         }
                         .buttonStyle(.plain)
@@ -89,6 +90,22 @@ struct SettingsView: View {
                     SFSafariViewWrapper(url: url).ignoresSafeArea(edges: .bottom)
                 }
             }
+            .fullScreenCover(isPresented: $showReAuthView) {
+                Task {
+                    do {
+                        viewModel.loadAuthUser()
+                        try await viewModel.delete()
+                        AnalyticsManager.shared.logEvent(name: "SettingsView_DeleteAccount")
+                        homeVM.selectedTab = .movies
+                        homeVM.showSignInView = true
+                    } catch {
+                        CrashlyticsManager.handleError(error: error)
+                    }
+                }
+            } content: {
+                DeleteAccountView()
+            }
+
             .sheet(isPresented: $showUpdateDisplayName) {
                 viewModel.loadCurrentUser()
             } content: {
