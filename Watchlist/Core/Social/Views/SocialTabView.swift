@@ -26,6 +26,8 @@ struct SocialTabView: View {
     @GestureState var press = false
     @State var showMenu = false
 
+    @State private var showDisplayNameView: Bool = false
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -68,7 +70,12 @@ struct SocialTabView: View {
                 Task {
                     var friends: [DBUser] = []
                     for id in friendIds {
-                        try friends.append(await vm.convertUserIdToUser(userId: id))
+                        do {
+                            try friends.append(await vm.convertUserIdToUser(userId: id))
+                        } catch {
+                            dump(error)
+                            CrashlyticsManager.handleError(error: error)
+                        }
                     }
                     vm.friends = friends
                 }
@@ -89,16 +96,18 @@ struct SocialTabView: View {
                     }
                 }
 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        withAnimation(.easeInOut) {
-                            showAddFriendsView.toggle()
+                if settingsVM.authUser?.isAnonymous == false {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            withAnimation(.easeInOut) {
+                                showAddFriendsView.toggle()
+                            }
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.headline)
+                                .foregroundColor(Color.theme.red)
+                                .padding(.trailing)
                         }
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.headline)
-                            .foregroundColor(Color.theme.red)
-                            .padding(.trailing)
                     }
                 }
             }
@@ -114,6 +123,9 @@ struct SocialTabView: View {
                     .environmentObject(homeVM)
                     .environmentObject(vm)
                     .presentationDetents([.large])
+            }
+            .fullScreenCover(isPresented: $showDisplayNameView) {
+                DisplayNameView()
             }
         }
         .analyticsScreen(name: "SocialTabView")
@@ -277,29 +289,53 @@ extension SocialTabView {
         VStack {
             if !settingsVM.authProviders.contains(.google) {
                 Button("Sign in with Google") {
-                    Task {
+                    Task { @MainActor in
                         do {
                             try await settingsVM.linkGoogleAccount()
+
+                            let user = try AuthenticationManager.shared.getAuthenticatedUser()
+                            if user.displayName == nil {
+                                showDisplayNameView = true
+                            }
                         } catch {
+                            dump(error)
                             CrashlyticsManager.handleError(error: error)
                         }
                     }
                 }
+                .font(.headline)
+                .foregroundStyle(Color.theme.genreText)
+                .padding()
+                .background(Color.theme.red)
+                .cornerRadius(10)
                 .padding()
             }
+
             if !settingsVM.authProviders.contains(.apple) {
                 Button("Sign in with Apple") {
-                    Task {
+                    Task { @MainActor in
                         do {
                             try await settingsVM.linkAppleAccount()
+
+                            let user = try AuthenticationManager.shared.getAuthenticatedUser()
+                            if user.displayName == nil {
+                                showDisplayNameView = true
+                            }
                         } catch {
+                            dump(error)
                             CrashlyticsManager.handleError(error: error)
                         }
                     }
                 }
+                .font(.headline)
+                .foregroundStyle(Color.theme.genreText)
+                .padding()
+                .background(Color.theme.red)
+                .cornerRadius(10)
                 .padding()
             }
         }
+        .padding(.top, 100)
     }
 }
 

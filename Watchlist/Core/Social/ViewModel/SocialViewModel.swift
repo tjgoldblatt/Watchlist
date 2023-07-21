@@ -33,9 +33,10 @@ final class SocialViewModel: ObservableObject {
     init() {
         Task { @MainActor in
             self.currentUser = try? await UserManager.shared.getUser()
-        }
-        if let currentUser {
-            AnalyticsManager.shared.setUserProperty(value: currentUser.displayName, property: "displayName")
+
+            if let currentUser {
+                AnalyticsManager.shared.setUserProperty(value: currentUser.displayName, property: "displayName")
+            }
         }
 
         getAllUsers()
@@ -49,10 +50,10 @@ final class SocialViewModel: ObservableObject {
                 allUsers = allUsers
                     // Doing this so users don't see test accounts
                         .filter {
-                            $0.userId != "82rN4294VtT3gyXV8O0bV1I40mN2"
-                                && $0.userId != "nPxpb3vGMOTV1kZd9gVYYd8WDbB2"
-                                && $0.userId != "ZTXz36UseUcFnHyYpFeOAI2uCPi2"
-                                && $0.userId != "u4C9s9X1NcgAngCbgSKoyCryMtU2"
+                            $0.email != "tj.goldblatt@wolterskluwer.com"
+                                && $0.email != "tgold49@gmail.com"
+                                && $0.email != "leongraphicsofficial@gmail.com"
+                                && $0.email != "watchlisttest123@gmail.com"
                         }
             }
             isLoaded = true
