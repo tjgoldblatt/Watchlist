@@ -46,7 +46,7 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func delete() async throws {
-        let authUser = try await AuthenticationManager.shared.getAuthenticatedUser()
+        let authUser = try AuthenticationManager.shared.getAuthenticatedUser()
 
         // Remove all pending friend requests
         let pendingFriendRequests = try await UserManager.shared.getUsersWithFriendRequestFor(userId: authUser.uid)

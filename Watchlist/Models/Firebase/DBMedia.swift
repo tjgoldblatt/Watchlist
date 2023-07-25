@@ -29,6 +29,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
     var bookmarked: Bool
     var watched: Bool
     var personalRating: Double?
+    @ServerTimestamp var lastUpdated: Timestamp?
 
     init(
         media: Media,
@@ -59,6 +60,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         self.bookmarked = bookmarked
         self.watched = watched
         self.personalRating = personalRating
+        lastUpdated = Timestamp(date: Date())
         releaseDate = media.releaseDate
         firstAirDate = media.firstAirDate
     }
@@ -81,6 +83,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         case bookmarked
         case watched
         case personalRating
+        case lastUpdated
 
         case releaseDate
         case firstAirDate
@@ -102,6 +105,7 @@ struct DBMedia: Codable, Identifiable, Hashable {
         genreIDs = try container.decodeIfPresent([Int].self, forKey: .genreIDs)
         currentlyWatching = try container.decodeIfPresent(Bool.self, forKey: .currentlyWatching) ?? false
         bookmarked = try container.decodeIfPresent(Bool.self, forKey: .bookmarked) ?? false
+        lastUpdated = try container.decodeIfPresent(Timestamp.self, forKey: .lastUpdated)
         watched = try container.decode(Bool.self, forKey: .watched)
         personalRating = try container.decodeIfPresent(Double.self, forKey: .personalRating)
         releaseDate = try container.decodeIfPresent(String.self, forKey: .releaseDate)

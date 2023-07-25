@@ -6,6 +6,8 @@
 //
 
 import Combine
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 import Foundation
 
 @MainActor
@@ -112,6 +114,8 @@ final class MediaModalViewModel: ObservableObject {
                           let updatedDBMedia: DBMedia = movieDetail.convertToMedia(dbMedia: media) else { return }
 
                     media = updatedDBMedia
+
+                    media.lastUpdated = Timestamp(date: Date())
 
                     Task {
                         do {
