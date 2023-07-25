@@ -54,6 +54,7 @@ final class SocialViewModel: ObservableObject {
                                 && $0.email != "tgold49@gmail.com"
                                 && $0.email != "leongraphicsofficial@gmail.com"
                                 && $0.email != "watchlisttest123@gmail.com"
+                                && $0.displayName?.contains("Apple") == false
                         }
             }
             isLoaded = true

@@ -16,7 +16,6 @@ struct MediaModalView: View {
 
     @Namespace private var animation
 
-    @State private var hasUpdatedDetails: Bool = false
     @State private var shouldAddOrDeleteMediaList: Bool?
     @State var isInMediaList: Bool = false
     @State private var showContent: Bool = false
@@ -39,6 +38,10 @@ struct MediaModalView: View {
         }
 
         return ""
+    }
+
+    var shouldUpdateMedia: Bool {
+        vm.media.lastUpdated == nil || vm.media.lastUpdated?.dateValue().isWithinLastSevenDays() == false
     }
 
     var personalMedia: DBMedia? {
@@ -101,9 +104,9 @@ struct MediaModalView: View {
             .coordinateSpace(name: "SCROLL")
             .onAppear {
                 isInMediaList = isInMediaList(media: vm.media)
-                if homeVM.isMediaIDInWatchlist(for: vm.media.id), hasUpdatedDetails {
+
+                if homeVM.isMediaIDInWatchlist(for: vm.media.id), shouldUpdateMedia {
                     vm.updateMediaDetails()
-                    hasUpdatedDetails = true
                 }
 
                 showContent = true

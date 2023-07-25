@@ -20,6 +20,7 @@
 		322F76072A5ECE52005B4743 /* Bundle+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322F76062A5ECE52005B4743 /* Bundle+EXT.swift */; };
 		323194E62A5ED48C0004FD5C /* WhatToTest.en-US.txt in Resources */ = {isa = PBXBuildFile; fileRef = 323194E52A5ED48C0004FD5C /* WhatToTest.en-US.txt */; };
 		3239C8892A5C4CE500328A30 /* PinchToZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3239C8882A5C4CE500328A30 /* PinchToZoom.swift */; };
+		323FD7B42A701211000A6265 /* Date+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323FD7B32A701210000A6265 /* Date+EXT.swift */; };
 		3244188A2A16DA27004CC2F8 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324418892A16DA27004CC2F8 /* NotificationManager.swift */; };
 		324418972A16FB43004CC2F8 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324418962A16FB43004CC2F8 /* DeepLinkManager.swift */; };
 		324BAE6029B8D3D9002FBB6F /* WatchlistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324BAE5F29B8D3D9002FBB6F /* WatchlistApp.swift */; };
@@ -134,6 +135,7 @@
 		322F76062A5ECE52005B4743 /* Bundle+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+EXT.swift"; sourceTree = "<group>"; };
 		323194E52A5ED48C0004FD5C /* WhatToTest.en-US.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "WhatToTest.en-US.txt"; sourceTree = "<group>"; };
 		3239C8882A5C4CE500328A30 /* PinchToZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchToZoom.swift; sourceTree = "<group>"; };
+		323FD7B32A701210000A6265 /* Date+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+EXT.swift"; sourceTree = "<group>"; };
 		324418892A16DA27004CC2F8 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		324418962A16FB43004CC2F8 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		324BAE5C29B8D3D9002FBB6F /* Watchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Watchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -469,6 +471,7 @@
 				32A2F1AB2A092F3E00578535 /* ShapeStyle+EXT.swift */,
 				329A768829BA846F0074A4F9 /* PreviewProvider+EXT.swift */,
 				322F76062A5ECE52005B4743 /* Bundle+EXT.swift */,
+				323FD7B32A701210000A6265 /* Date+EXT.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -924,6 +927,7 @@
 				32952D9C29BB9548002B3596 /* Errors.swift in Sources */,
 				32B5128C29CBB00000879AF6 /* RatingModalView.swift in Sources */,
 				32B3E1CD29E60C2300314B4F /* AuthenticationManager.swift in Sources */,
+				323FD7B42A701211000A6265 /* Date+EXT.swift in Sources */,
 				32B3E1C829E60BDA00314B4F /* SignInWithAppleButtonSwiftUI.swift in Sources */,
 				32C89CC929EAFA4B0094D8E2 /* DeleteAccountView.swift in Sources */,
 				32B3E1D229E60CA800314B4F /* SignInView.swift in Sources */,
