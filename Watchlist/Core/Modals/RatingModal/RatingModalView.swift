@@ -93,6 +93,7 @@ struct RatingModalView: View {
                         if rating > 0 { media.watched = true
                             media.personalRating = Double(rating)
                             dismiss()
+                            homeVM.hapticFeedback.impactOccurred()
                             AnalyticsManager.shared.logEvent(name: "RatingModalView_RatingSent")
                         }
                     } label: {

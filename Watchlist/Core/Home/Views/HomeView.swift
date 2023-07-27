@@ -45,14 +45,23 @@ struct HomeView: View {
                         .environmentObject(homeVM)
                         .tabItem {
                             Image(systemName: Tab.social.icon)
+                                .accessibilityIdentifier("SocialTab")
                         }
                         .tag(Tab.social)
                         .badge(homeVM.pendingFriendRequests)
+                }
+                .onAppear {
+                    // correct the transparency bug for Tab bars
+                    UITabBar.appearance().shadowImage = UIImage()
+                    UITabBar.appearance().backgroundImage = UIImage()
+                    UITabBar.appearance().isTranslucent = true
+                    UITabBar.appearance().backgroundColor = UIColor(Color.theme.background)
                 }
                 .preferredColorScheme(.dark)
                 .accentColor(Color.theme.red)
                 .tint(Color.theme.red)
                 .onChange(of: homeVM.selectedTab) { updatedTab in
+                    homeVM.hapticFeedback.impactOccurred()
                     withAnimation(.easeIn) {
                         currentTab = updatedTab
                         homeVM.genresSelected = []

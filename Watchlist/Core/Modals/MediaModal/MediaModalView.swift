@@ -218,6 +218,7 @@ struct MediaModalView: View {
                                 vm.media.bookmarked.toggle()
                                 isBookmarked.toggle()
                                 vm.setMediaBookmarked(vm.media.bookmarked)
+                                homeVM.hapticFeedback.impactOccurred()
                             }
                             AnalyticsManager.shared
                                 .logEvent(
@@ -232,6 +233,7 @@ struct MediaModalView: View {
                             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                                 vm.media.currentlyWatching.toggle()
                                 vm.media.watched = false
+                                homeVM.hapticFeedback.impactOccurred()
                             }
                             vm.setMediaCurrentlyWatching(vm.media.currentlyWatching)
                             AnalyticsManager.shared
@@ -250,6 +252,7 @@ struct MediaModalView: View {
                                     vm.media.personalRating = nil
                                     vm.media.currentlyWatching = false
                                     vm.media.bookmarked = false
+                                    homeVM.hapticFeedback.impactOccurred()
                                 }
                             } label: {
                                 Text("Reset")
@@ -264,6 +267,7 @@ struct MediaModalView: View {
                             } else {
                                 vm.showDeleteConfirmation.toggle()
                             }
+                            homeVM.hapticFeedback.impactOccurred()
                         } label: {
                             Text(!isInMediaList ? "Add to Watchlist" : "Remove from Watchlist")
                             Image(systemName: !isInMediaList ? "plus" : "xmark")
@@ -287,6 +291,7 @@ struct MediaModalView: View {
                             } else {
                                 vm.showDeleteConfirmation.toggle()
                             }
+                            homeVM.hapticFeedback.impactOccurred()
                         } label: {
                             Text(!isInMediaList ? "Add to Watchlist" : "Remove from Watchlist")
                             Image(systemName: !isInMediaList ? "plus" : "xmark")
@@ -446,6 +451,7 @@ extension MediaModalView {
                             if friendName == nil {
                                 vm.media.watched.toggle()
                                 vm.media.currentlyWatching = false
+                                homeVM.hapticFeedback.impactOccurred()
                                 AnalyticsManager.shared.logEvent(name: "MediaModalView_ToggleMediaWatched_\(vm.media.watched)")
                             }
                         } label: {
@@ -580,6 +586,7 @@ extension MediaModalView {
 
     private var rateThisButton: some View {
         Button {
+            homeVM.hapticFeedback.impactOccurred()
             vm.showingRating.toggle()
             AnalyticsManager.shared.logEvent(name: "MediaModalView_RateButton_Tapped")
         } label: {
