@@ -15,3 +15,5 @@ Pods/*
 Pods/**
 Podfile.lock
 Debug*/
+/Watchlist/Models/TraktConstants.swift
+/Watchlist/Models/TMDBConstants.swift
